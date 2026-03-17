@@ -22,17 +22,22 @@
 ## 角色架构
 
 ```mermaid
-flowchart TD
-    User["<b>用户</b><br/>产品方向 / 需求定义 / Wave 边界验收"]
-    Lead["<b>Team Lead</b> (Claude 主会话)<br/>拆任务 / 接口契约 / 协调全流程 / 合代码"]
-    Doc["<b>Doc Engineer</b> (Lead sub-agent)<br/>Wave 完成后文档审计"]
-    Dev["<b>Claude Developer</b> (teammate)<br/>写代码 / 写单元测试 / 回看 Codex 修复"]
-    Codex["<b>Codex 5.3 Reviewer</b> (MCP 调用)<br/>审查代码 / 直接修复问题 / QA 冒烟测试"]
+flowchart TB
+    User["用户<br/><br/>产品方向<br/>需求定义<br/>Wave 边界验收"]
+
+    subgraph Lead["Team Lead — Claude 主会话"]
+        direction LR
+        LeadTasks["拆任务<br/>接口契约<br/>协调全流程<br/>合代码"]
+        Doc["Doc Engineer<br/>sub-agent<br/><br/>Wave 完成后<br/>文档审计"]
+    end
+
+    Dev["Claude Developer<br/>teammate<br/><br/>写代码<br/>写单元测试<br/>回看 Codex 修复"]
+
+    Codex["Codex 5.3 Reviewer<br/>MCP 调用<br/><br/>审查代码<br/>直接修复问题<br/>QA 冒烟测试"]
 
     User --> Lead
     Lead --> Dev
     Lead --> Codex
-    Doc -.->|sub-agent| Lead
 ```
 
 - Lead / Developer / Doc Engineer：**Claude Opus 4.6** + max effort
