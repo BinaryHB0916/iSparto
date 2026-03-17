@@ -45,6 +45,25 @@ flowchart TB
 
 ---
 
+## 和现有工具的区别
+
+现有的 AI 编程工具（Cursor、Windsurf、Copilot、Claude Code 单会话）本质上是**一个 AI 辅助一个人写代码**——你还是那个写代码的人，AI 是你的副驾。
+
+iSparto 不一样。你不写代码，你是产品负责人。AI 不是你的副驾，而是**一支完整的团队替你开发**：
+
+| | 单 Agent 工具 | iSparto |
+|--|--------------|---------|
+| 你的角色 | 写代码的人，AI 帮你补全 / 重构 / debug | 产品负责人，确认方向和验收 |
+| AI 的角色 | 一个助手 | 一支团队（Lead + Developer + Reviewer + Doc Engineer） |
+| 并行能力 | 无，单线程对话 | Wave 内多 Developer 并行，tmux 分屏可视 |
+| 代码审查 | 自己审自己（同源） | Codex 审 Claude（异源），覆盖不同模型的盲区 |
+| 跨会话状态 | 丢失，每次重新解释上下文 | plan.md 驱动，`/start-working` 自动恢复 |
+| 文档同步 | 手动维护 | Doc Engineer 每个 Wave 自动审计 |
+
+**简单说：其他工具让 AI 帮你写代码，iSparto 让 AI 替你做项目。**
+
+---
+
 ## 前置条件
 
 | 项目 | 要求 | 说明 |
