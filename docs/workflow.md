@@ -73,31 +73,38 @@ Lead 确认全部通过 → 合代码 → 更新 plan.md
 
 ## 自定义命令（commands/）
 
+> 以下是 4 个自定义命令的完整内容。每个命令都明确了执行角色（Team Lead）和与用户的交互边界。
+
 ### 1. start-working.md
 
-```
-开工流程：
+**执行角色：Team Lead** — 汇报状态，等用户确认后启动团队
 
-1. 读取 docs/plan.md，确认：
+```
+你是 Team Lead。用户执行了 /start-working，进入开工流程。
+
+1. 读取 CLAUDE.md 确认项目上下文和开发规则
+2. 读取 docs/plan.md，向用户汇报：
    - 当前处于哪个 Wave
    - 本 Wave 有哪些 Team，各自状态（待开始 / 进行中 / 已完成）
    - 上次收工后的遗留问题
-2. 快速检查：代码当前状态与 docs/ 文档是否一致，有无漂移
-3. 确认当前分支（应在 feat/ 或 fix/ 或 hotfix/ 分支上，不在 main 上开发）
-4. 判断接下来的工作模式：
+3. 快速检查：代码当前状态与 docs/ 文档是否一致，有无漂移
+4. 确认当前分支（应在 feat/ 或 fix/ 或 hotfix/ 分支上，不在 main 上开发）
+5. 判断接下来的工作模式，向用户建议：
    - 如果当前 Wave 有可并行的 Team → 建议启动 Agent Team
    - 如果是单任务或需要人工决策 → 走普通开发模式
-5. 输出以上信息，等我确认后再开始，不要写任何代码
+6. 输出以上信息，等用户确认"开始"后，再按 Lead 流程启动团队
 ```
 
 ### 2. end-working.md
 
+**执行角色：Team Lead** — 确保所有改动和决策落库，不丢上下文
+
 ```
-收工流程：
+你是 Team Lead。用户执行了 /end-working，进入收工流程。
 
 1. 检查本次所有改动和决策：
-   - 代码改动是否与 docs/ 文档一致？不一致则更新文档
-   - 对话中的口头决策是否已写入对应文档？
+   - 代码改动是否与 docs/ 文档一致？不一致则 Lead 直接更新或 spawn Doc Engineer 更新
+   - 对话中的口头决策是否已写入对应文档？未写入则补充
 2. 更新 docs/plan.md：
    - 标记完成的任务
    - 如果当前 Wave 的所有 Team 都完成，标记 Wave 状态为已完成
@@ -106,13 +113,15 @@ Lead 确认全部通过 → 合代码 → 更新 plan.md
 3. git add -A && git commit
 4. git push
 
-执行前先让我确认 commit message。
+执行前先让用户确认 commit message。
 ```
 
 ### 3. plan.md
 
+**执行角色：Team Lead** — 审视需求，输出方案，等用户确认后写入 plan.md
+
 ```
-针对我接下来描述的需求：
+你是 Team Lead。用户执行了 /plan，要求你对接下来描述的需求出方案。
 
 1. 先审视产品方向：
    - 这真的是用户需要的吗？
@@ -122,24 +131,27 @@ Lead 确认全部通过 → 合代码 → 更新 plan.md
 3. 输出实现方案：
    - 要改哪些文件、怎么改、有什么风险
    - 解耦分析：哪些任务之间没有文件重叠和数据依赖，可以并行？哪些必须顺序执行？
-   - 如果可以并行，列出文件所有权划分（确保不重叠）
+   - 如果可以并行，列出文件所有权划分（确保不重叠），说明 Lead 将 spawn 哪些 Developer teammate
    - 如果并行任务之间有数据交互，定义接口契约
-   - 是否需要 Codex 前置架构审视
+   - 是否需要调用 Codex MCP 做前置架构审视
    - 是否涉及高风险代码需要 Codex 审查
-4. 等我确认方案后，先把方案追加到 docs/plan.md，再开始写代码
+4. 等用户确认方案后，Lead 把方案追加到 docs/plan.md，再启动团队开发
 ```
 
 ### 4. init-project.md
 
-```
-基于 ~/.claude/CLAUDE-TEMPLATE.md 模板初始化新项目：
+**执行角色：Team Lead** — 生成项目骨架和文档体系，为 Wave 开发做准备
 
-1. 填写项目信息、确定技术栈和目标平台
-2. 按 ~/.claude/templates/ 下的模板结构生成 docs/（product-spec.md、tech-spec.md、design-spec.md 等）
-3. 生成初始 docs/plan.md，按 Wave 组织开发计划
-4. 初始化 git 仓库，创建 main 分支
-5. 在 CLAUDE.md 中包含协作模式、模块边界、分支策略
-6. 调用 Codex MCP 做架构前置审视（基于 tech-spec.md），将结果反馈给用户确认
+```
+你是 Team Lead。用户执行了 /init-project，要求你初始化一个新项目。
+
+1. 与用户确认项目信息、技术栈和目标平台
+2. 基于 ~/.claude/CLAUDE-TEMPLATE.md 生成项目的 CLAUDE.md
+3. 按 ~/.claude/templates/ 下的模板结构生成 docs/（product-spec.md、tech-spec.md、design-spec.md 等）
+4. 生成初始 docs/plan.md，按 Wave 组织开发计划
+5. 初始化 git 仓库，创建 main 分支
+6. 调用 Codex MCP 做架构前置审视（基于 tech-spec.md），向用户汇报审视结果
+7. 等用户确认所有文档和架构审视结果后，项目初始化完成
 ```
 
 ---
