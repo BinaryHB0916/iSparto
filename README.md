@@ -74,6 +74,7 @@ codex login
 # 4. 把本仓库的命令和模板复制到用户目录
 git clone https://github.com/BinaryHB0916/iSparto.git
 cp -r iSparto/commands/ ~/.claude/commands/
+cp -r iSparto/templates/ ~/.claude/templates/
 cp iSparto/CLAUDE-TEMPLATE.md ~/.claude/CLAUDE-TEMPLATE.md
 cp iSparto/settings.json ~/.claude/settings.json
 
@@ -145,7 +146,7 @@ Lead 团队自己跑（你不用盯着）
 
 ---
 
-## 仓库结构
+## 仓库结构与文档索引
 
 ```
 iSparto/
@@ -153,6 +154,7 @@ iSparto/
 ├── settings.json              ← Claude Code 全局配置
 ├── CLAUDE-TEMPLATE.md         ← 新项目 CLAUDE.md 生成模板
 ├── LICENSE
+├── .gitignore
 ├── commands/
 │   ├── start-working.md       ← 开工命令
 │   ├── end-working.md         ← 收工命令
@@ -163,29 +165,15 @@ iSparto/
 │   ├── tech-spec-template.md
 │   ├── design-spec-template.md
 │   └── plan-template.md
-└── docs/                      ← 详细文档
-    ├── concepts.md            ← 核心概念（解耦、Wave、文件所有权）
-    ├── user-guide.md          ← 用户交互手册（4 命令 + 3 通知）
-    ├── roles.md               ← 角色定义（Lead、Developer、Codex、Doc Engineer 完整指令）
+└── docs/
+    ├── concepts.md            ← 核心概念（解耦、Wave、文件所有权）⭐ 建议先读
+    ├── user-guide.md          ← 用户交互手册（4 命令 + 3 通知）⭐ 建议先读
+    ├── roles.md               ← 角色定义 + Codex prompt 模板
     ├── workflow.md            ← 完整开发流程 + 分支策略 + Codex 集成
-    ├── configuration.md       ← 全局配置 + 文档规范 + 适配指南 + 多设备同步
+    ├── configuration.md       ← 全局配置 + 适配指南 + 多设备同步
     ├── troubleshooting.md     ← 常见问题排查
     └── design-decisions.md    ← 设计决策记录
 ```
-
----
-
-## 详细文档
-
-| 文档 | 内容 |
-|------|------|
-| [核心概念](docs/concepts.md) | 解耦、Wave、文件所有权、接口契约、tmux teammate 模式 |
-| [用户交互手册](docs/user-guide.md) | 你要做什么、不需要做什么、重点关注什么 |
-| [角色定义](docs/roles.md) | Lead、Developer、Codex Reviewer、Doc Engineer 的完整指令和 prompt 模板 |
-| [完整开发流程](docs/workflow.md) | Phase 0 初始化 → Phase 1-N Wave 并行开发 → 分支策略 → Codex 集成 → 自定义命令 |
-| [配置与适配](docs/configuration.md) | settings.json、文档命名规范、适配指南、Memory 边界、多设备同步 |
-| [常见问题排查](docs/troubleshooting.md) | MCP 连接、上下文溢出、文件冲突、会话恢复等 |
-| [设计决策记录](docs/design-decisions.md) | 每个设计选择的"为什么" |
 
 ---
 

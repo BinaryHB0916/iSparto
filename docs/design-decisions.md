@@ -23,3 +23,7 @@
 | Effort level | max | Max 订阅 token 用不完，追求最高推理深度 |
 | 成本 | $120/月 | Claude Max $100 + ChatGPT $20，两个顶级模型无额外费用 |
 | Memory 粒度 | 里程碑级别 | 空间有限，细节由 plan.md 承载 |
+| 文档分层 | README 精简 + docs/ 详细文档 | README 控制在 200 行内，新用户 30 秒看完核心信息；深度内容按主题拆到 docs/ |
+| 架构图用 mermaid | 替代 ASCII art | GitHub 代码块字体中 CJK 字符宽度不精确，ASCII 边框必然错位；mermaid 渲染为 SVG 无此问题 |
+| 仅支持 macOS + iTerm2 | 不做跨平台终端适配 | Agent Team tmux 模式依赖 iTerm2 内置 tmux 集成；当前阶段聚焦核心体验，不分散精力 |
+| templates/ 独立目录 | 模板从 README 中抽出 | 避免 README 中重复模板内容（原 400+ 行），模板作为独立文件可被 /init-project 直接引用 |
