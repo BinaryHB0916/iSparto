@@ -1,7 +1,5 @@
 # iSparto
 
-> 一个人种下种子，一支军队自己长出来。
-
 用 Claude Code Agent Team 模式，让一个人拥有一支 AI 开发团队。
 适用于所有软件开发项目（iOS / Android / macOS / Windows / Web / 跨平台）。
 
@@ -47,20 +45,20 @@ flowchart TB
 
 ## 和现有工具的区别
 
-现有的 AI 编程工具（Cursor、Windsurf、Copilot、Claude Code 单会话）本质上是**一个 AI 辅助一个人写代码**——你还是那个写代码的人，AI 是你的副驾。
+现有的 AI 编程工具（Cursor、Windsurf、Copilot、Claude Code 单会话）都是**你和一个 Agent 反复沟通**——Agent 没有团队，没有分工，所有事情都靠你和它一来一回地推进。
 
-iSparto 不一样。你不写代码，你是产品负责人。AI 不是你的副驾，而是**一支完整的团队替你开发**：
+iSparto 把单个 Agent 变成**一支有分工的团队**：Lead 拆任务、Developer 并行写代码、Codex 交叉审查、Doc Engineer 同步文档。你不再逐句指挥 Agent，而是确认方向和验收结果。
 
 | | 单 Agent 工具 | iSparto |
 |--|--------------|---------|
-| 你的角色 | 写代码的人，AI 帮你补全 / 重构 / debug | 产品负责人，确认方向和验收 |
-| AI 的角色 | 一个助手 | 一支团队（Lead + Developer + Reviewer + Doc Engineer） |
+| 协作模式 | 你和一个 Agent 反复沟通 | 你对接 Lead，Lead 协调整个团队 |
+| AI 的组织 | 单个 Agent，无分工 | 团队化（Lead + Developer + Reviewer + Doc Engineer） |
 | 并行能力 | 无，单线程对话 | Wave 内多 Developer 并行，tmux 分屏可视 |
 | 代码审查 | 自己审自己（同源） | Codex 审 Claude（异源），覆盖不同模型的盲区 |
 | 跨会话状态 | 丢失，每次重新解释上下文 | plan.md 驱动，`/start-working` 自动恢复 |
 | 文档同步 | 手动维护 | Doc Engineer 每个 Wave 自动审计 |
 
-**简单说：其他工具让 AI 帮你写代码，iSparto 让 AI 替你做项目。**
+**简单说：其他工具是你指挥一个 Agent，iSparto 是你指挥一支团队。**
 
 ---
 
