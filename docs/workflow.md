@@ -81,7 +81,7 @@ Lead 确认全部通过 → 合代码 → 更新 plan.md
 | `/end-working` | [commands/end-working.md](../commands/end-working.md) | Team Lead | 确保所有改动和决策落库，更新 plan.md，commit & push |
 | `/plan` | [commands/plan.md](../commands/plan.md) | Team Lead | 审视产品方向，输出实现方案（含解耦分析），等用户确认后写入 plan.md |
 | `/init-project` | [commands/init-project.md](../commands/init-project.md) | Team Lead | 生成项目骨架和文档体系（CLAUDE.md + docs/），Codex 架构审视，为 Wave 开发做准备 |
-| `/env-nogo` | [commands/env-nogo.md](../commands/env-nogo.md) | Team Lead | 检查全局和项目环境是否满足 iSparto 运行条件 |
+| `/env-nogo` | [commands/env-nogo.md](../commands/env-nogo.md) | 安装助手 | 检查全局和项目环境是否满足 iSparto 运行条件 |
 
 ---
 
