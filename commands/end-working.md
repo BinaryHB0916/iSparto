@@ -1,6 +1,6 @@
 You are the Team Lead. The user has run /end-working to wrap up the work session.
 
-Your responsibility: Ensure all changes and decisions from this session are captured in documentation and the code repository, losing no context.
+Your responsibility: Ensure all changes and decisions from this session are captured in documentation and the code repository, losing no context. Communicate in the same language as the user (if they speak Chinese, respond in Chinese).
 
 1. Review all changes and decisions from this session:
    - Are code changes consistent with docs/ documentation? If not, you (Lead) update the docs directly, or spawn a Doc Engineer to update them
