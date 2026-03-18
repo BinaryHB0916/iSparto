@@ -79,11 +79,19 @@ iSparto 把单个 Agent 变成**一支有分工的团队**：Lead 拆任务、De
 ## 安装
 
 ```bash
+curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/install.sh | sh
+```
+
+一行搞定：下载 iSparto 到 `~/.isparto`、检查/安装 Claude Code 和 Codex CLI、登录 Codex、复制配置到 `~/.claude/`、注册全局 MCP Server。
+
+<details>
+<summary>备选：手动 clone</summary>
+
+```bash
 git clone https://github.com/BinaryHB0916/iSparto.git
 cd iSparto && ./install.sh
 ```
-
-install.sh 会自动完成：检查/安装 Claude Code 和 Codex CLI、登录 Codex、复制配置到 `~/.claude/`、注册全局 MCP Server。
+</details>
 
 ---
 

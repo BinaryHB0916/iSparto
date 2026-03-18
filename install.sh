@@ -11,7 +11,24 @@ echo "  iSparto Installer"
 echo "  ─────────────────"
 echo ""
 
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+# ── 0. If running via curl pipe, clone repo first ─────────
+ISPARTO_HOME="$HOME/.isparto"
+
+if [ -f "$(dirname "$0")/settings.json" ] 2>/dev/null; then
+    # Running from within the repo
+    SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+else
+    # Running standalone (curl | sh) — clone repo
+    echo "Downloading iSparto..."
+    if [ -d "$ISPARTO_HOME" ]; then
+        echo -e "  ${YELLOW}→${NC} Updating existing installation..."
+        git -C "$ISPARTO_HOME" pull --quiet
+    else
+        git clone --quiet https://github.com/BinaryHB0916/iSparto.git "$ISPARTO_HOME"
+    fi
+    echo -e "  ${GREEN}✓${NC} iSparto downloaded to $ISPARTO_HOME"
+    SCRIPT_DIR="$ISPARTO_HOME"
+fi
 
 # ── 1. Node.js ──────────────────────────────────────────────
 

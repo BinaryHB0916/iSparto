@@ -81,11 +81,19 @@ iSparto turns a single Agent into **a team with clear roles**: Lead breaks down 
 ## Installation
 
 ```bash
+curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/install.sh | sh
+```
+
+One command handles everything: downloads iSparto to `~/.isparto`, checks/installs Claude Code and Codex CLI, logs into Codex, copies configuration to `~/.claude/`, and registers the global MCP Server.
+
+<details>
+<summary>Alternative: manual clone</summary>
+
+```bash
 git clone https://github.com/BinaryHB0916/iSparto.git
 cd iSparto && ./install.sh
 ```
-
-install.sh handles everything automatically: checks/installs Claude Code and Codex CLI, logs into Codex, copies configuration to `~/.claude/`, and registers the global MCP Server.
+</details>
 
 ---
 
