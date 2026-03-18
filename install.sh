@@ -18,15 +18,15 @@ if [ -f "$(dirname "$0")/settings.json" ] 2>/dev/null; then
     # Running from within the repo
     SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 else
-    # Running standalone (curl | sh) — clone repo
+    # Running standalone (curl | bash) — clone repo
     echo "Downloading iSparto..."
     if [ -d "$ISPARTO_HOME" ]; then
-        echo -e "  ${YELLOW}→${NC} Updating existing installation..."
+        printf "  ${YELLOW}→${NC} Updating existing installation...\n"
         git -C "$ISPARTO_HOME" pull --quiet
     else
         git clone --quiet https://github.com/BinaryHB0916/iSparto.git "$ISPARTO_HOME"
     fi
-    echo -e "  ${GREEN}✓${NC} iSparto downloaded to $ISPARTO_HOME"
+    printf "  ${GREEN}✓${NC} iSparto downloaded to $ISPARTO_HOME\n"
     SCRIPT_DIR="$ISPARTO_HOME"
 fi
 
@@ -36,14 +36,14 @@ echo "Checking Node.js..."
 if command -v node &> /dev/null; then
     NODE_VERSION=$(node -v | sed 's/v//' | cut -d. -f1)
     if [ "$NODE_VERSION" -ge 18 ]; then
-        echo -e "  ${GREEN}✓${NC} Node.js $(node -v)"
+        printf "  ${GREEN}✓${NC} Node.js $(node -v)\n"
     else
-        echo -e "  ${RED}✘${NC} Node.js $(node -v) — requires 18+"
+        printf "  ${RED}✘${NC} Node.js $(node -v) — requires 18+\n"
         echo "  Install from https://nodejs.org"
         exit 1
     fi
 else
-    echo -e "  ${RED}✘${NC} Node.js not found"
+    printf "  ${RED}✘${NC} Node.js not found\n"
     echo "  Install 18+ from https://nodejs.org"
     exit 1
 fi
@@ -52,31 +52,31 @@ fi
 
 echo "Checking Claude Code..."
 if command -v claude &> /dev/null; then
-    echo -e "  ${GREEN}✓${NC} Claude Code installed"
+    printf "  ${GREEN}✓${NC} Claude Code installed\n"
 else
-    echo -e "  ${YELLOW}→${NC} Installing Claude Code..."
+    printf "  ${YELLOW}→${NC} Installing Claude Code...\n"
     npm install -g @anthropic-ai/claude-code
-    echo -e "  ${GREEN}✓${NC} Claude Code installed"
+    printf "  ${GREEN}✓${NC} Claude Code installed\n"
 fi
 
 # ── 3. Codex CLI ────────────────────────────────────────────
 
 echo "Checking Codex CLI..."
 if command -v codex &> /dev/null; then
-    echo -e "  ${GREEN}✓${NC} Codex CLI installed"
+    printf "  ${GREEN}✓${NC} Codex CLI installed\n"
 else
-    echo -e "  ${YELLOW}→${NC} Installing Codex CLI..."
+    printf "  ${YELLOW}→${NC} Installing Codex CLI...\n"
     npm install -g @openai/codex
-    echo -e "  ${GREEN}✓${NC} Codex CLI installed"
+    printf "  ${GREEN}✓${NC} Codex CLI installed\n"
 fi
 
 # ── 4. Codex Login ──────────────────────────────────────────
 
 echo "Checking Codex login..."
 if codex login status &> /dev/null; then
-    echo -e "  ${GREEN}✓${NC} Codex logged in"
+    printf "  ${GREEN}✓${NC} Codex logged in\n"
 else
-    echo -e "  ${YELLOW}→${NC} Codex not logged in. Running codex login..."
+    printf "  ${YELLOW}→${NC} Codex not logged in. Running codex login...\n"
     codex login
 fi
 
@@ -92,17 +92,17 @@ copy_file() {
     local dst="$2"
     local label="$3"
     if [ -f "$dst" ]; then
-        echo -en "  ${YELLOW}?${NC} $label already exists. Overwrite? [y/N] "
-        read -r answer
+        printf "  ${YELLOW}?${NC} $label already exists. Overwrite? [y/N] "
+        read -r answer < /dev/tty
         if [[ "$answer" =~ ^[Yy]$ ]]; then
             cp "$src" "$dst"
-            echo -e "  ${GREEN}✓${NC} Overwrote $label"
+            printf "  ${GREEN}✓${NC} Overwrote $label\n"
         else
-            echo -e "  ${YELLOW}→${NC} Skipped $label"
+            printf "  ${YELLOW}→${NC} Skipped $label\n"
         fi
     else
         cp "$src" "$dst"
-        echo -e "  ${GREEN}✓${NC} Installed $label"
+        printf "  ${GREEN}✓${NC} Installed $label\n"
     fi
 }
 
@@ -123,15 +123,15 @@ done
 
 echo "Registering Codex MCP Server (global)..."
 if claude mcp add codex-reviewer -s user -- npx -y codex-mcp-server 2>/dev/null; then
-    echo -e "  ${GREEN}✓${NC} Codex MCP Server registered globally"
+    printf "  ${GREEN}✓${NC} Codex MCP Server registered globally\n"
 else
-    echo -e "  ${YELLOW}→${NC} MCP registration skipped (may already exist)"
+    printf "  ${YELLOW}→${NC} MCP registration skipped (may already exist)\n"
 fi
 
 # ── Done ────────────────────────────────────────────────────
 
 echo ""
-echo -e "${GREEN}Done!${NC} iSparto is ready."
+printf "${GREEN}Done!${NC} iSparto is ready.\n"
 echo ""
 echo "To start a new project:"
 echo ""
