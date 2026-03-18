@@ -1,13 +1,13 @@
-# 常见问题排查
+# Troubleshooting
 
-| 问题 | 原因 | 解决 |
-|------|------|------|
-| Codex MCP 状态显示 ✘ failed | MCP Server 命令写错，或 Codex CLI 未安装/未登录 | 确认 `codex --version` 和 `codex login status` 正常，然后 `claude mcp remove codex-reviewer -s project && claude mcp add codex-reviewer -s project -- npx -y codex-mcp-server`，重启 Claude Code |
-| Claude Code 上下文窗口满了 | 长会话积累太多 token | 执行 `/compact` 压缩上下文。如果仍然满，`/end-working` 收工后开新会话 `/start-working` 继续（plan.md 保证上下文不丢） |
-| Developer 改了不该改的文件 | 文件所有权指令被忽略 | Lead 发现后回滚该文件的改动，重新明确文件所有权后让 Developer 重做。在 CLAUDE.md 里加项目特有规则强调 |
-| merge 冲突（多 Developer 并行） | 文件所有权划分有重叠，或共享文件没有明确修改顺序 | Lead 拆任务时确保文件所有权不重叠。共享文件的修改只分配给一个 Developer，或明确顺序 |
-| Codex 审查返回空结果 | 网络问题或 Codex 服务临时不可用 | 重试一次。如果持续失败，检查 `codex login status`，可能需要重新登录 |
-| Codex 持续不可用 | Codex 服务故障或账户问题，短时间内无法恢复 | Lead 上报用户"Codex 不可用"，由用户决定：继续开发（跳过 Codex 环节）、等待恢复、或其他处理方式 |
-| `/start-working` 发现代码和文档不一致 | 上次收工时文档同步不完整 | 先让 Lead 修复不一致，确认后再继续开发 |
-| 短暂离开后想继续 | Claude Code 会话还在 | `claude --continue` 接回当前会话。如果会话已过期，开新会话 `/start-working` |
-| Agent Team teammate 不可见 | 未使用 iTerm2，或 tmux 集成未启用 | 确认在 iTerm2 中运行 Claude Code；检查 iTerm2 设置中 tmux 集成是否开启 |
+| Problem | Cause | Solution |
+|---------|-------|----------|
+| Codex MCP status shows ✘ failed | MCP Server command is incorrect, or Codex CLI is not installed/not logged in | Verify that `codex --version` and `codex login status` work correctly, then run `claude mcp remove codex-reviewer -s project && claude mcp add codex-reviewer -s project -- npx -y codex-mcp-server` and restart Claude Code |
+| Claude Code context window is full | Long sessions accumulate too many tokens | Run `/compact` to compress context. If still full, run `/end-working` to wrap up, then start a new session with `/start-working` to continue (plan.md ensures no context is lost) |
+| Developer modified files they shouldn't have | File ownership directives were ignored | Team Lead rolls back the changes to that file, re-clarifies file ownership, and has the Developer redo the work. Add project-specific rules to CLAUDE.md to emphasize this |
+| Merge conflicts (multiple Developers in parallel) | File ownership boundaries overlap, or shared files lack a clear modification order | Team Lead ensures file ownership does not overlap when splitting tasks. Assign shared file modifications to only one Developer, or define a clear order |
+| Codex review returns empty results | Network issues or Codex service temporarily unavailable | Retry once. If it continues to fail, check `codex login status` — you may need to log in again |
+| Codex remains unavailable | Codex service outage or account issue that cannot be resolved quickly | Team Lead escalates to the user: "Codex is unavailable." The user decides: continue development (skip Codex steps), wait for recovery, or handle otherwise |
+| `/start-working` finds code and docs out of sync | Documentation sync was incomplete during the last wrap-up | Have the Team Lead fix the inconsistencies first, then confirm before continuing development |
+| Want to continue after stepping away briefly | Claude Code session is still active | Use `claude --continue` to resume the current session. If the session has expired, start a new session with `/start-working` |
+| Agent Team teammates not visible | Not using iTerm2, or tmux integration is not enabled | Confirm you are running Claude Code in iTerm2; check that tmux integration is enabled in iTerm2 settings |

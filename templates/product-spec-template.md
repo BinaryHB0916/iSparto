@@ -1,92 +1,92 @@
-# [项目名称] — 产品规格
+# [Project Name] -- Product Spec
 
-> 代码中的产品行为必须以此文档为准。修改产品需求时先更新本文档，再改代码。
+> Product behavior in code must follow this document. When modifying product requirements, update this document first, then change the code.
 
 ---
 
-## 产品概述
+## Product Overview
 
-### 目标用户
-<!-- 谁在用这个产品？画像越具体越好 -->
+### Target Users
+<!-- Who uses this product? The more specific the persona, the better -->
 
-### 核心价值
-<!-- 用户用了这个产品，得到了什么？一句话 -->
+### Core Value
+<!-- What does the user gain from this product? One sentence -->
 
-### 产品边界
-<!-- 明确做什么、不做什么，防止范围蔓延 -->
-| 做 | 不做 |
-|-----|------|
+### Product Scope
+<!-- Clearly define what is in scope and out of scope to prevent scope creep -->
+| In Scope | Out of Scope |
+|----------|--------------|
 | ... | ... |
 
 ---
 
-## 页面结构
+## Page Structure
 
-### 页面总览
-<!-- 列出所有页面和层级关系 -->
+### Page Overview
+<!-- List all pages and their hierarchy -->
 
-| 页面 | 入口 | 说明 |
-|------|------|------|
+| Page | Entry Point | Description |
+|------|-------------|-------------|
 | ... | ... | ... |
 
-### [页面名称]
+### [Page Name]
 
-**功能描述：** [这个页面做什么]
+**Feature Description:** [What this page does]
 
-**页面元素：**
-<!-- 列出页面上的 UI 元素和各自的行为 -->
+**Page Elements:**
+<!-- List UI elements on the page and their behaviors -->
 
-**交互规则：**
-<!-- 用户操作 → 系统响应，逐条列 -->
+**Interaction Rules:**
+<!-- User action -> system response, listed one by one -->
 
 ---
 
-## 交互流程
+## Interaction Flows
 
-### [流程名称]（如：注册流程 / 购买流程 / 内容消费流程）
+### [Flow Name] (e.g., registration flow / purchase flow / content consumption flow)
 
 ```
-步骤 1：[用户操作]
-    → [系统响应]
-步骤 2：[用户操作]
-    → [系统响应]
-    → 异常：[错误场景] → [兜底处理]
+Step 1: [User action]
+    -> [System response]
+Step 2: [User action]
+    -> [System response]
+    -> Exception: [Error scenario] -> [Fallback handling]
 ```
 
 ---
 
-## 功能清单
+## Feature List
 
-| 功能 | 优先级 | 状态 | 说明 |
-|------|--------|------|------|
-| ... | P0/P1/P2 | 已实现/开发中/待定 | ... |
+| Feature | Priority | Status | Description |
+|---------|----------|--------|-------------|
+| ... | P0/P1/P2 | Implemented/In Progress/Pending | ... |
 
 ---
 
-## 文案规范
+## Copy Guidelines
 
-### 固定文案
-<!-- 按钮文字、提示语、错误信息等 -->
+### Fixed Copy
+<!-- Button text, prompts, error messages, etc. -->
 
-| 位置 | 文案 | 说明 |
-|------|------|------|
+| Location | Copy | Description |
+|----------|------|-------------|
 | ... | ... | ... |
 
-### 多语言（如适用）
-<!-- 语言支持范围和翻译策略 -->
+### Localization (if applicable)
+<!-- Language support scope and translation strategy -->
 
 ---
 
-## 通知与消息（如适用）
+## Notifications & Messages (if applicable)
 
-| 触发场景 | 通知类型 | 内容 | 说明 |
-|----------|----------|------|------|
-| ... | 推送/短信/应用内 | ... | ... |
+| Trigger Scenario | Notification Type | Content | Description |
+|------------------|-------------------|---------|-------------|
+| ... | Push/SMS/In-app | ... | ... |
 
 ---
 
-## 权限与角色（如适用）
+## Permissions & Roles (if applicable)
 
-| 角色 | 可访问页面 | 可执行操作 |
-|------|-----------|-----------|
+| Role | Accessible Pages | Allowed Actions |
+|------|-----------------|-----------------|
 | ... | ... | ... |

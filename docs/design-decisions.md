@@ -1,29 +1,29 @@
-# 设计决策记录
+# Design Decision Log
 
-| 决策 | 选择 | 原因 |
-|------|------|------|
-| 去掉 Claude Reviewer | Codex 做唯一审查者 | 同源审查价值有限，异源审查覆盖盲区更有效 |
-| Codex 架构前置审视 | Phase 0 就介入 | 在动手前拦截架构问题，成本远低于开发后返工 |
-| Codex 角色定位 | 扫地僧 | 不参与日常开发，关键节点把关，发现问题顺手修 |
-| Lead 负责信息传递 | Codex ↔ Developer 由 Lead 协调 | 用户不参与中间的复制粘贴，Lead 自动转发 |
-| Doc Engineer 是 sub-agent | Lead spawn | 需要 Lead 的全局上下文，不需要独立 tmux pane |
-| Developer 自带单元测试 | 编码时一起写 | 测试是代码的一部分，不应该是独立阶段 |
-| 平台无关设计 | 模板不绑定任何技术栈 | 适用于 iOS / Android / macOS / Windows / Web / 跨平台 |
-| 项目特有插件放项目级 | 不放全局 settings.json | swift-lsp 只对 iOS 有用，不污染其他项目 |
-| 文档命名统一 | 全部 -spec 后缀 | product-spec、tech-spec、design-spec 一目了然 |
-| 新增 tech-spec.md | 独立技术规格文档 | 产品行为（product-spec）与技术实现（tech-spec）职责分离，模板成本为零，项目不需要可不创建 |
-| Lead 授权与上报机制 | Lead 自行决定日常事项，拿不准就上报 | 减少用户参与中间协调，同时确保关键决策不被绕过，宁可多报不能漏报 |
-| Lead 文档变更权限 | Lead 可改所有文档，事后汇总报告 | Lead + Doc Engineer 是文档管理者，禁止改文档制造瓶颈；用户事后审核，产品决策变更标注 ⚠ 重点关注 |
-| Codex 统一配置 | xhigh reasoning + fast mode | 所有 Codex 调用（架构审视、代码审查、QA）统一最高推理深度 + fast 模式 |
-| Codex QA 冒烟测试 | 代码审查后增加 QA 环节 | 补齐人类团队 QA 角色的缺口；增量测试策略（只测变更路径）解决冒烟测试慢的问题 |
-| Wave 并行的前提 | 任务完全解耦 | 文件不重叠 + 数据无依赖 + 运行时无依赖才能并行；不能解耦就拆到下一个 Wave，不冒冲突风险 |
-| Hotfix 走完整流程 | 不设简化版 | Agent Team 全流程是分钟级，不存在人类团队的等人瓶颈；hotfix 恰恰最容易出二次事故，更不应该砍审查 |
-| 项目命名 | iSparto | 希腊神话 Spartoi（种龙牙长军队）+ i 从末尾移到开头 = I = 一个人。一人成军 |
-| 借鉴 gstack | 只取产品审视思路 | plan-ceo-review 理念好，/browse /qa 是 Web 专用不通用 |
-| Effort level | max | Max 订阅 token 用不完，追求最高推理深度 |
-| 成本 | $120/月 | Claude Max $100 + ChatGPT $20，两个顶级模型无额外费用 |
-| Memory 粒度 | 里程碑级别 | 空间有限，细节由 plan.md 承载 |
-| 文档分层 | README 精简 + docs/ 详细文档 | README 控制在 200 行内，新用户 30 秒看完核心信息；深度内容按主题拆到 docs/ |
-| 架构图用 mermaid | 替代 ASCII art | GitHub 代码块字体中 CJK 字符宽度不精确，ASCII 边框必然错位；mermaid 渲染为 SVG 无此问题 |
-| 仅支持 macOS + iTerm2 | 不做跨平台终端适配 | Agent Team tmux 模式依赖 iTerm2 内置 tmux 集成；当前阶段聚焦核心体验，不分散精力 |
-| templates/ 独立目录 | 模板从 README 中抽出 | 避免 README 中重复模板内容（原 400+ 行），模板作为独立文件可被 /init-project 直接引用 |
+| Decision | Choice | Rationale |
+|----------|--------|-----------|
+| Remove Claude Reviewer | Codex as the sole reviewer | Same-source review has limited value; cross-source review covers blind spots more effectively |
+| Codex architecture pre-review | Intervene at Phase 0 | Catching architecture issues before coding begins costs far less than rework after development |
+| Codex role positioning | Hidden master | Does not participate in day-to-day development; provides oversight at key checkpoints and fixes issues along the way |
+| Team Lead handles information relay | Team Lead coordinates Codex-Developer communication | The user does not participate in copy-pasting between roles; Team Lead forwards automatically |
+| Doc Engineer is a sub-agent | Spawned by Team Lead | Requires Team Lead's global context; does not need an independent tmux pane |
+| Developer includes unit tests | Written alongside the code | Tests are part of the code, not a separate phase |
+| Platform-agnostic design | Template is not tied to any tech stack | Works for iOS / Android / macOS / Windows / Web / cross-platform |
+| Project-specific plugins at project level | Not in global settings.json | swift-lsp is only useful for iOS and should not pollute other projects |
+| Unified document naming | All use the -spec suffix | product-spec, tech-spec, design-spec — immediately clear |
+| Added tech-spec.md | Separate tech spec document | Separates product behavior (product-spec) from technical implementation (tech-spec); template cost is zero — skip it if the project doesn't need it |
+| Team Lead authorization & escalation mechanism | Team Lead decides routine matters independently; escalates when uncertain | Reduces user involvement in intermediate coordination while ensuring critical decisions are not bypassed — better to escalate too much than too little |
+| Team Lead document change permissions | Team Lead can modify all documents; reports changes in summary afterward | Team Lead + Doc Engineer are document managers; prohibiting document changes creates bottlenecks. User reviews afterward; product decision changes are marked with a warning for special attention |
+| Unified Codex configuration | xhigh reasoning + fast mode | All Codex invocations (architecture pre-review, code review, QA) use the highest reasoning depth + fast mode |
+| Codex QA smoke testing | QA step added after code review | Fills the gap of the QA role in human teams; incremental testing strategy (only test changed paths) addresses the slowness of smoke testing |
+| Prerequisites for Wave parallelism | Tasks must be fully decoupled | No file overlap + no data dependencies + no runtime dependencies required for parallelism; if decoupling is not possible, defer to the next Wave — do not risk conflicts |
+| Hotfix follows the full workflow | No simplified version | The full Agent Team workflow takes minutes; there is no human-team bottleneck of waiting for people. Hotfixes are precisely when second incidents are most likely, so review should not be cut |
+| Project name | iSparto | Greek mythology Spartoi (sow dragon teeth, grow an army) + moved i from the end to the front = I = one person. An army of one |
+| Inspired by gstack | Only adopted the product review concept | The plan-ceo-review philosophy is good; /browse and /qa are Web-specific and not universal |
+| Effort level | max | Max subscription tokens go unused otherwise; pursue the highest reasoning depth |
+| Cost | $120/month | Claude Max $100 + ChatGPT $20 — two top-tier models with no additional fees |
+| Memory granularity | Milestone level | Space is limited; details are managed by plan.md |
+| Document layering | Concise README + detailed docs/ | Keep README under 200 lines so new users can grasp core information in 30 seconds; in-depth content is split by topic into docs/ |
+| Architecture diagrams use mermaid | Replaces ASCII art | CJK character widths are imprecise in GitHub code block fonts, making ASCII borders inevitably misaligned; mermaid renders as SVG and has no such issue |
+| macOS + iTerm2 only | No cross-platform terminal adaptation | Agent Team tmux mode depends on iTerm2's built-in tmux integration; focus on the core experience at this stage without spreading effort thin |
+| templates/ as a separate directory | Templates extracted from README | Avoids duplicating template content in the README (originally 400+ lines); templates as standalone files can be directly referenced by /init-project |

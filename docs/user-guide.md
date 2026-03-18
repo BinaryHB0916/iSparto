@@ -1,36 +1,36 @@
-# 用户交互手册
+# User Interaction Guide
 
-> 你作为用户，和 Agent Team 协作只需要关注以下交互点。
+> As a user, you only need to focus on the following interaction points when collaborating with the Agent Team.
 
-## 你主动做的（5 个命令）
+## What You Initiate (5 Commands)
 
-| 命令 | 时机 | 你要做什么 |
-|------|------|-----------|
-| `/init-project` | 新项目启动，一次性 | 提供产品需求描述，审核生成的文档 |
-| `/start-working` | 每次开工 | 看 Lead 的状态汇报，确认"开始" |
-| `/end-working` | 每次收工 | 确认 commit message |
-| `/plan xxx` | 有新需求时 | 描述需求，审核 Lead 的方案 |
-| `/env-nogo` | 环境有疑问时 | 看检查结果，修复 ✘ 项 |
+| Command | When | What You Do |
+|---------|------|-------------|
+| `/init-project` | New project kickoff, one-time | Provide product requirements description, review generated documents |
+| `/start-working` | Start of each work session | Review the Team Lead's status report, confirm "start" |
+| `/end-working` | End of each work session | Confirm the commit message |
+| `/plan xxx` | When there's a new requirement | Describe the requirement, review the Team Lead's proposal |
+| `/env-nogo` | When there are environment concerns | Review check results, fix items marked with a cross |
 
-## Lead 会来找你的（3 种情况）
+## When the Team Lead Comes to You (3 Scenarios)
 
-| 情况 | 什么时候 | 你要做什么 |
-|------|---------|-----------|
-| Wave 验收 | 一个 Wave 完成后 | 看变更汇总和文档审计报告，确认没问题 |
-| 上报决策 | Lead 拿不准时 | Lead 说明情况，你拍板 |
-| commit 确认 | push 前 | 看 commit message，确认 |
+| Scenario | When | What You Do |
+|----------|------|-------------|
+| Wave validation | After a Wave is completed | Review the change summary and documentation audit report, confirm everything looks good |
+| Escalate for decision | When the Team Lead is unsure | The Team Lead explains the situation, you approve/decide |
+| Commit confirmation | Before push | Review the commit message, confirm |
 
-## 你不需要做的
+## What You Don't Need to Do
 
-- 不需要协调 Developer 之间的工作 — Lead 负责
-- 不需要把 Codex 审查结果转发给 Developer — Lead 自动转发
-- 不需要手动更新文档 — Doc Engineer 负责
-- 不需要盯着开发过程 — 等通知就行
-- 不需要做代码审查 — Codex 负责
-- 不需要做冒烟测试 — Codex QA 负责
+- No need to coordinate work between Developers — the Team Lead handles that
+- No need to relay Codex review results to Developers — the Team Lead forwards them automatically
+- No need to manually update documents — the Doc Engineer handles that
+- No need to monitor the development process — just wait for notifications
+- No need to do code review — Codex handles that
+- No need to do smoke testing — Codex QA handles that
 
-## 你需要重点关注的
+## What You Should Focus On
 
-- **Wave 验收时的文档变更汇总** — 特别是标注 ⚠ 产品决策变更的部分
-- **Lead 上报的决策** — 这些是 Lead 认为超出 TA 权限的事项
-- **plan.md 的遗留问题** — 每次 /start-working 会展示，确保不遗漏
+- **Documentation change summary at Wave validation** — especially sections marked with a warning for product decision changes
+- **Decisions escalated by the Team Lead** — these are matters the Team Lead considers beyond their authority
+- **Remaining issues in plan.md** — shown each time with /start-working, make sure nothing is missed

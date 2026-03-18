@@ -1,100 +1,100 @@
-# [项目名称] — 技术规格
+# [Project Name] -- Tech Spec
 
-> 代码中的架构决策、数据结构、API 设计必须以此文档为准。修改技术方案时先更新本文档，再改代码。
+> Architecture decisions, data structures, and API designs in code must follow this document. When modifying technical solutions, update this document first, then change the code.
 
 ---
 
-## 架构概览
+## Architecture Overview
 
-### 整体架构
-<!-- 用文字描述系统的高层架构，如：纯客户端 / 客户端+云函数 / 前后端分离 / 微服务 -->
-[描述]
+### Overall Architecture
+<!-- Describe the high-level system architecture in text, e.g., client-only / client + cloud functions / frontend-backend separation / microservices -->
+[Description]
 
-### 架构图
-<!-- 可选：ASCII 图或说明性描述 -->
+### Architecture Diagram
+<!-- Optional: ASCII diagram or descriptive text -->
 
-### 关键架构约束
-<!-- 列出不可随意变更的架构决策及其原因 -->
-| 约束 | 原因 |
-|------|------|
+### Key Architecture Constraints
+<!-- List architecture decisions that cannot be changed arbitrarily, with reasons -->
+| Constraint | Reason |
+|------------|--------|
 | ... | ... |
 
 ---
 
-## 数据模型
+## Data Model
 
-### 核心实体
-<!-- 每个实体列出字段、类型、约束 -->
+### Core Entities
+<!-- List fields, types, and constraints for each entity -->
 
-#### [实体名称]
-| 字段 | 类型 | 约束 | 说明 |
-|------|------|------|------|
+#### [Entity Name]
+| Field | Type | Constraints | Description |
+|-------|------|-------------|-------------|
 | ... | ... | ... | ... |
 
-### 实体关系
-<!-- 描述实体之间的关系：一对多、多对多等 -->
+### Entity Relationships
+<!-- Describe relationships between entities: one-to-many, many-to-many, etc. -->
 
-### 本地存储方案
-<!-- 如适用：CoreData / SQLite / UserDefaults / 文件系统等 -->
-
----
-
-## API 契约
-
-### 内部接口
-<!-- 模块间的关键接口定义：函数签名、参数、返回值 -->
-
-### 外部 API
-<!-- 如适用：后端接口、云函数、第三方 API -->
-
-#### [接口名称]
-- 端点：[URL / 函数名]
-- 方法：[GET / POST / 云函数调用]
-- 请求参数：
-- 响应格式：
-- 错误码：
+### Local Storage Strategy
+<!-- If applicable: CoreData / SQLite / UserDefaults / file system, etc. -->
 
 ---
 
-## 状态管理
+## API Contracts
 
-### 全局状态
-<!-- 应用级别的状态：用户登录态、主题、语言等 -->
+### Internal Interfaces
+<!-- Key interface definitions between modules: function signatures, parameters, return values -->
 
-### 页面/模块状态
-<!-- 各模块内部的状态管理方式 -->
+### External APIs
+<!-- If applicable: backend endpoints, cloud functions, third-party APIs -->
+
+#### [Interface Name]
+- Endpoint: [URL / function name]
+- Method: [GET / POST / cloud function call]
+- Request parameters:
+- Response format:
+- Error codes:
 
 ---
 
-## 第三方服务集成
+## State Management
 
-| 服务 | 用途 | SDK/方式 | 配置要点 |
-|------|------|----------|----------|
+### Global State
+<!-- Application-level state: user auth status, theme, language, etc. -->
+
+### Page/Module State
+<!-- State management approach within each module -->
+
+---
+
+## Third-Party Service Integrations
+
+| Service | Purpose | SDK/Method | Configuration Notes |
+|---------|---------|------------|---------------------|
 | ... | ... | ... | ... |
 
 ---
 
-## 基础设施
+## Infrastructure
 
-### 环境配置
-<!-- 开发/测试/生产环境的差异 -->
+### Environment Configuration
+<!-- Differences between development/testing/production environments -->
 
-### 构建与部署
-<!-- CI/CD、签名、发布流程等 -->
+### Build & Deployment
+<!-- CI/CD, signing, release process, etc. -->
 
-### 安全
-<!-- 敏感数据处理、加密、权限控制 -->
+### Security
+<!-- Sensitive data handling, encryption, access control -->
 
 ---
 
-## 错误处理
+## Error Handling
 
-### 错误码体系
-<!-- 如适用 -->
+### Error Code System
+<!-- If applicable -->
 
-| 错误码 | 含义 | 处理方式 |
-|--------|------|----------|
+| Error Code | Meaning | Handling Approach |
+|------------|---------|-------------------|
 | ... | ... | ... |
 
-### 异常兜底策略
-<!-- 网络异常、数据异常、崩溃恢复等 -->
+### Exception Fallback Strategy
+<!-- Network errors, data anomalies, crash recovery, etc. -->

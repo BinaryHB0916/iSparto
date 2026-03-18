@@ -1,81 +1,72 @@
-# [项目名称]
+# [Project Name]
 
-## 项目概述
-<!-- 一句话说清：这是什么、给谁用、当前阶段 -->
-[描述]
+## Project Overview
+<!-- One sentence: what it is, who it's for, current stage -->
+[Description]
 
-## 技术栈
-<!-- 根据项目实际情况填写 -->
-- 语言：[Swift / Kotlin / TypeScript / Python / Rust / Go ...]
-- 框架：[SwiftUI / Jetpack Compose / React / Next.js / Electron / Tauri / Flask ...]
-- 平台：[iOS / Android / macOS / Windows / Web / 跨平台 ...]
-- 构建：[Xcode / Gradle / Vite / Webpack / Cargo / CMake ...]
-- 其他：[...]
+## Tech Stack
+<!-- Fill in based on the actual project -->
+- Language: [Swift / Kotlin / TypeScript / Python / Rust / Go ...]
+- Framework: [SwiftUI / Jetpack Compose / React / Next.js / Electron / Tauri / Flask ...]
+- Platform: [iOS / Android / macOS / Windows / Web / Cross-platform ...]
+- Build: [Xcode / Gradle / Vite / Webpack / Cargo / CMake ...]
+- Other: [...]
 
-## 开发规则
-- 任何代码改动必须同步更新对应文档
-- 产品决策变更必须写入文档，不能只存在于对话中
-- 不确定的产品问题先问我，不要自行决定
-- 完成任务后更新 docs/plan.md
-- 不在 main 分支上直接开发，新功能走 feat/ 分支，bug 修复走 fix/ 分支，线上紧急修复走 hotfix/ 分支
-- 核心业务逻辑必须有单元测试
-<!-- 按项目需要增减项目特有规则，总数控制在10条以内 -->
+## Development Rules
+- Any code change must include corresponding documentation updates
+- Product decision changes must be written into docs, not just discussed in conversation
+- Ask me first about uncertain product questions; do not decide on your own
+- Update docs/plan.md after completing tasks
+- Do not develop directly on main branch; use feat/ branches for new features, fix/ branches for bug fixes, hotfix/ branches for urgent production fixes
+- Core business logic must have unit tests
+<!-- Add or remove project-specific rules as needed; keep the total under 10 -->
 
-## 协作模式：Agent Team
+## Collaboration Mode: Agent Team
 
-**角色：**
-- Team Lead（主会话）：拆任务、协调全流程、合代码。不写业务代码。Lead 负责 Codex ↔ Developer 之间的信息传递，用户不参与中间协调。Lead 有权自行决定日常事项（常规权限审批、流程推进），但拿不准的事项必须上报用户，宁可多报不能漏报。
-- Claude Developer（teammate）：写代码 + 单元测试。按文件所有权范围工作。回看 Codex 修复。
-- Codex Reviewer（MCP）：审查代码 + 直接修复问题 + QA 冒烟测试。扫地僧角色——不参与日常开发，在关键节点把关，发现问题顺手修。统一使用 xhigh reasoning + fast mode。QA 增量测试只测变更路径。Lead 调用。
-- Doc Engineer（Lead sub-agent）：Wave 完成后文档审计。确保代码和文档同步。
+**Roles:**
+- Team Lead (main session): Breaks down tasks, coordinates the full workflow, merges code. Does not write business code. Lead handles information relay between Codex and Developer; the user does not participate in intermediate coordination. Lead may make routine decisions independently (standard approvals, process advancement), but must escalate uncertain matters to the user -- better to over-report than under-report.
+- Claude Developer (teammate): Writes code + unit tests. Works within file ownership scope. Reviews Codex fixes.
+- Codex Reviewer (MCP): Code review + direct fixes + QA smoke testing. A hidden-master role -- does not participate in daily development; gates quality at key checkpoints and fixes issues on the spot. Always uses xhigh reasoning + fast mode. QA incremental testing only covers changed paths. Called by Lead.
+- Doc Engineer (Lead sub-agent): Documentation audit after Wave completion. Ensures code and docs stay in sync.
 
-**开发流程：**
-1. Lead 拆任务 → 定义文件所有权 + 接口契约
-2. Developer 开发 + 单元测试
-3. Lead 调用 Codex 审查代码 + 修复
-4. Lead 转发修改给 Developer 回看
-5. Lead 调用 Codex QA 冒烟测试（增量，只测变更路径）
-6. Lead spawn Doc Engineer 文档审计（放最后，确保 QA 修复也被审计）
-7. Lead 合代码
+**Development Workflow:**
+1. Lead breaks down tasks -> defines file ownership + interface contracts
+2. Developer develops + unit tests
+3. Lead calls Codex for code review + fixes
+4. Lead forwards changes to Developer for review
+5. Lead calls Codex for QA smoke testing (incremental, only changed paths)
+6. Lead spawns Doc Engineer for documentation audit (last step, ensures QA fixes are also audited)
+7. Lead merges code
 
-**Codex 审查触发：** 高风险代码必须触发代码审查 + QA，纯 UI 只需 QA，小修不需要。
+**Codex Review Triggers:** High-risk code must trigger code review + QA; UI-only changes need QA only; minor fixes need neither.
 
-**分支策略：** main 锁定，feat/xxx 开发，fix/xxx 修复，hotfix/xxx 线上紧急修复（从 main 拉，走完整流程）。
+**Branching Strategy:** main is locked; feat/xxx for development, fix/xxx for bug fixes, hotfix/xxx for urgent production fixes (branched from main, full workflow required).
 
-**模块边界：**
-<!-- 根据项目实际结构填写 -->
-| 模块 | 目录 | 说明 |
-|------|------|------|
+**Module Boundaries:**
+<!-- Fill in based on actual project structure -->
+| Module | Directory | Description |
+|--------|-----------|-------------|
 | ... | ... | ... |
 
-## 快捷用语
+## Operational Guardrails
+<!-- Define based on project needs -->
+- Deploying to production requires approval
+- Must confirm before git push
+- Must confirm before deleting files
+- Do not commit directly to main branch
 
-用户说以下关键词时，自动调用对应的命令：
+## Common Commands
+<!-- Fill in based on project tech stack -->
+[Build command]
+[Run command]
+[Test command]
 
-| 用户说 | 等同于 |
-|--------|--------|
-| 开工开工 | `/start-working` |
-| 收工收工 | `/end-working` |
-
-## 操作护栏
-<!-- 根据项目需要定义 -->
-- 部署到生产环境必须获得批准
-- git push 前必须确认
-- 删除文件前必须确认
-- 不在 main 分支上直接 commit
-
-## 常用命令
-<!-- 根据项目技术栈填写 -->
-[构建命令]
-[运行命令]
-[测试命令]
-
-## 文档索引
-<!-- ⚠ 用文字"详见 docs/xxx.md"，不要用 @docs/xxx.md -->
-<!-- 后者会每次自动把整个文件嵌入上下文，浪费大量 token -->
-<!-- 前者让 Claude Code 需要时自己去读，按需加载 -->
-- 产品规格 → docs/product-spec.md
-- 技术规格 → docs/tech-spec.md（如有）
-- 设计规格 → docs/design-spec.md（如有）
-- 开发计划 → docs/plan.md
-- 内容素材 → docs/content/（如有）
+## Documentation Index
+<!-- Use text like "see docs/xxx.md", not @docs/xxx.md -->
+<!-- The latter auto-embeds the entire file into context every time, wasting tokens -->
+<!-- The former lets Claude Code read it on demand, loading only when needed -->
+- Product spec -> docs/product-spec.md
+- Tech spec -> docs/tech-spec.md (if applicable)
+- Design spec -> docs/design-spec.md (if applicable)
+- Development plan -> docs/plan.md
+- Content assets -> docs/content/ (if applicable)

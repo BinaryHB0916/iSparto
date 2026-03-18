@@ -1,111 +1,111 @@
-# [项目名称] — 开发计划
+# [Project Name] -- Development Plan
 
 ---
 
-## 项目结构
+## Project Structure
 
-<!-- 完整的文件树，随项目演进保持更新 -->
-
----
-
-## 已完成阶段
-
-<!-- 已完成的 Phase/Wave 压缩为单行标题，减少 token 占用 -->
-### Phase X: xxx ✅
-### Phase Y: yyy ✅
+<!-- Full file tree, keep updated as the project evolves -->
 
 ---
 
-## Wave 并行开发计划
+## Completed Phases
 
-> Wave 内并行提速，Wave 间顺序保质，用户在 Wave 边界验收。
-> 拆 Wave 的核心是解耦：同一 Wave 内的任务不能有文件重叠、数据依赖或运行时依赖。不能解耦就拆到下一个 Wave。
+<!-- Compress completed Phase/Wave entries into single-line headings to reduce token usage -->
+### Phase X: xxx
+### Phase Y: yyy
 
-### Wave 总览
+---
+
+## Wave Parallel Development Plan
+
+> Waves run in parallel for speed; Waves run sequentially for quality. Users accept deliverables at Wave boundaries.
+> The core of Wave splitting is decoupling: tasks within the same Wave must not have file overlaps, data dependencies, or runtime dependencies. If decoupling is not possible, move the task to the next Wave.
+
+### Wave Overview
 
 ```
-Wave 1（状态）
-├── Team A: [任务名]
-├── Team B: [任务名]
-└── Team C: [任务名]
+Wave 1 (status)
+|-- Team A: [task name]
+|-- Team B: [task name]
++-- Team C: [task name]
 
-    ── 人工介入：[操作] ──
+    -- Manual intervention: [action] --
 
-Wave 2（状态）
-└── Team A: [任务名]
+Wave 2 (status)
++-- Team A: [task name]
 
-    ── 人工介入：[操作] ──
+    -- Manual intervention: [action] --
 
 Wave N ...
 ```
 
 ---
 
-### Wave 1 — [状态：进行中 / 待开始 / 已完成]
+### Wave 1 -- [Status: In Progress / Not Started / Completed]
 
-#### Team A: [任务名称]
+#### Team A: [Task Name]
 
-**状态：** [待开始 / 进行中 / 已完成]
+**Status:** [Not Started / In Progress / Completed]
 
-**任务清单：**
-- [ ] 任务 1
-- [ ] 任务 2
-- [ ] 任务 3
+**Task List:**
+- [ ] Task 1
+- [ ] Task 2
+- [ ] Task 3
 
-**文件所有权：**
-- Developer A 可新建：[文件列表]
-- Developer A 可修改：[文件列表]
-- Developer B 可修改：[文件列表]
-- 不可碰：[文件列表]
+**File Ownership:**
+- Developer A may create: [file list]
+- Developer A may modify: [file list]
+- Developer B may modify: [file list]
+- Off limits: [file list]
 
-**接口契约：**（如有多 Developer 协作）
-<!-- 函数签名、参数类型、返回值、共享数据结构 -->
+**Interface Contracts:** (if multi-Developer collaboration)
+<!-- Function signatures, parameter types, return values, shared data structures -->
 
-**Codex 审查：** [是/否] — [原因]
+**Codex Review:** [Yes/No] -- [Reason]
 
-**完成标准：**
-- 构建通过
-- 单元测试通过
-- Codex 代码审查通过（如触发）
-- Developer 回看修复通过
-- Codex QA 冒烟测试通过（如触发）
-- Doc Engineer 文档审计通过
-- plan.md 已更新
-
----
-
-#### Team B: [任务名称]
-<!-- 同上结构 -->
+**Completion Criteria:**
+- Build passes
+- Unit tests pass
+- Codex code review passes (if triggered)
+- Developer review of fixes passes
+- Codex QA smoke testing passes (if triggered)
+- Doc Engineer documentation audit passes
+- plan.md updated
 
 ---
 
-### Wave 2 — [状态]
-
-**前置条件：** Wave 1 全部完成 + [其他条件]
-
-#### Team A: [任务名称]
-<!-- 同上结构 -->
+#### Team B: [Task Name]
+<!-- Same structure as above -->
 
 ---
 
-## 人工介入点
+### Wave 2 -- [Status]
 
-| 时间点 | 操作 | 预计耗时 |
-|--------|------|----------|
-| Wave X 完成后 | [具体操作] | Xmin |
-| Wave Y 开始前 | [外部依赖到位] | 外部流程 |
+**Prerequisites:** Wave 1 fully completed + [other conditions]
+
+#### Team A: [Task Name]
+<!-- Same structure as above -->
 
 ---
 
-## 技术决策记录
+## Manual Intervention Points
 
-| 决策 | 选择 | 原因 |
-|------|------|------|
+| Timing | Action | Estimated Duration |
+|--------|--------|--------------------|
+| After Wave X completes | [specific action] | Xmin |
+| Before Wave Y starts | [external dependency ready] | External process |
+
+---
+
+## Technical Decision Log
+
+| Decision | Choice | Reason |
+|----------|--------|--------|
 | ... | ... | ... |
 
 ---
 
-## 待办（非代码）
+## To-Do (Non-Code)
 
-1. ⏳ [待办项] — [说明]
-2. ✅ [已完成项] — [说明]
+1. Pending: [to-do item] -- [description]
+2. Done: [completed item] -- [description]

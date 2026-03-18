@@ -1,93 +1,93 @@
-# [项目名称] — 设计规格
+# [Project Name] -- Design Spec
 
-> 代码中的视觉参数必须严格引用此文档。修改设计时先更新本文档，再改代码。
-
----
-
-## 色值
-
-### 主色
-| 名称 | 色值 | 用途 |
-|------|------|------|
-| primary | #XXXXXX | 主按钮、关键操作 |
-| accent | #XXXXXX | 强调、高亮 |
-
-### 背景色
-| 名称 | 色值 | 用途 |
-|------|------|------|
-| bgPrimary | #XXXXXX | 页面主背景 |
-| bgSecondary | #XXXXXX | 卡片、模块背景 |
-
-### 文字色
-| 名称 | 色值 | 用途 |
-|------|------|------|
-| textPrimary | #XXXXXX | 正文 |
-| textSecondary | #XXXXXX | 辅助说明 |
-
-### 语义色
-| 名称 | 色值 | 用途 |
-|------|------|------|
-| success | #XXXXXX | 成功 |
-| warning | #XXXXXX | 警告 |
-| error | #XXXXXX | 错误 |
-
-### 特殊色（项目独有）
-<!-- 如有 -->
+> Visual parameters in code must strictly reference this document. When modifying the design, update this document first, then change the code.
 
 ---
 
-## 字体
+## Colors
 
-### 字体族
-| 名称 | 字体 | 用途 |
-|------|------|------|
-| primary | [字体名] | 正文 |
-| display | [字体名] | 标题 |
+### Primary Colors
+| Name | Value | Usage |
+|------|-------|-------|
+| primary | #XXXXXX | Primary buttons, key actions |
+| accent | #XXXXXX | Emphasis, highlights |
 
-### 字号
-| 名称 | 大小 | 行高 | 字重 | 用途 |
-|------|------|------|------|------|
-| title1 | Xpt | X | bold | 页面大标题 |
-| title2 | Xpt | X | semibold | 章节标题 |
-| body | Xpt | X | regular | 正文 |
-| caption | Xpt | X | regular | 辅助说明 |
+### Background Colors
+| Name | Value | Usage |
+|------|-------|-------|
+| bgPrimary | #XXXXXX | Main page background |
+| bgSecondary | #XXXXXX | Cards, section backgrounds |
 
----
+### Text Colors
+| Name | Value | Usage |
+|------|-------|-------|
+| textPrimary | #XXXXXX | Body text |
+| textSecondary | #XXXXXX | Supporting text |
 
-## 间距
+### Semantic Colors
+| Name | Value | Usage |
+|------|-------|-------|
+| success | #XXXXXX | Success |
+| warning | #XXXXXX | Warning |
+| error | #XXXXXX | Error |
 
-| 名称 | 值 | 用途 |
-|------|-----|------|
-| xs | Xpt | 紧凑间隔 |
-| sm | Xpt | 元素内间距 |
-| md | Xpt | 模块间间距 |
-| lg | Xpt | 区块间间距 |
-| xl | Xpt | 页面级间距 |
-
-### 圆角
-| 名称 | 值 | 用途 |
-|------|-----|------|
-| sm | Xpt | 小按钮、标签 |
-| md | Xpt | 卡片、输入框 |
-| lg | Xpt | 弹窗 |
+### Special Colors (project-specific)
+<!-- If applicable -->
 
 ---
 
-## 阴影（如适用）
-| 名称 | 参数 | 用途 |
-|------|------|------|
-| sm | offset blur spread color | 轻微浮起 |
-| md | offset blur spread color | 卡片 |
+## Typography
+
+### Font Families
+| Name | Font | Usage |
+|------|------|-------|
+| primary | [Font name] | Body text |
+| display | [Font name] | Headings |
+
+### Font Sizes
+| Name | Size | Line Height | Weight | Usage |
+|------|------|-------------|--------|-------|
+| title1 | Xpt | X | bold | Page main title |
+| title2 | Xpt | X | semibold | Section title |
+| body | Xpt | X | regular | Body text |
+| caption | Xpt | X | regular | Supporting text |
 
 ---
 
-## 动效（如适用）
-| 名称 | 参数 | 用途 |
-|------|------|------|
-| fadeIn | duration, easing | 页面进入 |
-| slideUp | duration, easing | 弹窗出现 |
+## Spacing
+
+| Name | Value | Usage |
+|------|-------|-------|
+| xs | Xpt | Tight spacing |
+| sm | Xpt | Inner element spacing |
+| md | Xpt | Spacing between modules |
+| lg | Xpt | Spacing between sections |
+| xl | Xpt | Page-level spacing |
+
+### Border Radius
+| Name | Value | Usage |
+|------|-------|-------|
+| sm | Xpt | Small buttons, tags |
+| md | Xpt | Cards, input fields |
+| lg | Xpt | Modals |
 
 ---
 
-## 氛围元素（项目独有，如适用）
-<!-- 如勇芽的星空背景、月亮光晕等 -->
+## Shadows (if applicable)
+| Name | Parameters | Usage |
+|------|------------|-------|
+| sm | offset blur spread color | Subtle elevation |
+| md | offset blur spread color | Cards |
+
+---
+
+## Animations (if applicable)
+| Name | Parameters | Usage |
+|------|------------|-------|
+| fadeIn | duration, easing | Page entrance |
+| slideUp | duration, easing | Modal appearance |
+
+---
+
+## Atmosphere Elements (project-specific, if applicable)
+<!-- E.g., starry sky background, moon glow effects, etc. -->
