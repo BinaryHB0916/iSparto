@@ -82,7 +82,8 @@ fi
 
 # ── 5. Copy config to ~/.claude/ ────────────────────────────
 
-echo "Installing config to ~/.claude/..."
+echo "Installing global commands & templates to ~/.claude/ ..."
+echo "  (project-level config will be created when you run /init-project or /migrate)"
 
 mkdir -p ~/.claude/commands
 mkdir -p ~/.claude/templates
