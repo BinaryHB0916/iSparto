@@ -8,7 +8,7 @@ Your responsibility: Based on the product description provided by the user, gene
    - product-spec.md (product spec)
    - tech-spec.md (tech spec, if applicable)
    - design-spec.md (design spec, if applicable)
-4. Generate all project documents in the user's language. Use the template structure but write content (including section headings) in whatever language the user communicates in.
+4. Communicate and generate all project documents in the user's language (English or Chinese only). Use the template structure but localize the content.
 5. Generate the initial docs/plan.md, organizing the development plan by Wave
 6. Create project-level .claude/settings.json with iSparto required settings:
    ```json

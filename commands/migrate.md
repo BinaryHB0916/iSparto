@@ -20,7 +20,7 @@ Your job: scan the current project, report what exists and what's missing, propo
 
 3. Wait for user confirmation before executing anything
 
-4. Language: Generate all documents and messages in the user's language. If the user communicates in Chinese, write all content (including section headings, comments, and descriptions) in Chinese. Use the template structure but localize the content.
+4. Language: Communicate and generate all documents in the user's language (English or Chinese only). Use the template structure but localize the content.
 
 5. Execute the confirmed migration plan:
    - Create or merge project-level .claude/settings.json with iSparto required settings:
