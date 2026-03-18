@@ -8,7 +8,7 @@ Global environment:
 3. Node.js: 18+ (check node -v)
 4. Claude Code: installed (check claude --version)
 5. Codex CLI: installed and logged in (check codex --version and codex login status)
-6. ~/.claude/ completeness: settings.json, CLAUDE-TEMPLATE.md, commands/ (5 commands), templates/ (4 templates)
+6. ~/.claude/ completeness: settings.json, CLAUDE-TEMPLATE.md, commands/ (6 commands), templates/ (4 templates)
 
 Project environment (if the current directory has a CLAUDE.md, you are inside a project — run these additional checks):
 7. Codex MCP Server: connected

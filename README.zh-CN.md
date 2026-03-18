@@ -168,7 +168,8 @@ iSparto/
 │   ├── end-working.md         ← 收工命令
 │   ├── plan.md                ← 出方案命令
 │   ├── init-project.md        ← 初始化项目命令
-│   └── env-nogo.md            ← 环境就绪检查
+│   ├── env-nogo.md            ← 环境就绪检查
+│   └── migrate.md             ← 迁移已有项目到 iSparto
 ├── templates/
 │   ├── product-spec-template.md
 │   ├── tech-spec-template.md
@@ -176,7 +177,7 @@ iSparto/
 │   └── plan-template.md
 └── docs/
     ├── concepts.md            ← 核心概念（解耦、Wave、文件所有权）⭐ 建议先读
-    ├── user-guide.md          ← 用户交互手册（5 命令 + 3 通知）⭐ 建议先读
+    ├── user-guide.md          ← 用户交互手册（6 命令 + 3 通知）⭐ 建议先读
     ├── roles.md               ← 角色定义 + Codex prompt 模板
     ├── workflow.md            ← 完整开发流程 + 分支策略 + Codex 集成
     ├── configuration.md       ← 全局配置 + 适配指南 + 多设备同步
