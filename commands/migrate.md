@@ -4,6 +4,7 @@ Your job: scan the current project, report what exists and what's missing, propo
 
 1. Scan the current project:
    - Read CLAUDE.md (does it exist? what sections does it have?)
+   - Read .claude/settings.json (does it exist? what settings are already configured?)
    - Read docs/ (what files exist? do naming conventions match iSparto's -spec pattern?)
    - Check git status (is git initialized? what branch?)
    - Map existing files to iSparto equivalents (e.g., requirements.md → product spec, architecture.md → tech spec)
@@ -20,6 +21,16 @@ Your job: scan the current project, report what exists and what's missing, propo
 3. Wait for user confirmation before executing anything
 
 4. Execute the confirmed migration plan:
+   - Create or merge project-level .claude/settings.json with iSparto required settings:
+     ```json
+     {
+       "env": {
+         "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+       },
+       "teammateMode": "tmux"
+     }
+     ```
+     If .claude/settings.json already exists, merge these entries without removing existing settings.
    - Append iSparto sections to CLAUDE.md (do not replace existing content)
    - Create missing docs from templates
    - Generate plan.md based on current project state

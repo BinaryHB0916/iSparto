@@ -84,7 +84,7 @@ iSparto turns a single Agent into **a team with clear roles**: Lead breaks down 
 curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/install.sh | bash
 ```
 
-One command handles everything: downloads iSparto to `~/.isparto`, checks/installs Claude Code and Codex CLI, logs into Codex, copies configuration to `~/.claude/`, and registers the global MCP Server.
+One command handles everything: downloads iSparto to `~/.isparto`, checks/installs Claude Code and Codex CLI, logs into Codex, copies commands and templates to `~/.claude/`, and registers the global MCP Server. Your existing `~/.claude/settings.json` is never modified.
 
 <details>
 <summary>Alternative: manual clone</summary>
@@ -168,7 +168,7 @@ Occasionally Lead comes to you (escalate decisions / confirm commits)
 ```
 iSparto/
 ├── README.md                  ← The document you are reading now
-├── settings.json              ← Claude Code global configuration
+├── settings.json              ← Reference template for project-level .claude/settings.json
 ├── CLAUDE-TEMPLATE.md         ← Template for generating new project CLAUDE.md
 ├── LICENSE
 ├── .gitignore

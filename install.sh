@@ -14,7 +14,7 @@ echo ""
 # ── 0. If running via curl pipe, clone repo first ─────────
 ISPARTO_HOME="$HOME/.isparto"
 
-if [ -f "$(dirname "$0")/settings.json" ] 2>/dev/null; then
+if [ -f "$(dirname "$0")/commands/start-working.md" ] 2>/dev/null; then
     # Running from within the repo
     SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 else
@@ -106,7 +106,6 @@ copy_file() {
     fi
 }
 
-copy_file "$SCRIPT_DIR/settings.json" ~/.claude/settings.json "~/.claude/settings.json"
 copy_file "$SCRIPT_DIR/CLAUDE-TEMPLATE.md" ~/.claude/CLAUDE-TEMPLATE.md "~/.claude/CLAUDE-TEMPLATE.md"
 
 for f in "$SCRIPT_DIR"/commands/*.md; do

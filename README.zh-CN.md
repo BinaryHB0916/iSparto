@@ -82,7 +82,7 @@ iSparto 把单个 Agent 变成**一支有分工的团队**：Lead 拆任务、De
 curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/install.sh | bash
 ```
 
-一行搞定：下载 iSparto 到 `~/.isparto`、检查/安装 Claude Code 和 Codex CLI、登录 Codex、复制配置到 `~/.claude/`、注册全局 MCP Server。
+一行搞定：下载 iSparto 到 `~/.isparto`、检查/安装 Claude Code 和 Codex CLI、登录 Codex、复制命令和模板到 `~/.claude/`、注册全局 MCP Server。不会修改你现有的 `~/.claude/settings.json`。
 
 <details>
 <summary>备选：手动 clone</summary>
@@ -166,7 +166,7 @@ Lead 团队自己跑（你不用盯着）
 ```
 iSparto/
 ├── README.md                  ← 你正在读的这份文档
-├── settings.json              ← Claude Code 全局配置
+├── settings.json              ← 项目级 .claude/settings.json 的参考模板
 ├── CLAUDE-TEMPLATE.md         ← 新项目 CLAUDE.md 生成模板
 ├── LICENSE
 ├── .gitignore

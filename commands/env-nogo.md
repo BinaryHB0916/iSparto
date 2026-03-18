@@ -8,12 +8,13 @@ Global environment:
 3. Node.js: 18+ (check node -v)
 4. Claude Code: installed (check claude --version)
 5. Codex CLI: installed and logged in (check codex --version and codex login status)
-6. ~/.claude/ completeness: settings.json, CLAUDE-TEMPLATE.md, commands/ (6 commands), templates/ (4 templates)
+6. ~/.claude/ completeness: CLAUDE-TEMPLATE.md, commands/ (6 commands), templates/ (4 templates)
 
 Project environment (if the current directory has a CLAUDE.md, you are inside a project — run these additional checks):
 7. Codex MCP Server: connected
-8. CLAUDE.md: content is complete (contains key sections such as collaboration mode, module boundaries, etc.)
-9. docs/ structure: at least product-spec.md and plan.md exist
+8. Project-level .claude/settings.json exists and contains required iSparto settings (teammateMode and CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS)
+9. CLAUDE.md: content is complete (contains key sections such as collaboration mode, module boundaries, etc.)
+10. docs/ structure: at least product-spec.md and plan.md exist
 
 Report format: List each item with its pass/fail status. For failed items, provide the specific fix command or steps.
 All pass → output "Environment ready. You may proceed."

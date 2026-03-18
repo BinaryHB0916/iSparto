@@ -1,20 +1,36 @@
 # Configuration & Adaptation
 
-## Global Configuration (settings.json)
+## Configuration Layers
+
+iSparto uses two configuration layers. The installer does NOT modify your global `~/.claude/settings.json` — your personal Claude Code settings are always preserved.
+
+### Project-Level Configuration (.claude/settings.json)
+
+Created automatically by `/init-project` or `/migrate` in each project:
 
 ```json
 {
-  "model": "opus",
   "env": {
-    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
-    "CLAUDE_CODE_EFFORT_LEVEL": "max"
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
   },
-  "effortLevel": "max",
   "teammateMode": "tmux"
 }
 ```
 
-**Note:** `enabledPlugins` is not placed in the global configuration. Configure it per-project in the project-level `.claude/settings.json` as needed (e.g., add swift-lsp for iOS projects, other plugins for Web projects).
+This is the minimum required for iSparto's Agent Team mode. Add platform-specific plugins here as needed (e.g., swift-lsp for iOS projects).
+
+### Global Configuration (optional, user-managed)
+
+Your `~/.claude/settings.json` is yours. iSparto never touches it. You may optionally set model and effort preferences globally:
+
+```json
+{
+  "model": "opus",
+  "effortLevel": "max"
+}
+```
+
+The repo includes a `settings.json` as a reference template — it is NOT installed globally.
 
 **Note:** `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` is an experimental flag that still requires manual activation as of March 2026. Future Claude Code versions may make this the default behavior, at which point this environment variable can be removed.
 
@@ -77,7 +93,7 @@ Template files used during project initialization:
 | Branching strategy | Branch model for main / feat / fix / hotfix |
 | Authorization & escalation mechanism | Team Lead's decision boundaries |
 | Documentation sync rules | Documentation must follow when code changes |
-| settings.json | Global configuration — copy directly |
+| settings.json | Reference template — project-level config is created by `/init-project` or `/migrate` |
 
 ### Must Be Modified Per Project
 
@@ -136,7 +152,6 @@ If you switch development between multiple computers, you can share user-level c
 
 ```
 ~/.claude/
-├── settings.json          ← Global configuration
 ├── CLAUDE-TEMPLATE.md     ← New project template
 ├── commands/
 │   ├── start-working.md
