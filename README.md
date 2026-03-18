@@ -1,5 +1,7 @@
 # iSparto
 
+[中文版](README.zh-CN.md)
+
 Use Claude Code Agent Team mode to give one person a full AI development team.
 Works for all software development projects (iOS / Android / macOS / Windows / Web / cross-platform).
 
@@ -177,8 +179,6 @@ iSparto/
 ```
 
 ---
-
-[中文版](README.zh-CN.md)
 
 ## License
 
