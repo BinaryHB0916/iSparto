@@ -140,6 +140,11 @@ Never do:
 Codex invocation configuration: all scenarios uniformly use reasoningEffort: xhigh + fast mode.
 When the Team Lead invokes, specify in MCP parameters: model "codex-5.3" reasoningEffort "xhigh", with fast mode enabled.
 
+IMPORTANT — Scoping Codex reviews to current changes only:
+- For code review: use the MCP "review" tool with the "commit" parameter set to the latest commit SHA, or "base" set to the branch point (e.g., "main"). This ensures Codex only reviews the current Wave's diff, not the entire repository history.
+- For architecture pre-review and QA smoke testing: use the MCP "codex" tool with the prompt template below. Explicitly list only the changed files and relevant context — do not pass the entire codebase.
+- Never invoke Codex review without scoping. An unscoped review diffs the entire repo and wastes time.
+
 Note: Codex prompt templates are written in English uniformly. Even if your project is in Chinese, prompts sent to Codex should be in English — Codex understands and executes English prompts with higher quality. The Team Lead handles Chinese-English translation automatically.
 
 Architecture pre-review prompt template (Phase 0, after product initialization, before development):
