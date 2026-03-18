@@ -87,35 +87,26 @@ echo "Installing config to ~/.claude/..."
 mkdir -p ~/.claude/commands
 mkdir -p ~/.claude/templates
 
-copy_file() {
+install_file() {
     local src="$1"
     local dst="$2"
     local label="$3"
-    if [ -f "$dst" ]; then
-        printf "  ${YELLOW}?${NC} $label already exists. Overwrite? [y/N] "
-        read -r answer < /dev/tty
-        if [[ "$answer" =~ ^[Yy]$ ]]; then
-            cp "$src" "$dst"
-            printf "  ${GREEN}✓${NC} Overwrote $label\n"
-        else
-            printf "  ${YELLOW}→${NC} Skipped $label\n"
-        fi
-    else
-        cp "$src" "$dst"
-        printf "  ${GREEN}✓${NC} Installed $label\n"
-    fi
+    local action="Installed"
+    [ -f "$dst" ] && action="Updated"
+    cp "$src" "$dst"
+    printf "  ${GREEN}✓${NC} $action $label\n"
 }
 
-copy_file "$SCRIPT_DIR/CLAUDE-TEMPLATE.md" ~/.claude/CLAUDE-TEMPLATE.md "~/.claude/CLAUDE-TEMPLATE.md"
+install_file "$SCRIPT_DIR/CLAUDE-TEMPLATE.md" ~/.claude/CLAUDE-TEMPLATE.md "~/.claude/CLAUDE-TEMPLATE.md"
 
 for f in "$SCRIPT_DIR"/commands/*.md; do
     name=$(basename "$f")
-    copy_file "$f" ~/.claude/commands/"$name" "~/.claude/commands/$name"
+    install_file "$f" ~/.claude/commands/"$name" "~/.claude/commands/$name"
 done
 
 for f in "$SCRIPT_DIR"/templates/*.md; do
     name=$(basename "$f")
-    copy_file "$f" ~/.claude/templates/"$name" "~/.claude/templates/$name"
+    install_file "$f" ~/.claude/templates/"$name" "~/.claude/templates/$name"
 done
 
 # ── 6. Register Codex MCP Server (global) ───────────────────
