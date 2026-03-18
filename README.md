@@ -102,6 +102,14 @@ claude --effort max
 /init-project I want to build an xxx   # generates CLAUDE.md + docs/, Codex architecture pre-review
 ```
 
+### Migrate an Existing Project
+
+```bash
+cd existing-project/
+claude --effort max
+/migrate                         # scans project, proposes migration plan, preserves all existing content
+```
+
 ### Daily Work Cycle
 
 ```
@@ -162,7 +170,8 @@ iSparto/
 │   ├── end-working.md         ← End working command
 │   ├── plan.md                ← Planning command
 │   ├── init-project.md        ← Initialize project command
-│   └── env-nogo.md            ← Environment readiness check
+│   ├── env-nogo.md            ← Environment readiness check
+│   └── migrate.md             ← Migrate existing project to iSparto
 ├── templates/
 │   ├── product-spec-template.md
 │   ├── tech-spec-template.md
@@ -170,7 +179,7 @@ iSparto/
 │   └── plan-template.md
 └── docs/
     ├── concepts.md            ← Core concepts (decoupling, Wave, file ownership) ⭐ Recommended reading
-    ├── user-guide.md          ← User interaction guide (5 commands + 3 notifications) ⭐ Recommended reading
+    ├── user-guide.md          ← User interaction guide (6 commands + 3 notifications) ⭐ Recommended reading
     ├── roles.md               ← Role definitions + Codex prompt templates
     ├── workflow.md            ← Full development workflow + branching strategy + Codex integration
     ├── configuration.md       ← Global configuration + adaptation guide + multi-device sync

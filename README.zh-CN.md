@@ -100,6 +100,14 @@ claude --effort max
 /init-project 我要做一个xxx       # 生成 CLAUDE.md + docs/，Codex 架构审视
 ```
 
+### 迁移已有项目
+
+```bash
+cd existing-project/
+claude --effort max
+/migrate                         # 扫描项目，出迁移方案，保留所有现有内容
+```
+
 ### 每天的工作循环
 
 ```

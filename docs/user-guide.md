@@ -2,11 +2,12 @@
 
 > As a user, you only need to focus on the following interaction points when collaborating with the Agent Team.
 
-## What You Initiate (5 Commands)
+## What You Initiate (6 Commands)
 
 | Command | When | What You Do |
 |---------|------|-------------|
 | `/init-project` | New project kickoff, one-time | Provide product requirements description, review generated documents |
+| `/migrate` | Adopting iSparto in an existing project, one-time | Review the migration plan, confirm before execution |
 | `/start-working` | Start of each work session | Review the Team Lead's status report, confirm "start" |
 | `/end-working` | End of each work session | Confirm the commit message |
 | `/plan xxx` | When there's a new requirement | Describe the requirement, review the Team Lead's proposal |
