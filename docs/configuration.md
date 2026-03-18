@@ -51,11 +51,11 @@ docs/
 
 ## 模板文件
 
-项目初始化时使用的文档模板位于 `templates/` 目录：
+项目初始化时使用的模板文件：
 
 | 模板 | 用途 |
 |------|------|
-| `CLAUDE-TEMPLATE.md` | 项目 CLAUDE.md 的生成模板 |
+| `CLAUDE-TEMPLATE.md`（根目录） | 项目 CLAUDE.md 的生成模板 |
 | `templates/product-spec-template.md` | 产品规格文档模板 |
 | `templates/tech-spec-template.md` | 技术规格文档模板（可选） |
 | `templates/design-spec-template.md` | 设计规格文档模板（可选） |
@@ -71,7 +71,7 @@ docs/
 
 | 内容 | 说明 |
 |------|------|
-| 4 个自定义命令 | `/start-working`、`/end-working`、`/plan`、`/init-project` 通用于所有项目 |
+| 5 个自定义命令 | `/start-working`、`/end-working`、`/plan`、`/init-project`、`/env-nogo` 通用于所有项目 |
 | 角色定义 | Lead、Developer、Codex Reviewer、Doc Engineer 的职责和规则 |
 | 触发条件表 | 代码审查 + QA 冒烟测试的触发逻辑 |
 | 分支策略 | main / feat / fix / hotfix 的分支模型 |
@@ -138,11 +138,17 @@ docs/
 ~/.claude/
 ├── settings.json          ← 全局配置
 ├── CLAUDE-TEMPLATE.md     ← 新项目模板
-└── commands/
-    ├── start-working.md
-    ├── end-working.md
-    ├── plan.md
-    └── init-project.md
+├── commands/
+│   ├── start-working.md
+│   ├── end-working.md
+│   ├── plan.md
+│   ├── init-project.md
+│   └── env-nogo.md
+└── templates/
+    ├── product-spec-template.md
+    ├── tech-spec-template.md
+    ├── design-spec-template.md
+    └── plan-template.md
 ```
 
 ### 不需要同步的

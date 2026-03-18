@@ -81,29 +81,11 @@ iSparto 不一样。你不写代码，你是产品负责人。AI 不是你的副
 ## 安装
 
 ```bash
-# 1. 安装 Claude Code（需要 Node.js 18+）
-npm install -g @anthropic-ai/claude-code
-
-# 2. 安装 Codex CLI
-npm install -g @openai/codex
-
-# 3. 用 ChatGPT 订阅账户登录 Codex
-codex login
-
-# 4. 把本仓库的命令和模板复制到用户目录
 git clone https://github.com/BinaryHB0916/iSparto.git
-cp -r iSparto/commands/ ~/.claude/commands/
-cp -r iSparto/templates/ ~/.claude/templates/
-cp iSparto/CLAUDE-TEMPLATE.md ~/.claude/CLAUDE-TEMPLATE.md
-cp iSparto/settings.json ~/.claude/settings.json
-
-# 5. 在你的项目里添加 Codex MCP Server（每个项目执行一次）
-cd your-project/
-claude mcp add codex-reviewer -s project -- npx -y codex-mcp-server
-
-# 6. 重启 Claude Code，验证 MCP 连接
-# 进入 Claude Code 后输入 /mcp，确认 codex-reviewer 状态为 ✓ connected
+cd iSparto && ./install.sh
 ```
+
+install.sh 会自动完成：检查/安装 Claude Code 和 Codex CLI、登录 Codex、复制配置到 `~/.claude/`、注册全局 MCP Server。
 
 ---
 
@@ -113,12 +95,11 @@ claude mcp add codex-reviewer -s project -- npx -y codex-mcp-server
 
 ### 初始化新项目
 
-```
-1. 在任何地方讨论产品 idea，产出一份 rough 文档
-2. 新建项目文件夹
-3. 在 Claude Code 里执行 /init-project + 产品文档
-4. Claude Code 生成 CLAUDE.md + docs/（product-spec、tech-spec、design-spec、plan）
-5. 检查确认，开工
+```bash
+mkdir my-app && cd my-app
+claude --effort max
+/env-nogo                        # 可选，确认环境就绪
+/init-project 我要做一个xxx       # 生成 CLAUDE.md + docs/，Codex 架构审视
 ```
 
 ### 每天的工作循环
@@ -150,18 +131,19 @@ Lead 团队自己跑（你不用盯着）
 
 ## 启动清单
 
+**一次性安装（`./install.sh` 自动完成）：**
+
 - [ ] Claude Max + ChatGPT 订阅已开通
-- [ ] 终端使用 iTerm2（macOS，内置 tmux 集成，Agent Team 分屏依赖）
-- [ ] Codex CLI 已安装并登录（`npm i -g @openai/codex && codex login`）
-- [ ] `~/.claude/` 下的 settings.json、CLAUDE-TEMPLATE.md、commands/ 已就位
-- [ ] 多设备同步已配置（如有多台电脑）
-- [ ] 项目级 Codex MCP Server 已添加（`/mcp` 验证 ✓ connected）
-- [ ] 项目级 `.claude/settings.json` 配置平台相关插件（如 iOS 加 swift-lsp）
-- [ ] 项目 CLAUDE.md 已通过 `/init-project` 生成，包含协作模式 + 模块边界 + 分支策略
-- [ ] 项目 docs/plan.md 按 Wave 模板组织
-- [ ] 项目 docs/tech-spec.md 按模板创建（如有技术架构）
-- [ ] 项目 docs/design-spec.md 按模板创建（如有 UI）
-- [ ] 启动用 `claude --effort max`
+- [ ] 终端使用 iTerm2（macOS，Agent Team 分屏依赖）
+- [ ] `./install.sh` 已执行（Claude Code、Codex CLI、配置文件、MCP）
+- [ ] 多设备同步已配置（如有多台电脑，见 [configuration.md](docs/configuration.md#多设备同步可选)）
+
+**每个新项目（`/init-project` 自动完成）：**
+
+- [ ] `claude --effort max` 启动
+- [ ] `/env-nogo` 检查通过（可选）
+- [ ] `/init-project` 已生成 CLAUDE.md + docs/
+- [ ] 项目级 `.claude/settings.json` 配置平台相关插件（如 iOS 加 swift-lsp，可选）
 
 ---
 
@@ -174,11 +156,13 @@ iSparto/
 ├── CLAUDE-TEMPLATE.md         ← 新项目 CLAUDE.md 生成模板
 ├── LICENSE
 ├── .gitignore
+├── install.sh                 ← 一键安装脚本
 ├── commands/
 │   ├── start-working.md       ← 开工命令
 │   ├── end-working.md         ← 收工命令
 │   ├── plan.md                ← 出方案命令
-│   └── init-project.md        ← 初始化项目命令
+│   ├── init-project.md        ← 初始化项目命令
+│   └── env-nogo.md            ← 环境就绪检查
 ├── templates/
 │   ├── product-spec-template.md
 │   ├── tech-spec-template.md
@@ -186,7 +170,7 @@ iSparto/
 │   └── plan-template.md
 └── docs/
     ├── concepts.md            ← 核心概念（解耦、Wave、文件所有权）⭐ 建议先读
-    ├── user-guide.md          ← 用户交互手册（4 命令 + 3 通知）⭐ 建议先读
+    ├── user-guide.md          ← 用户交互手册（5 命令 + 3 通知）⭐ 建议先读
     ├── roles.md               ← 角色定义 + Codex prompt 模板
     ├── workflow.md            ← 完整开发流程 + 分支策略 + Codex 集成
     ├── configuration.md       ← 全局配置 + 适配指南 + 多设备同步

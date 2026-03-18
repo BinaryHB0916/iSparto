@@ -33,17 +33,17 @@ Claude Developer(s) 并行开发
   - 为核心逻辑编写单元测试
   - 确保构建通过
     ↓
-Codex Reviewer 审查（Lead 通过 MCP 调用，xhigh + fast）
+Codex Reviewer 审查（按触发条件表判断是否执行，见下方）
   - 审查代码逻辑、边界条件、安全问题
   - 发现问题直接修复
     ↓
-Claude Developer 回看 Codex 的修复
+Claude Developer 回看 Codex 的修复（如触发了审查）
   - 确认修复正确
   - 确认没有引入新问题
   - 确认符合项目代码风格
   - 构建验证
     ↓
-Codex QA 冒烟测试（Lead 通过 MCP 调用，xhigh + fast，增量）
+Codex QA 冒烟测试（按触发条件表判断是否执行，见下方）
   - 识别本 Wave 的变更范围，只测变更涉及的功能路径
   - 已在之前 Wave 测过且未被本次改动影响的部分跳过
   - 模拟关键用户操作路径，验证功能端到端可用
@@ -73,86 +73,15 @@ Lead 确认全部通过 → 合代码 → 更新 plan.md
 
 ## 自定义命令（commands/）
 
-> 以下是 4 个自定义命令的完整内容。每个命令都明确了执行角色（Team Lead）和与用户的交互边界。
+> 命令的完整内容见 `commands/` 目录下的源文件，以下是各命令的职责摘要。
 
-### 1. start-working.md
-
-**执行角色：Team Lead** — 汇报状态，等用户确认后启动团队
-
-```
-你是 Team Lead。用户执行了 /start-working，进入开工流程。
-
-1. 读取 CLAUDE.md 确认项目上下文和开发规则
-2. 读取 docs/plan.md，向用户汇报：
-   - 当前处于哪个 Wave
-   - 本 Wave 有哪些 Team，各自状态（待开始 / 进行中 / 已完成）
-   - 上次收工后的遗留问题
-3. 快速检查：代码当前状态与 docs/ 文档是否一致，有无漂移
-4. 确认当前分支（应在 feat/ 或 fix/ 或 hotfix/ 分支上，不在 main 上开发）
-5. 判断接下来的工作模式，向用户建议：
-   - 如果当前 Wave 有可并行的 Team → 建议启动 Agent Team
-   - 如果是单任务或需要人工决策 → 走普通开发模式
-6. 输出以上信息，等用户确认"开始"后，再按 Lead 流程启动团队
-```
-
-### 2. end-working.md
-
-**执行角色：Team Lead** — 确保所有改动和决策落库，不丢上下文
-
-```
-你是 Team Lead。用户执行了 /end-working，进入收工流程。
-
-1. 检查本次所有改动和决策：
-   - 代码改动是否与 docs/ 文档一致？不一致则 Lead 直接更新或 spawn Doc Engineer 更新
-   - 对话中的口头决策是否已写入对应文档？未写入则补充
-2. 更新 docs/plan.md：
-   - 标记完成的任务
-   - 如果当前 Wave 的所有 Team 都完成，标记 Wave 状态为已完成
-   - 列出下次待办
-   - 记录遗留问题和人工介入点
-3. git add -A && git commit
-4. git push
-
-执行前先让用户确认 commit message。
-```
-
-### 3. plan.md
-
-**执行角色：Team Lead** — 审视需求，输出方案，等用户确认后写入 plan.md
-
-```
-你是 Team Lead。用户执行了 /plan，要求你对接下来描述的需求出方案。
-
-1. 先审视产品方向：
-   - 这真的是用户需要的吗？
-   - 有没有更好的解法藏在需求背后？
-   - 10 分版本长什么样？
-2. 读取相关的 docs/ 文档获取上下文
-3. 输出实现方案：
-   - 要改哪些文件、怎么改、有什么风险
-   - 解耦分析：哪些任务之间没有文件重叠和数据依赖，可以并行？哪些必须顺序执行？
-   - 如果可以并行，列出文件所有权划分（确保不重叠），说明 Lead 将 spawn 哪些 Developer teammate
-   - 如果并行任务之间有数据交互，定义接口契约
-   - 是否需要调用 Codex MCP 做前置架构审视
-   - 是否涉及高风险代码需要 Codex 审查
-4. 等用户确认方案后，Lead 把方案追加到 docs/plan.md，再启动团队开发
-```
-
-### 4. init-project.md
-
-**执行角色：Team Lead** — 生成项目骨架和文档体系，为 Wave 开发做准备
-
-```
-你是 Team Lead。用户执行了 /init-project，要求你初始化一个新项目。
-
-1. 与用户确认项目信息、技术栈和目标平台
-2. 基于 ~/.claude/CLAUDE-TEMPLATE.md 生成项目的 CLAUDE.md
-3. 按 ~/.claude/templates/ 下的模板结构生成 docs/（product-spec.md、tech-spec.md、design-spec.md 等）
-4. 生成初始 docs/plan.md，按 Wave 组织开发计划
-5. 初始化 git 仓库，创建 main 分支
-6. 调用 Codex MCP 做架构前置审视（基于 tech-spec.md），向用户汇报审视结果
-7. 等用户确认所有文档和架构审视结果后，项目初始化完成
-```
+| 命令 | 源文件 | 执行角色 | 职责 |
+|------|--------|----------|------|
+| `/start-working` | [commands/start-working.md](../commands/start-working.md) | Team Lead | 汇报当前状态（Wave 进度、遗留问题），等用户确认后启动团队 |
+| `/end-working` | [commands/end-working.md](../commands/end-working.md) | Team Lead | 确保所有改动和决策落库，更新 plan.md，commit & push |
+| `/plan` | [commands/plan.md](../commands/plan.md) | Team Lead | 审视产品方向，输出实现方案（含解耦分析），等用户确认后写入 plan.md |
+| `/init-project` | [commands/init-project.md](../commands/init-project.md) | Team Lead | 生成项目骨架和文档体系（CLAUDE.md + docs/），Codex 架构审视，为 Wave 开发做准备 |
+| `/env-nogo` | [commands/env-nogo.md](../commands/env-nogo.md) | Team Lead | 检查全局和项目环境是否满足 iSparto 运行条件 |
 
 ---
 
@@ -169,7 +98,7 @@ main              ← 稳定版，发布从这里出
 **规则：**
 - main 不直接开发，锁定为当前发布版本
 - 每个 Wave 对应一个 feature 分支（如 `feat/wave-1-auth`）
-- Wave 内部，Lead 将任务拆成解耦的子任务，每个 Developer 通过 git worktree 在独立工作目录中并行开发，靠文件所有权杜绝冲突
+- Wave 内部，Lead 将任务拆成解耦的子任务，每个 Developer 通过 git worktree 在独立工作目录中并行开发（由 Claude Code Agent Team 自动管理，无需手动操作），靠文件所有权杜绝冲突
 - 小修小补可在 fix/ 分支上快速合回
 - merge 回 main 前必须通过 Doc Engineer 审计；Codex 代码审查和 QA 冒烟测试按触发条件表执行（不是每次都触发）
 

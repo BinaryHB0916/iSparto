@@ -7,6 +7,7 @@
 | Developer 改了不该改的文件 | 文件所有权指令被忽略 | Lead 发现后回滚该文件的改动，重新明确文件所有权后让 Developer 重做。在 CLAUDE.md 里加项目特有规则强调 |
 | merge 冲突（多 Developer 并行） | 文件所有权划分有重叠，或共享文件没有明确修改顺序 | Lead 拆任务时确保文件所有权不重叠。共享文件的修改只分配给一个 Developer，或明确顺序 |
 | Codex 审查返回空结果 | 网络问题或 Codex 服务临时不可用 | 重试一次。如果持续失败，检查 `codex login status`，可能需要重新登录 |
+| Codex 持续不可用 | Codex 服务故障或账户问题，短时间内无法恢复 | Lead 上报用户"Codex 不可用"，由用户决定：继续开发（跳过 Codex 环节）、等待恢复、或其他处理方式 |
 | `/start-working` 发现代码和文档不一致 | 上次收工时文档同步不完整 | 先让 Lead 修复不一致，确认后再继续开发 |
 | 短暂离开后想继续 | Claude Code 会话还在 | `claude --continue` 接回当前会话。如果会话已过期，开新会话 `/start-working` |
 | Agent Team teammate 不可见 | 未使用 iTerm2，或 tmux 集成未启用 | 确认在 iTerm2 中运行 Claude Code；检查 iTerm2 设置中 tmux 集成是否开启 |
