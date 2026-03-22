@@ -12,7 +12,7 @@ User reviews product direction:
   - Is there a better solution hidden behind the requirement?
   - What does the 10/10 version look like?
     |
-Codex 5.3 reviews technical architecture (Team Lead invokes via MCP, xhigh + fast, based on tech-spec.md):
+Codex 5.3 reviews technical architecture (Team Lead invokes via MCP, xhigh reasoning, based on tech-spec.md):
   - Architecture fitness and scalability
   - Data flow and state management
   - Potential performance bottlenecks and security issues
@@ -82,7 +82,7 @@ Team Lead confirms all passes -> merge code -> update plan.md
 | `/plan` | [commands/plan.md](../commands/plan.md) | Team Lead | Review product direction, output implementation plan (with decoupling analysis), wait for user confirmation before writing to plan.md |
 | `/init-project` | [commands/init-project.md](../commands/init-project.md) | Team Lead | Generate project skeleton and documentation system (CLAUDE.md + docs/), Codex architecture pre-review, prepare for Wave development |
 | `/env-nogo` | [commands/env-nogo.md](../commands/env-nogo.md) | Setup Assistant | Check whether global and project environments meet iSparto runtime requirements |
-| `/migrate` | [commands/migrate.md](../commands/migrate.md) | Setup Assistant | Migrate an existing project to iSparto workflow — scan, propose, execute after confirmation |
+| `/migrate` | [commands/migrate.md](../commands/migrate.md) | Setup Assistant | Migrate an existing project to iSparto workflow — scan, propose, execute after confirmation. Supports `--dry-run` to preview only |
 
 ---
 
@@ -116,7 +116,7 @@ main              <- Stable version, releases are made from here
 
 > For the Codex role definition and three prompt templates, see [roles.md -> Codex Reviewer](roles.md#codex-reviewer).
 
-Codex intervenes in three scenarios, all configured with xhigh reasoning + fast mode:
+Codex intervenes in three scenarios, all configured with xhigh reasoning (via `codex` tool; `review` tool uses server defaults):
 
 | Scenario | Timing | Details |
 |----------|--------|---------|

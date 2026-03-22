@@ -4,15 +4,117 @@ set -e
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
 NC='\033[0m'
 
+ISPARTO_HOME="$HOME/.isparto"
+BACKUP_DIR="$ISPARTO_HOME/backup"
+MANIFEST="$BACKUP_DIR/manifest.txt"
+
+DRY_RUN=false
+UNINSTALL=false
+
+for arg in "$@"; do
+    case "$arg" in
+        --dry-run)   DRY_RUN=true ;;
+        --uninstall) UNINSTALL=true ;;
+    esac
+done
+
+# ══════════════════════════════════════════════════════════════
+# Uninstall mode
+# ══════════════════════════════════════════════════════════════
+
+if $UNINSTALL; then
+    echo ""
+    echo "  iSparto Uninstaller"
+    echo "  ────────────────────"
+    echo ""
+
+    if [ ! -f "$MANIFEST" ]; then
+        printf "  ${RED}✘${NC} No install manifest found at $MANIFEST\n"
+        echo "  Nothing to uninstall, or iSparto was installed before the backup feature existed."
+        echo ""
+        echo "  To manually clean up:"
+        echo "    rm -rf ~/.isparto"
+        echo "    rm -f ~/.claude/CLAUDE-TEMPLATE.md"
+        echo "    rm -f ~/.claude/commands/{start-working,end-working,plan,init-project,env-nogo,migrate}.md"
+        echo "    rm -f ~/.claude/templates/{product-spec,tech-spec,design-spec,plan}-template.md"
+        echo "    claude mcp remove codex-reviewer -s user"
+        echo ""
+        exit 1
+    fi
+
+    echo "Restoring from backup..."
+
+    while IFS='|' read -r action path; do
+        case "$action" in
+            created)
+                if [ -f "$path" ]; then
+                    rm "$path"
+                    printf "  ${GREEN}✓${NC} Removed $path\n"
+                fi
+                ;;
+            overwritten)
+                backup_file="$BACKUP_DIR/$(echo "$path" | sed 's|[/ ]|__|g')"
+                if [ -f "$backup_file" ]; then
+                    cp "$backup_file" "$path"
+                    printf "  ${GREEN}✓${NC} Restored $path\n"
+                else
+                    printf "  ${YELLOW}→${NC} Backup missing for $path, skipping\n"
+                fi
+                ;;
+            mkdir)
+                # Only remove if directory is empty (we created it)
+                if [ -d "$path" ] && [ -z "$(ls -A "$path")" ]; then
+                    rmdir "$path"
+                    printf "  ${GREEN}✓${NC} Removed empty directory $path\n"
+                fi
+                ;;
+            mcp)
+                if claude mcp remove codex-reviewer -s user 2>/dev/null; then
+                    printf "  ${GREEN}✓${NC} Removed Codex MCP Server registration\n"
+                else
+                    printf "  ${YELLOW}→${NC} MCP removal skipped (may not exist)\n"
+                fi
+                ;;
+            npm)
+                printf "  ${YELLOW}→${NC} Skipping $path (global npm package — remove manually with: npm uninstall -g $path)\n"
+                ;;
+        esac
+    done < "$MANIFEST"
+
+    # Remove backup and isparto home
+    rm -rf "$BACKUP_DIR"
+    # Only remove ~/.isparto if it's empty now (backup gone, nothing else inside)
+    if [ -d "$ISPARTO_HOME" ] && [ -z "$(ls -A "$ISPARTO_HOME")" ]; then
+        rmdir "$ISPARTO_HOME"
+        printf "  ${GREEN}✓${NC} Removed $ISPARTO_HOME\n"
+    else
+        printf "  ${YELLOW}→${NC} $ISPARTO_HOME still has files (e.g. git repo), not removed\n"
+        echo "    Remove manually if you want: rm -rf $ISPARTO_HOME"
+    fi
+
+    echo ""
+    printf "${GREEN}Uninstall complete.${NC}\n"
+    echo ""
+    exit 0
+fi
+
+# ══════════════════════════════════════════════════════════════
+# Install mode (normal or dry-run)
+# ══════════════════════════════════════════════════════════════
+
 echo ""
-echo "  iSparto Installer"
+if $DRY_RUN; then
+    echo "  iSparto Installer (DRY RUN — no changes will be made)"
+else
+    echo "  iSparto Installer"
+fi
 echo "  ─────────────────"
 echo ""
 
 # ── 0. If running via curl pipe, clone repo first ─────────
-ISPARTO_HOME="$HOME/.isparto"
 
 if [ -f "$(dirname "$0")/commands/start-working.md" ] 2>/dev/null; then
     # Running from within the repo
@@ -20,15 +122,68 @@ if [ -f "$(dirname "$0")/commands/start-working.md" ] 2>/dev/null; then
 else
     # Running standalone (curl | bash) — clone repo
     echo "Downloading iSparto..."
-    if [ -d "$ISPARTO_HOME" ]; then
-        printf "  ${YELLOW}→${NC} Updating existing installation...\n"
-        git -C "$ISPARTO_HOME" pull --quiet
+    if $DRY_RUN; then
+        if [ -d "$ISPARTO_HOME" ]; then
+            printf "  ${BLUE}[dry-run]${NC} Would update existing installation\n"
+        else
+            printf "  ${BLUE}[dry-run]${NC} Would clone to $ISPARTO_HOME\n"
+        fi
+        # Still need SCRIPT_DIR for file checks — use existing if available
+        if [ -d "$ISPARTO_HOME" ]; then
+            SCRIPT_DIR="$ISPARTO_HOME"
+        else
+            printf "  ${YELLOW}→${NC} No local copy found. Dry-run cannot preview file changes.\n"
+            printf "  ${YELLOW}→${NC} Run without --dry-run first, or clone manually.\n"
+            exit 0
+        fi
     else
-        git clone --quiet https://github.com/BinaryHB0916/iSparto.git "$ISPARTO_HOME"
+        if [ -d "$ISPARTO_HOME" ]; then
+            printf "  ${YELLOW}→${NC} Updating existing installation...\n"
+            git -C "$ISPARTO_HOME" pull --quiet
+        else
+            git clone --quiet https://github.com/BinaryHB0916/iSparto.git "$ISPARTO_HOME"
+        fi
+        printf "  ${GREEN}✓${NC} iSparto downloaded to $ISPARTO_HOME\n"
     fi
-    printf "  ${GREEN}✓${NC} iSparto downloaded to $ISPARTO_HOME\n"
     SCRIPT_DIR="$ISPARTO_HOME"
 fi
+
+# ── Snapshot: prepare backup (only on real install) ────────
+# Key invariant: the backup directory preserves the user's ORIGINAL files
+# from before iSparto was ever installed. Re-installs (updates) must NOT
+# overwrite these originals. We only back up a file if no backup exists yet.
+
+if ! $DRY_RUN; then
+    mkdir -p "$BACKUP_DIR"
+    # Do NOT clear manifest on re-install — append new entries only
+    touch "$MANIFEST"
+fi
+
+# Helper: compute backup filename for a given path
+backup_name_for() {
+    echo "$1" | sed 's|[/ ]|__|g'
+}
+
+# Helper: record an action in the manifest and back up if needed
+record() {
+    local action="$1"  # created | overwritten | mkdir | mcp | npm
+    local path="$2"
+    if ! $DRY_RUN; then
+        # Avoid duplicate manifest entries
+        if grep -qF "${action}|${path}" "$MANIFEST" 2>/dev/null; then
+            return
+        fi
+        echo "${action}|${path}" >> "$MANIFEST"
+        if [[ "$action" == "overwritten" && -f "$path" ]]; then
+            local bname
+            bname="$(backup_name_for "$path")"
+            # Only back up if we don't already have the original
+            if [ ! -f "$BACKUP_DIR/$bname" ]; then
+                cp "$path" "$BACKUP_DIR/$bname"
+            fi
+        fi
+    fi
+}
 
 # ── 1. Node.js ──────────────────────────────────────────────
 
@@ -54,9 +209,14 @@ echo "Checking Claude Code..."
 if command -v claude &> /dev/null; then
     printf "  ${GREEN}✓${NC} Claude Code installed\n"
 else
-    printf "  ${YELLOW}→${NC} Installing Claude Code...\n"
-    npm install -g @anthropic-ai/claude-code
-    printf "  ${GREEN}✓${NC} Claude Code installed\n"
+    if $DRY_RUN; then
+        printf "  ${BLUE}[dry-run]${NC} Would install Claude Code\n"
+    else
+        printf "  ${YELLOW}→${NC} Installing Claude Code...\n"
+        npm install -g @anthropic-ai/claude-code
+        record npm "@anthropic-ai/claude-code"
+        printf "  ${GREEN}✓${NC} Claude Code installed\n"
+    fi
 fi
 
 # ── 3. Codex CLI ────────────────────────────────────────────
@@ -65,19 +225,28 @@ echo "Checking Codex CLI..."
 if command -v codex &> /dev/null; then
     printf "  ${GREEN}✓${NC} Codex CLI installed\n"
 else
-    printf "  ${YELLOW}→${NC} Installing Codex CLI...\n"
-    npm install -g @openai/codex
-    printf "  ${GREEN}✓${NC} Codex CLI installed\n"
+    if $DRY_RUN; then
+        printf "  ${BLUE}[dry-run]${NC} Would install Codex CLI\n"
+    else
+        printf "  ${YELLOW}→${NC} Installing Codex CLI...\n"
+        npm install -g @openai/codex
+        record npm "@openai/codex"
+        printf "  ${GREEN}✓${NC} Codex CLI installed\n"
+    fi
 fi
 
 # ── 4. Codex Login ──────────────────────────────────────────
 
 echo "Checking Codex login..."
-if codex login status &> /dev/null; then
+if command -v codex &> /dev/null && codex login status &> /dev/null; then
     printf "  ${GREEN}✓${NC} Codex logged in\n"
 else
-    printf "  ${YELLOW}→${NC} Codex not logged in. Running codex login...\n"
-    codex login
+    if $DRY_RUN; then
+        printf "  ${BLUE}[dry-run]${NC} Would run codex login\n"
+    else
+        printf "  ${YELLOW}→${NC} Codex not logged in. Running codex login...\n"
+        codex login
+    fi
 fi
 
 # ── 5. Copy config to ~/.claude/ ────────────────────────────
@@ -85,17 +254,36 @@ fi
 echo "Installing global commands & templates to ~/.claude/ ..."
 echo "  (project-level config will be created when you run /init-project or /migrate)"
 
-mkdir -p ~/.claude/commands
-mkdir -p ~/.claude/templates
+if ! $DRY_RUN; then
+    [ ! -d ~/.claude/commands ] && mkdir -p ~/.claude/commands && record mkdir "$HOME/.claude/commands"
+    [ ! -d ~/.claude/templates ] && mkdir -p ~/.claude/templates && record mkdir "$HOME/.claude/templates"
+fi
 
 install_file() {
     local src="$1"
     local dst="$2"
     local label="$3"
-    local action="Installed"
-    [ -f "$dst" ] && action="Updated"
-    cp "$src" "$dst"
-    printf "  ${GREEN}✓${NC} $action $label\n"
+    if $DRY_RUN; then
+        if [ -f "$dst" ]; then
+            if diff -q "$src" "$dst" &>/dev/null; then
+                printf "  ${GREEN}✓${NC} $label (already up to date)\n"
+            else
+                printf "  ${BLUE}[dry-run]${NC} Would overwrite $label\n"
+            fi
+        else
+            printf "  ${BLUE}[dry-run]${NC} Would install $label\n"
+        fi
+    else
+        if [ -f "$dst" ]; then
+            record overwritten "$dst"
+            cp "$src" "$dst"
+            printf "  ${GREEN}✓${NC} Updated $label\n"
+        else
+            cp "$src" "$dst"
+            record created "$dst"
+            printf "  ${GREEN}✓${NC} Installed $label\n"
+        fi
+    fi
 }
 
 install_file "$SCRIPT_DIR/CLAUDE-TEMPLATE.md" ~/.claude/CLAUDE-TEMPLATE.md "~/.claude/CLAUDE-TEMPLATE.md"
@@ -113,20 +301,38 @@ done
 # ── 6. Register Codex MCP Server (global) ───────────────────
 
 echo "Registering Codex MCP Server (global)..."
-if claude mcp add codex-reviewer -s user -- npx -y codex-mcp-server 2>/dev/null; then
-    printf "  ${GREEN}✓${NC} Codex MCP Server registered globally\n"
+if $DRY_RUN; then
+    if claude mcp list -s user 2>/dev/null | grep -q codex-reviewer; then
+        printf "  ${GREEN}✓${NC} Codex MCP Server already registered\n"
+    else
+        printf "  ${BLUE}[dry-run]${NC} Would register Codex MCP Server globally\n"
+    fi
 else
-    printf "  ${YELLOW}→${NC} MCP registration skipped (may already exist)\n"
+    if claude mcp add codex-reviewer -s user -- npx -y codex-mcp-server 2>/dev/null; then
+        record mcp "codex-reviewer"
+        printf "  ${GREEN}✓${NC} Codex MCP Server registered globally\n"
+    else
+        printf "  ${YELLOW}→${NC} MCP registration skipped (may already exist)\n"
+    fi
 fi
 
 # ── Done ────────────────────────────────────────────────────
 
 echo ""
-printf "${GREEN}Done!${NC} iSparto is ready.\n"
-echo ""
-echo "Next step — launch Claude Code in your project directory:"
-echo ""
-echo "  claude --effort max"
-echo "  /init-project <description>      # new project"
-echo "  /migrate                         # existing project"
+if $DRY_RUN; then
+    printf "${GREEN}Dry run complete!${NC} No changes were made.\n"
+    echo ""
+    echo "Run without --dry-run to install:"
+    echo ""
+    echo "  ./install.sh"
+else
+    printf "${GREEN}Done!${NC} iSparto is ready.\n"
+    printf "  Backup saved to $BACKUP_DIR (use ./install.sh --uninstall to revert)\n"
+    echo ""
+    echo "Next step — launch Claude Code in your project directory:"
+    echo ""
+    echo "  claude --effort max"
+    echo "  /init-project <description>      # new project"
+    echo "  /migrate                         # existing project"
+fi
 echo ""

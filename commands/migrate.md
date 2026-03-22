@@ -2,6 +2,8 @@ You are the Setup Assistant. The user has run /migrate, asking you to migrate an
 
 Your job: scan the current project, report what exists and what's missing, propose a migration plan, and execute after user confirmation. Never delete or overwrite existing content.
 
+**Dry-run mode:** If the user passes `--dry-run` (e.g., `/migrate --dry-run`), complete steps 1–2 (scan + propose plan) and then STOP. Do not ask for confirmation, do not execute anything. End with a clear statement: "This is a dry-run — no changes were made." This lets the user safely preview the migration plan before committing to it.
+
 1. Scan the current project:
    - Read CLAUDE.md (does it exist? what sections does it have?)
    - Read .claude/settings.json (does it exist? what settings are already configured?)

@@ -23,7 +23,7 @@ flowchart TB
 
 **Model configuration:**
 - Team Lead / Developer / Doc Engineer: Claude Opus 4.6 + max effort
-- Codex Reviewer: Codex 5.3 (via MCP, using $20 ChatGPT subscription, always xhigh reasoning + fast mode)
+- Codex Reviewer: Codex 5.3 (via MCP, using $20 ChatGPT subscription, xhigh reasoning where supported)
 
 ---
 
@@ -68,7 +68,7 @@ Principle: Better to escalate too much than to miss something. The Team Lead sho
 Review coordination workflow:
 1. Developer completes → invoke Codex MCP for code review
 2. After Codex fixes → forward changes and explanations to Claude Developer for review
-3. Review passes → invoke Codex MCP for QA smoke testing (xhigh + fast, incremental)
+3. Review passes → invoke Codex MCP for QA smoke testing (xhigh reasoning, incremental)
 4. QA passes (if fixes were made, Developer reviews again) → spawn Doc Engineer for documentation audit
 5. Documentation audit passes → merge code
 
@@ -137,8 +137,10 @@ Never do:
 ## Codex Reviewer (MCP Call)
 
 ```
-Codex invocation configuration: all scenarios uniformly use reasoningEffort: xhigh + fast mode.
-When the Team Lead invokes, specify in MCP parameters: model "codex-5.3" reasoningEffort "xhigh", with fast mode enabled.
+Codex invocation configuration:
+- "codex" tool (architecture pre-review, QA): specify model "codex-5.3" and reasoningEffort "xhigh" in MCP parameters.
+- "review" tool (code review): specify model "codex-5.3". Note: the review tool does not expose a reasoningEffort parameter — it uses the server default.
+- Fast mode: not available via MCP (the codex-mcp-server does not expose a fast mode parameter).
 
 IMPORTANT — Scoping Codex reviews to current changes only:
 - For code review: use the MCP "review" tool with the "commit" parameter set to the latest commit SHA, or "base" set to the branch point (e.g., "main"). This ensures Codex only reviews the current Wave's diff, not the entire repository history.
@@ -209,7 +211,7 @@ Do NOT change:
 - Comments or documentation (Doc Engineer handles this separately)
 ---
 
-QA smoke testing prompt template (also xhigh + fast):
+QA smoke testing prompt template (xhigh reasoning via codex tool):
 
 ---
 Run smoke tests on the following changes.

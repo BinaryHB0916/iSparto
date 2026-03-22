@@ -7,7 +7,7 @@
 | Command | When | What You Do |
 |---------|------|-------------|
 | `/init-project` | New project kickoff, one-time | Provide product requirements description, review generated documents |
-| `/migrate` | Adopting iSparto in an existing project, one-time | Review the migration plan, confirm before execution |
+| `/migrate` | Adopting iSparto in an existing project, one-time | Review the migration plan, confirm before execution. Use `--dry-run` to preview without executing |
 | `/start-working` | Start of each work session | Review the Team Lead's status report, confirm "start" |
 | `/end-working` | End of each work session | Confirm the commit message |
 | `/plan xxx` | When there's a new requirement | Describe the requirement, review the Team Lead's proposal |

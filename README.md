@@ -41,7 +41,7 @@ flowchart TB
 ```
 
 - Lead / Developer / Doc Engineer: **Claude Opus 4.6** + max effort
-- Codex Reviewer: **Codex 5.3** (via MCP, using $20 ChatGPT subscription, xhigh reasoning + fast mode)
+- Codex Reviewer: **Codex 5.3** (via MCP, using $20 ChatGPT subscription, xhigh reasoning)
 
 ---
 
@@ -86,12 +86,28 @@ curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/install.s
 
 One command handles everything: downloads iSparto to `~/.isparto`, checks/installs Claude Code and Codex CLI, logs into Codex, copies commands and templates to `~/.claude/`, and registers the global MCP Server. Your existing `~/.claude/settings.json` is never modified.
 
+**Preview before installing:** add `--dry-run` to see what would happen without making any changes:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/install.sh | bash -s -- --dry-run
+```
+
+**Uninstall:** reverts all changes and restores your original files from the backup snapshot:
+
+```bash
+# If installed via curl (repo is at ~/.isparto):
+~/.isparto/install.sh --uninstall
+
+# If installed via manual clone:
+cd iSparto && ./install.sh --uninstall
+```
+
 <details>
 <summary>Alternative: manual clone</summary>
 
 ```bash
 git clone https://github.com/BinaryHB0916/iSparto.git
-cd iSparto && ./install.sh
+cd iSparto && ./install.sh              # or: ./install.sh --dry-run
 ```
 </details>
 
@@ -115,6 +131,7 @@ claude --effort max
 ```bash
 cd existing-project/
 claude --effort max
+/migrate --dry-run               # preview migration plan without executing (recommended for first run)
 /migrate                         # scans project, proposes migration plan, preserves all existing content
 ```
 

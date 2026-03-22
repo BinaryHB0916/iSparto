@@ -39,7 +39,7 @@ flowchart TB
 ```
 
 - Lead / Developer / Doc Engineer：**Claude Opus 4.6** + max effort
-- Codex Reviewer：**Codex 5.3**（通过 MCP，走 $20 ChatGPT 订阅，xhigh reasoning + fast mode）
+- Codex Reviewer：**Codex 5.3**（通过 MCP，走 $20 ChatGPT 订阅，xhigh reasoning）
 
 ---
 
@@ -84,12 +84,28 @@ curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/install.s
 
 一行搞定：下载 iSparto 到 `~/.isparto`、检查/安装 Claude Code 和 Codex CLI、登录 Codex、复制命令和模板到 `~/.claude/`、注册全局 MCP Server。不会修改你现有的 `~/.claude/settings.json`。
 
+**安装前先预览：** 加 `--dry-run` 可以看到会发生什么，但不执行任何变更：
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/install.sh | bash -s -- --dry-run
+```
+
+**卸载：** 从备份快照还原所有被修改的文件，清理 iSparto 安装的内容：
+
+```bash
+# 通过 curl 安装的（仓库在 ~/.isparto）：
+~/.isparto/install.sh --uninstall
+
+# 通过手动 clone 安装的：
+cd iSparto && ./install.sh --uninstall
+```
+
 <details>
 <summary>备选：手动 clone</summary>
 
 ```bash
 git clone https://github.com/BinaryHB0916/iSparto.git
-cd iSparto && ./install.sh
+cd iSparto && ./install.sh              # 或: ./install.sh --dry-run
 ```
 </details>
 
@@ -113,6 +129,7 @@ claude --effort max
 ```bash
 cd existing-project/
 claude --effort max
+/migrate --dry-run               # 预览迁移方案，不执行任何变更（首次建议先用这个）
 /migrate                         # 扫描项目，出迁移方案，保留所有现有内容
 ```
 
