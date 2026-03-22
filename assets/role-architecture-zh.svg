@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 640" width="1100" height="640">
+  <defs>
+    <linearGradient id="gold-line" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="rgba(212,175,55,0)"/>
+      <stop offset="50%" stop-color="rgba(212,175,55,0.35)"/>
+      <stop offset="100%" stop-color="rgba(212,175,55,0)"/>
+    </linearGradient>
+    <linearGradient id="card-lead" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#141008"/>
+      <stop offset="100%" stop-color="#0d0b07"/>
+    </linearGradient>
+    <linearGradient id="card-exec" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0c1a0f"/>
+      <stop offset="100%" stop-color="#080f0a"/>
+    </linearGradient>
+    <filter id="glow-gold"><feGaussianBlur stdDeviation="12"/></filter>
+    <filter id="glow-green"><feGaussianBlur stdDeviation="10"/></filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1100" height="640" fill="#000"/>
+
+  <!-- Side matrix rain — left 2 columns -->
+  <g font-family="monospace" font-size="14" fill="rgba(180,255,180,0.3)">
+    <text x="18" y="22">θ</text><text x="18" y="56">Λ</text><text x="18" y="90">σ</text><text x="18" y="124">Π</text><text x="18" y="158">ω</text><text x="18" y="192">α</text><text x="18" y="226">Ξ</text><text x="18" y="260">ρ</text><text x="18" y="294">δ</text><text x="18" y="328">Ω</text><text x="18" y="362">μ</text><text x="18" y="396">Λ</text><text x="18" y="430">η</text><text x="18" y="464">Φ</text><text x="18" y="498">β</text><text x="18" y="532">γ</text><text x="18" y="566">ζ</text><text x="18" y="600">Ψ</text><text x="18" y="634">κ</text>
+    <text x="48" y="38">ψ</text><text x="48" y="72">Β</text><text x="48" y="106">ν</text><text x="48" y="140">φ</text><text x="48" y="174">Γ</text><text x="48" y="208">ε</text><text x="48" y="242">τ</text><text x="48" y="276">Η</text><text x="48" y="310">ι</text><text x="48" y="344">χ</text><text x="48" y="378">Α</text><text x="48" y="412">λ</text><text x="48" y="446">Θ</text><text x="48" y="480">ξ</text><text x="48" y="514">Κ</text><text x="48" y="548">υ</text><text x="48" y="582">Σ</text><text x="48" y="616">π</text>
+  </g>
+  <g font-family="monospace" font-size="14" fill="rgba(180,255,180,0.85)">
+    <text x="18" y="634">κ</text><text x="48" y="616">π</text>
+  </g>
+  <g font-family="monospace" font-size="14" fill="rgba(212,175,55,0.5)">
+    <text x="18" y="260">ρ</text><text x="48" y="446">Θ</text>
+  </g>
+
+  <!-- Side matrix rain — right 2 columns (mirrored) -->
+  <g font-family="monospace" font-size="14" fill="rgba(180,255,180,0.3)">
+    <text x="1052" y="30">Σ</text><text x="1052" y="64">π</text><text x="1052" y="98">α</text><text x="1052" y="132">ρ</text><text x="1052" y="166">τ</text><text x="1052" y="200">ο</text><text x="1052" y="234">ί</text><text x="1052" y="268">Δ</text><text x="1052" y="302">Ω</text><text x="1052" y="336">θ</text><text x="1052" y="370">Λ</text><text x="1052" y="404">φ</text><text x="1052" y="438">Γ</text><text x="1052" y="472">ψ</text><text x="1052" y="506">β</text><text x="1052" y="540">η</text><text x="1052" y="574">κ</text><text x="1052" y="608">ζ</text>
+    <text x="1082" y="14">ε</text><text x="1082" y="48">Ψ</text><text x="1082" y="82">μ</text><text x="1082" y="116">Π</text><text x="1082" y="150">ω</text><text x="1082" y="184">χ</text><text x="1082" y="218">ν</text><text x="1082" y="252">Φ</text><text x="1082" y="286">δ</text><text x="1082" y="320">Σ</text><text x="1082" y="354">α</text><text x="1082" y="388">ι</text><text x="1082" y="422">Η</text><text x="1082" y="456">τ</text><text x="1082" y="490">Ξ</text><text x="1082" y="524">Ρ</text><text x="1082" y="558">ο</text><text x="1082" y="592">λ</text><text x="1082" y="626">Β</text>
+  </g>
+  <g font-family="monospace" font-size="14" fill="rgba(180,255,180,0.85)">
+    <text x="1052" y="608">ζ</text><text x="1082" y="626">Β</text>
+  </g>
+  <g font-family="monospace" font-size="14" fill="rgba(212,175,55,0.5)">
+    <text x="1052" y="200">ο</text><text x="1082" y="388">ι</text>
+  </g>
+
+  <!-- ═══════════════ CENTER CONTENT ═══════════════ -->
+  <g transform="translate(50,0)">
+
+    <!-- ═══════════════ 用户 ═══════════════ -->
+    <text x="500" y="72" text-anchor="middle" fill="rgba(212,175,55,0.12)" font-family="Georgia, 'Times New Roman', serif" font-size="36" font-weight="900" letter-spacing="0.15em" filter="url(#glow-gold)">USER</text>
+    <text x="500" y="72" text-anchor="middle" fill="rgba(212,175,55,0.9)" font-family="Georgia, 'Times New Roman', serif" font-size="36" font-weight="900" letter-spacing="0.15em">USER</text>
+    <text x="500" y="100" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="15" letter-spacing="0.06em">产品方向 · 需求定义 · Wave 边界验收</text>
+
+    <rect x="300" y="125" width="400" height="1" fill="url(#gold-line)"/>
+    <line x1="500" y1="126" x2="500" y2="175" stroke="rgba(212,175,55,0.3)" stroke-width="1"/>
+
+    <!-- ═══════════════ TEAM LEAD ═══════════════ -->
+    <rect x="160" y="175" width="680" height="220" rx="10" fill="url(#card-lead)" stroke="rgba(212,175,55,0.18)" stroke-width="1"/>
+
+    <text x="500" y="225" text-anchor="middle" fill="rgba(255,255,255,0.92)" font-family="Georgia, 'Times New Roman', serif" font-size="28" font-weight="900" letter-spacing="0.1em">TEAM LEAD</text>
+    <text x="500" y="251" text-anchor="middle" fill="rgba(212,175,55,0.6)" font-family="'Courier New', monospace" font-size="13" letter-spacing="0.08em">CLAUDE OPUS 4.6 · 主会话</text>
+
+    <g fill="rgba(212,175,55,0.5)">
+      <circle cx="272" cy="291" r="2.5"/>
+      <circle cx="272" cy="314" r="2.5"/>
+      <circle cx="272" cy="337" r="2.5"/>
+      <circle cx="272" cy="360" r="2.5"/>
+    </g>
+    <g fill="rgba(255,255,255,0.6)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="15">
+      <text x="284" y="295">拆分任务</text>
+      <text x="284" y="318">接口契约</text>
+      <text x="284" y="341">协调全流程</text>
+      <text x="284" y="364">合并代码</text>
+    </g>
+
+    <!-- Doc Engineer 子卡片 -->
+    <rect x="530" y="278" width="280" height="95" rx="8" fill="rgba(20,16,8,0.6)" stroke="rgba(212,175,55,0.25)" stroke-width="1"/>
+    <text x="670" y="310" text-anchor="middle" fill="rgba(212,175,55,0.85)" font-family="Georgia, 'Times New Roman', serif" font-size="18" font-weight="bold" letter-spacing="0.05em">Doc Engineer</text>
+    <text x="670" y="330" text-anchor="middle" fill="rgba(212,175,55,0.5)" font-family="'Courier New', monospace" font-size="11">子代理</text>
+    <text x="670" y="357" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="14">Wave 完成后 · 文档审计与同步</text>
+
+    <!-- ═══════════════ 连接线 ═══════════════ -->
+    <rect x="200" y="395" width="600" height="1" fill="url(#gold-line)"/>
+    <line x1="270" y1="395" x2="270" y2="460" stroke="rgba(180,255,180,0.3)" stroke-width="1"/>
+    <line x1="730" y1="395" x2="730" y2="460" stroke="rgba(180,255,180,0.3)" stroke-width="1"/>
+
+    <!-- ═══════════════ DEVELOPER ═══════════════ -->
+    <rect x="70" y="460" width="400" height="140" rx="10" fill="url(#card-exec)" stroke="rgba(180,255,180,0.15)" stroke-width="1"/>
+
+    <text x="270" y="508" text-anchor="middle" fill="rgba(0,255,65,0.06)" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="900" letter-spacing="0.1em" filter="url(#glow-green)">DEVELOPER</text>
+    <text x="270" y="508" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="900" letter-spacing="0.1em">DEVELOPER</text>
+    <text x="270" y="534" text-anchor="middle" fill="rgba(180,255,180,0.55)" font-family="'Courier New', monospace" font-size="12" letter-spacing="0.08em">CLAUDE OPUS 4.6 · 协作者</text>
+    <g fill="rgba(255,255,255,0.55)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="14" text-anchor="middle">
+      <text x="270" y="570">写代码 · 单元测试 · 审查 Codex 修复</text>
+    </g>
+
+    <!-- ═══════════════ CODEX REVIEWER ═══════════════ -->
+    <rect x="530" y="460" width="400" height="140" rx="10" fill="url(#card-exec)" stroke="rgba(180,255,180,0.15)" stroke-width="1"/>
+
+    <text x="730" y="508" text-anchor="middle" fill="rgba(0,255,65,0.06)" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="900" letter-spacing="0.1em" filter="url(#glow-green)">CODEX REVIEWER</text>
+    <text x="730" y="508" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="900" letter-spacing="0.1em">CODEX REVIEWER</text>
+    <text x="730" y="534" text-anchor="middle" fill="rgba(180,255,180,0.55)" font-family="'Courier New', monospace" font-size="12" letter-spacing="0.08em">CODEX 5.3 · MCP 调用</text>
+    <g fill="rgba(255,255,255,0.55)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="14" text-anchor="middle">
+      <text x="730" y="570">代码审查 · 直接修复 · QA 冒烟测试</text>
+    </g>
+
+  </g>
+</svg>

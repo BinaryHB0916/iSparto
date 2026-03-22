@@ -19,7 +19,7 @@
 ## 角色架构
 
 <p align="center">
-  <img src="assets/role-architecture.svg" alt="角色架构" width="100%"/>
+  <img src="assets/role-architecture-zh.svg" alt="角色架构" width="100%"/>
 </p>
 
 - Lead / Developer / Doc Engineer：**Claude Opus 4.6** + max effort
