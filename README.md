@@ -1,9 +1,10 @@
-# iSparto
+<p align="center">
+  <img src="assets/header.svg" alt="iSparto" width="100%"/>
+</p>
 
-[中文版](README.zh-CN.md)
-
-Use Claude Code Agent Team mode to give one person a full AI development team.
-Works for all software development projects (iOS / Android / macOS / Windows / Web / cross-platform).
+<p align="center">
+  <a href="README.zh-CN.md">中文版</a>
+</p>
 
 ---
 
@@ -21,24 +22,9 @@ The **i** was moved from the end of Spartoi to the front. Lowercase i = I = me, 
 
 ## Role Architecture
 
-```mermaid
-flowchart TB
-    User["User<br/><br/>Product direction<br/>Requirements definition<br/>Wave boundary acceptance"]
-
-    subgraph Lead["Team Lead — Claude main session"]
-        direction LR
-        LeadTasks["Break down tasks<br/>Interface contracts<br/>Coordinate full workflow<br/>Merge code"]
-        Doc["Doc Engineer<br/>sub-agent<br/><br/>After Wave completion<br/>Documentation audit"]
-    end
-
-    Dev["Claude Developer<br/>teammate<br/><br/>Write code<br/>Write unit tests<br/>Review Codex fixes"]
-
-    Codex["Codex 5.3 Reviewer<br/>MCP call<br/><br/>Code review<br/>Fix issues directly<br/>QA smoke testing"]
-
-    User --> Lead
-    Lead --> Dev
-    Lead --> Codex
-```
+<p align="center">
+  <img src="assets/role-architecture.svg" alt="Role Architecture" width="100%"/>
+</p>
 
 - Lead / Developer / Doc Engineer: **Claude Opus 4.6** + max effort
 - Codex Reviewer: **Codex 5.3** (via MCP, using $20 ChatGPT subscription, xhigh reasoning)

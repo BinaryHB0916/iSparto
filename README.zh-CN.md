@@ -1,7 +1,6 @@
-# iSparto
-
-用 Claude Code Agent Team 模式，让一个人拥有一支 AI 开发团队。
-适用于所有软件开发项目（iOS / Android / macOS / Windows / Web / 跨平台）。
+<p align="center">
+  <img src="assets/header.svg" alt="iSparto" width="100%"/>
+</p>
 
 ---
 
@@ -19,24 +18,9 @@
 
 ## 角色架构
 
-```mermaid
-flowchart TB
-    User["用户<br/><br/>产品方向<br/>需求定义<br/>Wave 边界验收"]
-
-    subgraph Lead["Team Lead — Claude 主会话"]
-        direction LR
-        LeadTasks["拆任务<br/>接口契约<br/>协调全流程<br/>合代码"]
-        Doc["Doc Engineer<br/>sub-agent<br/><br/>Wave 完成后<br/>文档审计"]
-    end
-
-    Dev["Claude Developer<br/>teammate<br/><br/>写代码<br/>写单元测试<br/>回看 Codex 修复"]
-
-    Codex["Codex 5.3 Reviewer<br/>MCP 调用<br/><br/>审查代码<br/>直接修复问题<br/>QA 冒烟测试"]
-
-    User --> Lead
-    Lead --> Dev
-    Lead --> Codex
-```
+<p align="center">
+  <img src="assets/role-architecture.svg" alt="角色架构" width="100%"/>
+</p>
 
 - Lead / Developer / Doc Engineer：**Claude Opus 4.6** + max effort
 - Codex Reviewer：**Codex 5.3**（通过 MCP，走 $20 ChatGPT 订阅，xhigh reasoning）
