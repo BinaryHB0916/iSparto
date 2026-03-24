@@ -1,20 +1,27 @@
 ---
-name: Feature request
-about: Suggest an idea for this project
-title: ''
-labels: ''
+name: Feature Request
+about: Suggest a new feature or improvement
+title: '[Feature] '
+labels: enhancement
 assignees: ''
-
 ---
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+**Problem**
+What problem does this solve? What's the friction today?
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
+**Proposed solution**
+How should it work?
 
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
+**Alternatives considered**
+Any other approaches you've thought about?
+
+**Which part of iSparto does this affect?**
+- [ ] install.sh (installation/upgrade)
+- [ ] Command templates (commands/*.md)
+- [ ] Document templates (templates/*.md)
+- [ ] Snapshot/restore (lib/snapshot.sh)
+- [ ] Documentation (docs/, README)
+- [ ] Other: ___
 
 **Additional context**
-Add any other context or screenshots about the feature request here.
+Any other details, screenshots, or references.
