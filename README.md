@@ -78,6 +78,12 @@ One command handles everything: downloads iSparto to `~/.isparto`, checks/instal
 curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/install.sh | bash -s -- --dry-run
 ```
 
+**Upgrade:** re-run the installer to pull the latest version and see what's new:
+
+```bash
+~/.isparto/install.sh --upgrade
+```
+
 **Uninstall:** reverts all changes and restores your original files from the backup snapshot:
 
 ```bash
@@ -211,7 +217,9 @@ iSparto/
 ├── CLAUDE-TEMPLATE.md         ← Template for generating new project CLAUDE.md
 ├── LICENSE
 ├── .gitignore
-├── install.sh                 ← One-click install script
+├── VERSION                    ← Current version (semver)
+├── CHANGELOG.md               ← Release notes
+├── install.sh                 ← One-click install/upgrade script
 ├── lib/
 │   └── snapshot.sh            ← Snapshot/restore engine (factory reset capability)
 ├── commands/

@@ -74,6 +74,12 @@ curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/install.s
 curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/install.sh | bash -s -- --dry-run
 ```
 
+**升级：** 重新运行安装器拉取最新版本，查看更新内容：
+
+```bash
+~/.isparto/install.sh --upgrade
+```
+
 **卸载：** 从备份快照还原所有被修改的文件，清理 iSparto 安装的内容：
 
 ```bash
@@ -207,7 +213,9 @@ iSparto/
 ├── CLAUDE-TEMPLATE.md         ← 新项目 CLAUDE.md 生成模板
 ├── LICENSE
 ├── .gitignore
-├── install.sh                 ← 一键安装脚本
+├── VERSION                    ← 当前版本号 (semver)
+├── CHANGELOG.md               ← 更新日志
+├── install.sh                 ← 一键安装/升级脚本
 ├── lib/
 │   └── snapshot.sh            ← 快照/恢复引擎（出厂设置回滚）
 ├── commands/
