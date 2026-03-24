@@ -95,9 +95,41 @@ cd iSparto && ./install.sh              # 或: ./install.sh --dry-run
 
 ---
 
-## 快速开始
+## 实测案例
 
-<!-- TODO: 补充真实项目的使用示例和截图，展示从 /init-project 到 Agent Team 分屏并行的完整流程 -->
+**自举案例：iSparto 用自己的工作流开发自己的功能**
+
+iSparto 的 "Session Log 自动采集" 功能（`/end-working` 自动生成 session report，`/start-working` 自动读取历史）完全由 iSparto 自己的 Agent Team 工作流开发完成。以下是实际执行流程。
+
+**执行流程：**
+
+1. `/start-working` — Lead 读取 plan.md，报告 Wave 5 状态，确定 session log 为下一个任务
+2. Lead 建 `feat/session-log` 分支
+3. Lead 拆任务 + 定义文件所有权：
+   - Developer A：`commands/end-working.md`（加 session report 生成）
+   - Developer B：`commands/start-working.md`（加 session log 读取）
+4. 2 个 Developer 并行开发 — 同时完成各自任务
+5. Codex Review — 发现 2 个 P2 问题：
+   - `git diff --stat` 漏掉已暂存/新文件 → 改为 `git diff HEAD --stat`
+   - diff 输出放 Markdown table 会破坏渲染 → 移到 code block
+6. Lead 修复 Codex 发现的问题
+7. Doc Engineer 更新 workflow.md 和 plan.md
+8. 合并到 main（`--no-ff` merge commit）
+
+**关键数据：**
+
+| 指标 | 数值 |
+|------|------|
+| 并行 Developer 数 | 2 |
+| Codex Review 轮次 | 1 次，捕获 2 个 P2 问题并修复 |
+| 文件变更 | 4 个文件，+45 行，-11 行 |
+| 完整周期 | 拆任务 → 并行开发 → Codex 审查 → 修复 → 文档审计 → 合并 |
+
+> 注：tmux 分屏并行截图将在更多 dogfooding 案例积累后补充。
+
+---
+
+## 快速开始
 
 ### 初始化新项目
 

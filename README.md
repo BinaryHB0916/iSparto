@@ -99,9 +99,41 @@ cd iSparto && ./install.sh              # or: ./install.sh --dry-run
 
 ---
 
-## Quick Start
+## Real-World Usage
 
-<!-- TODO: Add real project usage examples and screenshots showing the complete flow from /init-project to Agent Team split-pane parallel execution -->
+iSparto used its own Agent Team workflow to develop itself. Below is the first complete dogfooding run — building the "Session Log" feature (automatic session metrics collection in `/end-working` and `/start-working`).
+
+### Flow
+
+1. **`/start-working`** — Lead read `plan.md`, reported Wave 5 status, identified the session log feature as the next task.
+2. **Branch** — Lead created `feat/session-log`.
+3. **Task breakdown** — Lead assigned file ownership:
+   - Developer A: `commands/end-working.md` (add session report generation)
+   - Developer B: `commands/start-working.md` (add session log reading)
+4. **Parallel development** — Both Developers ran simultaneously and completed their tasks.
+5. **Codex Review** — Found 2 P2 issues:
+   - `git diff --stat` misses staged/untracked files. Fixed to `git diff HEAD --stat`.
+   - Diff output inside a Markdown table breaks rendering. Moved to a code block.
+6. **Fix** — Lead applied both Codex findings.
+7. **Doc audit** — Doc Engineer updated `workflow.md` and `plan.md`.
+8. **Merge** — Merged to `main` via `--no-ff` merge commit.
+
+### Stats
+
+| Metric | Value |
+|--------|-------|
+| Developers in parallel | 2 |
+| Codex review passes | 1 |
+| Issues caught by Codex | 2 (both fixed) |
+| Files changed | 4 |
+| Insertions / Deletions | +45 / -11 |
+| Full cycle | Task breakdown, parallel dev, Codex review, fix, doc audit, merge |
+
+> Screenshots of tmux split-pane parallel execution will be added after more dogfooding sessions.
+
+---
+
+## Quick Start
 
 ### Initialize a New Project
 
