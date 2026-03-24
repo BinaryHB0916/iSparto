@@ -55,8 +55,8 @@
 ### 开源优化
 - [x] README 实测效果章节（自举案例：Session Log 功能开发全流程）
 - [x] 升级功能 — install.sh --upgrade + VERSION + CHANGELOG.md（版本追踪、changelog 展示）
-- [ ] CONTRIBUTING.md 贡献指南
-- [ ] GitHub Issues 模板优化
+- [x] CONTRIBUTING.md 贡献指南
+- [x] GitHub Issues 模板优化（bug report / feature request / question 适配 CLI 项目）
 
 ### Pro 版规划
 - [ ] Agent dashboard 原型设计
