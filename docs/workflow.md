@@ -77,8 +77,8 @@ Team Lead confirms all passes -> merge code -> update plan.md
 
 | Command | Source File | Execution Role | Responsibility |
 |---------|-------------|----------------|----------------|
-| `/start-working` | [commands/start-working.md](../commands/start-working.md) | Team Lead | Report current status (Wave progress, remaining issues), wait for user confirmation before launching the team |
-| `/end-working` | [commands/end-working.md](../commands/end-working.md) | Team Lead | Ensure all changes and decisions are persisted, update plan.md, commit & push |
+| `/start-working` | [commands/start-working.md](../commands/start-working.md) | Team Lead | Report current status (Wave progress, remaining issues, session history), wait for user confirmation before launching the team |
+| `/end-working` | [commands/end-working.md](../commands/end-working.md) | Team Lead | Ensure all changes and decisions are persisted, update plan.md, generate session report to session-log.md, commit & push |
 | `/plan` | [commands/plan.md](../commands/plan.md) | Team Lead | Review product direction, output implementation plan (with decoupling analysis), wait for user confirmation before writing to plan.md |
 | `/init-project` | [commands/init-project.md](../commands/init-project.md) | Team Lead | Generate project skeleton and documentation system (CLAUDE.md + docs/), Codex architecture pre-review, prepare for Wave development |
 | `/env-nogo` | [commands/env-nogo.md](../commands/env-nogo.md) | Setup Assistant | Check whether global and project environments meet iSparto runtime requirements |

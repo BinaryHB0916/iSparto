@@ -44,10 +44,11 @@
 ## 当前 Wave
 
 ### Wave 5: Dogfooding 验证
-- [ ] 场景 1: isparto-website 项目 — /migrate 后跑完整工作流
-- [ ] 场景 2: 萌芽勇气 (iOS app) — /migrate 已有项目
+- [x] 场景 1: isparto-website 项目 — /migrate 已完成
+- [x] 场景 2: 萌芽勇气 (iOS app) — /migrate 已完成
 - [ ] 场景 3: 全新空项目 — /init-project 从零开始
-- [ ] 每个场景记录：Wave 数量、并行效率、Codex 拦截问题、截图
+- [x] Session Log 自动采集 — /end-working 自动生成 session report，/start-working 自动读取历史
+- [ ] 每个场景记录：Wave 数量、并行效率、Codex 拦截问题、截图（现在由 session-log.md 自动采集）
 
 ## 待办 (Backlog)
 
