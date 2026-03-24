@@ -9,10 +9,12 @@
 | `/init-project` | New project kickoff, one-time | Provide product requirements description, review generated documents |
 | `/migrate` | Adopting iSparto in an existing project, one-time | Review the migration plan, confirm before execution. Use `--dry-run` to preview without executing |
 | `/start-working` | Start of each work session | Review the Team Lead's status report, confirm "start" |
-| `/end-working` | End of each work session | Confirm the commit message |
+| `/end-working` | End of each work session | Review session report, confirm the commit message |
 | `/plan xxx` | When there's a new requirement | Describe the requirement, review the Team Lead's proposal |
 | `/env-nogo` | When there are environment concerns | Review check results, fix items marked with a cross |
 | `/restore` | When you want to undo a migration or init | Review snapshot details, confirm restore to roll back all changes |
+
+**Upgrading iSparto:** Run `~/.isparto/install.sh --upgrade` to pull the latest version and see what's new.
 
 ## When the Team Lead Comes to You (3 Scenarios)
 
@@ -30,6 +32,7 @@
 - No need to monitor the development process — just wait for notifications
 - No need to do code review — Codex handles that
 - No need to do smoke testing — Codex QA handles that
+- No need to manually track development metrics — session-log.md records them automatically at the end of each session
 
 ## What You Should Focus On
 

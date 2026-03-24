@@ -18,7 +18,7 @@ iSparto 是一个开源的 AI Agent Team 工作流框架，把 Claude Code 单 A
 - **快照/恢复**: 每次操作前自动拍快照，/restore 一键回滚
 - **Session log**: docs/session-log.md 记录每次会话的开发指标
 - **版本追踪与更新日志**: --upgrade 支持版本升级
-- **一键安装**: curl 一行命令搞定
+- **一键安装**: curl 一行命令搞定，支持 --dry-run 预览、--upgrade 升级、--uninstall 卸载
 
 ### Pro 版（付费，规划中）
 - Real-time agent dashboard — agent 状态、进度、阻塞可视化

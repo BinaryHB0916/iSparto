@@ -2,6 +2,10 @@
   <img src="assets/header.svg" alt="iSparto" width="100%"/>
 </p>
 
+<p align="center">
+  <a href="README.md">English</a>
+</p>
+
 ---
 
 ## 名字的由来
@@ -193,7 +197,7 @@ Lead 团队自己跑（你不用盯着）
 - [ ] Claude Max + ChatGPT 订阅已开通
 - [ ] 终端使用 iTerm2（macOS，Agent Team 分屏依赖）
 - [ ] `./install.sh` 已执行（Claude Code、Codex CLI、配置文件、MCP）
-- [ ] 多设备同步已配置（如有多台电脑，见 [configuration.md](docs/configuration.md#多设备同步可选)）
+- [ ] 多设备同步已配置（如有多台电脑，见 [configuration.md](docs/configuration.md#multi-device-sync-optional)）
 
 **每个新项目（`/init-project` 自动完成）：**
 
@@ -232,6 +236,9 @@ iSparto/
 │   ├── design-spec-template.md
 │   └── plan-template.md
 └── docs/
+    ├── product-spec.md        ← 产品规格（iSparto 自身的，用于自举）
+    ├── plan.md                ← 按 Wave 组织的开发计划
+    ├── session-log.md         ← 自动生成的会话指标（由 /end-working 创建）
     ├── concepts.md            ← 核心概念（解耦、Wave、文件所有权）⭐ 建议先读
     ├── user-guide.md          ← 用户交互手册（7 命令 + 3 通知）⭐ 建议先读
     ├── roles.md               ← 角色定义 + Codex prompt 模板

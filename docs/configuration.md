@@ -49,6 +49,7 @@ docs/
 ├── tech-spec.md        ← Tech spec (architecture, data models, API contracts, state management, infrastructure, third-party integrations)
 ├── design-spec.md      ← Design spec (colors, typography, spacing, atmosphere elements, component styles)
 ├── plan.md             ← Development plan (Wave orchestration, task status, manual intervention points)
+├── session-log.md      ← Auto-generated session metrics (created by /end-working)
 └── content/            ← Content assets (if applicable)
 ```
 
@@ -62,6 +63,7 @@ All spec documents use the uniform `-spec` suffix: product-spec, tech-spec, desi
 | tech-spec.md | Architecture, data models, API contracts, state management, infrastructure, third-party integrations | **How to build it technically** |
 | design-spec.md | Colors, typography, spacing, animations, atmosphere elements | **How it looks visually** |
 | plan.md | Wave orchestration, task status, remaining issues, manual intervention points | **Where we are now** |
+| session-log.md | Tasks completed, developers spawned, Codex reviews, files changed, key decisions | **Auto-generated session metrics** |
 
 ---
 
@@ -158,7 +160,9 @@ If you switch development between multiple computers, you can share user-level c
 │   ├── end-working.md
 │   ├── plan.md
 │   ├── init-project.md
-│   └── env-nogo.md
+│   ├── env-nogo.md
+│   ├── migrate.md
+│   └── restore.md
 └── templates/
     ├── product-spec-template.md
     ├── tech-spec-template.md
