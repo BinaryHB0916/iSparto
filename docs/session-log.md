@@ -39,3 +39,47 @@
 - 跑了两次完整的 Agent Team 流程（session-log + README benchmark），每次都是 2 Developer 并行
 - 用户提出"升级功能"缺失，已加入 backlog，下次会话优先处理
 - ~/.claude/commands/end-working.md 是安装时的旧版本，还没包含 session log 步骤；下次 install.sh 更新后会同步
+
+## 2026-03-24 Session (continued)
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | Wave 5 (Dogfooding 验证) — 续 |
+| Tasks completed | 升级系统 (--upgrade + VERSION + CHANGELOG), 文档术语修复, Doc Engineer 三层职责升级, 全面文档审计 (22 项), CONTRIBUTING.md + Issue 模板, GitHub Issues Pro 标记, Lead 主动建议行为 |
+| Developers spawned | 10 (2 upgrade, 2 docs-fix, 2 docs-audit, 3 full-audit-fix, 1 contributing) |
+| Codex reviews | 2 (1 for upgrade/install.sh, 1 for session-log) |
+| Codex catches | upgrade: 1 P2 — head -n -1 macOS 不兼容 → 改 sed '$d'; session-log: 2 P2 (上次已修) |
+| Key decisions | v0.1.0 首个版本号, Doc Engineer 三层职责(代码同步→术语一致→产品叙事), Lead 主动建议下一步写入框架, GitHub Issues 区分 Free/Pro, CONTRIBUTING.md 双语社区 |
+
+### Files Changed
+```
+ CHANGELOG.md                              |  25 ++++++
+ CLAUDE-TEMPLATE.md                        |   4 +-
+ CLAUDE.md                                 |   4 +-
+ CONTRIBUTING.md                           | 120 ++++++
+ README.md                                 |  17 ++-
+ README.zh-CN.md                           |  23 +++-
+ VERSION                                   |   1 +
+ .github/ISSUE_TEMPLATE/bug_report.md      |  45 ++--
+ .github/ISSUE_TEMPLATE/custom.md          |  18 ++-
+ .github/ISSUE_TEMPLATE/feature_request.md |  43 ++--
+ docs/concepts.md                          |   2 +
+ docs/configuration.md                     |   6 +-
+ docs/design-decisions.md                  |   3 +
+ docs/plan.md                              |  12 +-
+ docs/product-spec.md                      |   4 +-
+ docs/roles.md                             |  13 ++
+ docs/session-log.md                       |  (this entry)
+ docs/troubleshooting.md                   |   6 +
+ docs/user-guide.md                        |   5 +-
+ docs/workflow.md                          |   2 +
+ install.sh                                |  59 +++-
+ 21 files changed, 400+ insertions
+```
+
+### Notes
+- 今天两个 session 合计：38 files touched, 1300+ insertions, 12 developers spawned, 4 Codex reviews, 3 P2 catches
+- 开源 backlog 全部清零
+- 框架层两个重要演进：Doc Engineer 产品叙事审计 + Lead 主动建议下一步
+- 下次优先：场景 3 (全新空项目 /init-project) + tmux 截图

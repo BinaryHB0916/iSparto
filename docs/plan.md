@@ -57,6 +57,10 @@
 - [x] 升级功能 — install.sh --upgrade + VERSION + CHANGELOG.md（版本追踪、changelog 展示）
 - [x] CONTRIBUTING.md 贡献指南
 - [x] GitHub Issues 模板优化（bug report / feature request / question 适配 CLI 项目）
+- [x] GitHub Issues #2 #3 标记为 Pro 付费功能，避免社区误解
+- [x] Doc Engineer 职责升级为三层（代码同步 → 术语一致 → 产品叙事完整性）
+- [x] 全面文档审计（22 项修复，14 个文件）
+- [x] Team Lead 角色增加"主动建议下一步"行为
 
 ### Pro 版规划
 - [ ] Agent dashboard 原型设计
