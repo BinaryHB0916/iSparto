@@ -3,7 +3,7 @@
 ## 已完成
 
 ### Wave 0: 核心框架
-- [x] 6 个 slash commands (start-working, end-working, plan, init-project, migrate, env-nogo)
+- [x] 6 个 slash commands (start-working, end-working, plan, init-project, migrate, env-nogo)（Wave 2 新增 /restore 后扩展为 7 个）
 - [x] 4 个文档模板 (product-spec, tech-spec, design-spec, plan)
 - [x] CLAUDE-TEMPLATE.md 项目模板
 - [x] settings.json 参考配置

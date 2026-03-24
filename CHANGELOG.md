@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Core workflow with 7 slash commands (/start-working, /end-working, /plan, /init-project, /migrate, /env-nogo, /restore)
 - 4 document templates (product-spec, tech-spec, design-spec, plan)
 - CLAUDE-TEMPLATE.md for bootstrapping new projects
-- Install system (install.sh) with dry-run, uninstall, and MCP registration support
+- Install system (install.sh) with dry-run, uninstall, upgrade, and MCP registration support
 - Bilingual README (English and Chinese)
 - SVG assets for header banner and role architecture diagram
 - Snapshot/restore system (lib/snapshot.sh) for saving and restoring project state

@@ -236,6 +236,9 @@ iSparto/
 │   ├── design-spec-template.md
 │   └── plan-template.md
 └── docs/
+    ├── product-spec.md        ← Product spec (iSparto's own, for self-bootstrapping)
+    ├── plan.md                ← Development plan by Wave
+    ├── session-log.md         ← Auto-generated session metrics (created by /end-working)
     ├── concepts.md            ← Core concepts (decoupling, Wave, file ownership) ⭐ Recommended reading
     ├── user-guide.md          ← User interaction guide (7 commands + 3 notifications) ⭐ Recommended reading
     ├── roles.md               ← Role definitions + Codex prompt templates
