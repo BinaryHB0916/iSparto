@@ -54,7 +54,7 @@
 
 ### 开源优化
 - [x] README 实测效果章节（自举案例：Session Log 功能开发全流程）
-- [ ] 升级功能 — install.sh 缺少显式 --upgrade 流程（版本追踪、changelog 展示、升级提示）
+- [x] 升级功能 — install.sh --upgrade + VERSION + CHANGELOG.md（版本追踪、changelog 展示）
 - [ ] CONTRIBUTING.md 贡献指南
 - [ ] GitHub Issues 模板优化
 

@@ -13,11 +13,13 @@ MANIFEST="$BACKUP_DIR/manifest.txt"
 
 DRY_RUN=false
 UNINSTALL=false
+UPGRADE=false
 
 for arg in "$@"; do
     case "$arg" in
         --dry-run)   DRY_RUN=true ;;
         --uninstall) UNINSTALL=true ;;
+        --upgrade)   UPGRADE=true ;;
     esac
 done
 
@@ -132,7 +134,11 @@ fi
 # ══════════════════════════════════════════════════════════════
 
 echo ""
-if $DRY_RUN; then
+if $UPGRADE && $DRY_RUN; then
+    echo "  iSparto Upgrader (DRY RUN — no changes will be made)"
+elif $UPGRADE; then
+    echo "  iSparto Upgrader"
+elif $DRY_RUN; then
     echo "  iSparto Installer (DRY RUN — no changes will be made)"
 else
     echo "  iSparto Installer"
@@ -172,6 +178,43 @@ else
         printf "  ${GREEN}✓${NC} iSparto downloaded to $ISPARTO_HOME\n"
     fi
     SCRIPT_DIR="$ISPARTO_HOME"
+fi
+
+# ── Detect upgrade and show what's new ─────────────────────
+
+OLD_VERSION=""
+if [ -f "$ISPARTO_HOME/VERSION" ]; then
+    OLD_VERSION=$(cat "$ISPARTO_HOME/VERSION")
+fi
+NEW_VERSION=""
+if [ -f "$SCRIPT_DIR/VERSION" ]; then
+    NEW_VERSION=$(cat "$SCRIPT_DIR/VERSION")
+fi
+
+if [ -n "$OLD_VERSION" ] && [ -n "$NEW_VERSION" ] && [ "$OLD_VERSION" != "$NEW_VERSION" ]; then
+    if $DRY_RUN; then
+        printf "  ${BLUE}[dry-run]${NC} Would upgrade: $OLD_VERSION -> $NEW_VERSION\n"
+        if [ -f "$SCRIPT_DIR/CHANGELOG.md" ]; then
+            echo ""
+            echo "  What's new in $NEW_VERSION:"
+            sed -n "/^## \[$NEW_VERSION\]/,/^## \[/p" "$SCRIPT_DIR/CHANGELOG.md" | sed '$d' | sed 's/^/  /'
+            echo ""
+        fi
+    else
+        printf "  ${GREEN}*${NC} Upgrading: $OLD_VERSION -> $NEW_VERSION\n"
+        if [ -f "$SCRIPT_DIR/CHANGELOG.md" ]; then
+            echo ""
+            echo "  What's new in $NEW_VERSION:"
+            sed -n "/^## \[$NEW_VERSION\]/,/^## \[/p" "$SCRIPT_DIR/CHANGELOG.md" | sed '$d' | sed 's/^/  /'
+            echo ""
+        fi
+    fi
+elif [ -z "$OLD_VERSION" ] && [ -n "$NEW_VERSION" ]; then
+    if $DRY_RUN; then
+        printf "  ${BLUE}[dry-run]${NC} Version: $NEW_VERSION\n"
+    else
+        printf "  ${GREEN}*${NC} Version: $NEW_VERSION\n"
+    fi
 fi
 
 # ── Install lib/snapshot.sh to ~/.isparto/lib/ ────────────
@@ -365,6 +408,14 @@ else
     fi
 fi
 
+# ── Track installed version ──────────────────────────────────
+
+if ! $DRY_RUN; then
+    if [ -f "$SCRIPT_DIR/VERSION" ]; then
+        cp "$SCRIPT_DIR/VERSION" "$ISPARTO_HOME/VERSION"
+    fi
+fi
+
 # ── Done ────────────────────────────────────────────────────
 
 echo ""
@@ -375,7 +426,11 @@ if $DRY_RUN; then
     echo ""
     echo "  ./install.sh"
 else
-    printf "${GREEN}Done!${NC} iSparto is ready.\n"
+    if [ -n "$NEW_VERSION" ]; then
+        printf "${GREEN}Done!${NC} iSparto $NEW_VERSION is ready.\n"
+    else
+        printf "${GREEN}Done!${NC} iSparto is ready.\n"
+    fi
     printf "  Snapshot saved (use ./install.sh --uninstall to revert)\n"
     echo ""
     echo "Next step — launch Claude Code in your project directory:"
