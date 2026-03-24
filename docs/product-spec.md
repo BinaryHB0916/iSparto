@@ -16,6 +16,8 @@ iSparto 是一个开源的 AI Agent Team 工作流框架，把 Claude Code 单 A
 - **Codex 异源审查**: Codex 审 Claude 代码，覆盖不同模型的盲区
 - **文档自动同步**: Doc Engineer 每个 Wave 审计代码和文档一致性
 - **快照/恢复**: 每次操作前自动拍快照，/restore 一键回滚
+- **Session log**: docs/session-log.md 记录每次会话的开发指标
+- **版本追踪与更新日志**: --upgrade 支持版本升级
 - **一键安装**: curl 一行命令搞定
 
 ### Pro 版（付费，规划中）

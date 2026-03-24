@@ -23,7 +23,7 @@
 </p>
 
 - Lead / Developer / Doc Engineer：**Claude Opus 4.6** + max effort
-- Codex Reviewer：**Codex 5.3**（通过 MCP，走 $20 ChatGPT 订阅，xhigh reasoning）
+- Codex Reviewer：**Codex 5.3**（通过 MCP，走 $20 ChatGPT 订阅，最高推理强度）
 
 ---
 
@@ -233,7 +233,7 @@ iSparto/
 │   └── plan-template.md
 └── docs/
     ├── concepts.md            ← 核心概念（解耦、Wave、文件所有权）⭐ 建议先读
-    ├── user-guide.md          ← 用户交互手册（6 命令 + 3 通知）⭐ 建议先读
+    ├── user-guide.md          ← 用户交互手册（7 命令 + 3 通知）⭐ 建议先读
     ├── roles.md               ← 角色定义 + Codex prompt 模板
     ├── workflow.md            ← 完整开发流程 + 分支策略 + Codex 集成
     ├── configuration.md       ← 全局配置 + 适配指南 + 多设备同步

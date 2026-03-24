@@ -27,7 +27,7 @@ The **i** was moved from the end of Spartoi to the front. Lowercase i = I = me, 
 </p>
 
 - Lead / Developer / Doc Engineer: **Claude Opus 4.6** + max effort
-- Codex Reviewer: **Codex 5.3** (via MCP, using $20 ChatGPT subscription, xhigh reasoning)
+- Codex Reviewer: **Codex 5.3** (via MCP, using $20 ChatGPT subscription, max reasoning)
 
 ---
 
@@ -237,7 +237,7 @@ iSparto/
 │   └── plan-template.md
 └── docs/
     ├── concepts.md            ← Core concepts (decoupling, Wave, file ownership) ⭐ Recommended reading
-    ├── user-guide.md          ← User interaction guide (6 commands + 3 notifications) ⭐ Recommended reading
+    ├── user-guide.md          ← User interaction guide (7 commands + 3 notifications) ⭐ Recommended reading
     ├── roles.md               ← Role definitions + Codex prompt templates
     ├── workflow.md            ← Full development workflow + branching strategy + Codex integration
     ├── configuration.md       ← Global configuration + adaptation guide + multi-device sync
