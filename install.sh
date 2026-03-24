@@ -31,62 +31,88 @@ if $UNINSTALL; then
     echo "  ────────────────────"
     echo ""
 
-    if [ ! -f "$MANIFEST" ]; then
-        printf "  ${RED}✘${NC} No install manifest found at $MANIFEST\n"
+    # Try new snapshot system first, fall back to legacy manifest
+    SNAPSHOT_SCRIPT="$ISPARTO_HOME/lib/snapshot.sh"
+    LATEST_SNAP=""
+    if [ -x "$SNAPSHOT_SCRIPT" ]; then
+        LATEST_SNAP=$("$SNAPSHOT_SCRIPT" list --type=install 2>/dev/null | tail -1 | awk '{print $1}')
+    fi
+
+    if [ -n "$LATEST_SNAP" ] && [ "$LATEST_SNAP" != "No" ] && [ "$LATEST_SNAP" != "ID" ]; then
+        echo "  Restoring from snapshot: $LATEST_SNAP"
+        "$SNAPSHOT_SCRIPT" restore "$LATEST_SNAP"
+
+        # Snapshot doesn't handle MCP or npm — do those via legacy manifest
+        if [ -f "$MANIFEST" ]; then
+            while IFS='|' read -r action path; do
+                case "$action" in
+                    mcp)
+                        if claude mcp remove codex-reviewer -s user 2>/dev/null; then
+                            printf "  ${GREEN}✓${NC} Removed Codex MCP Server registration\n"
+                        else
+                            printf "  ${YELLOW}→${NC} MCP removal skipped (may not exist)\n"
+                        fi
+                        ;;
+                    npm)
+                        printf "  ${YELLOW}→${NC} Skipping $path (global npm package — remove manually with: npm uninstall -g $path)\n"
+                        ;;
+                esac
+            done < "$MANIFEST"
+        fi
+    elif [ -f "$MANIFEST" ]; then
+        echo "  Restoring from legacy backup..."
+
+        while IFS='|' read -r action path; do
+            case "$action" in
+                created)
+                    if [ -f "$path" ]; then
+                        rm "$path"
+                        printf "  ${GREEN}✓${NC} Removed $path\n"
+                    fi
+                    ;;
+                overwritten)
+                    backup_file="$BACKUP_DIR/$(echo "$path" | sed 's|[/ ]|__|g')"
+                    if [ -f "$backup_file" ]; then
+                        cp "$backup_file" "$path"
+                        printf "  ${GREEN}✓${NC} Restored $path\n"
+                    else
+                        printf "  ${YELLOW}→${NC} Backup missing for $path, skipping\n"
+                    fi
+                    ;;
+                mkdir)
+                    if [ -d "$path" ] && [ -z "$(ls -A "$path")" ]; then
+                        rmdir "$path"
+                        printf "  ${GREEN}✓${NC} Removed empty directory $path\n"
+                    fi
+                    ;;
+                mcp)
+                    if claude mcp remove codex-reviewer -s user 2>/dev/null; then
+                        printf "  ${GREEN}✓${NC} Removed Codex MCP Server registration\n"
+                    else
+                        printf "  ${YELLOW}→${NC} MCP removal skipped (may not exist)\n"
+                    fi
+                    ;;
+                npm)
+                    printf "  ${YELLOW}→${NC} Skipping $path (global npm package — remove manually with: npm uninstall -g $path)\n"
+                    ;;
+            esac
+        done < "$MANIFEST"
+    else
+        printf "  ${RED}✘${NC} No snapshot or legacy manifest found.\n"
         echo "  Nothing to uninstall, or iSparto was installed before the backup feature existed."
         echo ""
         echo "  To manually clean up:"
         echo "    rm -rf ~/.isparto"
         echo "    rm -f ~/.claude/CLAUDE-TEMPLATE.md"
-        echo "    rm -f ~/.claude/commands/{start-working,end-working,plan,init-project,env-nogo,migrate}.md"
+        echo "    rm -f ~/.claude/commands/{start-working,end-working,plan,init-project,env-nogo,migrate,restore}.md"
         echo "    rm -f ~/.claude/templates/{product-spec,tech-spec,design-spec,plan}-template.md"
         echo "    claude mcp remove codex-reviewer -s user"
         echo ""
         exit 1
     fi
 
-    echo "Restoring from backup..."
-
-    while IFS='|' read -r action path; do
-        case "$action" in
-            created)
-                if [ -f "$path" ]; then
-                    rm "$path"
-                    printf "  ${GREEN}✓${NC} Removed $path\n"
-                fi
-                ;;
-            overwritten)
-                backup_file="$BACKUP_DIR/$(echo "$path" | sed 's|[/ ]|__|g')"
-                if [ -f "$backup_file" ]; then
-                    cp "$backup_file" "$path"
-                    printf "  ${GREEN}✓${NC} Restored $path\n"
-                else
-                    printf "  ${YELLOW}→${NC} Backup missing for $path, skipping\n"
-                fi
-                ;;
-            mkdir)
-                # Only remove if directory is empty (we created it)
-                if [ -d "$path" ] && [ -z "$(ls -A "$path")" ]; then
-                    rmdir "$path"
-                    printf "  ${GREEN}✓${NC} Removed empty directory $path\n"
-                fi
-                ;;
-            mcp)
-                if claude mcp remove codex-reviewer -s user 2>/dev/null; then
-                    printf "  ${GREEN}✓${NC} Removed Codex MCP Server registration\n"
-                else
-                    printf "  ${YELLOW}→${NC} MCP removal skipped (may not exist)\n"
-                fi
-                ;;
-            npm)
-                printf "  ${YELLOW}→${NC} Skipping $path (global npm package — remove manually with: npm uninstall -g $path)\n"
-                ;;
-        esac
-    done < "$MANIFEST"
-
-    # Remove backup and isparto home
+    # Remove backup, snapshots, and isparto home
     rm -rf "$BACKUP_DIR"
-    # Only remove ~/.isparto if it's empty now (backup gone, nothing else inside)
     if [ -d "$ISPARTO_HOME" ] && [ -z "$(ls -A "$ISPARTO_HOME")" ]; then
         rmdir "$ISPARTO_HOME"
         printf "  ${GREEN}✓${NC} Removed $ISPARTO_HOME\n"
@@ -148,7 +174,30 @@ else
     SCRIPT_DIR="$ISPARTO_HOME"
 fi
 
-# ── Snapshot: prepare backup (only on real install) ────────
+# ── Install lib/snapshot.sh to ~/.isparto/lib/ ────────────
+
+if ! $DRY_RUN; then
+    mkdir -p "$ISPARTO_HOME/lib"
+    cp "$SCRIPT_DIR/lib/snapshot.sh" "$ISPARTO_HOME/lib/snapshot.sh"
+    chmod +x "$ISPARTO_HOME/lib/snapshot.sh"
+fi
+
+# ── Snapshot: create pre-install snapshot ──────────────────
+
+if ! $DRY_RUN; then
+    SNAPSHOT_FILES=()
+    SNAPSHOT_FILES+=("$HOME/.claude/CLAUDE-TEMPLATE.md")
+    for f in "$SCRIPT_DIR"/commands/*.md; do
+        SNAPSHOT_FILES+=("$HOME/.claude/commands/$(basename "$f")")
+    done
+    for f in "$SCRIPT_DIR"/templates/*.md; do
+        SNAPSHOT_FILES+=("$HOME/.claude/templates/$(basename "$f")")
+    done
+    SNAPSHOT_ID=$("$ISPARTO_HOME/lib/snapshot.sh" create install global "${SNAPSHOT_FILES[@]}")
+    printf "  ${GREEN}✓${NC} Snapshot created: $SNAPSHOT_ID\n"
+fi
+
+# ── Legacy backup (kept for backward compatibility) ────────
 # Key invariant: the backup directory preserves the user's ORIGINAL files
 # from before iSparto was ever installed. Re-installs (updates) must NOT
 # overwrite these originals. We only back up a file if no backup exists yet.
@@ -327,7 +376,7 @@ if $DRY_RUN; then
     echo "  ./install.sh"
 else
     printf "${GREEN}Done!${NC} iSparto is ready.\n"
-    printf "  Backup saved to $BACKUP_DIR (use ./install.sh --uninstall to revert)\n"
+    printf "  Snapshot saved (use ./install.sh --uninstall to revert)\n"
     echo ""
     echo "Next step — launch Claude Code in your project directory:"
     echo ""

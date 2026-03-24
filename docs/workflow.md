@@ -83,6 +83,7 @@ Team Lead confirms all passes -> merge code -> update plan.md
 | `/init-project` | [commands/init-project.md](../commands/init-project.md) | Team Lead | Generate project skeleton and documentation system (CLAUDE.md + docs/), Codex architecture pre-review, prepare for Wave development |
 | `/env-nogo` | [commands/env-nogo.md](../commands/env-nogo.md) | Setup Assistant | Check whether global and project environments meet iSparto runtime requirements |
 | `/migrate` | [commands/migrate.md](../commands/migrate.md) | Setup Assistant | Migrate an existing project to iSparto workflow — scan, propose, execute after confirmation. Supports `--dry-run` to preview only |
+| `/restore` | [commands/restore.md](../commands/restore.md) | Setup Assistant | Restore project to a previous snapshot — list snapshots, preview changes, execute after confirmation |
 
 ---
 

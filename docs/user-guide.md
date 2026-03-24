@@ -2,7 +2,7 @@
 
 > As a user, you only need to focus on the following interaction points when collaborating with the Agent Team.
 
-## What You Initiate (6 Commands)
+## What You Initiate (7 Commands)
 
 | Command | When | What You Do |
 |---------|------|-------------|
@@ -12,6 +12,7 @@
 | `/end-working` | End of each work session | Confirm the commit message |
 | `/plan xxx` | When there's a new requirement | Describe the requirement, review the Team Lead's proposal |
 | `/env-nogo` | When there are environment concerns | Review check results, fix items marked with a cross |
+| `/restore` | When you want to undo a migration or init | Review snapshot details, confirm restore to roll back all changes |
 
 ## When the Team Lead Comes to You (3 Scenarios)
 

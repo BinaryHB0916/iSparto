@@ -70,7 +70,7 @@ iSparto turns a single Agent into **a team with clear roles**: Lead breaks down 
 curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/install.sh | bash
 ```
 
-One command handles everything: downloads iSparto to `~/.isparto`, checks/installs Claude Code and Codex CLI, logs into Codex, copies commands and templates to `~/.claude/`, and registers the global MCP Server. Your existing `~/.claude/settings.json` is never modified.
+One command handles everything: downloads iSparto to `~/.isparto`, checks/installs Claude Code and Codex CLI, logs into Codex, copies commands and templates to `~/.claude/`, and registers the global MCP Server. Your existing `~/.claude/settings.json` is never modified. A snapshot of your original files is automatically created before any changes — you can always revert to your pre-install state.
 
 **Preview before installing:** add `--dry-run` to see what would happen without making any changes:
 
@@ -112,6 +112,8 @@ claude --effort max
 /init-project I want to build an xxx   # generates CLAUDE.md + docs/, Codex architecture pre-review
 ```
 
+A snapshot is automatically taken before any files are created. If anything goes wrong, run `/restore` to roll back.
+
 ### Migrate an Existing Project
 
 ```bash
@@ -120,6 +122,8 @@ claude --effort max
 /migrate --dry-run               # preview migration plan without executing (recommended for first run)
 /migrate                         # scans project, proposes migration plan, preserves all existing content
 ```
+
+A snapshot of your existing files is automatically taken before any changes. Run `/restore` at any time to roll back to the pre-migration state.
 
 ### Daily Work Cycle
 
@@ -176,13 +180,16 @@ iSparto/
 ├── LICENSE
 ├── .gitignore
 ├── install.sh                 ← One-click install script
+├── lib/
+│   └── snapshot.sh            ← Snapshot/restore engine (factory reset capability)
 ├── commands/
 │   ├── start-working.md       ← Start working command
 │   ├── end-working.md         ← End working command
 │   ├── plan.md                ← Planning command
 │   ├── init-project.md        ← Initialize project command
 │   ├── env-nogo.md            ← Environment readiness check
-│   └── migrate.md             ← Migrate existing project to iSparto
+│   ├── migrate.md             ← Migrate existing project to iSparto
+│   └── restore.md             ← Restore project to a previous snapshot
 ├── templates/
 │   ├── product-spec-template.md
 │   ├── tech-spec-template.md

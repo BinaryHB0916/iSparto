@@ -66,7 +66,7 @@ iSparto 把单个 Agent 变成**一支有分工的团队**：Lead 拆任务、De
 curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/install.sh | bash
 ```
 
-一行搞定：下载 iSparto 到 `~/.isparto`、检查/安装 Claude Code 和 Codex CLI、登录 Codex、复制命令和模板到 `~/.claude/`、注册全局 MCP Server。不会修改你现有的 `~/.claude/settings.json`。
+一行搞定：下载 iSparto 到 `~/.isparto`、检查/安装 Claude Code 和 Codex CLI、登录 Codex、复制命令和模板到 `~/.claude/`、注册全局 MCP Server。不会修改你现有的 `~/.claude/settings.json`。安装前会自动对原始文件拍快照，随时可以回滚到安装前的状态。
 
 **安装前先预览：** 加 `--dry-run` 可以看到会发生什么，但不执行任何变更：
 
@@ -108,6 +108,8 @@ claude --effort max
 /init-project 我要做一个xxx       # 生成 CLAUDE.md + docs/，Codex 架构审视
 ```
 
+创建文件前会自动拍快照。如果出现任何问题，运行 `/restore` 即可回滚。
+
 ### 迁移已有项目
 
 ```bash
@@ -116,6 +118,8 @@ claude --effort max
 /migrate --dry-run               # 预览迁移方案，不执行任何变更（首次建议先用这个）
 /migrate                         # 扫描项目，出迁移方案，保留所有现有内容
 ```
+
+迁移前会自动对现有文件拍快照。随时运行 `/restore` 可回滚到迁移前的状态。
 
 ### 每天的工作循环
 
@@ -172,13 +176,16 @@ iSparto/
 ├── LICENSE
 ├── .gitignore
 ├── install.sh                 ← 一键安装脚本
+├── lib/
+│   └── snapshot.sh            ← 快照/恢复引擎（出厂设置回滚）
 ├── commands/
 │   ├── start-working.md       ← 开工命令
 │   ├── end-working.md         ← 收工命令
 │   ├── plan.md                ← 出方案命令
 │   ├── init-project.md        ← 初始化项目命令
 │   ├── env-nogo.md            ← 环境就绪检查
-│   └── migrate.md             ← 迁移已有项目到 iSparto
+│   ├── migrate.md             ← 迁移已有项目到 iSparto
+│   └── restore.md             ← 恢复项目到之前的快照
 ├── templates/
 │   ├── product-spec-template.md
 │   ├── tech-spec-template.md

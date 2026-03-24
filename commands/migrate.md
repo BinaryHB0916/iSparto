@@ -24,7 +24,20 @@ Your job: scan the current project, report what exists and what's missing, propo
 
 4. Language: Communicate and generate all documents in the user's language (English or Chinese only). Use the template structure but localize the content.
 
-5. Execute the confirmed migration plan:
+5. **Before executing any changes**, create a snapshot of the current project state:
+   - Compile the list of files you are about to create or modify (from the migration plan in step 2)
+   - Run the snapshot command with those files:
+     ```bash
+     bash ~/.isparto/lib/snapshot.sh create migrate "$(pwd)" <file1> <file2> ...
+     ```
+     For example, if you plan to modify CLAUDE.md and .claude/settings.json, and create docs/plan.md:
+     ```bash
+     bash ~/.isparto/lib/snapshot.sh create migrate "$(pwd)" CLAUDE.md .claude/settings.json docs/plan.md
+     ```
+   - Report the snapshot ID to the user: "Snapshot created: <id>. You can restore to pre-migration state with `/restore <id>` at any time."
+   - If the snapshot script is not found at `~/.isparto/lib/snapshot.sh`, warn the user: "Snapshot script not found. Run `cd ~/.isparto && git pull && ./install.sh` to update iSparto, or proceed without a snapshot." Wait for user confirmation before proceeding without a snapshot.
+
+6. Execute the confirmed migration plan:
    - Create or merge project-level .claude/settings.json with iSparto required settings:
      ```json
      {
@@ -40,6 +53,8 @@ Your job: scan the current project, report what exists and what's missing, propo
    - Generate plan.md based on current project state
    - Initialize git if not already done
 
-6. Run /env-nogo to verify the environment is ready
+7. Run /env-nogo to verify the environment is ready
+
+Note: If anything goes wrong during migration, the user can run `/restore <snapshot_id>` to roll back all changes to the pre-migration state.
 
 $ARGUMENTS
