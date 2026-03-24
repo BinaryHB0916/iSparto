@@ -279,6 +279,11 @@ Audit checklist:
    - Do module boundaries need adjustment (new directories, file ownership changes)
    - Does the project structure diagram need updating
 
+6. Product terminology consistency
+   - Are command counts, feature names, and role names consistent across all docs
+   - Do user-facing docs contain any internal API terms or code-level identifiers that should not be exposed
+   - Are newly introduced terms used consistently (same spelling, same capitalization, same phrasing)
+
 Output format (the following is the report template from Doc Engineer to the Team Lead, not a section of this document):
 
 === Documentation Audit Report ===

@@ -27,7 +27,7 @@
 - Team Lead (main session): Breaks down tasks, coordinates the full workflow, merges code. Does not write business code. Lead handles information relay between Codex and Developer; the user does not participate in intermediate coordination. Lead may make routine decisions independently (standard approvals, process advancement), but must escalate uncertain matters to the user -- better to over-report than under-report.
 - Claude Developer (teammate): Writes code + unit tests. Works within file ownership scope. Reviews Codex fixes.
 - Codex Reviewer (MCP): Code review + direct fixes + QA smoke testing. A hidden-master role -- does not participate in daily development; gates quality at key checkpoints and fixes issues on the spot. Always uses xhigh reasoning. QA incremental testing only covers changed paths. Called by Lead.
-- Doc Engineer (Lead sub-agent): Documentation audit after Wave completion. Ensures code and docs stay in sync.
+- Doc Engineer (Lead sub-agent): Documentation audit after Wave completion. Ensures code and docs stay in sync. Also checks product terminology consistency across all docs (command counts, feature names, user-facing vs internal terms).
 
 **Development Workflow:**
 1. Lead breaks down tasks -> defines file ownership + interface contracts

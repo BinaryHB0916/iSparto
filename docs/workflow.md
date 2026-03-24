@@ -55,6 +55,7 @@ Team Lead spawns Doc Engineer (sub-agent) for documentation audit (placed last t
   - plan.md task status update
   - design-spec.md vs actual styles consistency
   - Whether CLAUDE.md module boundaries need updating
+  - Product terminology consistency across all docs (command counts, feature names match, no internal API terms in user-facing docs)
     |
 Team Lead confirms all passes -> merge code -> update plan.md
 ```
