@@ -53,7 +53,7 @@
 ## 待办 (Backlog)
 
 ### 开源优化
-- [ ] README 实测效果章节（dogfooding 完成后补充真实数据 + 截图）
+- [x] README 实测效果章节（自举案例：Session Log 功能开发全流程）
 - [ ] CONTRIBUTING.md 贡献指南
 - [ ] GitHub Issues 模板优化
 
