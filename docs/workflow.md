@@ -162,8 +162,8 @@ main              <- Stable version, releases are made from here
 
 **Merge workflow (both modes):**
 1. Lead pushes the feature/fix/hotfix branch
-2. Lead creates PR to main via `gh pr create`
-3. Lead merges PR via `gh pr merge --merge`
+2. If `gh` CLI is available: create PR via `gh pr create`, merge via `gh pr merge --merge`
+3. If `gh` CLI is NOT available: merge locally via `git checkout main && git merge --no-ff <branch> && git push`
 4. Lead deletes the branch (local + remote) and switches back to main
 
 **Hotfix Workflow:**

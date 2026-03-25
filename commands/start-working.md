@@ -12,7 +12,10 @@ Your responsibility: Report current status and wait for user confirmation before
    - Cumulative project stats: total sessions, total Codex reviews, total issues caught
    - If the log doesn't exist yet, skip this — it will be created on the first /end-working
 4. Quick check: Is the current code state consistent with docs/ documentation, or has any drift occurred?
-5. Confirm the current branch (should be on a feat/, fix/, or hotfix/ branch — do not develop on main)
+5. Confirm the current branch:
+   - If on main (expected after last session's merge): create a new feat/fix/hotfix branch for the upcoming task
+   - If already on a feature branch: confirm it is the correct one for the current work
+   - Never develop directly on main
 6. Determine the collaboration mode (transparent to user, no mode switch needed):
    - **Solo + Codex**: when ALL of — single task, single module (per CLAUDE.md Module Boundaries), ≤ 3 files
    - **Agent Team**: when ANY of — 2+ parallelizable tasks, cross-module changes, new feature requiring design

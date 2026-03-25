@@ -41,8 +41,8 @@ Your responsibility: Ensure all changes and decisions from this session are capt
    - This file will be committed together with the other changes in the next step
 4. git add -A && git commit && git push
 5. If all tasks on the current branch are complete (all reviews passed, docs updated):
-   - Create PR to main via `gh pr create`
-   - Merge PR via `gh pr merge --merge`
+   - If `gh` CLI is available: create PR via `gh pr create`, merge via `gh pr merge --merge`
+   - If `gh` CLI is NOT available: merge locally via `git checkout main && git merge --no-ff <branch> && git push`
    - Delete branch (local + remote) and switch back to main
    - If tasks are NOT complete (mid-Wave), just push — PR will be created when the branch is done
 
