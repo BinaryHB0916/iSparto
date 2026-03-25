@@ -40,7 +40,7 @@ Lead 根据任务特征自动选择模式，用户无需干预。
 4. Lead 跑 Doc Engineer 审计（sub-agent）
 5. Lead 推分支 -> 建 PR -> merge 到 main -> 清理分支
 
-/end-working 全自动执行（commit + PR merge + 输出 briefing），不需要用户确认。
+/end-working 全自动执行（commit + push + 输出 briefing），不需要用户确认。分支任务全部完成时自动建 PR 并 merge；未完成时只 push，不 merge。
 
 **Development Workflow (Agent Team):**
 1. Lead 拆任务 -> 定义文件所有权 + 接口契约
@@ -51,7 +51,7 @@ Lead 根据任务特征自动选择模式，用户无需干预。
 6. Lead 派 Doc Engineer 文档审计（最后一步，确保 QA 修复也被审计）
 7. Lead 推分支 -> 建 PR -> merge 到 main -> 清理分支
 
-/end-working 全自动执行（commit + PR merge + 输出 briefing），不需要用户确认。
+/end-working 全自动执行（commit + push + 输出 briefing），不需要用户确认。分支任务全部完成时自动建 PR 并 merge；未完成时只 push，不 merge。
 
 **Codex Review Triggers:** 高风险代码（install.sh 核心逻辑、snapshot.sh）必须触发 code review + QA；纯文档调整只需 QA；小修小补不触发。
 

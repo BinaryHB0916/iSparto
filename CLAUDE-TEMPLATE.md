@@ -41,7 +41,7 @@ Lead automatically selects the mode — no user action needed.
 4. Lead runs Doc Engineer audit (as sub-agent)
 5. Lead pushes branch -> creates PR -> merges to main -> cleans up branch
 
-The user receives a session briefing after /end-working but does not need to approve commits, pushes, or merges — these are fully autonomous after Codex review and Doc Engineer audit.
+/end-working is fully autonomous (commit + push + briefing). When all branch tasks are complete, Lead auto-creates PR and merges; when mid-Wave, only pushes without merging.
 
 **Development Workflow (Agent Team):**
 1. Lead breaks down tasks -> defines file ownership + interface contracts
@@ -52,7 +52,7 @@ The user receives a session briefing after /end-working but does not need to app
 6. Lead spawns Doc Engineer for documentation audit (last step, ensures QA fixes are also audited)
 7. Lead pushes branch -> creates PR -> merges to main -> cleans up branch
 
-The user receives a session briefing after /end-working but does not need to approve commits, pushes, or merges — these are fully autonomous after Codex review and Doc Engineer audit.
+/end-working is fully autonomous (commit + push + briefing). When all branch tasks are complete, Lead auto-creates PR and merges; when mid-Wave, only pushes without merging.
 
 **Codex Review Triggers:** High-risk code must trigger code review + QA; UI-only changes need QA only; minor fixes need neither.
 
