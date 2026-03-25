@@ -65,6 +65,7 @@
 - [x] Solo + Codex 模式（Lead 根据任务自动选 Solo 或 Agent Team，用户无感）
 - [x] Auto PR merge（完成审查后自动建 PR 并 merge，不需要用户手动 review）
 - [x] GitHub Branch Protection（main 禁直接 push / force push / 删除，enforce admins）
+- [x] 减少用户审批门（end-working 全自动、start-working 自然对话、并行读取规则）
 
 ### 工作流增强
 - [ ] GitHub Actions CI 质量门 — PR 必须通过 CI 检查才能 merge（对代码项目如 Heddle 尤其重要）
