@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Automated release script (scripts/release.sh): bump version, update changelog, tag, push, create GitHub Release with assets
+
+### Fixed
+
+- Upgrade from git-clone install no longer copies files to themselves
+
 ## [0.2.0] - 2026-03-25
 
 ### Changed
