@@ -1,4 +1,9 @@
 #!/bin/bash
+# iSparto Installer — installs commands, templates, and tools to ~/.claude/
+# Invoked by bootstrap.sh (verified) or directly from a local repo clone.
+#
+# When run via bootstrap.sh, ISPARTO_INSTALL_VERSION is set.
+# When run from a local repo, it reads VERSION from the repo directory.
 set -e
 
 RED='\033[0;31m'
@@ -10,145 +15,86 @@ NC='\033[0m'
 ISPARTO_HOME="$HOME/.isparto"
 BACKUP_DIR="$ISPARTO_HOME/backup"
 MANIFEST="$BACKUP_DIR/manifest.txt"
+REPO="BinaryHB0916/iSparto"
 
 DRY_RUN=false
-UNINSTALL=false
 UPGRADE=false
 
 for arg in "$@"; do
     case "$arg" in
         --dry-run)   DRY_RUN=true ;;
-        --uninstall) UNINSTALL=true ;;
         --upgrade)   UPGRADE=true ;;
+        --uninstall)
+            # Delegate to the local stub if it exists
+            if [ -x "$ISPARTO_HOME/bin/isparto.sh" ]; then
+                exec "$ISPARTO_HOME/bin/isparto.sh" "$@"
+            else
+                echo "iSparto is not installed or uses an older version."
+                echo "Try: rm -rf ~/.isparto && reinstall with:"
+                echo "  curl -fsSL https://raw.githubusercontent.com/$REPO/main/bootstrap.sh | bash"
+                exit 1
+            fi
+            ;;
     esac
 done
 
 # ══════════════════════════════════════════════════════════════
-# Uninstall mode
+# Determine SCRIPT_DIR — where to find source files
 # ══════════════════════════════════════════════════════════════
 
-if $UNINSTALL; then
-    echo ""
-    echo "  iSparto Uninstaller"
-    echo "  ────────────────────"
-    echo ""
+INSTALL_VERSION="${ISPARTO_INSTALL_VERSION:-}"
 
-    # Try new snapshot system first, fall back to legacy manifest
-    SNAPSHOT_SCRIPT="$ISPARTO_HOME/lib/snapshot.sh"
-    LATEST_SNAP=""
-    if [ -x "$SNAPSHOT_SCRIPT" ]; then
-        LATEST_SNAP=$("$SNAPSHOT_SCRIPT" list --type=install 2>/dev/null | tail -1 | awk '{print $1}')
+if [ -f "$(dirname "$0")/commands/start-working.md" ] 2>/dev/null; then
+    # Running from a local repo clone (development or manual install)
+    SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+    if [ -z "$INSTALL_VERSION" ] && [ -f "$SCRIPT_DIR/VERSION" ]; then
+        INSTALL_VERSION=$(cat "$SCRIPT_DIR/VERSION")
     fi
-
-    if [ -n "$LATEST_SNAP" ] && [ "$LATEST_SNAP" != "No" ] && [ "$LATEST_SNAP" != "ID" ]; then
-        echo "  Restoring from snapshot: $LATEST_SNAP"
-        "$SNAPSHOT_SCRIPT" restore "$LATEST_SNAP"
-
-        # Snapshot doesn't handle MCP or npm — do those via legacy manifest
-        if [ -f "$MANIFEST" ]; then
-            while IFS='|' read -r action path; do
-                case "$action" in
-                    mcp)
-                        if claude mcp remove codex-reviewer -s user 2>/dev/null; then
-                            printf "  ${GREEN}✓${NC} Removed Codex MCP Server registration\n"
-                        else
-                            printf "  ${YELLOW}→${NC} MCP removal skipped (may not exist)\n"
-                        fi
-                        ;;
-                    npm)
-                        printf "  ${YELLOW}→${NC} Skipping $path (global npm package — remove manually with: npm uninstall -g $path)\n"
-                        ;;
-                esac
-            done < "$MANIFEST"
-        fi
-    elif [ -f "$MANIFEST" ]; then
-        echo "  Restoring from legacy backup..."
-
-        while IFS='|' read -r action path; do
-            case "$action" in
-                created)
-                    if [ -f "$path" ]; then
-                        rm "$path"
-                        printf "  ${GREEN}✓${NC} Removed $path\n"
-                    fi
-                    ;;
-                overwritten)
-                    backup_file="$BACKUP_DIR/$(echo "$path" | sed 's|[/ ]|__|g')"
-                    if [ -f "$backup_file" ]; then
-                        cp "$backup_file" "$path"
-                        printf "  ${GREEN}✓${NC} Restored $path\n"
-                    else
-                        printf "  ${YELLOW}→${NC} Backup missing for $path, skipping\n"
-                    fi
-                    ;;
-                mkdir)
-                    if [ -d "$path" ] && [ -z "$(ls -A "$path")" ]; then
-                        rmdir "$path"
-                        printf "  ${GREEN}✓${NC} Removed empty directory $path\n"
-                    fi
-                    ;;
-                mcp)
-                    if claude mcp remove codex-reviewer -s user 2>/dev/null; then
-                        printf "  ${GREEN}✓${NC} Removed Codex MCP Server registration\n"
-                    else
-                        printf "  ${YELLOW}→${NC} MCP removal skipped (may not exist)\n"
-                    fi
-                    ;;
-                npm)
-                    printf "  ${YELLOW}→${NC} Skipping $path (global npm package — remove manually with: npm uninstall -g $path)\n"
-                    ;;
-            esac
-        done < "$MANIFEST"
-    else
-        printf "  ${RED}✘${NC} No snapshot or legacy manifest found.\n"
-        echo "  Nothing to uninstall, or iSparto was installed before the backup feature existed."
-        echo ""
-        echo "  To manually clean up:"
-        echo "    rm -rf ~/.isparto"
-        echo "    rm -f ~/.claude/CLAUDE-TEMPLATE.md"
-        echo "    rm -f ~/.claude/commands/{start-working,end-working,plan,init-project,env-nogo,migrate,restore}.md"
-        echo "    rm -f ~/.claude/templates/{product-spec,tech-spec,design-spec,plan}-template.md"
-        echo "    claude mcp remove codex-reviewer -s user"
-        echo ""
+else
+    # Running via bootstrap.sh — download release tarball
+    if [ -z "$INSTALL_VERSION" ]; then
+        echo "Error: ISPARTO_INSTALL_VERSION not set and not running from repo." >&2
+        echo "Use bootstrap.sh to install: curl -fsSL https://raw.githubusercontent.com/$REPO/main/bootstrap.sh | bash" >&2
         exit 1
     fi
 
-    # Remove backup, snapshots, and isparto home
-    rm -rf "$BACKUP_DIR"
-    if [ -d "$ISPARTO_HOME" ] && [ -z "$(ls -A "$ISPARTO_HOME")" ]; then
-        rmdir "$ISPARTO_HOME"
-        printf "  ${GREEN}✓${NC} Removed $ISPARTO_HOME\n"
-    else
-        printf "  ${YELLOW}→${NC} $ISPARTO_HOME still has files (e.g. git repo), not removed\n"
-        echo "    Remove manually if you want: rm -rf $ISPARTO_HOME"
-    fi
+    TAG="v${INSTALL_VERSION}"
+    TARBALL_URL="https://github.com/$REPO/archive/refs/tags/$TAG.tar.gz"
 
-    echo ""
-    printf "${GREEN}Uninstall complete.${NC}\n"
-    echo ""
-    exit 0
-fi
-
-# ══════════════════════════════════════════════════════════════
-# Self-update: when running from ~/.isparto, pull latest and re-exec
-# ══════════════════════════════════════════════════════════════
-
-if $UPGRADE && [ -d "$ISPARTO_HOME/.git" ] && [ -z "${ISPARTO_SELF_UPDATED:-}" ]; then
-    REAL_SCRIPT="$(cd "$(dirname "$0")" && pwd)/$(basename "$0")"
-    if [[ "$REAL_SCRIPT" == "$ISPARTO_HOME/"* ]]; then
-        if $DRY_RUN; then
-            printf "  ${BLUE}[dry-run]${NC} Would self-update installer from remote\n"
+    echo "Downloading iSparto $INSTALL_VERSION..."
+    if $DRY_RUN; then
+        printf "  ${BLUE}[dry-run]${NC} Would download release $TAG\n"
+        # For dry-run, we need an existing SCRIPT_DIR to preview files
+        if [ -d "$ISPARTO_HOME" ] && [ -f "$ISPARTO_HOME/VERSION" ]; then
+            # Use a temp extraction anyway so we can show accurate diffs
+            TMPDIR_RELEASE=$(mktemp -d)
+            trap "rm -rf '$TMPDIR_RELEASE'" EXIT
+            if curl -fsSL "$TARBALL_URL" -o "$TMPDIR_RELEASE/release.tar.gz" 2>/dev/null; then
+                tar -xzf "$TMPDIR_RELEASE/release.tar.gz" -C "$TMPDIR_RELEASE" 2>/dev/null
+                SCRIPT_DIR="$TMPDIR_RELEASE/iSparto-${INSTALL_VERSION}"
+            else
+                printf "  ${YELLOW}→${NC} Could not download tarball for dry-run preview.\n"
+                exit 0
+            fi
         else
-            git -C "$ISPARTO_HOME" pull --quiet
-            printf "  ${GREEN}✓${NC} Installer self-updated\n"
-            export ISPARTO_SELF_UPDATED=1
-            exec "$ISPARTO_HOME/install.sh" "$@"
+            printf "  ${YELLOW}→${NC} No existing installation. Run without --dry-run to install.\n"
+            exit 0
         fi
+    else
+        TMPDIR_RELEASE=$(mktemp -d)
+        trap "rm -rf '$TMPDIR_RELEASE'" EXIT
+        curl -fsSL "$TARBALL_URL" -o "$TMPDIR_RELEASE/release.tar.gz" || {
+            printf "  ${RED}Error:${NC} Failed to download release $TAG\n" >&2
+            exit 1
+        }
+        tar -xzf "$TMPDIR_RELEASE/release.tar.gz" -C "$TMPDIR_RELEASE"
+        SCRIPT_DIR="$TMPDIR_RELEASE/iSparto-${INSTALL_VERSION}"
+        printf "  ${GREEN}✓${NC} Downloaded iSparto $INSTALL_VERSION\n"
     fi
 fi
 
 # ══════════════════════════════════════════════════════════════
-# Install mode (normal or dry-run)
+# Install mode
 # ══════════════════════════════════════════════════════════════
 
 echo ""
@@ -164,38 +110,14 @@ fi
 echo "  ─────────────────"
 echo ""
 
-# ── 0. If running via curl pipe, clone repo first ─────────
+# ── Detect need for migration (defer actual cleanup until after file copy) ──
 
-if [ -f "$(dirname "$0")/commands/start-working.md" ] 2>/dev/null; then
-    # Running from within the repo
-    SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-else
-    # Running standalone (curl | bash) — clone repo
-    echo "Downloading iSparto..."
+NEEDS_MIGRATION=false
+if [ -d "$ISPARTO_HOME/.git" ]; then
+    NEEDS_MIGRATION=true
     if $DRY_RUN; then
-        if [ -d "$ISPARTO_HOME" ]; then
-            printf "  ${BLUE}[dry-run]${NC} Would update existing installation\n"
-        else
-            printf "  ${BLUE}[dry-run]${NC} Would clone to $ISPARTO_HOME\n"
-        fi
-        # Still need SCRIPT_DIR for file checks — use existing if available
-        if [ -d "$ISPARTO_HOME" ]; then
-            SCRIPT_DIR="$ISPARTO_HOME"
-        else
-            printf "  ${YELLOW}→${NC} No local copy found. Dry-run cannot preview file changes.\n"
-            printf "  ${YELLOW}→${NC} Run without --dry-run first, or clone manually.\n"
-            exit 0
-        fi
-    else
-        if [ -d "$ISPARTO_HOME" ]; then
-            printf "  ${YELLOW}→${NC} Updating existing installation...\n"
-            git -C "$ISPARTO_HOME" pull --quiet
-        else
-            git clone --quiet https://github.com/BinaryHB0916/iSparto.git "$ISPARTO_HOME"
-        fi
-        printf "  ${GREEN}✓${NC} iSparto downloaded to $ISPARTO_HOME\n"
+        printf "  ${BLUE}[dry-run]${NC} Would migrate from git-clone to release-based install\n"
     fi
-    SCRIPT_DIR="$ISPARTO_HOME"
 fi
 
 # ── Detect upgrade and show what's new ─────────────────────
@@ -204,28 +126,19 @@ OLD_VERSION=""
 if [ -f "$ISPARTO_HOME/VERSION" ]; then
     OLD_VERSION=$(cat "$ISPARTO_HOME/VERSION")
 fi
-NEW_VERSION=""
-if [ -f "$SCRIPT_DIR/VERSION" ]; then
-    NEW_VERSION=$(cat "$SCRIPT_DIR/VERSION")
-fi
+NEW_VERSION="$INSTALL_VERSION"
 
 if [ -n "$OLD_VERSION" ] && [ -n "$NEW_VERSION" ] && [ "$OLD_VERSION" != "$NEW_VERSION" ]; then
     if $DRY_RUN; then
         printf "  ${BLUE}[dry-run]${NC} Would upgrade: $OLD_VERSION -> $NEW_VERSION\n"
-        if [ -f "$SCRIPT_DIR/CHANGELOG.md" ]; then
-            echo ""
-            echo "  What's new in $NEW_VERSION:"
-            sed -n "/^## \[$NEW_VERSION\]/,/^## \[/p" "$SCRIPT_DIR/CHANGELOG.md" | sed '$d' | sed 's/^/  /'
-            echo ""
-        fi
     else
         printf "  ${GREEN}*${NC} Upgrading: $OLD_VERSION -> $NEW_VERSION\n"
-        if [ -f "$SCRIPT_DIR/CHANGELOG.md" ]; then
-            echo ""
-            echo "  What's new in $NEW_VERSION:"
-            sed -n "/^## \[$NEW_VERSION\]/,/^## \[/p" "$SCRIPT_DIR/CHANGELOG.md" | sed '$d' | sed 's/^/  /'
-            echo ""
-        fi
+    fi
+    if [ -f "$SCRIPT_DIR/CHANGELOG.md" ]; then
+        echo ""
+        echo "  What's new in $NEW_VERSION:"
+        sed -n "/^## \[$NEW_VERSION\]/,/^## \[/p" "$SCRIPT_DIR/CHANGELOG.md" | sed '$d' | sed 's/^/  /'
+        echo ""
     fi
 elif [ -z "$OLD_VERSION" ] && [ -n "$NEW_VERSION" ]; then
     if $DRY_RUN; then
@@ -241,6 +154,16 @@ if ! $DRY_RUN; then
     mkdir -p "$ISPARTO_HOME/lib"
     cp "$SCRIPT_DIR/lib/snapshot.sh" "$ISPARTO_HOME/lib/snapshot.sh"
     chmod +x "$ISPARTO_HOME/lib/snapshot.sh"
+fi
+
+# ── Install local stub (isparto.sh) ──────────────────────
+
+if ! $DRY_RUN; then
+    mkdir -p "$ISPARTO_HOME/bin"
+    cp "$SCRIPT_DIR/isparto.sh" "$ISPARTO_HOME/bin/isparto.sh"
+    chmod +x "$ISPARTO_HOME/bin/isparto.sh"
+    # Backward compat: ~/.isparto/install.sh -> bin/isparto.sh
+    ln -sf "$ISPARTO_HOME/bin/isparto.sh" "$ISPARTO_HOME/install.sh"
 fi
 
 # ── Snapshot: create pre-install snapshot ──────────────────
@@ -429,9 +352,26 @@ fi
 # ── Track installed version ──────────────────────────────────
 
 if ! $DRY_RUN; then
-    if [ -f "$SCRIPT_DIR/VERSION" ]; then
+    if [ -n "$INSTALL_VERSION" ]; then
+        echo "$INSTALL_VERSION" > "$ISPARTO_HOME/VERSION"
+    elif [ -f "$SCRIPT_DIR/VERSION" ]; then
         cp "$SCRIPT_DIR/VERSION" "$ISPARTO_HOME/VERSION"
     fi
+fi
+
+# ── Migrate: clean up old git-clone files (deferred until after copy) ──
+
+if $NEEDS_MIGRATION && ! $DRY_RUN; then
+    printf "  ${YELLOW}→${NC} Cleaning up old git-clone files...\n"
+    rm -rf "$ISPARTO_HOME/.git"
+    rm -rf "$ISPARTO_HOME/commands" "$ISPARTO_HOME/templates" "$ISPARTO_HOME/docs"
+    rm -rf "$ISPARTO_HOME/assets" "$ISPARTO_HOME/.github"
+    rm -f "$ISPARTO_HOME/README.md" "$ISPARTO_HOME/README.zh-CN.md"
+    rm -f "$ISPARTO_HOME/CLAUDE.md" "$ISPARTO_HOME/CLAUDE-TEMPLATE.md"
+    rm -f "$ISPARTO_HOME/CONTRIBUTING.md" "$ISPARTO_HOME/LICENSE"
+    rm -f "$ISPARTO_HOME/CHANGELOG.md" "$ISPARTO_HOME/.gitignore"
+    rm -f "$ISPARTO_HOME/.DS_Store" "$ISPARTO_HOME/settings.json"
+    printf "  ${GREEN}✓${NC} Migrated to release-based install\n"
 fi
 
 # ── Done ────────────────────────────────────────────────────
@@ -442,14 +382,14 @@ if $DRY_RUN; then
     echo ""
     echo "Run without --dry-run to install:"
     echo ""
-    echo "  ./install.sh"
+    echo "  curl -fsSL https://raw.githubusercontent.com/$REPO/main/bootstrap.sh | bash"
 else
     if [ -n "$NEW_VERSION" ]; then
         printf "${GREEN}Done!${NC} iSparto $NEW_VERSION is ready.\n"
     else
         printf "${GREEN}Done!${NC} iSparto is ready.\n"
     fi
-    printf "  Snapshot saved (use ./install.sh --uninstall to revert)\n"
+    printf "  Snapshot saved (use ~/.isparto/install.sh --uninstall to revert)\n"
     echo ""
     echo "Next step — launch Claude Code in your project directory:"
     echo ""

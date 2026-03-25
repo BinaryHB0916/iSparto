@@ -62,7 +62,8 @@ Lead 根据任务特征自动选择模式，用户无需干预。
 **Module Boundaries:**
 | Module | Directory/Files | Description |
 |--------|----------------|-------------|
-| Installer | install.sh | 一键安装/卸载脚本 |
+| Bootstrap | bootstrap.sh | 薄引导入口（解析版本、校验 checksum、拉取 install.sh） |
+| Installer | install.sh, isparto.sh | 安装/升级/卸载；isparto.sh 是本地 stub |
 | Snapshot Engine | lib/snapshot.sh | 快照/恢复引擎 |
 | Slash Commands | commands/*.md | 7 个用户命令模板 |
 | Doc Templates | templates/*.md | 4 个文档模板 |

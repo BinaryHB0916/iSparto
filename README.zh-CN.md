@@ -67,31 +67,33 @@ iSparto 把单个 Agent 变成**一支有分工的团队**：Lead 拆任务、De
 ## 安装
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/bootstrap.sh | bash
 ```
 
-一行搞定：下载 iSparto 到 `~/.isparto`、检查/安装 Claude Code 和 Codex CLI、登录 Codex、复制命令和模板到 `~/.claude/`、注册全局 MCP Server。不会修改你现有的 `~/.claude/settings.json`。安装前会自动对原始文件拍快照，随时可以回滚到安装前的状态。
+一行搞定：从 GitHub Releases 下载经过校验的安装器、检查/安装 Claude Code 和 Codex CLI、登录 Codex、复制命令和模板到 `~/.claude/`、注册全局 MCP Server。不会修改你现有的 `~/.claude/settings.json`。安装前会自动对原始文件拍快照，随时可以回滚到安装前的状态。
 
 **安装前先预览：** 加 `--dry-run` 可以看到会发生什么，但不执行任何变更：
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/install.sh | bash -s -- --dry-run
+curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/bootstrap.sh | bash -s -- --dry-run
 ```
 
-**升级：** 重新运行安装器拉取最新版本，查看更新内容：
+**安装指定版本：**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/bootstrap.sh | bash -s -- --version=0.2.0
+```
+
+**升级：** 重新运行拉取最新版本，查看更新内容：
 
 ```bash
 ~/.isparto/install.sh --upgrade
 ```
 
-**卸载：** 从备份快照还原所有被修改的文件，清理 iSparto 安装的内容：
+**卸载：** 从备份快照还原所有被修改的文件（离线可用）：
 
 ```bash
-# 通过 curl 安装的（仓库在 ~/.isparto）：
 ~/.isparto/install.sh --uninstall
-
-# 通过手动 clone 安装的：
-cd iSparto && ./install.sh --uninstall
 ```
 
 <details>
@@ -219,7 +221,9 @@ iSparto/
 ├── .gitignore
 ├── VERSION                    ← 当前版本号 (semver)
 ├── CHANGELOG.md               ← 更新日志
-├── install.sh                 ← 一键安装/升级脚本
+├── bootstrap.sh               ← 薄引导入口（版本解析 + checksum 校验）
+├── install.sh                 ← 主安装器（随版本发布）
+├── isparto.sh                 ← 本地 stub（升级/卸载/版本）
 ├── lib/
 │   └── snapshot.sh            ← 快照/恢复引擎（出厂设置回滚）
 ├── commands/
