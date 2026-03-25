@@ -224,3 +224,29 @@
 - Codex review 再次证明价值：trap 变量作用域 bug 和 snapshot 排序 bug 都是人工不易发现的
 - 确立 upgrade 边界原则："upgrade 改 agent 行为，不碰用户已有工作"
 - 去伪存真延后两项高风险清理：legacy backup 系统（需 MCP 解耦）和 git-clone 迁移代码（再保留一个版本）
+
+## 2026-03-25 Session (continued 4)
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | Hotfix (v0.4.0 发布后修复) |
+| Tasks completed | isparto.sh exec 修复 (PR #24), 升级输出精简 (PR #25) |
+| Developers spawned | 0 (Solo 模式，Lead 独立完成) |
+| Codex reviews | 0 (小修复，低风险) |
+| Codex catches | N/A |
+| Key decisions | 升级输出区分首次安装(详细)和升级(精简), changelog 只展开 Added 其余折叠计数+链接, 依赖/文件/MCP 全通过时各一行 |
+
+### Files Changed
+```
+ CHANGELOG.md |  28 +++++++++++++
+ VERSION      |   2 +-
+ install.sh   | 125 ++++++++++++++++++++++++++++++++++++++++-------------------
+ isparto.sh   |   2 +-
+ 4 files changed, 115 insertions(+), 42 deletions(-)
+```
+
+### Notes
+- v0.4.0 发布后用户实际安装时发现 `;;` 语法错误，根因是 isparto.sh 在升级时被覆盖后 bash 继续从旧偏移读取新文件
+- 升级输出从 ~40 行压缩到 ~15 行：changelog 折叠、依赖汇总、文件计数、去掉 Next step
+- 两个 hotfix PR 均已合并，准备发布 v0.4.1

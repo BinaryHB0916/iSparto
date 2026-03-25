@@ -67,6 +67,8 @@
 - [x] GitHub Branch Protection（main 禁直接 push / force push / 删除，enforce admins）
 - [x] 减少用户审批门（end-working 全自动、start-working 自然对话、并行读取规则）
 - [x] Solo vs Agent Team 判断标准细化（默认 Solo，同时满足"可分解"+"工作量值得"才升级 Agent Team）
+- [x] isparto.sh exec 修复 — 升级时 self-overwrite 导致 `;;` 语法错误
+- [x] 升级输出精简 — changelog 折叠、依赖/文件汇总、去掉升级用户不需要的 Next step
 
 ### 工作流增强
 - [ ] GitHub Actions CI 质量门 — PR 必须通过 CI 检查才能 merge（对代码项目如 Heddle 尤其重要）
