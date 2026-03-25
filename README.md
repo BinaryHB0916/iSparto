@@ -92,6 +92,8 @@ curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/bootstrap
 ~/.isparto/install.sh --upgrade
 ```
 
+> Upgrade updates framework components only (commands, templates, snapshot engine). Your project files (CLAUDE.md, docs/, code, settings) are never touched.
+
 **Uninstall:** reverts all changes and restores your original files from the backup snapshot (works offline):
 
 ```bash
