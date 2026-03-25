@@ -92,6 +92,8 @@ curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/bootstrap
 ~/.isparto/install.sh --upgrade
 ```
 
+> 升级只更新框架组件（命令模板、文档模板、快照引擎）。你的项目文件（CLAUDE.md、docs/、代码、配置）不会被修改。
+
 **卸载：** 从备份快照还原所有被修改的文件（离线可用）：
 
 ```bash
