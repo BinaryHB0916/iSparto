@@ -70,7 +70,12 @@
 
 ### 工作流增强
 - [ ] GitHub Actions CI 质量门 — PR 必须通过 CI 检查才能 merge（对代码项目如 Heddle 尤其重要）
-- [ ] Release 流程 — git tag + GitHub Releases（版本发布正式化）
+- [x] Release 流程 — git tag + GitHub Releases + scripts/release.sh 自动化（v0.3.0 已发布）
+- [x] Agent Team 模式扩展读任务 — 触发条件覆盖 review/审计/调研，不仅限写代码
+- [x] 全项目四视角 Review — 产品设计/技术/新用户/代码文档一致性
+- [x] 开源仓库清理 — 移除 Pro 版内容和截图占位，明确 upgrade scope
+- [x] Codex 发现 bug 修复 — isparto.sh trap 变量作用域、snapshot --latest 排序
+- [x] 去伪存真精简 — 配置文档瘦身、死代码清理、命令模板去重（净删 62 行）
 
 ### Pro 版规划
 - [ ] Agent dashboard 原型设计
