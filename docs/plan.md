@@ -66,6 +66,7 @@
 - [x] Auto PR merge（完成审查后自动建 PR 并 merge，不需要用户手动 review）
 - [x] GitHub Branch Protection（main 禁直接 push / force push / 删除，enforce admins）
 - [x] 减少用户审批门（end-working 全自动、start-working 自然对话、并行读取规则）
+- [x] Solo vs Agent Team 判断标准细化（默认 Solo，同时满足"可分解"+"工作量值得"才升级 Agent Team）
 
 ### 工作流增强
 - [ ] GitHub Actions CI 质量门 — PR 必须通过 CI 检查才能 merge（对代码项目如 Heddle 尤其重要）
