@@ -67,31 +67,33 @@ iSparto turns a single Agent into **a team with clear roles**: Lead breaks down 
 ## Installation
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/bootstrap.sh | bash
 ```
 
-One command handles everything: downloads iSparto to `~/.isparto`, checks/installs Claude Code and Codex CLI, logs into Codex, copies commands and templates to `~/.claude/`, and registers the global MCP Server. Your existing `~/.claude/settings.json` is never modified. A snapshot of your original files is automatically created before any changes — you can always revert to your pre-install state.
+One command handles everything: downloads a verified installer from GitHub Releases, checks/installs Claude Code and Codex CLI, logs into Codex, copies commands and templates to `~/.claude/`, and registers the global MCP Server. Your existing `~/.claude/settings.json` is never modified. A snapshot of your original files is automatically created before any changes — you can always revert to your pre-install state.
 
 **Preview before installing:** add `--dry-run` to see what would happen without making any changes:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/install.sh | bash -s -- --dry-run
+curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/bootstrap.sh | bash -s -- --dry-run
 ```
 
-**Upgrade:** re-run the installer to pull the latest version and see what's new:
+**Install a specific version:**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/bootstrap.sh | bash -s -- --version=0.2.0
+```
+
+**Upgrade:** re-run to pull the latest version and see what's new:
 
 ```bash
 ~/.isparto/install.sh --upgrade
 ```
 
-**Uninstall:** reverts all changes and restores your original files from the backup snapshot:
+**Uninstall:** reverts all changes and restores your original files from the backup snapshot (works offline):
 
 ```bash
-# If installed via curl (repo is at ~/.isparto):
 ~/.isparto/install.sh --uninstall
-
-# If installed via manual clone:
-cd iSparto && ./install.sh --uninstall
 ```
 
 <details>
@@ -219,7 +221,9 @@ iSparto/
 ├── .gitignore
 ├── VERSION                    ← Current version (semver)
 ├── CHANGELOG.md               ← Release notes
-├── install.sh                 ← One-click install/upgrade script
+├── bootstrap.sh               ← Thin entry point (version resolve + checksum verify)
+├── install.sh                 ← Main installer (versioned per release)
+├── isparto.sh                 ← Local stub (upgrade/uninstall/version)
 ├── lib/
 │   └── snapshot.sh            ← Snapshot/restore engine (factory reset capability)
 ├── commands/

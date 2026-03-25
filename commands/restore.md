@@ -26,6 +26,6 @@ Your job: help the user identify the correct snapshot and safely restore it. Com
    - For install-type snapshots, remind the user that MCP deregistration and npm packages are not handled by restore — recommend `~/.isparto/install.sh --uninstall` for a full global uninstall
 
 5. If the snapshot script is not found at `~/.isparto/lib/snapshot.sh`:
-   - Tell the user: "Snapshot system not found. Please update iSparto: `cd ~/.isparto && git pull && ./install.sh`"
+   - Tell the user: "Snapshot system not found. Please update iSparto: `~/.isparto/install.sh --upgrade`"
 
 $ARGUMENTS

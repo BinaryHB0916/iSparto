@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-03-25
+
+### Changed
+
+- Installer architecture: replaced git-clone approach with thin bootstrap + GitHub Releases
+- bootstrap.sh: new thin entry point with SHA256 checksum verification and version pinning
+- isparto.sh: new local stub for offline uninstall/restore and network upgrade
+- install.sh: downloads release tarball instead of cloning git repo
+- Automatic migration from old git-clone installs to release-based installs
+
+### Fixed
+
+- Upgrade from old versions no longer requires pressing Y for each file
+- Self-update mechanism works reliably across all versions
+
 ## [0.1.0] - 2026-03-24
 
 ### Added

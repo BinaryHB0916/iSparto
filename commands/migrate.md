@@ -35,7 +35,7 @@ Your job: scan the current project, report what exists and what's missing, propo
      bash ~/.isparto/lib/snapshot.sh create migrate "$(pwd)" CLAUDE.md .claude/settings.json docs/plan.md
      ```
    - Report the snapshot ID to the user: "Snapshot created: <id>. You can restore to pre-migration state with `/restore <id>` at any time."
-   - If the snapshot script is not found at `~/.isparto/lib/snapshot.sh`, warn the user: "Snapshot script not found. Run `cd ~/.isparto && git pull && ./install.sh` to update iSparto." Then proceed without a snapshot — do not block on this.
+   - If the snapshot script is not found at `~/.isparto/lib/snapshot.sh`, warn the user: "Snapshot script not found. Run `~/.isparto/install.sh --upgrade` to update iSparto." Then proceed without a snapshot — do not block on this.
 
 6. Execute the confirmed migration plan:
    - Create or merge project-level .claude/settings.json with iSparto required settings:
