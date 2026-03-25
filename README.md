@@ -41,7 +41,7 @@ iSparto turns a single Agent into **a team with clear roles**: Lead breaks down 
 |--|---------------------|---------|
 | Collaboration mode | You go back and forth with a single Agent | Lead auto-selects: Solo + Codex for small tasks, Agent Team for parallel work |
 | AI organization | Single Agent, no division of labor | Team-based (Lead + Developer + Reviewer + Doc Engineer) |
-| Parallelism | None — single-threaded conversation | Solo mode for focused fixes; Agent Team for parallel Developers within a Wave |
+| Parallelism | None — single-threaded conversation | Solo mode (default) for small tasks; Agent Team for parallel execution within a Wave |
 | Code review | Agent reviews its own code (same source) | Codex reviews Claude (different source), covering each model's blind spots |
 | Cross-session state | Lost — must re-explain context every time | Driven by plan.md; `/start-working` auto-restores state |
 | Documentation sync | Manual maintenance | Doc Engineer auto-audits every Wave |
@@ -51,6 +51,8 @@ iSparto turns a single Agent into **a team with clear roles**: Lead breaks down 
 ---
 
 ## Prerequisites
+
+> **Platform: macOS only.** Agent Team mode requires iTerm2's built-in tmux integration. Solo + Codex mode may work on other platforms, but is untested.
 
 | Item | Requirement | Notes |
 |------|-------------|-------|
@@ -81,7 +83,7 @@ curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/bootstrap
 **Install a specific version:**
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/bootstrap.sh | bash -s -- --version=0.2.0
+curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/bootstrap.sh | bash -s -- --version=0.3.0
 ```
 
 **Upgrade:** re-run to pull the latest version and see what's new:
@@ -215,6 +217,9 @@ Occasionally Lead comes to you (escalate decisions / confirm commits)
 ```
 iSparto/
 ├── README.md                  ← The document you are reading now
+├── README.zh-CN.md            ← Chinese version / 中文版
+├── CLAUDE.md                  ← Project instructions for Claude Code
+├── CONTRIBUTING.md            ← Contribution guidelines
 ├── settings.json              ← Reference template for project-level .claude/settings.json
 ├── CLAUDE-TEMPLATE.md         ← Template for generating new project CLAUDE.md
 ├── LICENSE
@@ -224,6 +229,8 @@ iSparto/
 ├── bootstrap.sh               ← Thin entry point (version resolve + checksum verify)
 ├── install.sh                 ← Main installer (versioned per release)
 ├── isparto.sh                 ← Local stub (upgrade/uninstall/version)
+├── scripts/
+│   └── release.sh             ← Automated release script (bump version → changelog → tag → gh release)
 ├── lib/
 │   └── snapshot.sh            ← Snapshot/restore engine (factory reset capability)
 ├── commands/
@@ -244,7 +251,7 @@ iSparto/
     ├── plan.md                ← Development plan by Wave
     ├── session-log.md         ← Auto-generated session metrics (created by /end-working)
     ├── concepts.md            ← Core concepts (decoupling, Wave, file ownership) ⭐ Recommended reading
-    ├── user-guide.md          ← User interaction guide (7 commands + 3 notifications) ⭐ Recommended reading
+    ├── user-guide.md          ← User interaction guide (7 commands + 2 notifications) ⭐ Recommended reading
     ├── roles.md               ← Role definitions + Codex prompt templates
     ├── workflow.md            ← Full development workflow + branching strategy + Codex integration
     ├── configuration.md       ← Global configuration + adaptation guide + multi-device sync

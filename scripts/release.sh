@@ -81,6 +81,7 @@ printf "  ${GREEN}✓${NC} VERSION → $NEW_VERSION\n"
 # ── 3. Update CHANGELOG ─────────────────────────────────────
 
 # Replace [Unreleased] with [Unreleased]\n\n## [x.y.z] - date
+# Note: sed -i '' is macOS/BSD syntax. This script is designed for local macOS use only.
 sed -i '' "s/## \[Unreleased\]/## [Unreleased]\n\n## [$NEW_VERSION] - $TODAY/" CHANGELOG.md
 printf "  ${GREEN}✓${NC} CHANGELOG.md → [$NEW_VERSION] - $TODAY\n"
 
@@ -121,7 +122,7 @@ printf "  ${GREEN}✓${NC} Cleaned up $RELEASE_BRANCH\n"
 # ── 8. Build release assets ─────────────────────────────────
 
 TMPDIR=$(mktemp -d)
-trap "rm -rf '$TMPDIR'" EXIT
+trap 'rm -rf "$TMPDIR"' EXIT
 
 cp install.sh "$TMPDIR/install.sh"
 (cd "$TMPDIR" && shasum -a 256 install.sh > checksums.sha256)

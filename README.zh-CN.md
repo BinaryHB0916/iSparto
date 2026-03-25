@@ -41,7 +41,7 @@ iSparto 把单个 Agent 变成**一支有分工的团队**：Lead 拆任务、De
 |--|--------------|---------|
 | 协作模式 | 你和一个 Agent 反复沟通 | Lead 自动选择：小任务 Solo + Codex，并行任务 Agent Team |
 | AI 的组织 | 单个 Agent，无分工 | 团队化（Lead + Developer + Reviewer + Doc Engineer） |
-| 并行能力 | 无，单线程对话 | Solo 模式专注修复；Agent Team 模式 Wave 内多 Developer 并行 |
+| 并行能力 | 无，单线程对话 | Solo 模式（默认）处理小任务；Agent Team 模式 Wave 内并行执行 |
 | 代码审查 | 自己审自己（同源） | Codex 审 Claude（异源），覆盖不同模型的盲区 |
 | 跨会话状态 | 丢失，每次重新解释上下文 | plan.md 驱动，`/start-working` 自动恢复 |
 | 文档同步 | 手动维护 | Doc Engineer 每个 Wave 自动审计 |
@@ -51,6 +51,8 @@ iSparto 把单个 Agent 变成**一支有分工的团队**：Lead 拆任务、De
 ---
 
 ## 前置条件
+
+> **平台：仅支持 macOS。** Agent Team 模式依赖 iTerm2 内置的 tmux 集成。Solo + Codex 模式在其他平台上可能可用，但未经测试。
 
 | 项目 | 要求 | 说明 |
 |------|------|------|
@@ -81,7 +83,7 @@ curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/bootstrap
 **安装指定版本：**
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/bootstrap.sh | bash -s -- --version=0.2.0
+curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/bootstrap.sh | bash -s -- --version=0.3.0
 ```
 
 **升级：** 重新运行拉取最新版本，查看更新内容：
@@ -214,7 +216,10 @@ Lead 团队自己跑（你不用盯着）
 
 ```
 iSparto/
-├── README.md                  ← 你正在读的这份文档
+├── README.md                  ← English version / 英文版
+├── README.zh-CN.md            ← 你正在读的这份文档
+├── CLAUDE.md                  ← Claude Code 项目指令
+├── CONTRIBUTING.md            ← 贡献指南
 ├── settings.json              ← 项目级 .claude/settings.json 的参考模板
 ├── CLAUDE-TEMPLATE.md         ← 新项目 CLAUDE.md 生成模板
 ├── LICENSE
@@ -224,6 +229,8 @@ iSparto/
 ├── bootstrap.sh               ← 薄引导入口（版本解析 + checksum 校验）
 ├── install.sh                 ← 主安装器（随版本发布）
 ├── isparto.sh                 ← 本地 stub（升级/卸载/版本）
+├── scripts/
+│   └── release.sh             ← 自动化发版脚本（bump version → changelog → tag → gh release）
 ├── lib/
 │   └── snapshot.sh            ← 快照/恢复引擎（出厂设置回滚）
 ├── commands/
@@ -244,7 +251,7 @@ iSparto/
     ├── plan.md                ← 按 Wave 组织的开发计划
     ├── session-log.md         ← 自动生成的会话指标（由 /end-working 创建）
     ├── concepts.md            ← 核心概念（解耦、Wave、文件所有权）⭐ 建议先读
-    ├── user-guide.md          ← 用户交互手册（7 命令 + 3 通知）⭐ 建议先读
+    ├── user-guide.md          ← 用户交互手册（7 命令 + 2 通知）⭐ 建议先读
     ├── roles.md               ← 角色定义 + Codex prompt 模板
     ├── workflow.md            ← 完整开发流程 + 分支策略 + Codex 集成
     ├── configuration.md       ← 全局配置 + 适配指南 + 多设备同步
