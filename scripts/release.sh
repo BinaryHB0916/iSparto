@@ -7,8 +7,8 @@
 #   1. Validates version format and checks preconditions
 #   2. Updates VERSION file
 #   3. Inserts release date into CHANGELOG.md ([Unreleased] → [x.y.z] - date)
-#   4. Commits, tags, pushes
-#   5. Creates GitHub Release with install.sh + checksums.sha256 as assets
+#   4. Commits on release branch, creates PR, merges to main
+#   5. Tags the merge commit, creates GitHub Release with install.sh + checksums.sha256 as assets
 set -e
 
 RED='\033[0;31m'
@@ -63,35 +63,62 @@ fi
 
 OLD_VERSION=$(cat VERSION)
 TODAY=$(date +%Y-%m-%d)
+RELEASE_BRANCH="release/v$NEW_VERSION"
 
 printf "${GREEN}Releasing:${NC} $OLD_VERSION → $NEW_VERSION\n"
 echo ""
 
-# ── 1. Update VERSION ───────────────────────────────────────
+# ── 1. Create release branch ─────────────────────────────────
+
+git checkout -b "$RELEASE_BRANCH"
+printf "  ${GREEN}✓${NC} Created branch $RELEASE_BRANCH\n"
+
+# ── 2. Update VERSION ───────────────────────────────────────
 
 echo "$NEW_VERSION" > VERSION
 printf "  ${GREEN}✓${NC} VERSION → $NEW_VERSION\n"
 
-# ── 2. Update CHANGELOG ─────────────────────────────────────
+# ── 3. Update CHANGELOG ─────────────────────────────────────
 
 # Replace [Unreleased] with [Unreleased]\n\n## [x.y.z] - date
 sed -i '' "s/## \[Unreleased\]/## [Unreleased]\n\n## [$NEW_VERSION] - $TODAY/" CHANGELOG.md
 printf "  ${GREEN}✓${NC} CHANGELOG.md → [$NEW_VERSION] - $TODAY\n"
 
-# ── 3. Commit and tag ───────────────────────────────────────
+# ── 4. Commit, push, and create PR ──────────────────────────
 
 git add VERSION CHANGELOG.md
 git commit -m "release: v$NEW_VERSION"
+git push -u origin "$RELEASE_BRANCH"
+printf "  ${GREEN}✓${NC} Pushed $RELEASE_BRANCH\n"
+
+RELEASE_NOTES=$(sed -n "/^## \[$NEW_VERSION\]/,/^## \[/p" CHANGELOG.md | sed '$d' | sed '1d')
+
+PR_URL=$(gh pr create \
+    --title "release: v$NEW_VERSION" \
+    --body "$RELEASE_NOTES" \
+    --base main)
+printf "  ${GREEN}✓${NC} PR created: $PR_URL\n"
+
+# ── 5. Merge PR ─────────────────────────────────────────────
+
+gh pr merge "$PR_URL" --merge --admin
+printf "  ${GREEN}✓${NC} PR merged to main\n"
+
+# ── 6. Tag merge commit ─────────────────────────────────────
+
+git checkout main
+git pull origin main
 git tag "v$NEW_VERSION"
-printf "  ${GREEN}✓${NC} Committed and tagged v$NEW_VERSION\n"
-
-# ── 4. Push ──────────────────────────────────────────────────
-
-git push origin main
 git push origin "v$NEW_VERSION"
-printf "  ${GREEN}✓${NC} Pushed to origin\n"
+printf "  ${GREEN}✓${NC} Tagged v$NEW_VERSION on main\n"
 
-# ── 5. Build release assets ─────────────────────────────────
+# ── 7. Clean up release branch ──────────────────────────────
+
+git branch -d "$RELEASE_BRANCH"
+git push origin --delete "$RELEASE_BRANCH" 2>/dev/null || true
+printf "  ${GREEN}✓${NC} Cleaned up $RELEASE_BRANCH\n"
+
+# ── 8. Build release assets ─────────────────────────────────
 
 TMPDIR=$(mktemp -d)
 trap "rm -rf '$TMPDIR'" EXIT
@@ -100,10 +127,7 @@ cp install.sh "$TMPDIR/install.sh"
 (cd "$TMPDIR" && shasum -a 256 install.sh > checksums.sha256)
 printf "  ${GREEN}✓${NC} Generated checksums.sha256\n"
 
-# ── 6. Create GitHub Release ────────────────────────────────
-
-# Extract changelog section for this version
-RELEASE_NOTES=$(sed -n "/^## \[$NEW_VERSION\]/,/^## \[/p" CHANGELOG.md | sed '$d' | sed '1d')
+# ── 9. Create GitHub Release ────────────────────────────────
 
 gh release create "v$NEW_VERSION" \
     "$TMPDIR/install.sh" \
