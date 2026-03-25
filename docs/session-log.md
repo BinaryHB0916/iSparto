@@ -152,3 +152,31 @@
 - 全面审计发现 27 个用户交互点：保留 8 个(产品决策+不可逆操作)，删除 3 个，简化 3 个
 - 用户交互模型统一：Lead 输出 briefing + 建议下一步 → 用户自然回应 → 继续
 - 用户反馈：并行不限于写代码，读取/审查任务也应并行——已写入框架规则
+
+## 2026-03-25 Session (continued 2)
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | Wave 5 (Dogfooding 验证) — 续 |
+| Tasks completed | Solo vs Agent Team 判断标准细化（默认 Solo，两条件升级） |
+| Developers spawned | 0 (Solo + Codex 模式) |
+| Codex reviews | 0 (纯文档标准更新，低风险) |
+| Codex catches | N/A |
+| Key decisions | Solo 是默认模式；Agent Team 需同时满足"可分解"+"工作量值得"；文件数 ≤3 降为参考值，核心看文件数×每文件改动量 |
+
+### Files Changed
+```
+ CLAUDE-TEMPLATE.md        |   6 ++--
+ CLAUDE.md                 |   6 ++--
+ commands/start-working.md |   6 ++--
+ docs/plan.md              |   1 +
+ docs/session-log.md       |  (this entry)
+ docs/workflow.md          |  19 ++++----
+ 6 files changed, 20+ insertions
+```
+
+### Notes
+- 用户指出发布时跳过了 Doc Engineer 审计和 plan.md 更新，补做收工流程
+- 判断标准从"硬门槛"（单任务+单模块+≤3文件）改为"两条件框架"（可分解×工作量值得），更符合实际判断逻辑
+- 今天三个 session 合计：6 files touched this session, 累计 17 files, 0 Codex reviews this session
