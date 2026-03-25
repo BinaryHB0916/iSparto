@@ -139,9 +139,11 @@ Team Lead pushes branch -> creates PR -> merges to main -> cleans up branch
 | `/end-working` | [commands/end-working.md](../commands/end-working.md) | Team Lead | Ensure all changes are persisted, update plan.md, generate session report, auto commit + PR merge, output session briefing |
 | `/plan` | [commands/plan.md](../commands/plan.md) | Team Lead | Review product direction, output implementation plan (with decoupling analysis), wait for user confirmation before writing to plan.md |
 | `/init-project` | [commands/init-project.md](../commands/init-project.md) | Team Lead | Generate project skeleton and documentation system (CLAUDE.md + docs/), Codex architecture pre-review, prepare for Wave development |
-| `/env-nogo` | [commands/env-nogo.md](../commands/env-nogo.md) | Setup Assistant | Check whether global and project environments meet iSparto runtime requirements |
-| `/migrate` | [commands/migrate.md](../commands/migrate.md) | Setup Assistant | Migrate an existing project to iSparto workflow — scan, propose, execute after confirmation. Supports `--dry-run` to preview only |
-| `/restore` | [commands/restore.md](../commands/restore.md) | Setup Assistant | Restore project to a previous snapshot — list snapshots, preview changes, execute after confirmation |
+| `/env-nogo` | [commands/env-nogo.md](../commands/env-nogo.md) | Setup Assistant* | Check whether global and project environments meet iSparto runtime requirements |
+| `/migrate` | [commands/migrate.md](../commands/migrate.md) | Setup Assistant* | Migrate an existing project to iSparto workflow — scan, propose, execute after confirmation. Supports `--dry-run` to preview only |
+| `/restore` | [commands/restore.md](../commands/restore.md) | Setup Assistant* | Restore project to a previous snapshot — list snapshots, preview changes, execute after confirmation |
+
+\* **Setup Assistant** is not a separate role — it is the Team Lead acting in a setup/maintenance capacity. These commands use a distinct persona to clearly separate setup operations from development workflow.
 
 ---
 
@@ -152,7 +154,7 @@ main              <- Stable version, releases are made from here
   +-- feat/xxx    <- New feature development, merged back to main when complete
   +-- fix/xxx     <- General bug fixes, merged back to main when complete
   +-- hotfix/xxx  <- Urgent production fixes, branched from main, merged back to main when fixed
-  +-- release/x.x <- Release preparation branch (if needed)
+  +-- release/vX.Y.Z <- Release preparation branch (if needed)
 ```
 
 **Rules:**

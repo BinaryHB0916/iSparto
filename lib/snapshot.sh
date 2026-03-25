@@ -202,28 +202,26 @@ cmd_restore() {
 cmd_list() {
     local filter_type=""
     local filter_project=""
+    local latest_only=false
 
     for arg in "$@"; do
         case "$arg" in
             --type=*) filter_type="${arg#--type=}" ;;
             --project=*) filter_project="${arg#--project=}" ;;
-            --latest)
-                # Print just the latest snapshot ID matching filters
-                local latest_id=""
-                cmd_list_internal "$filter_type" "$filter_project" | tail -1 | awk '{print $1}'
-                return
-                ;;
+            --latest) latest_only=true ;;
         esac
     done
 
     if [ ! -d "$SNAPSHOT_DIR" ]; then
-        echo "No snapshots found."
+        $latest_only || echo "No snapshots found."
         return
     fi
 
     local found=false
-    printf "%-40s %-14s %-20s %s\n" "ID" "TYPE" "TIMESTAMP" "PROJECT"
-    printf "%-40s %-14s %-20s %s\n" "──────────────────────────────────────" "────────────" "───────────────────" "───────"
+    local last_id=""
+
+    $latest_only || printf "%-40s %-14s %-20s %s\n" "ID" "TYPE" "TIMESTAMP" "PROJECT"
+    $latest_only || printf "%-40s %-14s %-20s %s\n" "──────────────────────────────────────" "────────────" "───────────────────" "───────"
 
     for snap_dir in "$SNAPSHOT_DIR"/*/; do
         [ ! -f "$snap_dir/metadata.txt" ] && continue
@@ -239,11 +237,17 @@ cmd_list() {
         [ -n "$filter_type" ] && [ "$type" != "$filter_type" ] && continue
         [ -n "$filter_project" ] && [ "$project_dir" != "$filter_project" ] && continue
 
-        printf "%-40s %-14s %-20s %s (%s files)\n" "$id" "$type" "$timestamp" "$project_dir" "$file_count"
+        if $latest_only; then
+            last_id="$id"
+        else
+            printf "%-40s %-14s %-20s %s (%s files)\n" "$id" "$type" "$timestamp" "$project_dir" "$file_count"
+        fi
         found=true
     done
 
-    if ! $found; then
+    if $latest_only; then
+        [ -n "$last_id" ] && echo "$last_id"
+    elif ! $found; then
         echo "No snapshots found."
     fi
 }

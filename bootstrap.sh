@@ -32,7 +32,7 @@ if [ -z "$VERSION" ]; then
         # Fallback: no releases yet, run install.sh directly from main branch
         printf "${YELLOW}No releases found. Installing from main branch (unverified).${NC}\n" >&2
         TMPDIR=$(mktemp -d)
-        trap "rm -rf '$TMPDIR'" EXIT
+        trap 'rm -rf "$TMPDIR"' EXIT
         curl -fsSL "https://raw.githubusercontent.com/$REPO/main/install.sh" -o "$TMPDIR/install.sh" || {
             printf "${RED}Error:${NC} Failed to download install.sh from main branch.\n" >&2
             exit 1
@@ -47,7 +47,7 @@ BASE_URL="https://github.com/$REPO/releases/download/$TAG"
 
 # ── Download install.sh + checksums to temp dir ──────────────
 TMPDIR=$(mktemp -d)
-trap "rm -rf '$TMPDIR'" EXIT
+trap 'rm -rf "$TMPDIR"' EXIT
 
 curl -fsSL "$BASE_URL/install.sh" -o "$TMPDIR/install.sh" || {
     printf "${RED}Error:${NC} Failed to download install.sh for $TAG\n" >&2

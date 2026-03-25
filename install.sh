@@ -5,12 +5,19 @@
 # When run via bootstrap.sh, ISPARTO_INSTALL_VERSION is set.
 # When run from a local repo, it reads VERSION from the repo directory.
 set -e
+shopt -s nullglob
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
+
+# ── Platform check ─────────────────────────────────────────
+if [ "$(uname)" != "Darwin" ]; then
+    printf "${YELLOW}Warning:${NC} iSparto is designed for macOS. Agent Team mode requires iTerm2.\n"
+    printf "  Solo + Codex mode may work but is untested on this platform.\n"
+fi
 
 ISPARTO_HOME="$HOME/.isparto"
 BACKUP_DIR="$ISPARTO_HOME/backup"
@@ -81,7 +88,7 @@ if ! $_use_local_source; then
         if [ -d "$ISPARTO_HOME" ] && { [ -f "$ISPARTO_HOME/VERSION" ] || [ -d "$ISPARTO_HOME/.git" ]; }; then
             # Use a temp extraction anyway so we can show accurate diffs
             TMPDIR_RELEASE=$(mktemp -d)
-            trap "rm -rf '$TMPDIR_RELEASE'" EXIT
+            trap 'rm -rf "$TMPDIR_RELEASE"' EXIT
             if curl -fsSL "$TARBALL_URL" -o "$TMPDIR_RELEASE/release.tar.gz" 2>/dev/null; then
                 tar -xzf "$TMPDIR_RELEASE/release.tar.gz" -C "$TMPDIR_RELEASE" 2>/dev/null
                 SCRIPT_DIR="$TMPDIR_RELEASE/iSparto-${INSTALL_VERSION}"
@@ -95,7 +102,7 @@ if ! $_use_local_source; then
         fi
     else
         TMPDIR_RELEASE=$(mktemp -d)
-        trap "rm -rf '$TMPDIR_RELEASE'" EXIT
+        trap 'rm -rf "$TMPDIR_RELEASE"' EXIT
         curl -fsSL "$TARBALL_URL" -o "$TMPDIR_RELEASE/release.tar.gz" || {
             printf "  ${RED}Error:${NC} Failed to download release $TAG\n" >&2
             exit 1
