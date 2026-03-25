@@ -372,11 +372,7 @@ fi
 # ── Track installed version ──────────────────────────────────
 
 if ! $DRY_RUN; then
-    if [ -n "$INSTALL_VERSION" ]; then
-        echo "$INSTALL_VERSION" > "$ISPARTO_HOME/VERSION"
-    elif [ -f "$SCRIPT_DIR/VERSION" ]; then
-        cp "$SCRIPT_DIR/VERSION" "$ISPARTO_HOME/VERSION"
-    fi
+    echo "$INSTALL_VERSION" > "$ISPARTO_HOME/VERSION"
 fi
 
 # ── Migrate: clean up old git-clone files (deferred until after copy) ──

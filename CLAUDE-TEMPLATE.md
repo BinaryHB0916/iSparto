@@ -13,6 +13,7 @@
 - Other: [...]
 
 ## Development Rules
+- Communicate and generate documents in the user's language (English or Chinese only)
 - Any code change must include corresponding documentation updates
 - Product decision changes must be written into docs, not just discussed in conversation
 - Ask me first about uncertain product questions; do not decide on your own

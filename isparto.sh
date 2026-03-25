@@ -43,15 +43,14 @@ do_upgrade() {
     show_version
     echo "Checking for updates..."
     echo ""
-    local tmpfile
-    tmpfile=$(mktemp)
-    trap 'rm -f "$tmpfile"' EXIT
-    curl -fsSL "$BOOTSTRAP_URL" -o "$tmpfile" || {
+    UPGRADE_TMPFILE=$(mktemp)
+    trap 'rm -f "$UPGRADE_TMPFILE"' EXIT
+    curl -fsSL "$BOOTSTRAP_URL" -o "$UPGRADE_TMPFILE" || {
         printf "  ${RED}Error:${NC} Failed to download bootstrap.sh. Check your network connection.\n" >&2
-        rm -f "$tmpfile"
+        rm -f "$UPGRADE_TMPFILE"
         exit 1
     }
-    bash "$tmpfile" --upgrade
+    bash "$UPGRADE_TMPFILE" --upgrade
 }
 
 # ── Uninstall: 100% offline ──────────────────────────────────
@@ -170,7 +169,7 @@ do_uninstall() {
         rm -rf "$ISPARTO_HOME/snapshots"
 
         # Remove isparto home if empty (or mostly empty)
-        rm -f "$ISPARTO_HOME/VERSION" "$ISPARTO_HOME/checksums.sha256"
+        rm -f "$ISPARTO_HOME/VERSION"
         rm -f "$ISPARTO_HOME/install.sh"
         rm -rf "$ISPARTO_HOME/bin"
         rm -rf "$ISPARTO_HOME/lib"
