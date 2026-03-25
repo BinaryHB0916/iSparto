@@ -180,3 +180,47 @@
 - 用户指出发布时跳过了 Doc Engineer 审计和 plan.md 更新，补做收工流程
 - 判断标准从"硬门槛"（单任务+单模块+≤3文件）改为"两条件框架"（可分解×工作量值得），更符合实际判断逻辑
 - 今天三个 session 合计：6 files touched this session, 累计 17 files, 0 Codex reviews this session
+
+## 2026-03-25 Session (continued 3)
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | Wave 5 (Dogfooding 验证) — 续 |
+| Tasks completed | Agent Team 读写扩展, 四视角全项目 Review + 修复, Pro 内容清理, 升级 scope 文档, Codex bug 修复(trap 作用域+snapshot排序), 去伪存真精简 |
+| Developers spawned | 4 (四视角并行 review: 产品/技术/新用户/代码文档) |
+| Codex reviews | 2 (1 code review 全部代码改动, 1 pruning plan review) |
+| Codex catches | 2 P2 — isparto.sh trap local 变量作用域 bug, snapshot.sh --latest glob 排序不可靠 |
+| Key decisions | Agent Team 触发覆盖读+写任务, Pro 内容从开源仓库移除, 截图改为未来视频演示, upgrade 只更新框架不碰用户项目, 去伪存真延后 legacy backup 和 git-clone 迁移代码 |
+
+### Files Changed
+```
+ CLAUDE-TEMPLATE.md        | 11 ++++++---
+ CLAUDE.md                 | 11 ++++++---
+ README.md                 | 16 +++++++++----
+ README.zh-CN.md           | 18 ++++++++++----
+ bootstrap.sh              |  5 ++--
+ commands/end-working.md   |  2 +-
+ commands/env-nogo.md      |  2 +-
+ commands/init-project.md  | 11 ++++-----
+ commands/migrate.md       |  8 +++----
+ commands/plan.md          |  2 +-
+ commands/restore.md       |  2 +-
+ commands/start-working.md |  2 +-
+ docs/concepts.md          |  2 +-
+ docs/configuration.md     | 61 +-------
+ docs/product-spec.md      |  8 -------
+ docs/workflow.md          | 24 +++++++++------
+ install.sh                | 17 +++++++------
+ isparto.sh                | 16 ++++++-------
+ lib/snapshot.sh           | 31 +++++++++++++------
+ scripts/release.sh        |  4 ++--
+ 20 files changed, 114 insertions(+), 139 deletions(-)
+```
+
+### Notes
+- 今天四个 session 合计：~28 files touched, 5 PRs merged (#16-#20), 4 Codex reviews, 4 P2 catches
+- 首次运行四视角并行 review（产品/技术/新用户/代码文档），发现 20+ 问题并分类修复
+- Codex review 再次证明价值：trap 变量作用域 bug 和 snapshot 排序 bug 都是人工不易发现的
+- 确立 upgrade 边界原则："upgrade 改 agent 行为，不碰用户已有工作"
+- 去伪存真延后两项高风险清理：legacy backup 系统（需 MCP 解耦）和 git-clone 迁移代码（再保留一个版本）
