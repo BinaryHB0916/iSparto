@@ -46,7 +46,7 @@
 ### Wave 5: Dogfooding 验证
 - [x] 场景 1: isparto-website 项目 — /migrate 已完成
 - [x] 场景 2: 萌芽勇气 (iOS app) — /migrate 已完成
-- [ ] 场景 3: 全新空项目 — /init-project 从零开始
+- [ ] 场景 3: Heddle（暂定名，generative UI 运行时）— /init-project 从零开始（用户自行操作）
 - [x] Session Log 自动采集 — /end-working 自动生成 session report，/start-working 自动读取历史
 - [ ] 每个场景记录：Wave 数量、并行效率、Codex 拦截问题、截图（现在由 session-log.md 自动采集）
 
@@ -61,6 +61,14 @@
 - [x] Doc Engineer 职责升级为三层（代码同步 → 术语一致 → 产品叙事完整性）
 - [x] 全面文档审计（22 项修复，14 个文件）
 - [x] Team Lead 角色增加"主动建议下一步"行为
+- [x] install.sh --upgrade self-update（旧脚本自动拉取新版本再执行）
+- [x] Solo + Codex 模式（Lead 根据任务自动选 Solo 或 Agent Team，用户无感）
+- [x] Auto PR merge（完成审查后自动建 PR 并 merge，不需要用户手动 review）
+- [x] GitHub Branch Protection（main 禁直接 push / force push / 删除，enforce admins）
+
+### 工作流增强
+- [ ] GitHub Actions CI 质量门 — PR 必须通过 CI 检查才能 merge（对代码项目如 Heddle 尤其重要）
+- [ ] Release 流程 — git tag + GitHub Releases（版本发布正式化）
 
 ### Pro 版规划
 - [ ] Agent dashboard 原型设计
