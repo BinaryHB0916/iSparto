@@ -70,6 +70,7 @@ Lead 根据任务特征自动选择模式，用户无需干预。
 | Project Template | CLAUDE-TEMPLATE.md | 新项目 CLAUDE.md 生成模板 |
 | Framework Docs | docs/ (concepts, roles, workflow, configuration, user-guide, troubleshooting, design-decisions) | 面向用户的框架文档 |
 | Project Docs | docs/ (product-spec, plan) | iSparto 自身的产品规格和开发计划 |
+| Release Script | scripts/release.sh | 自动化发版（bump version → changelog → tag → gh release） |
 | Assets | assets/*.svg | README 用的 SVG 图 |
 | READMEs | README.md, README.zh-CN.md | 双语 README |
 
