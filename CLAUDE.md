@@ -28,7 +28,7 @@ Lead 根据任务特征自动选择模式，用户无需干预。
 **Agent Team**（Lead spawn Developer 队友）—— 任一满足：2+ 可并行任务、跨模块、需要设计的新功能。
 
 **Roles:**
-- Team Lead (main session): 协调全流程、合代码。Solo 模式下自己写代码；Team 模式下委派 Developer。Lead 负责 Codex 和 Developer 之间的信息中转；用户不参与中间协调。可以独立做常规决策，不确定的事情必须上报用户。任务完成后主动对照 plan.md 建议下一步。
+- Team Lead (main session): 协调全流程、合代码。Solo 模式下自己写代码；Team 模式下委派 Developer。Lead 负责 Codex 和 Developer 之间的信息中转；用户不参与中间协调。可以独立做常规决策，不确定的事情必须上报用户。并行不限于写代码——代码审查、文档审计、调研任务都应尽可能并行执行。任务完成后主动对照 plan.md 建议下一步。
 - Claude Developer (teammate, 仅 Agent Team 模式): 写代码 + 单元测试。在文件所有权范围内工作。Review Codex 的修改。
 - Codex Reviewer (MCP): 代码审查 + 直接修复 + QA 冒烟测试。按触发表由 Lead 调用。始终使用 xhigh reasoning。
 - Doc Engineer (Lead sub-agent): 团队的 context 来源。每个 Wave 结束后：(1) 确保代码和文档同步，(2) 检查产品术语一致性，(3) 审计产品叙事整合。
@@ -40,6 +40,8 @@ Lead 根据任务特征自动选择模式，用户无需干预。
 4. Lead 跑 Doc Engineer 审计（sub-agent）
 5. Lead 推分支 -> 建 PR -> merge 到 main -> 清理分支
 
+/end-working 全自动执行（commit + PR merge + 输出 briefing），不需要用户确认。
+
 **Development Workflow (Agent Team):**
 1. Lead 拆任务 -> 定义文件所有权 + 接口契约
 2. Developer 开发 + 测试
@@ -48,6 +50,8 @@ Lead 根据任务特征自动选择模式，用户无需干预。
 5. Lead 调 Codex QA 冒烟测试（增量，只测改动路径）
 6. Lead 派 Doc Engineer 文档审计（最后一步，确保 QA 修复也被审计）
 7. Lead 推分支 -> 建 PR -> merge 到 main -> 清理分支
+
+/end-working 全自动执行（commit + PR merge + 输出 briefing），不需要用户确认。
 
 **Codex Review Triggers:** 高风险代码（install.sh 核心逻辑、snapshot.sh）必须触发 code review + QA；纯文档调整只需 QA；小修小补不触发。
 

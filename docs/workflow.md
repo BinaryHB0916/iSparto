@@ -46,6 +46,7 @@ The Team Lead automatically selects the collaboration mode based on task charact
 - Doc Engineer documentation audit → always the final step
 - Branching → feat/fix/hotfix branches, never develop on main
 - Merge → after full workflow, Lead auto-creates PR and merges to main (no manual user review needed — Codex review during development is the quality gate)
+- Parallelism applies to reading too — code review, documentation audit, and research tasks can be parallelized across agents, not just code writing
 
 ## Phase 1-N: Wave Development
 
@@ -133,8 +134,8 @@ Team Lead pushes branch -> creates PR -> merges to main -> cleans up branch
 
 | Command | Source File | Execution Role | Responsibility |
 |---------|-------------|----------------|----------------|
-| `/start-working` | [commands/start-working.md](../commands/start-working.md) | Team Lead | Report current status (Wave progress, remaining issues, session history), wait for user confirmation before launching the team |
-| `/end-working` | [commands/end-working.md](../commands/end-working.md) | Team Lead | Ensure all changes and decisions are persisted, update plan.md, generate session report to session-log.md, commit & push |
+| `/start-working` | [commands/start-working.md](../commands/start-working.md) | Team Lead | Report current status (Wave progress, remaining issues, session history), suggest next step; user reviews briefing and responds naturally |
+| `/end-working` | [commands/end-working.md](../commands/end-working.md) | Team Lead | Ensure all changes are persisted, update plan.md, generate session report, auto commit + PR merge, output session briefing |
 | `/plan` | [commands/plan.md](../commands/plan.md) | Team Lead | Review product direction, output implementation plan (with decoupling analysis), wait for user confirmation before writing to plan.md |
 | `/init-project` | [commands/init-project.md](../commands/init-project.md) | Team Lead | Generate project skeleton and documentation system (CLAUDE.md + docs/), Codex architecture pre-review, prepare for Wave development |
 | `/env-nogo` | [commands/env-nogo.md](../commands/env-nogo.md) | Setup Assistant | Check whether global and project environments meet iSparto runtime requirements |
@@ -165,6 +166,8 @@ main              <- Stable version, releases are made from here
 2. If `gh` CLI is available: create PR via `gh pr create`, merge via `gh pr merge --merge`
 3. If `gh` CLI is NOT available: merge locally via `git checkout main && git merge --no-ff <branch> && git push`
 4. Lead deletes the branch (local + remote) and switches back to main
+
+Note: Auto PR merge only happens when all tasks on the current branch are complete (all reviews passed, docs updated). If work is mid-Wave, the branch is pushed but not merged — the PR will be created when the branch is done.
 
 **Hotfix Workflow:**
 - Branch hotfix/xxx from main

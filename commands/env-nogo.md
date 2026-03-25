@@ -17,6 +17,6 @@ Project environment (if the current directory has a CLAUDE.md, you are inside a 
 10. CLAUDE.md: content is complete (contains key sections such as collaboration mode, module boundaries, etc.)
 11. docs/ structure: at least product-spec.md and plan.md exist
 
-Report format: List each item with its pass/fail status. For failed items, provide the specific fix command or steps.
+Report format: List each item with its pass/fail status. For items that can be auto-fixed (e.g., missing npm packages), attempt the fix automatically. Only report items that require manual user action.
 All pass → output "Environment ready. You may proceed."
 Any fail → output "There are no-go items. Please fix them first."
