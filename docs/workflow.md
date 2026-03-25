@@ -21,7 +21,61 @@ Codex 5.3 reviews technical architecture (Team Lead invokes via MCP, xhigh reaso
 User confirms -> enter Wave development
 ```
 
-## Phase 1-N: Wave Parallel Development
+## Collaboration Mode Selection
+
+The Team Lead automatically selects the collaboration mode based on task characteristics. This is transparent to the user — no explicit mode switch is needed.
+
+**Solo + Codex** — Lead writes code directly. All conditions must be met:
+
+| Criterion | Threshold |
+|-----------|-----------|
+| Task count | Single task, or multiple sequential tasks that cannot be parallelized |
+| Module scope | Within a single Module Boundary (as defined in CLAUDE.md) |
+| File count | ≤ 3 files changed |
+
+**Agent Team** — Lead spawns Developer teammates. Any condition triggers:
+
+| Criterion | Threshold |
+|-----------|-----------|
+| Parallelism | 2+ tasks that can run in parallel (no file overlap, no data dependency) |
+| Module scope | Cross-module changes (touching files in different Module Boundaries) |
+| Complexity | New feature requiring design (new API, new module, new component) |
+
+**Shared across both modes** (no difference):
+- Codex review / QA → triggered per the Codex Review Trigger Conditions table below
+- Doc Engineer documentation audit → always the final step
+- Branching → feat/fix/hotfix branches, never develop on main
+- Merge → after full workflow, Lead auto-creates PR and merges to main (no manual user review needed — Codex review during development is the quality gate)
+
+## Phase 1-N: Wave Development
+
+### Solo + Codex Workflow
+
+```
+Team Lead reads plan.md, confirms current Wave
+    |
+Team Lead writes code directly
+  - Implements the task
+  - Writes unit tests for core logic
+  - Ensures build passes
+    |
+Codex Reviewer reviews (per trigger table below)
+  - Reviews code logic, edge conditions, security issues
+  - Directly fixes issues found
+    |
+Team Lead reviews Codex fixes (if any)
+  - Confirms fix is correct
+  - Confirms no new issues introduced
+    |
+Codex QA smoke testing (per trigger table below)
+    |
+Team Lead runs Doc Engineer audit (as sub-agent)
+  - Same checklist as Agent Team mode (see Doc Engineer role in roles.md)
+    |
+Team Lead pushes branch -> creates PR -> merges to main -> cleans up branch
+```
+
+### Agent Team Workflow
 
 ```
 Team Lead reads plan.md, confirms current Wave
@@ -33,7 +87,7 @@ Claude Developer(s) develop in parallel
   - Write unit tests for core logic
   - Ensure build passes
     |
-Codex Reviewer reviews (executed based on trigger condition table, see below)
+Codex Reviewer reviews (per trigger table below)
   - Reviews code logic, edge conditions, security issues
   - Directly fixes issues found
     |
@@ -43,7 +97,7 @@ Claude Developer reviews Codex fixes (if review was triggered)
   - Confirms adherence to project code style
   - Build verification
     |
-Codex QA smoke testing (executed based on trigger condition table, see below)
+Codex QA smoke testing (per trigger table below)
   - Identifies the change scope of this Wave, only tests feature paths affected by changes
   - Skips areas tested in previous Waves that are not affected by current changes
   - Simulates key user operation paths, verifies end-to-end functionality
@@ -58,7 +112,7 @@ Team Lead spawns Doc Engineer (sub-agent) for documentation audit (placed last t
   - Product terminology consistency across all docs (command counts, feature names match, no internal API terms in user-facing docs)
   - Product narrative integration: do new features fit coherently into the overall product story (README, product-spec, Quick Start, troubleshooting) — audit from the user's perspective, not just the changed files
     |
-Team Lead confirms all passes -> merge code -> update plan.md
+Team Lead pushes branch -> creates PR -> merges to main -> cleans up branch
 ```
 
 ## Codex Review Trigger Conditions
@@ -102,16 +156,21 @@ main              <- Stable version, releases are made from here
 **Rules:**
 - No direct development on main — it is locked to the current release version
 - Each Wave corresponds to a feature branch (e.g., `feat/wave-1-auth`)
-- Within a Wave, the Team Lead breaks tasks into decoupled sub-tasks, and each Developer works in an isolated working directory via git worktree for parallel development (automatically managed by Claude Code Agent Team, no manual operation needed), relying on file ownership to prevent conflicts
+- Within a Wave (Agent Team mode), the Team Lead breaks tasks into decoupled sub-tasks, and each Developer works in an isolated working directory via git worktree for parallel development (automatically managed by Claude Code Agent Team, no manual operation needed), relying on file ownership to prevent conflicts
 - Minor fixes can be quickly merged back on fix/ branches
-- Before merging back to main, documentation audit by Doc Engineer is required; Codex code review and QA smoke testing are executed based on the trigger condition table (not triggered every time)
+- After the full workflow completes (Codex review + Doc Engineer audit), Lead auto-creates PR and merges to main — no manual user review needed
+
+**Merge workflow (both modes):**
+1. Lead pushes the feature/fix/hotfix branch
+2. If `gh` CLI is available: create PR via `gh pr create`, merge via `gh pr merge --merge`
+3. If `gh` CLI is NOT available: merge locally via `git checkout main && git merge --no-ff <branch> && git push`
+4. Lead deletes the branch (local + remote) and switches back to main
 
 **Hotfix Workflow:**
 - Branch hotfix/xxx from main
-- Follow the full Team Lead -> Developer -> Codex review -> Developer review -> Codex QA -> Doc Engineer workflow
-- No simplified version — the Agent Team full workflow takes minutes, without the human team's bottleneck of waiting for people
+- The mode selection table applies: simple single-file hotfixes use Solo + Codex; complex hotfixes use Agent Team
 - The trigger condition table auto-adapts: single-file simple fixes do not trigger code review or QA; high-risk fixes trigger the full suite
-- After fixing, merge back to main; if there are in-progress feat/ branches, sync the hotfix changes
+- After fixing, merge back to main via PR; if there are in-progress feat/ branches, sync the hotfix changes
 
 ---
 

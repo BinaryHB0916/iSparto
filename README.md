@@ -39,9 +39,9 @@ iSparto turns a single Agent into **a team with clear roles**: Lead breaks down 
 
 | | Single-Agent Tools | iSparto |
 |--|---------------------|---------|
-| Collaboration mode | You go back and forth with a single Agent | You work with the Lead; Lead coordinates the whole team |
+| Collaboration mode | You go back and forth with a single Agent | Lead auto-selects: Solo + Codex for small tasks, Agent Team for parallel work |
 | AI organization | Single Agent, no division of labor | Team-based (Lead + Developer + Reviewer + Doc Engineer) |
-| Parallelism | None — single-threaded conversation | Multiple Developers in parallel within a Wave, visible via tmux split panes |
+| Parallelism | None — single-threaded conversation | Solo mode for focused fixes; Agent Team for parallel Developers within a Wave |
 | Code review | Agent reviews its own code (same source) | Codex reviews Claude (different source), covering each model's blind spots |
 | Cross-session state | Lost — must re-explain context every time | Driven by plan.md; `/start-working` auto-restores state |
 | Documentation sync | Manual maintenance | Doc Engineer auto-audits every Wave |
@@ -54,7 +54,7 @@ iSparto turns a single Agent into **a team with clear roles**: Lead breaks down 
 
 | Item | Requirement | Notes |
 |------|-------------|-------|
-| Claude Max subscription | $100/month | Claude Code + Agent Team mode |
+| Claude Max subscription | $100/month | Claude Code + Auto mode (Solo + Codex / Agent Team) |
 | ChatGPT subscription | $20/month | Codex CLI (code review + QA) |
 | Node.js | 18+ | Runs Claude Code, Codex CLI, and MCP Server |
 | Git | Any version | Version control |
