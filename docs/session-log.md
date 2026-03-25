@@ -118,3 +118,37 @@
 - Codex review 两次都有效拦截了问题（gh fallback、分支生命周期兼容性）
 - 产品决策：Heddle（暂定名，generative UI 运行时）确认为 dogfooding 场景 3
 - GitHub Actions CI 延后：web 项目用 Vercel 自带 CI 足够，等 Heddle 再验证独立 CI
+
+## 2026-03-25 Session (continued)
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | Wave 5 (Dogfooding 验证) — 续 |
+| Tasks completed | 全面工作流审计, 减少用户审批门(9处改动), 并行读取规则 |
+| Developers spawned | 3 (Dev A: 5 commands, Dev B: workflow+user-guide, Dev C: templates) |
+| Codex reviews | 1 (PR #7 workflow 审批门优化) |
+| Codex catches | PR #7: 2 P2 — env-nogo 报告格式矛盾 + /end-working merge 条件措辞不一致 |
+| Key decisions | 用户交互模型统一为 briefing 模式(通知而非审批), /end-working 全自动(不确认 commit message), /start-working 自然对话(不等"start"), 并行不限于写代码(读取/审查也并行) |
+
+### Files Changed
+```
+ CLAUDE-TEMPLATE.md          |   7 ++--
+ CLAUDE.md                   |   6 ++-
+ commands/end-working.md     |   2 +-
+ commands/env-nogo.md        |   2 +-
+ commands/init-project.md    |   2 +-
+ commands/migrate.md         |   2 +-
+ commands/start-working.md   |   2 +-
+ docs/plan.md                |   1 +
+ docs/session-log.md         |  (this entry)
+ docs/user-guide.md          |  12 +++---
+ docs/workflow.md            |   7 ++--
+ 11 files changed, 30+ insertions
+```
+
+### Notes
+- 首次使用 Agent Team 模式做文档改动（3 Developer 并行编辑 9 个文件）
+- 全面审计发现 27 个用户交互点：保留 8 个(产品决策+不可逆操作)，删除 3 个，简化 3 个
+- 用户交互模型统一：Lead 输出 briefing + 建议下一步 → 用户自然回应 → 继续
+- 用户反馈：并行不限于写代码，读取/审查任务也应并行——已写入框架规则
