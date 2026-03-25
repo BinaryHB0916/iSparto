@@ -44,17 +44,30 @@ done
 
 INSTALL_VERSION="${ISPARTO_INSTALL_VERSION:-}"
 
+_use_local_source=false
 if [ -f "$(dirname "$0")/commands/start-working.md" ] 2>/dev/null; then
-    # Running from a local repo clone (development or manual install)
-    SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-    if [ -z "$INSTALL_VERSION" ] && [ -f "$SCRIPT_DIR/VERSION" ]; then
-        INSTALL_VERSION=$(cat "$SCRIPT_DIR/VERSION")
+    _candidate_dir="$(cd "$(dirname "$0")" && pwd)"
+    _isparto_resolved="$(cd "$ISPARTO_HOME" 2>/dev/null && pwd || echo "")"
+    if [ "$_candidate_dir" != "$_isparto_resolved" ]; then
+        # Running from a local repo clone (development or manual install)
+        _use_local_source=true
+        SCRIPT_DIR="$_candidate_dir"
+        if [ -z "$INSTALL_VERSION" ] && [ -f "$SCRIPT_DIR/VERSION" ]; then
+            INSTALL_VERSION=$(cat "$SCRIPT_DIR/VERSION")
+        fi
     fi
-else
-    # Running via bootstrap.sh — download release tarball
+fi
+
+if ! $_use_local_source; then
+    # Running via bootstrap.sh, or from ISPARTO_HOME (legacy git-clone) — download release
     if [ -z "$INSTALL_VERSION" ]; then
-        echo "Error: ISPARTO_INSTALL_VERSION not set and not running from repo." >&2
-        echo "Use bootstrap.sh to install: curl -fsSL https://raw.githubusercontent.com/$REPO/main/bootstrap.sh | bash" >&2
+        # Auto-resolve latest version from GitHub Releases
+        INSTALL_VERSION=$(curl -fsSL "https://api.github.com/repos/$REPO/releases/latest" 2>/dev/null \
+            | grep '"tag_name"' | sed 's/.*"v\([^"]*\)".*/\1/')
+    fi
+    if [ -z "$INSTALL_VERSION" ]; then
+        echo "Error: Could not determine version. Use bootstrap.sh to install:" >&2
+        echo "  curl -fsSL https://raw.githubusercontent.com/$REPO/main/bootstrap.sh | bash" >&2
         exit 1
     fi
 
@@ -65,7 +78,7 @@ else
     if $DRY_RUN; then
         printf "  ${BLUE}[dry-run]${NC} Would download release $TAG\n"
         # For dry-run, we need an existing SCRIPT_DIR to preview files
-        if [ -d "$ISPARTO_HOME" ] && [ -f "$ISPARTO_HOME/VERSION" ]; then
+        if [ -d "$ISPARTO_HOME" ] && { [ -f "$ISPARTO_HOME/VERSION" ] || [ -d "$ISPARTO_HOME/.git" ]; }; then
             # Use a temp extraction anyway so we can show accurate diffs
             TMPDIR_RELEASE=$(mktemp -d)
             trap "rm -rf '$TMPDIR_RELEASE'" EXIT
