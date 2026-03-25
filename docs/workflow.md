@@ -25,14 +25,21 @@ User confirms -> enter Wave development
 
 The Team Lead automatically selects the collaboration mode based on task characteristics. This is transparent to the user — no explicit mode switch is needed.
 
-**Solo + Codex** — Lead writes code directly. This is the **default mode**.
+**Solo + Codex** — Lead completes the task alone. This is the **default mode**.
 
-**Agent Team** — Lead spawns Developer teammates. Upgrade to Agent Team when **both** conditions are met:
+**Agent Team** — Lead spawns teammates for parallel execution. Upgrade to Agent Team when **both** conditions are met:
 
 | Condition | Question | Examples |
 |-----------|----------|----------|
 | 1. Decomposable | Can the work be split into independent parallel sub-tasks? (no file overlap, no data dependency) | 2+ features in different modules → yes; sequential steps in one module → no |
-| 2. Sufficient volume | Is file count × change size per file large enough to justify coordination overhead? | 5 files with large logic changes → yes; 5 files with 1-line edits each → no |
+| 2. Sufficient volume | Is file count × workload per file large enough to justify coordination overhead? | See examples by task type below |
+
+This applies to both **write** and **read** tasks:
+
+| Task type | Agent Team example | Solo example |
+|-----------|-------------------|--------------|
+| **Write** (code, docs, config) | 5 files with large logic changes each | 5 files with 1-line edits each |
+| **Read** (code review, doc audit, research/debug) | Review spans multiple modules/files → split by module, parallel review | Review covers a few files → serial review |
 
 If either condition is not met, stay in Solo + Codex. The file count "≤ 3" is a quick heuristic, not a hard rule — what matters is whether parallel coordination saves more time than it costs.
 
@@ -41,7 +48,6 @@ If either condition is not met, stay in Solo + Codex. The file count "≤ 3" is 
 - Doc Engineer documentation audit → always the final step
 - Branching → feat/fix/hotfix branches, never develop on main
 - Merge → after full workflow, Lead auto-creates PR and merges to main (no manual user review needed — Codex review during development is the quality gate)
-- Parallelism applies to reading too — code review, documentation audit, and research tasks can be parallelized across agents, not just code writing
 
 ## Phase 1-N: Wave Development
 

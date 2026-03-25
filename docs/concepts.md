@@ -4,7 +4,7 @@
 
 ## The Most Critical Concept: Decoupling
 
-**The entire premise of Wave parallel development is that tasks are fully decoupled.** If two tasks modify the same file, or if A's output is B's input, they cannot be placed in the same Wave for parallel execution.
+**The entire premise of Wave parallel execution is that tasks are fully decoupled.** This applies to both write tasks (coding, documentation) and read tasks (code review, doc audit, research/debug). If two tasks touch the same file, or if A's output is B's input, they cannot be placed in the same Wave for parallel execution.
 
 The Team Lead's core job when breaking down tasks is not "distributing work," but **determining which tasks can run simultaneously and which must run sequentially**. The criteria are:
 
