@@ -21,26 +21,38 @@
 - Core business logic must have unit tests
 <!-- Add or remove project-specific rules as needed; keep the total under 10 -->
 
-## Collaboration Mode: Agent Team
+## Collaboration Mode: Auto (Solo + Codex / Agent Team)
+
+Lead automatically selects the mode — no user action needed.
+
+**Solo + Codex** (Lead writes code directly) — when ALL: single task, single module, ≤ 3 files.
+**Agent Team** (Lead spawns Developer teammates) — when ANY: 2+ parallel tasks, cross-module, or new feature requiring design.
 
 **Roles:**
-- Team Lead (main session): Breaks down tasks, coordinates the full workflow, merges code. Does not write business code. Lead handles information relay between Codex and Developer; the user does not participate in intermediate coordination. Lead may make routine decisions independently (standard approvals, process advancement), but must escalate uncertain matters to the user -- better to over-report than under-report. After completing a task, Lead proactively suggests the next step from plan.md -- do not wait for the user to ask "what's next".
-- Claude Developer (teammate): Writes code + unit tests. Works within file ownership scope. Reviews Codex fixes.
-- Codex Reviewer (MCP): Code review + direct fixes + QA smoke testing. A hidden-master role -- does not participate in daily development; gates quality at key checkpoints and fixes issues on the spot. Always uses xhigh reasoning. QA incremental testing only covers changed paths. Called by Lead.
-- Doc Engineer (Lead sub-agent): The team's context source — all roles depend on the documentation it maintains. Shares Lead's full project vision. After each Wave: (1) ensures code and docs stay in sync, (2) checks product terminology consistency across all docs, (3) audits whether new features are fully, coherently, and user-friendly integrated into the entire product narrative (README user journey, product-spec, Quick Start, command tables — not just the files that changed).
+- Team Lead (main session): Coordinates the full workflow, merges code. In Solo + Codex mode, writes code directly. In Agent Team mode, delegates to Developer teammates. Lead handles information relay between Codex and Developer; the user does not participate in intermediate coordination. Lead may make routine decisions independently, but must escalate uncertain matters to the user. After completing a task, Lead proactively suggests the next step from plan.md.
+- Claude Developer (teammate, Agent Team only): Writes code + unit tests. Works within file ownership scope. Reviews Codex fixes.
+- Codex Reviewer (MCP): Code review + direct fixes + QA smoke testing. Called by Lead per trigger table. Always uses xhigh reasoning.
+- Doc Engineer (Lead sub-agent): The team's context source. After each Wave: (1) ensures code and docs stay in sync, (2) checks product terminology consistency, (3) audits product narrative integration.
 
-**Development Workflow:**
+**Development Workflow (Solo + Codex):**
+1. Lead writes code + tests
+2. Lead calls Codex for code review + fixes (per trigger table)
+3. Lead calls Codex for QA smoke testing (per trigger table)
+4. Lead runs Doc Engineer audit (as sub-agent)
+5. Lead pushes branch -> creates PR -> merges to main -> cleans up branch
+
+**Development Workflow (Agent Team):**
 1. Lead breaks down tasks -> defines file ownership + interface contracts
 2. Developer develops + unit tests
 3. Lead calls Codex for code review + fixes
 4. Lead forwards changes to Developer for review
 5. Lead calls Codex for QA smoke testing (incremental, only changed paths)
 6. Lead spawns Doc Engineer for documentation audit (last step, ensures QA fixes are also audited)
-7. Lead merges code
+7. Lead pushes branch -> creates PR -> merges to main -> cleans up branch
 
 **Codex Review Triggers:** High-risk code must trigger code review + QA; UI-only changes need QA only; minor fixes need neither.
 
-**Branching Strategy:** main is locked; feat/xxx for development, fix/xxx for bug fixes, hotfix/xxx for urgent production fixes (branched from main, full workflow required).
+**Branching & Merge:** main is locked; feat/xxx for development, fix/xxx for bug fixes, hotfix/xxx for urgent fixes. After full workflow, Lead auto-creates PR and merges — no manual user review needed.
 
 **Module Boundaries:**
 <!-- Fill in based on actual project structure -->
