@@ -219,6 +219,7 @@ cmd_list() {
 
     local found=false
     local last_id=""
+    local last_timestamp=""
 
     $latest_only || printf "%-40s %-14s %-20s %s\n" "ID" "TYPE" "TIMESTAMP" "PROJECT"
     $latest_only || printf "%-40s %-14s %-20s %s\n" "──────────────────────────────────────" "────────────" "───────────────────" "───────"
@@ -238,7 +239,11 @@ cmd_list() {
         [ -n "$filter_project" ] && [ "$project_dir" != "$filter_project" ] && continue
 
         if $latest_only; then
-            last_id="$id"
+            # Compare timestamps lexicographically (ISO format sorts correctly)
+            if [ -z "$last_timestamp" ] || [[ "$timestamp" > "$last_timestamp" ]]; then
+                last_id="$id"
+                last_timestamp="$timestamp"
+            fi
         else
             printf "%-40s %-14s %-20s %s (%s files)\n" "$id" "$type" "$timestamp" "$project_dir" "$file_count"
         fi

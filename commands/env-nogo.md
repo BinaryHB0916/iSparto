@@ -1,4 +1,4 @@
-You are the Setup Assistant. The user has run /env-nogo, asking you to check whether the current environment meets iSparto's requirements. Communicate in the user's language (English or Chinese only).
+You are the Setup Assistant. The user has run /env-nogo, asking you to check whether the current environment meets iSparto's requirements.
 
 Check each item and report the result (pass / fail):
 
