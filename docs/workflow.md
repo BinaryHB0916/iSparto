@@ -25,21 +25,16 @@ User confirms -> enter Wave development
 
 The Team Lead automatically selects the collaboration mode based on task characteristics. This is transparent to the user — no explicit mode switch is needed.
 
-**Solo + Codex** — Lead writes code directly. All conditions must be met:
+**Solo + Codex** — Lead writes code directly. This is the **default mode**.
 
-| Criterion | Threshold |
-|-----------|-----------|
-| Task count | Single task, or multiple sequential tasks that cannot be parallelized |
-| Module scope | Within a single Module Boundary (as defined in CLAUDE.md) |
-| File count | ≤ 3 files changed |
+**Agent Team** — Lead spawns Developer teammates. Upgrade to Agent Team when **both** conditions are met:
 
-**Agent Team** — Lead spawns Developer teammates. Any condition triggers:
+| Condition | Question | Examples |
+|-----------|----------|----------|
+| 1. Decomposable | Can the work be split into independent parallel sub-tasks? (no file overlap, no data dependency) | 2+ features in different modules → yes; sequential steps in one module → no |
+| 2. Sufficient volume | Is file count × change size per file large enough to justify coordination overhead? | 5 files with large logic changes → yes; 5 files with 1-line edits each → no |
 
-| Criterion | Threshold |
-|-----------|-----------|
-| Parallelism | 2+ tasks that can run in parallel (no file overlap, no data dependency) |
-| Module scope | Cross-module changes (touching files in different Module Boundaries) |
-| Complexity | New feature requiring design (new API, new module, new component) |
+If either condition is not met, stay in Solo + Codex. The file count "≤ 3" is a quick heuristic, not a hard rule — what matters is whether parallel coordination saves more time than it costs.
 
 **Shared across both modes** (no difference):
 - Codex review / QA → triggered per the Codex Review Trigger Conditions table below
