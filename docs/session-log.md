@@ -83,3 +83,38 @@
 - 开源 backlog 全部清零
 - 框架层两个重要演进：Doc Engineer 产品叙事审计 + Lead 主动建议下一步
 - 下次优先：场景 3 (全新空项目 /init-project) + tmux 截图
+
+## 2026-03-25 Session
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | Wave 5 (Dogfooding 验证) — 续 |
+| Tasks completed | install.sh self-update 修复, Solo + Codex 模式定义, Auto PR merge 工作流, GitHub Branch Protection |
+| Developers spawned | 0 (Solo + Codex 模式，Lead 全程独立完成) |
+| Codex reviews | 2 (PR #4 install.sh self-update, PR #5 workflow 更新) |
+| Codex catches | PR #5: 2 P2 — gh CLI 缺少 fallback + start-working 分支检查与 end-working 回 main 不兼容 |
+| Key decisions | Solo + Codex 判断标准(单任务+单模块+≤3文件), Auto PR merge(审查完自动建PR合并), GitHub Branch Protection(enforce admins), Heddle 作为场景 3, GitHub Actions CI 延后到 Heddle |
+
+### Files Changed
+```
+ CLAUDE-TEMPLATE.md          |  28 ++++--
+ CLAUDE.md                   |  33 ++++---
+ README.md                   |   6 +-
+ README.zh-CN.md             |   6 +-
+ commands/end-working.md     |   8 ++-
+ commands/start-working.md   |  14 +++-
+ docs/plan.md                |   9 ++++
+ docs/roles.md               |   6 +-
+ docs/session-log.md         |  (this entry)
+ docs/workflow.md            |  77 ++++++++++++++---
+ install.sh                  |  18 ++++
+ 11 files changed, 170+ insertions
+```
+
+### Notes
+- 首次完整走通 Solo + Codex 工作流：Lead 独立写代码 → Codex review → Doc Engineer 审计 → auto PR merge
+- 首次启用 GitHub Branch Protection，main 分支正式锁定
+- Codex review 两次都有效拦截了问题（gh fallback、分支生命周期兼容性）
+- 产品决策：Heddle（暂定名，generative UI 运行时）确认为 dogfooding 场景 3
+- GitHub Actions CI 延后：web 项目用 Vercel 自带 CI 足够，等 Heddle 再验证独立 CI
