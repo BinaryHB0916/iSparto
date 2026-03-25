@@ -139,7 +139,6 @@ iSparto used its own Agent Team workflow to develop itself. Below is the first c
 | Insertions / Deletions | +45 / -11 |
 | Full cycle | Task breakdown, parallel dev, Codex review, fix, doc audit, merge |
 
-> Screenshots of tmux split-pane parallel execution will be added after more dogfooding sessions.
 
 ---
 

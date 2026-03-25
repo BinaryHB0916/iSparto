@@ -139,7 +139,6 @@ iSparto 的 "Session Log 自动采集" 功能（`/end-working` 自动生成 sess
 | 文件变更 | 4 个文件，+45 行，-11 行 |
 | 完整周期 | 拆任务 → 并行开发 → Codex 审查 → 修复 → 文档审计 → 合并 |
 
-> 注：tmux 分屏并行截图将在更多 dogfooding 案例积累后补充。
 
 ---
 

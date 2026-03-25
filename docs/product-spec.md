@@ -8,7 +8,6 @@ iSparto 是一个开源的 AI Agent Team 工作流框架，把 Claude Code 单 A
 
 ## 核心功能
 
-### 免费版（开源核心工作流）
 - **Agent Team 角色分工**: Team Lead 协调、Developer 写代码、Codex Reviewer 审查修复、Doc Engineer 文档同步
 - **Wave 并行开发**: 一个 Wave 内多个 Developer 并行，tmux 分屏可视
 - **7 个 Slash Commands**: /init-project, /migrate, /start-working, /end-working, /plan, /env-nogo, /restore
@@ -19,13 +18,6 @@ iSparto 是一个开源的 AI Agent Team 工作流框架，把 Claude Code 单 A
 - **Session log**: docs/session-log.md 记录每次会话的开发指标
 - **版本追踪与更新日志**: --upgrade 支持版本升级
 - **一键安装**: curl 一行命令搞定，支持 --dry-run 预览、--upgrade 升级、--uninstall 卸载
-
-### Pro 版（付费，规划中）
-- Real-time agent dashboard — agent 状态、进度、阻塞可视化
-- Auto-retry & rollback — agent 失败自动重试/回滚
-- Cost & token analytics — 每 wave 花费、预算告警
-- Multi-project management — 多项目统一看板
-- Wave history & replay — 回看每个 wave 的完整过程
 
 ## 技术约束
 - 纯配置项目：Shell 脚本 + Markdown 模板 + MCP Server 注册
