@@ -107,6 +107,25 @@ Clarify snapshot restore steps in troubleshooting docs
 
 ---
 
+## Releasing (Maintainers)
+
+To cut a new release:
+
+```bash
+./scripts/release.sh 0.3.0
+```
+
+The script handles everything automatically:
+1. Validates preconditions (on main, clean tree, tag doesn't exist)
+2. Updates `VERSION` and stamps `CHANGELOG.md` with the release date
+3. Commits, tags `v0.3.0`, pushes to origin
+4. Generates `checksums.sha256` for `install.sh`
+5. Creates a GitHub Release with `install.sh` + `checksums.sha256` as assets
+
+**Before releasing:** make sure `CHANGELOG.md` has entries under `[Unreleased]` describing what changed.
+
+---
+
 ## Community
 
 - **Languages:** English and Chinese are both welcome
