@@ -39,9 +39,9 @@ iSparto 把单个 Agent 变成**一支有分工的团队**：Lead 拆任务、De
 
 | | 单 Agent 工具 | iSparto |
 |--|--------------|---------|
-| 协作模式 | 你和一个 Agent 反复沟通 | 你对接 Lead，Lead 协调整个团队 |
+| 协作模式 | 你和一个 Agent 反复沟通 | Lead 自动选择：小任务 Solo + Codex，并行任务 Agent Team |
 | AI 的组织 | 单个 Agent，无分工 | 团队化（Lead + Developer + Reviewer + Doc Engineer） |
-| 并行能力 | 无，单线程对话 | Wave 内多 Developer 并行，tmux 分屏可视 |
+| 并行能力 | 无，单线程对话 | Solo 模式专注修复；Agent Team 模式 Wave 内多 Developer 并行 |
 | 代码审查 | 自己审自己（同源） | Codex 审 Claude（异源），覆盖不同模型的盲区 |
 | 跨会话状态 | 丢失，每次重新解释上下文 | plan.md 驱动，`/start-working` 自动恢复 |
 | 文档同步 | 手动维护 | Doc Engineer 每个 Wave 自动审计 |
@@ -54,7 +54,7 @@ iSparto 把单个 Agent 变成**一支有分工的团队**：Lead 拆任务、De
 
 | 项目 | 要求 | 说明 |
 |------|------|------|
-| Claude Max 订阅 | $100/月 | Claude Code + Agent Team 模式 |
+| Claude Max 订阅 | $100/月 | Claude Code + Auto 模式（Solo + Codex / Agent Team） |
 | ChatGPT 订阅 | $20/月 | Codex CLI（代码审查 + QA） |
 | Node.js | 18+ | 运行 Claude Code、Codex CLI 和 MCP Server |
 | Git | 任意版本 | 版本控制 |
