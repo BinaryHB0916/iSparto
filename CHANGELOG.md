@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Agent Team mode now triggers for read tasks (code review, doc audit, research) in addition to write tasks
+- Platform check: install.sh warns on non-macOS systems
+
+### Changed
+
+- Collaboration Mode selection criteria refined: "decomposable + worth the overhead" applies to both read and write
+- Extracted language instruction from 7 command templates into CLAUDE.md/CLAUDE-TEMPLATE.md (single source of truth)
+- Simplified configuration.md: removed Memory Boundary section, shortened Multi-Device Sync to 3 lines
+- release.sh uses PR flow instead of direct push to main
+
+### Fixed
+
+- isparto.sh: trap local variable scope bug (local var not accessible in EXIT trap after function returns)
+- snapshot.sh: --latest flag now compares timestamps instead of relying on glob order
+- Shell scripts: fixed trap quoting across bootstrap.sh, install.sh, isparto.sh, scripts/release.sh
+- README: fixed notification count, Solo mode description, directory tree completeness, zh-CN self-reference link
+- workflow.md: fixed release branch format, added Setup Assistant footnote
+
+### Removed
+
+- Pro version section from product-spec.md (open-source repo only contains free features)
+- Screenshot placeholder notes from READMEs (will use video demos)
+- Dead code: unused color variables, unreachable VERSION fallback branch, stale checksums.sha256 reference
+
 ## [0.3.0] - 2026-03-25
 
 ### Added
