@@ -50,7 +50,7 @@ do_upgrade() {
         rm -f "$UPGRADE_TMPFILE"
         exit 1
     }
-    bash "$UPGRADE_TMPFILE" --upgrade
+    exec bash "$UPGRADE_TMPFILE" --upgrade
 }
 
 # ── Uninstall: 100% offline ──────────────────────────────────
