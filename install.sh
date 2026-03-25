@@ -130,6 +130,24 @@ if $UNINSTALL; then
 fi
 
 # ══════════════════════════════════════════════════════════════
+# Self-update: when running from ~/.isparto, pull latest and re-exec
+# ══════════════════════════════════════════════════════════════
+
+if $UPGRADE && [ -d "$ISPARTO_HOME/.git" ] && [ -z "${ISPARTO_SELF_UPDATED:-}" ]; then
+    REAL_SCRIPT="$(cd "$(dirname "$0")" && pwd)/$(basename "$0")"
+    if [[ "$REAL_SCRIPT" == "$ISPARTO_HOME/"* ]]; then
+        if $DRY_RUN; then
+            printf "  ${BLUE}[dry-run]${NC} Would self-update installer from remote\n"
+        else
+            git -C "$ISPARTO_HOME" pull --quiet
+            printf "  ${GREEN}✓${NC} Installer self-updated\n"
+            export ISPARTO_SELF_UPDATED=1
+            exec "$ISPARTO_HOME/install.sh" "$@"
+        fi
+    fi
+fi
+
+# ══════════════════════════════════════════════════════════════
 # Install mode (normal or dry-run)
 # ══════════════════════════════════════════════════════════════
 
