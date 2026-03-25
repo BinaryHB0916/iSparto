@@ -8,21 +8,20 @@
 |---------|------|-------------|
 | `/init-project` | New project kickoff, one-time | Provide product requirements description, review generated documents |
 | `/migrate` | Adopting iSparto in an existing project, one-time | Review the migration plan, confirm before execution. Use `--dry-run` to preview without executing |
-| `/start-working` | Start of each work session | Review the Team Lead's status report, confirm "start" |
-| `/end-working` | End of each work session | Review session report, confirm the commit message |
+| `/start-working` | Start of each work session | Review the Team Lead's status briefing and next-step suggestion, respond naturally |
+| `/end-working` | End of each work session | Receive session briefing (fully autonomous — commit, PR merge, and push are automatic) |
 | `/plan xxx` | When there's a new requirement | Describe the requirement, review the Team Lead's proposal |
 | `/env-nogo` | When there are environment concerns | Review check results, fix items marked with a cross |
 | `/restore` | When you want to undo a migration or init | Review snapshot details, confirm restore to roll back all changes |
 
 **Upgrading iSparto:** Run `~/.isparto/install.sh --upgrade` to pull the latest version and see what's new.
 
-## When the Team Lead Comes to You (3 Scenarios)
+## When the Team Lead Comes to You (2 Scenarios)
 
 | Scenario | When | What You Do |
 |----------|------|-------------|
-| Wave validation | After a Wave is completed | Review the change summary and documentation audit report, confirm everything looks good |
+| Wave completion briefing | After a Wave is completed | Receive the change summary and documentation audit report (informational — no confirmation needed, development continues automatically) |
 | Escalate for decision | When the Team Lead is unsure | The Team Lead explains the situation, you approve/decide |
-| Commit confirmation | Before push | Review the commit message, confirm |
 
 ## What You Don't Need to Do
 
@@ -36,6 +35,7 @@
 
 ## What You Should Focus On
 
-- **Documentation change summary at Wave validation** — especially sections marked with a warning for product decision changes
+- **Wave completion briefings** — review change summaries, especially sections marked with a warning for product decision changes
 - **Decisions escalated by the Team Lead** — these are matters the Team Lead considers beyond their authority
 - **Remaining issues in plan.md** — shown each time with /start-working, make sure nothing is missed
+- **Product direction decisions** — /plan proposals, /migrate migration plans, /restore actions still require your confirmation

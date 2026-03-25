@@ -20,4 +20,4 @@ Your responsibility: Report current status and wait for user confirmation before
    - **Solo + Codex**: when ALL of — single task, single module (per CLAUDE.md Module Boundaries), ≤ 3 files
    - **Agent Team**: when ANY of — 2+ parallelizable tasks, cross-module changes, new feature requiring design
    - Announce your choice and reasoning briefly (e.g., "Single-module fix, I'll handle this Solo + Codex")
-7. Present all the above information and wait for the user to confirm "start" before proceeding
+7. Present all the above information with your suggested next step. The user will review the briefing and respond naturally — they may say 'continue', adjust priorities, or raise concerns. Do not treat this as a formal gate requiring an explicit 'start' command.

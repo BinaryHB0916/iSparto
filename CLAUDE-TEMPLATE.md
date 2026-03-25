@@ -29,7 +29,7 @@ Lead automatically selects the mode — no user action needed.
 **Agent Team** (Lead spawns Developer teammates) — when ANY: 2+ parallel tasks, cross-module, or new feature requiring design.
 
 **Roles:**
-- Team Lead (main session): Coordinates the full workflow, merges code. In Solo + Codex mode, writes code directly. In Agent Team mode, delegates to Developer teammates. Lead handles information relay between Codex and Developer; the user does not participate in intermediate coordination. Lead may make routine decisions independently, but must escalate uncertain matters to the user. After completing a task, Lead proactively suggests the next step from plan.md.
+- Team Lead (main session): Coordinates the full workflow, merges code. In Solo + Codex mode, writes code directly. In Agent Team mode, delegates to Developer teammates. Lead handles information relay between Codex and Developer; the user does not participate in intermediate coordination. Lead may make routine decisions independently, but must escalate uncertain matters to the user. Parallelism applies to reading too — code review, documentation audit, and research tasks should be parallelized across agents when possible, not just code writing. After completing a task, Lead proactively suggests the next step from plan.md.
 - Claude Developer (teammate, Agent Team only): Writes code + unit tests. Works within file ownership scope. Reviews Codex fixes.
 - Codex Reviewer (MCP): Code review + direct fixes + QA smoke testing. Called by Lead per trigger table. Always uses xhigh reasoning.
 - Doc Engineer (Lead sub-agent): The team's context source. After each Wave: (1) ensures code and docs stay in sync, (2) checks product terminology consistency, (3) audits product narrative integration.
@@ -41,6 +41,8 @@ Lead automatically selects the mode — no user action needed.
 4. Lead runs Doc Engineer audit (as sub-agent)
 5. Lead pushes branch -> creates PR -> merges to main -> cleans up branch
 
+/end-working is fully autonomous (commit + push + briefing). When all branch tasks are complete, Lead auto-creates PR and merges; when mid-Wave, only pushes without merging.
+
 **Development Workflow (Agent Team):**
 1. Lead breaks down tasks -> defines file ownership + interface contracts
 2. Developer develops + unit tests
@@ -49,6 +51,8 @@ Lead automatically selects the mode — no user action needed.
 5. Lead calls Codex for QA smoke testing (incremental, only changed paths)
 6. Lead spawns Doc Engineer for documentation audit (last step, ensures QA fixes are also audited)
 7. Lead pushes branch -> creates PR -> merges to main -> cleans up branch
+
+/end-working is fully autonomous (commit + push + briefing). When all branch tasks are complete, Lead auto-creates PR and merges; when mid-Wave, only pushes without merging.
 
 **Codex Review Triggers:** High-risk code must trigger code review + QA; UI-only changes need QA only; minor fixes need neither.
 
@@ -63,7 +67,6 @@ Lead automatically selects the mode — no user action needed.
 ## Operational Guardrails
 <!-- Define based on project needs -->
 - Deploying to production requires approval
-- Must confirm before git push
 - Must confirm before deleting files
 - Do not commit directly to main branch
 - Use /restore to roll back if /init-project or /migrate produces unexpected results

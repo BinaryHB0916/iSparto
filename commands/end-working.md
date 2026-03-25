@@ -46,4 +46,4 @@ Your responsibility: Ensure all changes and decisions from this session are capt
    - Delete branch (local + remote) and switch back to main
    - If tasks are NOT complete (mid-Wave), just push — PR will be created when the branch is done
 
-Get user confirmation on the commit message before executing.
+After completing all steps, output a brief session summary to the user (what changed, issues caught, next steps suggested). This is a briefing, not a confirmation gate — proceed without waiting for user approval.
