@@ -25,10 +25,14 @@
 
 Lead automatically selects the mode — no user action needed.
 
-**Solo + Codex** (Lead writes code directly) — the default mode.
-**Agent Team** (Lead spawns Developer teammates) — upgrade when BOTH conditions are met:
+**Solo + Codex** (Lead completes the task alone) — the default mode.
+**Agent Team** (Lead spawns teammates for parallel execution) — upgrade when BOTH conditions are met:
 1. Decomposable: work can be split into independent parallel sub-tasks (no file overlap, no data dependency)
-2. Sufficient volume: file count × change size per file justifies coordination overhead (5 files with large logic changes → Agent Team; 5 files with 1-line edits each → Solo)
+2. Sufficient volume: file count × workload per file justifies coordination overhead
+
+Applies to both **write** (code, docs, config) and **read** (code review, doc audit, research/debug) tasks:
+- Write: 5 files with large logic changes → Agent Team; 5 files with 1-line edits → Solo
+- Read: review spans multiple modules → Agent Team splits by module for parallel review; few files → Solo serial review
 
 **Roles:**
 - Team Lead (main session): Coordinates the full workflow, merges code. In Solo + Codex mode, writes code directly. In Agent Team mode, delegates to Developer teammates. Lead handles information relay between Codex and Developer; the user does not participate in intermediate coordination. Lead may make routine decisions independently, but must escalate uncertain matters to the user. Parallelism applies to reading too — code review, documentation audit, and research tasks should be parallelized across agents when possible, not just code writing. After completing a task, Lead proactively suggests the next step from plan.md.
