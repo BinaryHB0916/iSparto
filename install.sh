@@ -119,15 +119,16 @@ fi
 
 echo ""
 if $UPGRADE && $DRY_RUN; then
-    echo "  iSparto Upgrader (DRY RUN — no changes will be made)"
+    echo "  iSparto Upgrader (DRY RUN)"
 elif $UPGRADE; then
-    echo "  iSparto Upgrader"
+    : # upgrade header is just the version line below
 elif $DRY_RUN; then
     echo "  iSparto Installer (DRY RUN — no changes will be made)"
+    echo "  ─────────────────"
 else
     echo "  iSparto Installer"
+    echo "  ─────────────────"
 fi
-echo "  ─────────────────"
 echo ""
 
 # ── Detect need for migration (defer actual cleanup until after file copy) ──
@@ -155,9 +156,26 @@ if [ -n "$OLD_VERSION" ] && [ -n "$NEW_VERSION" ] && [ "$OLD_VERSION" != "$NEW_V
         printf "  ${GREEN}*${NC} Upgrading: $OLD_VERSION -> $NEW_VERSION\n"
     fi
     if [ -f "$SCRIPT_DIR/CHANGELOG.md" ]; then
-        echo ""
-        echo "  What's new in $NEW_VERSION:"
-        sed -n "/^## \[$NEW_VERSION\]/,/^## \[/p" "$SCRIPT_DIR/CHANGELOG.md" | sed '$d' | sed 's/^/  /'
+        # Show only Added items; summarize Changed/Fixed/Removed with counts
+        _cl_block=$(sed -n "/^## \[$NEW_VERSION\]/,/^## \[/p" "$SCRIPT_DIR/CHANGELOG.md" | sed '$d')
+        _added=$(echo "$_cl_block" | sed -n '/^### Added/,/^### /p' | sed '$d' | grep '^- ' || true)
+        if [ -n "$_added" ]; then
+            echo ""
+            echo "  What's new:"
+            echo "$_added" | sed 's/^/    /'
+        fi
+        _n_changed=$(echo "$_cl_block" | sed -n '/^### Changed/,/^### /{ /^### Changed/d; /^### /d; p; }' | grep -c '^- ' || true)
+        _n_fixed=$(echo "$_cl_block" | sed -n '/^### Fixed/,/^### /{ /^### Fixed/d; /^### /d; p; }' | grep -c '^- ' || true)
+        _n_removed=$(echo "$_cl_block" | sed -n '/^### Removed/,/^### /{ /^### Removed/d; /^### /d; p; }' | grep -c '^- ' || true)
+        _summary_parts=()
+        [ "$_n_changed" -gt 0 ] 2>/dev/null && _summary_parts+=("${_n_changed} changed")
+        [ "$_n_fixed" -gt 0 ] 2>/dev/null && _summary_parts+=("${_n_fixed} fixed")
+        [ "$_n_removed" -gt 0 ] 2>/dev/null && _summary_parts+=("${_n_removed} removed")
+        if [ ${#_summary_parts[@]} -gt 0 ]; then
+            _IFS_BAK="$IFS"; IFS=", "; _summary="${_summary_parts[*]}"; IFS="$_IFS_BAK"
+            printf "  … plus ${_summary} — full changelog:\n"
+            printf "    https://github.com/$REPO/releases/tag/v$NEW_VERSION\n"
+        fi
         echo ""
     fi
 elif [ -z "$OLD_VERSION" ] && [ -n "$NEW_VERSION" ]; then
@@ -198,7 +216,10 @@ if ! $DRY_RUN; then
         SNAPSHOT_FILES+=("$HOME/.claude/templates/$(basename "$f")")
     done
     SNAPSHOT_ID=$("$ISPARTO_HOME/lib/snapshot.sh" create install global "${SNAPSHOT_FILES[@]}")
-    printf "  ${GREEN}✓${NC} Snapshot created: $SNAPSHOT_ID\n"
+    # Fresh install: show snapshot ID; upgrade: silent (mentioned in Done)
+    if [ -z "$OLD_VERSION" ]; then
+        printf "  ${GREEN}✓${NC} Snapshot created: $SNAPSHOT_ID\n"
+    fi
 fi
 
 # ── Legacy backup (kept for backward compatibility) ────────
@@ -238,30 +259,36 @@ record() {
     fi
 }
 
-# ── 1. Node.js ──────────────────────────────────────────────
+# ── Dependencies ─────────────────────────────────────────────
+# On upgrade: collapse to one line when all pass.
+# On fresh install: show each step for clarity.
 
-echo "Checking Node.js..."
+_dep_ok=true   # track whether all deps pass silently
+
+# 1. Node.js
+_node_label=""
 if command -v node &> /dev/null; then
     NODE_VERSION=$(node -v | sed 's/v//' | cut -d. -f1)
     if [ "$NODE_VERSION" -ge 18 ]; then
-        printf "  ${GREEN}✓${NC} Node.js $(node -v)\n"
+        _node_label="Node $(node -v | sed 's/v//')"
     else
+        _dep_ok=false
         printf "  ${RED}✘${NC} Node.js $(node -v) — requires 18+\n"
         echo "  Install from https://nodejs.org"
         exit 1
     fi
 else
+    _dep_ok=false
     printf "  ${RED}✘${NC} Node.js not found\n"
     echo "  Install 18+ from https://nodejs.org"
     exit 1
 fi
 
-# ── 2. Claude Code ──────────────────────────────────────────
-
-echo "Checking Claude Code..."
+# 2. Claude Code
 if command -v claude &> /dev/null; then
-    printf "  ${GREEN}✓${NC} Claude Code installed\n"
+    : # already installed
 else
+    _dep_ok=false
     if $DRY_RUN; then
         printf "  ${BLUE}[dry-run]${NC} Would install Claude Code\n"
     else
@@ -272,12 +299,11 @@ else
     fi
 fi
 
-# ── 3. Codex CLI ────────────────────────────────────────────
-
-echo "Checking Codex CLI..."
+# 3. Codex CLI
 if command -v codex &> /dev/null; then
-    printf "  ${GREEN}✓${NC} Codex CLI installed\n"
+    : # already installed
 else
+    _dep_ok=false
     if $DRY_RUN; then
         printf "  ${BLUE}[dry-run]${NC} Would install Codex CLI\n"
     else
@@ -288,12 +314,11 @@ else
     fi
 fi
 
-# ── 4. Codex Login ──────────────────────────────────────────
-
-echo "Checking Codex login..."
+# 4. Codex Login
 if command -v codex &> /dev/null && codex login status &> /dev/null; then
-    printf "  ${GREEN}✓${NC} Codex logged in\n"
+    : # already logged in
 else
+    _dep_ok=false
     if $DRY_RUN; then
         printf "  ${BLUE}[dry-run]${NC} Would run codex login\n"
     else
@@ -302,15 +327,19 @@ else
     fi
 fi
 
-# ── 5. Copy config to ~/.claude/ ────────────────────────────
+# Summary line when all deps already satisfied
+if $_dep_ok; then
+    printf "  ${GREEN}✓${NC} Dependencies OK (${_node_label}, Claude Code, Codex)\n"
+fi
 
-echo "Installing global commands & templates to ~/.claude/ ..."
-echo "  (project-level config will be created when you run /init-project or /migrate)"
+# ── 5. Copy config to ~/.claude/ ────────────────────────────
 
 if ! $DRY_RUN; then
     [ ! -d ~/.claude/commands ] && mkdir -p ~/.claude/commands && record mkdir "$HOME/.claude/commands"
     [ ! -d ~/.claude/templates ] && mkdir -p ~/.claude/templates && record mkdir "$HOME/.claude/templates"
 fi
+
+_file_count=0
 
 install_file() {
     local src="$1"
@@ -329,15 +358,22 @@ install_file() {
     else
         if [ -f "$dst" ]; then
             record overwritten "$dst"
-            cp "$src" "$dst"
-            printf "  ${GREEN}✓${NC} Updated $label\n"
         else
-            cp "$src" "$dst"
             record created "$dst"
+        fi
+        cp "$src" "$dst"
+        _file_count=$((_file_count + 1))
+        # Fresh install: show each file; upgrade: silent (summary below)
+        if [ -z "$OLD_VERSION" ]; then
             printf "  ${GREEN}✓${NC} Installed $label\n"
         fi
     fi
 }
+
+if [ -z "$OLD_VERSION" ]; then
+    echo "Installing global commands & templates to ~/.claude/ ..."
+    echo "  (project-level config will be created when you run /init-project or /migrate)"
+fi
 
 install_file "$SCRIPT_DIR/CLAUDE-TEMPLATE.md" ~/.claude/CLAUDE-TEMPLATE.md "~/.claude/CLAUDE-TEMPLATE.md"
 
@@ -351,21 +387,28 @@ for f in "$SCRIPT_DIR"/templates/*.md; do
     install_file "$f" ~/.claude/templates/"$name" "~/.claude/templates/$name"
 done
 
+# Upgrade: single summary line
+if [ -n "$OLD_VERSION" ] && ! $DRY_RUN; then
+    printf "  ${GREEN}✓${NC} ${_file_count} files updated (commands, templates, config)\n"
+fi
+
 # ── 6. Register Codex MCP Server (global) ───────────────────
 
-echo "Registering Codex MCP Server (global)..."
 if $DRY_RUN; then
     if claude mcp list -s user 2>/dev/null | grep -q codex-reviewer; then
-        printf "  ${GREEN}✓${NC} Codex MCP Server already registered\n"
+        printf "  ${GREEN}✓${NC} Codex MCP Server OK\n"
     else
         printf "  ${BLUE}[dry-run]${NC} Would register Codex MCP Server globally\n"
     fi
 else
     if claude mcp add codex-reviewer -s user -- npx -y codex-mcp-server 2>/dev/null; then
         record mcp "codex-reviewer"
-        printf "  ${GREEN}✓${NC} Codex MCP Server registered globally\n"
+        printf "  ${GREEN}✓${NC} Codex MCP Server registered\n"
     else
-        printf "  ${YELLOW}→${NC} MCP registration skipped (may already exist)\n"
+        # Already registered — only mention on fresh install
+        if [ -z "$OLD_VERSION" ]; then
+            printf "  ${GREEN}✓${NC} Codex MCP Server OK\n"
+        fi
     fi
 fi
 
@@ -397,7 +440,6 @@ if $DRY_RUN; then
     printf "${GREEN}Dry run complete!${NC} No changes were made.\n"
     echo ""
     echo "Run without --dry-run to install:"
-    echo ""
     echo "  curl -fsSL https://raw.githubusercontent.com/$REPO/main/bootstrap.sh | bash"
 else
     if [ -n "$NEW_VERSION" ]; then
@@ -405,12 +447,15 @@ else
     else
         printf "${GREEN}Done!${NC} iSparto is ready.\n"
     fi
-    printf "  Snapshot saved (use ~/.isparto/install.sh --uninstall to revert)\n"
-    echo ""
-    echo "Next step — launch Claude Code in your project directory:"
-    echo ""
-    echo "  claude --effort max"
-    echo "  /init-project <description>      # new project"
-    echo "  /migrate                         # existing project"
+    printf "  Rollback: ~/.isparto/install.sh --uninstall\n"
+    # Fresh install: show next steps
+    if [ -z "$OLD_VERSION" ]; then
+        echo ""
+        echo "Next step — launch Claude Code in your project directory:"
+        echo ""
+        echo "  claude --effort max"
+        echo "  /init-project <description>      # new project"
+        echo "  /migrate                         # existing project"
+    fi
 fi
 echo ""
