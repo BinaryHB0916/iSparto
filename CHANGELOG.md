@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Codex review trigger rules overhauled: default is now "trigger code review + QA" for all code changes (Tier 1); only pure visual/config changes (Tier 2, QA only) and pure doc/formatting (Tier 3, skip both) are exempt
+- New Wave-level safety net: each Wave must include at least one batch Codex review regardless of individual change categorization
+- Process Observer compliance checklist expanded: 13 → 14 items (added B4 Wave-level batch review check)
+
 ## [0.5.2] - 2026-03-26
 
 ### Added
