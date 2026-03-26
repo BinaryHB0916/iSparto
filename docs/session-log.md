@@ -282,3 +282,30 @@
 - 根因：commands/*.md 模板全是英文指令且无语言检测说明，而 CLAUDE-TEMPLATE.md 的语言规则要到 CLAUDE.md 生成后才生效
 - 修复策略：在命令模板层加入语言检测（靠近执行时刻），而非翻译模板本身（模板是结构参考）
 - templates/*.md 保持英文结构不变——生成内容的语言由 commands 指令控制
+
+## 2026-03-26 Session (continued)
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | Wave 5 (Dogfooding 验证) — 续 |
+| Tasks completed | Process Observer 审计增加 C4 检查（plan.md 未完成项与实际状态核对），补标 plan.md 漏标的两项 |
+| Developers spawned | 0 (Solo + Codex 模式) |
+| Codex reviews | 0 (低风险文档改动，3 个文件 6 行) |
+| Codex catches | N/A |
+| Key decisions | Process Observer 职责扩展：不仅观察，还要主动检查 plan.md 未完成项是否与代码实际状态一致，发现漏标时提醒 Lead |
+
+### Files Changed
+```
+ commands/end-working.md  | 4 ++--
+ docs/plan.md             | 4 ++--
+ docs/process-observer.md | 2 ++
+ docs/session-log.md      | (this entry)
+ 4 files changed, 6 insertions(+), 4 deletions(-)
+```
+
+### Notes
+- 用户 dogfooding 中发现 plan.md 有两项（Process Observer hooks 实现 + /end-working 集成）已完成但未标记
+- 根因：plan.md 更新依赖 Lead "记得"，没有系统性核对机制
+- 修复：在 Process Observer 审计 Checklist C 增加 C4 检查项，/end-working 审计指令也同步补充
+- 这是 Process Observer 角色的一次职责升级：从纯观察到主动兜底

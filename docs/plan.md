@@ -77,8 +77,8 @@ v2.x  CEO 工作台      用户 = 老板，说需求看结果，不碰过程
 - [ ] 安装脚本 ASCII art banner — 黑客帝国风格的 fancy 安装头（ASCII logo + 动画效果）
 - [ ] GitHub Actions CI 质量门 — PR 必须通过 CI 检查才能 merge
 - [x] Process Observer 角色定义与文档 — 合规监督角色（实时拦截 hooks + 事后审计 sub-agent），docs/process-observer.md + 各文档集成
-- [ ] Process Observer hooks 实现 — PreToolUse hook shell 脚本，拦截高危操作
-- [ ] Process Observer /end-working 集成 — end-working.md 中触发合规审计并输出偏差报告
+- [x] Process Observer hooks 实现 — PreToolUse hook shell 脚本，拦截高危操作
+- [x] Process Observer /end-working 集成 — end-working.md 中触发合规审计并输出偏差报告
 
 **已完成：**（折叠）
 
