@@ -102,7 +102,7 @@ check_rule() {
             local env_found=false
             if ls .env .env.* 2>/dev/null | grep -q . 2>/dev/null; then
                 env_found=true
-            elif find . -maxdepth 2 \( -name ".env" -o -name ".env.*" \) -print -quit 2>/dev/null | grep -q . 2>/dev/null; then
+            elif find . -maxdepth 10 \( -name ".env" -o -name ".env.*" \) -print -quit 2>/dev/null | grep -q . 2>/dev/null; then
                 env_found=true
             fi
             if $env_found; then

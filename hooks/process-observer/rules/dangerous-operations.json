@@ -5,14 +5,14 @@
     {
       "id": "git-force-push-protected",
       "tool": "Bash",
-      "pattern": "git[[:space:]]+push[[:space:]]+.*(-f|--force)[[:space:]]+.*(main|master)",
+      "pattern": "git[[:space:]]+push[[:space:]]+.*(-f|--force).*([[:space:]]|:|/)(main|master)([[:space:]]|$)",
       "severity": "critical",
       "reason": "Force push to main/master is destructive and can rewrite shared history"
     },
     {
       "id": "git-push-main-direct",
       "tool": "Bash",
-      "pattern": "git[[:space:]]+push[[:space:]]+(origin[[:space:]]+)?(main|master)([[:space:]]|$)",
+      "pattern": "git[[:space:]]+push[[:space:]]+.*([[:space:]]|:|/)(main|master)([[:space:]]|$)|git[[:space:]]+push[[:space:]]+(main|master)([[:space:]]|$)",
       "severity": "high",
       "reason": "Direct push to main/master is not allowed — use a feature branch and PR"
     },
