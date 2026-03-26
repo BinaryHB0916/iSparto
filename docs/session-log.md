@@ -377,3 +377,34 @@
 - 外部反馈（X 用户问自定义 agent）触发路线图更新，但附带了前置判断条件（生态开放度）
 - README 重组采纳了外部产品建议中的 4/6 项，拒绝了 tagline 建议，延后了 GIF 录制
 - 下次优先：meic 项目 dogfooding 继续 + 终端录屏 GIF
+
+## 2026-03-26 Session (continued 4)
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | Wave 5 (Dogfooding 验证) — 续 |
+| Tasks completed | Codex review 触发规则重构：从"列举要 review 的"翻转为"列举可跳过的，其余全部 review" |
+| Developers spawned | 0 (Solo + Codex 模式) |
+| Codex reviews | 1 (PR #44 全部改动，发现 3 个一致性问题并修复) |
+| Codex catches | 3 P2/P3 — hotfix 规则未对齐 Tier 2 config 豁免, B1 判定标准未包含 config-only 跳过, workflow.md Agent Team 流程仍引用 B1-B3 而非 B1-B4 |
+| Key decisions | Codex review 默认触发(Tier 1)，仅纯视觉/config(Tier 2 QA only)和纯文档/格式化(Tier 3 skip)可跳过；新增 Wave 级兜底(B4)；检查项 13→14 |
+
+### Files Changed
+```
+ CLAUDE-TEMPLATE.md       |  2 +-
+ CLAUDE.md                |  2 +-
+ docs/concepts.md         |  2 +-
+ docs/process-observer.md |  8 +++++---
+ docs/roles.md            |  2 +-
+ docs/session-log.md      | (this entry)
+ docs/workflow.md         | 47 +++++++++++++++++++++++++++++++++++++----------
+ 6 files changed, 46 insertions(+), 17 deletions(-)
+```
+
+### Notes
+- 触发原因：用户在另一个项目 dogfooding 时发现 Codex review 经常不触发，根因是旧规则只定义了"高风险"和"纯 UI"两端，中间地带（业务逻辑、API、数据模型等）默认被跳过
+- 修复策略：翻转默认行为——从"opt-in"改为"opt-out"，只有明确列入跳过清单的才不触发
+- 这是框架级改动，影响所有安装 iSparto 的项目（通过 CLAUDE-TEMPLATE.md）
+- Codex review 再次证明价值：一次 review 发现 3 个交叉引用一致性问题，人工很难全部定位
+- 新增 B4 Wave 级兜底检查：确保即使单次改动被分类跳过，Wave 结束时仍有至少一次批量 review
