@@ -47,6 +47,7 @@
 - [x] 场景 1: isparto-website 项目 — /migrate 已完成
 - [x] 场景 2: 萌芽勇气 (iOS app) — /migrate 已完成
 - [ ] 场景 3: Heddle（暂定名，generative UI 运行时）— /init-project 从零开始（用户自行操作）
+- [ ] 场景 4: meic（暂定代号，虚拟声纹/声纹卡）— /init-project 从零开始（用户自行操作）
 - [x] Session Log 自动采集 — /end-working 自动生成 session report，/start-working 自动读取历史
 - [ ] 每个场景记录：Wave 数量、并行效率、Codex 拦截问题、截图（现在由 session-log.md 自动采集）
 
