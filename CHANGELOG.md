@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- User Preference Interface: territory-based boundary between Claude Code auto-memory and CLAUDE.md workflow rules, three-level preference response model (unconditional / conditional / record-only), conflict protocol, and agent team memory write rules
+- Plan Mode auto-trigger: Lead autonomously enters plan mode for cross-module, core design, user-facing, or hard-to-reverse changes
+- CLAUDE-TEMPLATE.md now includes User Preference Interface section (new projects inherit the rules via /init-project)
+- docs/configuration.md: detailed User Preference Interface reference documentation
+- docs/concepts.md: User Preference Interface added to Concept Quick Reference
+- docs/user-guide.md: "Your Preferences and the Agent Team" section
+- docs/design-decisions.md: recorded User Preference Interface and Plan Mode decisions
+
 ## [0.5.3] - 2026-03-26
 
 ### Changed
