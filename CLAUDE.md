@@ -30,6 +30,14 @@ Lead 根据任务特征自动选择模式，用户无需干预。
 1. 可分解：任务能拆成独立并行的子任务（无文件重叠、无数据依赖）
 2. 工作量值得：文件数 × 每文件工作量足以抵消并行协调开销
 
+**Plan Mode:** Lead 自主判断是否进入 plan mode，用户无需指示。满足任一条件时自动进入：
+- 改动跨越多个模块（Module Boundaries 表中 ≥2 个模块）
+- 改动涉及核心设计（CLAUDE.md、workflow 定义、角色定义）
+- 改动影响用户侧行为（slash commands、install 流程）
+- 改动不可轻易回滚（数据格式变更、破坏性 API 变更）
+
+不需要 plan mode：单模块内 bug fix、纯文档更新、格式化/typo。
+
 适用于**写**（代码、文档、配置）和**读**（code review、文档审计、调研/debug）两类任务：
 - 写：改 5 个文件每个大段逻辑 → Agent Team；改 5 个文件每个 1 行 → Solo
 - 读：review 涉及多模块多文件 → Agent Team 按模块分组并行 review；少量文件 → Solo 串行 review
@@ -88,6 +96,27 @@ Lead 根据任务特征自动选择模式，用户无需干预。
 - 不直接 commit 到 main——始终通过 PR merge
 - install.sh 破坏性改动（改变 backup 格式、删除旧兼容逻辑）需要用户明确同意
 - 高危操作由 Process Observer hooks 自动拦截，清单见 hooks/process-observer/rules/dangerous-operations.json
+
+## User Preference Interface
+
+Agent 团队将用户的 memory 视为**只读输入**，用于适配沟通方式；CLAUDE.md 是行为的唯一权威。
+
+**领地原则：** Memory 管"跟谁做事"（用户偏好），CLAUDE.md 管"怎么做事"（工作流规则）。归属按话题领地判断，不按内容是否矛盾判断。
+
+**三级响应模型：**
+
+| 级别 | 偏好类型 | 示例 | Agent 团队响应 |
+|------|---------|------|---------------|
+| 第一级：无条件尊重 | 沟通语言、输入方式、输出风格、称呼习惯 | 语音输入纠错、不要总结、用中文 | 直接适配 |
+| 第二级：有条件尊重 | 交互节奏、自主程度、关注重点 | 问号先讨论、常规决策不要问我、更关心性能 | 在工作流规则范围内适配；紧急拦截不等讨论 |
+| 第三级：只记录不执行 | 跳过流程、改变顺序、降低安全标准 | 不要 Codex review、先 push 再 review、直接推 main | 不执行，告知用户"工作流要求 [Y]，因为 [原因]" |
+
+**冲突协议：** 当 memory 与 CLAUDE.md 冲突时——执行 CLAUDE.md，向用户说明原因，不修改用户的 memory。如果用户想改规则，引导修改 CLAUDE.md。
+
+**Agent 团队 memory 写入规则：**
+- 允许：项目背景（project）、外部引用（reference）、用户画像（user）
+- 禁止：工作流规则、流程变更、任何与 CLAUDE.md 现有内容重复的条目
+- 写入前检查：该话题是否属于 CLAUDE.md 的领地？属于则不写
 
 ## Common Commands
 - 安装测试: `./install.sh --dry-run`
