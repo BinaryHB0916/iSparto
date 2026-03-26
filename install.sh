@@ -424,6 +424,75 @@ else
     fi
 fi
 
+# ── Patch project-level settings (hooks registration) ────────
+# If we're inside a project directory (has CLAUDE.md), ensure Process Observer
+# hooks are registered in .claude/settings.json. This covers projects that were
+# init'd before Process Observer existed.
+
+_project_settings=".claude/settings.json"
+if [ -f "CLAUDE.md" ] && ! $DRY_RUN; then
+    mkdir -p .claude
+    # Use Python (available on macOS) for reliable JSON merge
+    # Prints "PATCHED" if modified, empty if already registered, "ERROR:..." on failure
+    if ! command -v python3 &>/dev/null; then
+        printf "  ${YELLOW}→${NC} python3 not found — skipped project hooks registration\n"
+        printf "    Add Process Observer hooks to .claude/settings.json manually or run /migrate\n"
+    else
+        _patch_result=$(python3 -c "
+import json, sys, os
+
+path = '$_project_settings'
+hook_cmd = 'bash ~/.isparto/hooks/process-observer/scripts/pre-tool-check.sh'
+
+try:
+    if os.path.exists(path):
+        with open(path) as f:
+            settings = json.load(f)
+    else:
+        settings = {}
+except Exception as e:
+    print('ERROR: ' + str(e))
+    sys.exit(0)
+
+hooks = settings.get('hooks', {})
+pre_tool_use = hooks.get('PreToolUse', [])
+already = any(
+    any(hook_cmd in h.get('command', '') for h in entry.get('hooks', []))
+    for entry in pre_tool_use if isinstance(entry, dict)
+)
+
+if already:
+    sys.exit(0)
+
+settings.setdefault('hooks', {}).setdefault('PreToolUse', []).append({
+    'matcher': 'Bash',
+    'hooks': [{
+        'type': 'command',
+        'command': hook_cmd
+    }]
+})
+
+with open(path, 'w') as f:
+    json.dump(settings, f, indent=2)
+    f.write('\n')
+
+print('PATCHED')
+" 2>&1 || true)
+        if [ "$_patch_result" = "PATCHED" ]; then
+            printf "  ${GREEN}✓${NC} Process Observer hooks registered in project settings\n"
+        elif echo "$_patch_result" | grep -q "^ERROR:"; then
+            printf "  ${YELLOW}→${NC} Could not patch .claude/settings.json: ${_patch_result#ERROR: }\n"
+            printf "    Add Process Observer hooks manually or run /migrate\n"
+        fi
+    fi
+elif [ -f "CLAUDE.md" ] && $DRY_RUN; then
+    if [ -f "$_project_settings" ] && grep -q "pre-tool-check.sh" "$_project_settings" 2>/dev/null; then
+        : # already registered, skip
+    else
+        printf "  ${BLUE}[dry-run]${NC} Would register Process Observer hooks in project settings\n"
+    fi
+fi
+
 # ── Track installed version ──────────────────────────────────
 
 if ! $DRY_RUN; then
