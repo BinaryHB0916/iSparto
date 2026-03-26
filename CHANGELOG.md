@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `install.sh --upgrade` now auto-patches project-level `.claude/settings.json` to register Process Observer hooks if missing (covers projects init'd before v0.5.0)
+- Graceful fallback: warns if python3 is unavailable or settings.json is invalid, suggests `/migrate` as alternative
+
 ## [0.5.1] - 2026-03-26
 
 ### Added
