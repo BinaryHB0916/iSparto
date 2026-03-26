@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.1] - 2026-03-26
+
 ### Added
 
 - Process Observer C4 check: cross-references plan.md unchecked items against actual codebase state, catches implemented features that were not marked done
