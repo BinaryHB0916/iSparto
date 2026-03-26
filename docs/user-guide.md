@@ -32,6 +32,7 @@
 - No need to do code review — Codex handles that
 - No need to do smoke testing — Codex QA handles that
 - No need to manually track development metrics — session-log.md records them automatically at the end of each session
+- No need to worry about dangerous operations (force push, commit to main, leak secrets) — Process Observer hooks automatically intercept them in real time
 
 ## What You Should Focus On
 
@@ -39,3 +40,4 @@
 - **Decisions escalated by the Team Lead** — these are matters the Team Lead considers beyond their authority
 - **Remaining issues in plan.md** — shown each time with /start-working, make sure nothing is missed
 - **Product direction decisions** — /plan proposals, /migrate migration plans, /restore actions still require your confirmation
+- **Compliance audit reports** — shown in /end-working session briefing; review any FAIL or WARNING items, and decide whether to adopt the suggested corrections next session

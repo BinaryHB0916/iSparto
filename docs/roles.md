@@ -10,7 +10,11 @@ flowchart TB
         direction LR
         LeadTasks["Break down tasks<br/>Interface contracts<br/>Coordinate full workflow<br/>Merge code"]
         Doc["Doc Engineer<br/>sub-agent<br/><br/>After Wave completion<br/>Documentation audit"]
+        Observer["Process Observer<br/>sub-agent<br/><br/>Compliance audit"]
     end
+
+    ObserverHooks["Hooks / Real-time<br/>PreToolUse hook<br/>Block dangerous ops"]
+    ObserverAudit["Sub-agent / Post-session<br/>Compliance checklist<br/>Deviation report"]
 
     Dev["Claude Developer<br/>teammate<br/><br/>Write code<br/>Write unit tests<br/>Review Codex fixes"]
 
@@ -19,6 +23,9 @@ flowchart TB
     User --> Lead
     Lead --> Dev
     Lead --> Codex
+    Observer -.->|monitors| LeadTasks
+    Observer --> ObserverHooks
+    Observer --> ObserverAudit
 ```
 
 **Model configuration:**
@@ -315,3 +322,16 @@ Key principles:
 - Mark changes involving product decisions with "Warning: product decision change" in the report, so the user can focus on them during post-review
 - Report coverage honestly — do not skip any checklist items
 ```
+
+---
+
+## Process Observer (Team Lead's sub-agent)
+
+Process Observer 是团队的合规监督角色，确保开发流程遵循 CLAUDE.md 和工作流规范。它由两部分组成：
+
+- **实时拦截（Hooks）**：通过 Claude Code PreToolUse hook 在命令执行前拦截灾难性操作（git push --force、直接 commit 到 main、泄露敏感文件等）
+- **事后审计（Sub-agent）**：/end-working 流程中，在 Doc Engineer 之后运行，对照 5 个 Checklist（共 13 个检查项：A1-A3 分支规范、B1-B3 Codex Review 合规、C1-C3 Doc Engineer 合规、D1-D2 PR 流程合规、E1-E2 越权操作）输出偏差报告
+
+Process Observer 不参与开发决策，只监督流程合规性。审计报告输出到 session briefing，不自动修改文件。
+
+> 完整定义和审计 Checklist 详见 [docs/process-observer.md](process-observer.md)。

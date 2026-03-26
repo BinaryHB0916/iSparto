@@ -1,0 +1,146 @@
+{
+  "version": "1.0",
+  "description": "High-risk operation rules for iSparto Process Observer pre-tool-check hook",
+  "rules": [
+    {
+      "id": "git-force-push-protected",
+      "tool": "Bash",
+      "pattern": "git[[:space:]]+push[[:space:]]+.*(-f|--force).*([[:space:]]|:|/)(main|master)([[:space:]]|$)",
+      "severity": "critical",
+      "reason": "Force push to main/master is destructive and can rewrite shared history"
+    },
+    {
+      "id": "git-push-main-direct",
+      "tool": "Bash",
+      "pattern": "git[[:space:]]+push[[:space:]]+.*([[:space:]]|:|/)(main|master)([[:space:]]|$)|git[[:space:]]+push[[:space:]]+(main|master)([[:space:]]|$)",
+      "severity": "high",
+      "reason": "Direct push to main/master is not allowed — use a feature branch and PR"
+    },
+    {
+      "id": "git-reset-hard",
+      "tool": "Bash",
+      "pattern": "git[[:space:]]+reset[[:space:]]+--hard",
+      "severity": "critical",
+      "reason": "git reset --hard discards all uncommitted changes irreversibly"
+    },
+    {
+      "id": "git-clean-force",
+      "tool": "Bash",
+      "pattern": "git[[:space:]]+clean[[:space:]]+-[a-zA-Z]*f",
+      "severity": "critical",
+      "reason": "git clean -f permanently deletes untracked files"
+    },
+    {
+      "id": "git-branch-delete-main",
+      "tool": "Bash",
+      "pattern": "git[[:space:]]+branch[[:space:]]+-[dD][[:space:]]+(main|master)([[:space:]]|$)",
+      "severity": "critical",
+      "reason": "Deleting the main/master branch is destructive"
+    },
+    {
+      "id": "git-checkout-discard-all",
+      "tool": "Bash",
+      "pattern": "git[[:space:]]+checkout[[:space:]]+--[[:space:]]+\\.",
+      "severity": "critical",
+      "reason": "git checkout -- . discards all working directory changes irreversibly"
+    },
+    {
+      "id": "commit-env-file",
+      "tool": "Bash",
+      "pattern": "git[[:space:]]+add[[:space:]]+.*\\.env",
+      "severity": "critical",
+      "reason": "Committing .env files may expose secrets (API keys, passwords, tokens)"
+    },
+    {
+      "id": "commit-env-file-bulk",
+      "tool": "Bash",
+      "pattern": "git[[:space:]]+add[[:space:]]+(-A|\\.|--all)",
+      "severity": "high",
+      "reason": "Bulk git add may accidentally include .env or other sensitive files — check working directory first"
+    },
+    {
+      "id": "commit-credentials",
+      "tool": "Bash",
+      "pattern": "git[[:space:]]+add[[:space:]]+.*(credentials|secret|\\.pem|\\.key)([[:space:]]|$)",
+      "severity": "critical",
+      "reason": "Committing credential/secret/key files may expose sensitive authentication data"
+    },
+    {
+      "id": "commit-ssh-keys",
+      "tool": "Bash",
+      "pattern": "git[[:space:]]+add[[:space:]]+.*(id_rsa|id_ed25519)",
+      "severity": "critical",
+      "reason": "Committing SSH private keys is a critical security risk"
+    },
+    {
+      "id": "commit-aws-credentials",
+      "tool": "Bash",
+      "pattern": "git[[:space:]]+add[[:space:]]+.*\\.aws/(credentials|config)",
+      "severity": "critical",
+      "reason": "Committing AWS credentials exposes cloud infrastructure access"
+    },
+    {
+      "id": "skip-hooks",
+      "tool": "Bash",
+      "pattern": "--no-verify",
+      "severity": "high",
+      "reason": "Skipping git hooks bypasses pre-commit safety checks"
+    },
+    {
+      "id": "skip-gpg",
+      "tool": "Bash",
+      "pattern": "(--no-gpg-sign|-c[[:space:]]+commit\\.gpgsign=false)",
+      "severity": "high",
+      "reason": "Disabling GPG signing bypasses commit signature verification"
+    },
+    {
+      "id": "rm-rf-root",
+      "tool": "Bash",
+      "pattern": "rm[[:space:]]+-[a-zA-Z]*r[a-zA-Z]*f[a-zA-Z]*[[:space:]]+(/|~/?|\\$HOME)([[:space:]]|$)",
+      "severity": "critical",
+      "reason": "Recursive force delete on root/home directory will destroy the entire filesystem"
+    },
+    {
+      "id": "rm-git-directory",
+      "tool": "Bash",
+      "pattern": "rm[[:space:]]+-[a-zA-Z]*r[a-zA-Z]*f?[a-zA-Z]*[[:space:]]+.*\\.git([[:space:]]|$|/)",
+      "severity": "critical",
+      "reason": "Deleting .git directory destroys the entire repository history"
+    },
+    {
+      "id": "rm-claude-config",
+      "tool": "Bash",
+      "pattern": "rm[[:space:]]+-[a-zA-Z]*r[a-zA-Z]*f?[a-zA-Z]*[[:space:]]+.*\\.claude([[:space:]]|$|/)",
+      "severity": "critical",
+      "reason": "Deleting .claude directory removes all Claude Code configuration"
+    },
+    {
+      "id": "rm-isparto",
+      "tool": "Bash",
+      "pattern": "rm[[:space:]]+-[a-zA-Z]*r[a-zA-Z]*f?[a-zA-Z]*[[:space:]]+.*\\.isparto([[:space:]]|$|/)",
+      "severity": "critical",
+      "reason": "Deleting .isparto directory removes all iSparto data including backups and snapshots"
+    },
+    {
+      "id": "rm-isparto-backup",
+      "tool": "Bash",
+      "pattern": "rm[[:space:]]+.*\\.isparto/backup",
+      "severity": "high",
+      "reason": "Deleting iSparto backup directory removes the ability to uninstall/rollback"
+    },
+    {
+      "id": "rm-isparto-snapshots",
+      "tool": "Bash",
+      "pattern": "rm[[:space:]]+.*\\.isparto/snapshots",
+      "severity": "high",
+      "reason": "Deleting iSparto snapshots directory removes all configuration restore points"
+    },
+    {
+      "id": "commit-on-main",
+      "tool": "Bash",
+      "pattern": "git[[:space:]]+commit[[:space:]]",
+      "severity": "high",
+      "reason": "Committing directly on main branch — create a feature branch first (feat/, fix/, hotfix/)"
+    }
+  ]
+}

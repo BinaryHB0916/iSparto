@@ -40,13 +40,15 @@ Applies to both **write** (code, docs, config) and **read** (code review, doc au
 - Claude Developer (teammate, Agent Team only): Writes code + unit tests. Works within file ownership scope. Reviews Codex fixes.
 - Codex Reviewer (MCP): Code review + direct fixes + QA smoke testing. Called by Lead per trigger table. Always uses xhigh reasoning.
 - Doc Engineer (Lead sub-agent): The team's context source. After each Wave: (1) ensures code and docs stay in sync, (2) checks product terminology consistency, (3) audits product narrative integration.
+- Process Observer (hooks + Lead sub-agent): Compliance oversight. Hooks intercept catastrophic operations in real time (irreversible / shared state / data loss); post-session audit reviews execution against behavioral guidelines, outputs deviation report + rule correction suggestions.
 
 **Development Workflow (Solo + Codex):**
 1. Lead writes code + tests
 2. Lead calls Codex for code review + fixes (per trigger table)
 3. Lead calls Codex for QA smoke testing (per trigger table)
 4. Lead runs Doc Engineer audit (as sub-agent)
-5. Lead pushes branch -> creates PR -> merges to main -> cleans up branch
+5. Lead runs Process Observer post-session audit (as sub-agent, can run in parallel with Doc Engineer)
+6. Lead pushes branch -> creates PR -> merges to main -> cleans up branch
 
 /end-working is fully autonomous (commit + push + briefing). When all branch tasks are complete, Lead auto-creates PR and merges; when mid-Wave, only pushes without merging.
 
@@ -57,7 +59,8 @@ Applies to both **write** (code, docs, config) and **read** (code review, doc au
 4. Lead forwards changes to Developer for review
 5. Lead calls Codex for QA smoke testing (incremental, only changed paths)
 6. Lead spawns Doc Engineer for documentation audit (last step, ensures QA fixes are also audited)
-7. Lead pushes branch -> creates PR -> merges to main -> cleans up branch
+7. Lead runs Process Observer post-session audit (as sub-agent, can run in parallel with Doc Engineer)
+8. Lead pushes branch -> creates PR -> merges to main -> cleans up branch
 
 /end-working is fully autonomous (commit + push + briefing). When all branch tasks are complete, Lead auto-creates PR and merges; when mid-Wave, only pushes without merging.
 
@@ -77,6 +80,7 @@ Applies to both **write** (code, docs, config) and **read** (code review, doc au
 - Must confirm before deleting files
 - Do not commit directly to main branch
 - Use /restore to roll back if /init-project or /migrate produces unexpected results
+- Dangerous operations are automatically intercepted by Process Observer hooks; see hooks/process-observer/rules/dangerous-operations.json for the full list
 
 ## Common Commands
 <!-- Fill in based on project tech stack -->

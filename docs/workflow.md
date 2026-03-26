@@ -74,6 +74,13 @@ Codex QA smoke testing (per trigger table below)
 Team Lead runs Doc Engineer audit (as sub-agent)
   - Same checklist as Agent Team mode (see Doc Engineer role in roles.md)
     |
+Process Observer compliance audit (as sub-agent)
+  - Branch convention check
+  - Codex review compliance check
+  - Doc Engineer compliance check
+  - Ownership violation check
+  - Outputs deviation report to session briefing
+    |
 Team Lead pushes branch -> creates PR -> merges to main -> cleans up branch
 ```
 
@@ -113,6 +120,14 @@ Team Lead spawns Doc Engineer (sub-agent) for documentation audit (placed last t
   - Whether CLAUDE.md module boundaries need updating
   - Product terminology consistency across all docs (command counts, feature names match, no internal API terms in user-facing docs)
   - Product narrative integration: do new features fit coherently into the overall product story (README, product-spec, Quick Start, troubleshooting) — audit from the user's perspective, not just the changed files
+    |
+Process Observer compliance audit (as sub-agent, after Doc Engineer)
+  - Branch convention check (A1-A3)
+  - Codex review compliance check (B1-B3)
+  - Doc Engineer compliance check (C1-C3)
+  - PR workflow compliance check (D1-D2)
+  - Ownership violation check (E1-E2)
+  - Outputs deviation report to session briefing
     |
 Team Lead pushes branch -> creates PR -> merges to main -> cleans up branch
 ```
@@ -191,3 +206,23 @@ Codex intervenes in three scenarios, all configured with xhigh reasoning (via `c
 | A. Architecture pre-review | Phase 0, after product initialization, before development | roles.md -> Codex Reviewer -> Architecture pre-review prompt template |
 | B. Code review + fixes | Phase 1-N, after Developer completes | roles.md -> Codex Reviewer -> Code review prompt template |
 | C. QA smoke testing | Phase 1-N, after Developer review passes | roles.md -> Codex Reviewer -> QA smoke testing prompt template |
+
+---
+
+## Process Observer Integration
+
+Process Observer 在两个层面集成到工作流中：
+
+### Hooks 配置（实时拦截）
+
+通过 Claude Code PreToolUse hook 实现。hook 脚本在每次工具调用前被触发，检查命令是否匹配高危操作清单（git push --force、直接 commit 到 main、敏感文件泄露等）。匹配时阻止执行并输出原因。
+
+hook 的配置和高危操作清单详见 [docs/process-observer.md -> 实时拦截](process-observer.md#实时拦截hooks)。
+
+### 事后审计触发
+
+在 /end-working 流程中，**Doc Engineer 文档审计之后、推分支/建 PR 之前**，Team Lead 派生 Process Observer sub-agent 执行合规审计。审计对照 5 个 Checklist（共 13 个检查项）输出偏差报告。
+
+审计报告输出到 session briefing 中，不自动修改文件。下次 /start-working 时 Lead 在 briefing 中提醒用户上次审计偏差。
+
+完整审计 Checklist 和偏差报告模板详见 [docs/process-observer.md -> 事后审计](process-observer.md#事后审计sub-agent)。

@@ -194,6 +194,18 @@ if ! $DRY_RUN; then
     chmod +x "$ISPARTO_HOME/lib/snapshot.sh"
 fi
 
+# ── Install hooks/process-observer ───────────────────────
+
+if ! $DRY_RUN; then
+    mkdir -p "$ISPARTO_HOME/hooks/process-observer/scripts"
+    mkdir -p "$ISPARTO_HOME/hooks/process-observer/rules"
+    cp "$SCRIPT_DIR/hooks/process-observer/scripts/pre-tool-check.sh" \
+       "$ISPARTO_HOME/hooks/process-observer/scripts/pre-tool-check.sh"
+    chmod +x "$ISPARTO_HOME/hooks/process-observer/scripts/pre-tool-check.sh"
+    cp "$SCRIPT_DIR/hooks/process-observer/rules/dangerous-operations.json" \
+       "$ISPARTO_HOME/hooks/process-observer/rules/dangerous-operations.json"
+fi
+
 # ── Install local stub (isparto.sh) ──────────────────────
 
 if ! $DRY_RUN; then
