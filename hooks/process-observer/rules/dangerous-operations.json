@@ -96,7 +96,7 @@
     {
       "id": "rm-rf-root",
       "tool": "Bash",
-      "pattern": "rm[[:space:]]+-[a-zA-Z]*r[a-zA-Z]*f[a-zA-Z]*[[:space:]]+(/|~/|\\$HOME)[[:space:]]",
+      "pattern": "rm[[:space:]]+-[a-zA-Z]*r[a-zA-Z]*f[a-zA-Z]*[[:space:]]+(/|~/?|\\$HOME)([[:space:]]|$)",
       "severity": "critical",
       "reason": "Recursive force delete on root/home directory will destroy the entire filesystem"
     },

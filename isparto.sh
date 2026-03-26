@@ -173,6 +173,7 @@ do_uninstall() {
         rm -f "$ISPARTO_HOME/install.sh"
         rm -rf "$ISPARTO_HOME/bin"
         rm -rf "$ISPARTO_HOME/lib"
+        rm -rf "$ISPARTO_HOME/hooks"
 
         if [ -d "$ISPARTO_HOME" ] && [ -z "$(ls -A "$ISPARTO_HOME")" ]; then
             rmdir "$ISPARTO_HOME"

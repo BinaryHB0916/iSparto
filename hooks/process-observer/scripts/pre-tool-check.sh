@@ -37,8 +37,30 @@ if [ "$TOOL_NAME" != "Bash" ]; then
 fi
 
 # ── Extract command from tool_input ──────────────────────────
-# The command field may contain escaped characters; extract the raw value
-COMMAND=$(echo "$INPUT" | grep -o '"command"[[:space:]]*:[[:space:]]*"[^"]*"' | sed 's/^"command"[[:space:]]*:[[:space:]]*"//;s/"$//')
+# The command field may contain escaped quotes (\") inside the JSON string.
+# We use awk to correctly parse the full value, handling \" sequences.
+COMMAND=$(echo "$INPUT" | awk '
+    BEGIN { RS="\0" }
+    {
+        # Find "command" : "..." handling escaped quotes
+        if (match($0, /"command"[[:space:]]*:[[:space:]]*"/)) {
+            s = substr($0, RSTART + RLENGTH)
+            result = ""
+            for (i = 1; i <= length(s); i++) {
+                c = substr(s, i, 1)
+                if (c == "\\" && substr(s, i+1, 1) == "\"") {
+                    result = result "\""
+                    i++
+                } else if (c == "\"") {
+                    break
+                } else {
+                    result = result c
+                }
+            }
+            print result
+        }
+    }
+')
 
 if [ -z "$COMMAND" ]; then
     exit 0
