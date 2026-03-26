@@ -50,36 +50,89 @@
 - [x] Session Log 自动采集 — /end-working 自动生成 session report，/start-working 自动读取历史
 - [ ] 每个场景记录：Wave 数量、并行效率、Codex 拦截问题、截图（现在由 session-log.md 自动采集）
 
-## 待办 (Backlog)
+## 产品路线图
 
-### 开源优化
+iSparto 的演进分三个阶段（详见 product-spec.md）：
+
+```
+v0.x  开发者工具      用户 = 开发者，手动触发流程
+v1.x  自治开发团队    用户 = 技术负责人，给任务，团队自己跑
+v2.x  CEO 工作台      用户 = 老板，说需求看结果，不碰过程
+```
+
+---
+
+### v0.x — 开发者工具（当前阶段）
+
+**交付标准：一个没见过 iSparto 的 Claude Code 用户，看 README 就能装好、用起来、不找你问。**
+
+| 里程碑 | 版本 | 标志 |
+|--------|------|------|
+| 自用可靠 | v0.5 | 3 个 dogfooding 场景全部跑通 |
+| 外部可用 | v0.8 | 至少 1 个外部用户完整跑通，无需手把手指导 |
+| 正式发布 | v1.0 | 稳定（连续版本无 hotfix）+ Getting Started 教程 + 基本 issue 响应机制 |
+
+**剩余工作：**
+- [ ] 安装脚本 ASCII art banner — 黑客帝国风格的 fancy 安装头（ASCII logo + 动画效果）
+- [ ] GitHub Actions CI 质量门 — PR 必须通过 CI 检查才能 merge
+
+**已完成：**（折叠）
+
+<details>
+<summary>v0.x 已完成项（点击展开）</summary>
+
 - [x] README 实测效果章节（自举案例：Session Log 功能开发全流程）
-- [x] 升级功能 — install.sh --upgrade + VERSION + CHANGELOG.md（版本追踪、changelog 展示）
+- [x] 升级功能 — install.sh --upgrade + VERSION + CHANGELOG.md
 - [x] CONTRIBUTING.md 贡献指南
-- [x] GitHub Issues 模板优化（bug report / feature request / question 适配 CLI 项目）
-- [x] GitHub Issues #2 #3 标记为 Pro 付费功能，避免社区误解
-- [x] Doc Engineer 职责升级为三层（代码同步 → 术语一致 → 产品叙事完整性）
+- [x] GitHub Issues 模板优化
+- [x] GitHub Issues #2 #3 标记为 Pro 付费功能
+- [x] Doc Engineer 职责升级为三层
 - [x] 全面文档审计（22 项修复，14 个文件）
 - [x] Team Lead 角色增加"主动建议下一步"行为
-- [x] install.sh --upgrade self-update（旧脚本自动拉取新版本再执行）
-- [x] Solo + Codex 模式（Lead 根据任务自动选 Solo 或 Agent Team，用户无感）
-- [x] Auto PR merge（完成审查后自动建 PR 并 merge，不需要用户手动 review）
-- [x] GitHub Branch Protection（main 禁直接 push / force push / 删除，enforce admins）
-- [x] 减少用户审批门（end-working 全自动、start-working 自然对话、并行读取规则）
-- [x] Solo vs Agent Team 判断标准细化（默认 Solo，同时满足"可分解"+"工作量值得"才升级 Agent Team）
-- [x] isparto.sh exec 修复 — 升级时 self-overwrite 导致 `;;` 语法错误
-- [x] 升级输出精简 — changelog 折叠、依赖/文件汇总、去掉升级用户不需要的 Next step
+- [x] install.sh --upgrade self-update
+- [x] Solo + Codex 模式
+- [x] Auto PR merge
+- [x] GitHub Branch Protection
+- [x] 减少用户审批门
+- [x] Solo vs Agent Team 判断标准细化
+- [x] isparto.sh exec 修复
+- [x] 升级输出精简
+- [x] Release 流程 — git tag + GitHub Releases + scripts/release.sh
+- [x] Agent Team 模式扩展读任务
+- [x] 全项目四视角 Review
+- [x] 开源仓库清理
+- [x] Codex 发现 bug 修复
+- [x] 去伪存真精简
 
-### 工作流增强
-- [ ] GitHub Actions CI 质量门 — PR 必须通过 CI 检查才能 merge（对代码项目如 Heddle 尤其重要）
-- [x] Release 流程 — git tag + GitHub Releases + scripts/release.sh 自动化（v0.3.0 已发布）
-- [x] Agent Team 模式扩展读任务 — 触发条件覆盖 review/审计/调研，不仅限写代码
-- [x] 全项目四视角 Review — 产品设计/技术/新用户/代码文档一致性
-- [x] 开源仓库清理 — 移除 Pro 版内容和截图占位，明确 upgrade scope
-- [x] Codex 发现 bug 修复 — isparto.sh trap 变量作用域、snapshot --latest 排序
-- [x] 去伪存真精简 — 配置文档瘦身、死代码清理、命令模板去重（净删 62 行）
+</details>
 
-### Pro 版规划
-- [ ] Agent dashboard 原型设计
-- [ ] Auto-retry & rollback 技术方案
-- [ ] Cost & token analytics 数据采集方案
+---
+
+### v1.x — 自治开发团队
+
+**交付标准：用户给一个任务描述，团队自己跑完全流程并交付可验收的结果，用户不需要中途干预。**
+
+**核心能力：流程自治 + 状态可见性**
+
+- [ ] 跨 session 任务续接 — 换 session 后团队自动恢复上下文，无需用户手动对齐
+- [ ] 多任务并行管理 — 同时推进多个独立任务，Lead 自动调度优先级
+- [ ] 进度摘要 — 每个任务的状态、完成度、阻塞项，用人话汇报
+- [ ] Demo 预览 — 自动部署 preview 环境 + 截图 + 一句话说明变化
+- [ ] 风险预警 — 主动上报复杂度超预期、依赖问题、技术风险
+- [ ] 失败自动重试与回滚 — 构建/测试失败时自动诊断、重试或回滚
+- [ ] Agent dashboard — 任务看板，可视化团队工作状态
+- [ ] Cost & token analytics — 用量统计，帮用户理解投入产出
+
+---
+
+### v2.x — CEO 工作台
+
+**交付标准：一个非技术用户，用自然语言描述需求，能拿到可运行的 demo + 进度报告，全程不碰代码不碰终端。**
+
+**核心能力：需求理解 + 自然语言交互**
+
+- [ ] 需求拆解 — 业务语言 → 技术 task → 优先级排序，用户只确认方向
+- [ ] 方案决策 — 团队提出技术方案选项，用户选择，不需要理解技术细节
+- [ ] 交付验收 — 可运行 demo + 变更说明，用户体验后给反馈
+- [ ] 自然语言项目管理 — "这周能上线吗？""昨天那个功能做得怎么样？"
+- [ ] 多项目管理 — 同时管理多个项目的多支 AI 团队
