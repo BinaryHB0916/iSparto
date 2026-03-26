@@ -120,9 +120,10 @@ Suggestion: Use `git push` (without --force) or `git push --force-with-lease` fo
 
 | # | 检查项 | 判定标准 | 偏差级别 |
 |---|--------|---------|---------|
-| B1 | 高风险代码是否触发 Codex code review | 涉及 install.sh / snapshot.sh 等高风险文件 + session 中有 review 调用记录 | P1 |
-| B2 | QA smoke testing 是否触发 | 根据 Codex Review Trigger Conditions 表判断是否应触发 + 实际是否触发 | P1 |
+| B1 | 代码改动是否触发 Codex code review | 默认应触发；仅 Tier 2（纯视觉、非安全配置值）和 Tier 3（纯文档/纯格式化）可跳过 code review。对照 workflow.md 触发条件表判断 | P1 |
+| B2 | QA smoke testing 是否触发 | 默认应触发；仅纯文档/纯格式化改动可跳过。对照 workflow.md 触发条件表判断 | P1 |
 | B3 | Codex 发现的问题是否被处理 | Codex review 输出的 catches 是否有对应的 fix commit | P1 |
+| B4 | Wave 级兜底 review 是否执行 | 每个 Wave 至少包含一次批量 Codex review，不论单次改动如何分类 | P1 |
 
 #### Checklist C：Doc Engineer 合规
 
@@ -167,9 +168,10 @@ Suggestion: Use `git push` (without --force) or `git push --force-with-lease` fo
 | A1 | Branch is feat/fix/hotfix | PASS/FAIL | Current branch: feat/xxx |
 | A2 | No direct commits to main | PASS/FAIL | ... |
 | A3 | Branch naming convention | PASS/FAIL | ... |
-| B1 | Codex code review triggered for high-risk code | PASS/FAIL/N/A | ... |
+| B1 | Codex code review triggered for code changes | PASS/FAIL/N/A | ... |
 | B2 | QA smoke testing triggered | PASS/FAIL/N/A | ... |
 | B3 | Codex catches resolved | PASS/FAIL/N/A | ... |
+| B4 | Wave-level batch review executed | PASS/FAIL/N/A | ... |
 | C1 | Doc Engineer executed | PASS/FAIL | ... |
 | C2 | Code changes have doc updates | PASS/FAIL | ... |
 | C3 | plan.md updated | PASS/FAIL | ... |
