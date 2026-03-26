@@ -64,7 +64,7 @@ Applies to both **write** (code, docs, config) and **read** (code review, doc au
 
 /end-working is fully autonomous (commit + push + briefing). When all branch tasks are complete, Lead auto-creates PR and merges; when mid-Wave, only pushes without merging.
 
-**Codex Review Triggers:** High-risk code must trigger code review + QA; UI-only changes need QA only; minor fixes need neither.
+**Codex Review Triggers:** Default is to trigger code review + QA for all code changes. Only skip for: pure visual changes (QA only, no code review) and pure documentation/formatting (skip both). Each Wave must include at least one batch review. See docs/workflow.md for the full trigger table.
 
 **Branching & Merge:** main is locked; feat/xxx for development, fix/xxx for bug fixes, hotfix/xxx for urgent fixes. After full workflow, Lead auto-creates PR and merges — no manual user review needed.
 

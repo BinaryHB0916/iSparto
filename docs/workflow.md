@@ -123,7 +123,7 @@ Team Lead spawns Doc Engineer (sub-agent) for documentation audit (placed last t
     |
 Process Observer compliance audit (as sub-agent, after Doc Engineer)
   - Branch convention check (A1-A3)
-  - Codex review compliance check (B1-B3)
+  - Codex review compliance check (B1-B4)
   - Doc Engineer compliance check (C1-C3)
   - PR workflow compliance check (D1-D2)
   - Ownership violation check (E1-E2)
@@ -134,13 +134,40 @@ Team Lead pushes branch -> creates PR -> merges to main -> cleans up branch
 
 ## Codex Review Trigger Conditions
 
-| Scenario | Code Review | QA Smoke Testing |
-|----------|-------------|------------------|
-| High-risk code: data sync, payments, authentication | Required | Required |
-| New API endpoints or data models | Required | Required |
-| Pure UI adjustments, copy changes | Not required | Recommended (verify display is correct) |
-| Developer self-tested but involves multi-file changes | Recommended | Required |
-| Small bug fixes (single file, simple logic) | Not required | Not required |
+**Default: trigger code review + QA.** Only skip for changes explicitly listed in the "QA only" or "Skip" tiers below. When in doubt, trigger.
+
+### Tier 1: Code Review + QA (default — everything not in Tier 2 or 3)
+
+All code changes trigger both code review and QA unless they fall entirely within Tier 2 or Tier 3. This includes but is not limited to:
+
+| Category | Examples |
+|----------|----------|
+| Cross-layer interaction | System calls, threading, IPC, language bridging (C/Swift, JNI), build configuration |
+| Business logic | State management, data flow, conditional branching, error handling paths |
+| Data layer | Model definitions, schema changes, persistence logic, migrations |
+| API / networking | Request construction, response parsing, authentication flows |
+| Navigation / routing | Page transitions, deep links, URL schemes |
+| Dependencies | Adding, removing, or updating packages (SPM, npm, pip, etc.) |
+| Permissions / security | Entitlements, Info.plist, credentials handling, encryption |
+| Infrastructure | CI/CD pipelines, deployment config, install/upgrade scripts |
+
+### Tier 2: QA only (no code review needed)
+
+| Category | Examples |
+|----------|----------|
+| Pure visual | Colors, fonts, layout constants, animation parameters, copy text |
+| Config value tweaks | Non-security config changes (timeouts, feature flags, display limits) |
+
+### Tier 3: Skip (neither code review nor QA)
+
+| Category | Examples |
+|----------|----------|
+| Pure documentation | Markdown files, comments, READMEs — with zero code changes |
+| Formatting only | Whitespace, indentation, linter auto-fixes — with zero logic changes |
+
+### Wave-level safety net
+
+Each Wave must include at least one batch Codex review before completion, regardless of how individual changes are categorized. Do not defer all reviews to the delivery checkpoint — review at Wave boundaries to catch issues early.
 
 ---
 
@@ -190,7 +217,7 @@ Note: Auto PR merge only happens when all tasks on the current branch are comple
 **Hotfix Workflow:**
 - Branch hotfix/xxx from main
 - The mode selection table applies: simple single-file hotfixes use Solo + Codex; complex hotfixes use Agent Team
-- The trigger condition table auto-adapts: single-file simple fixes do not trigger code review or QA; high-risk fixes trigger the full suite
+- The trigger condition table auto-adapts: Tier 2 changes (pure visual, non-security config tweaks) need QA only; Tier 3 changes (pure doc/formatting) skip both; all other code fixes trigger code review + QA per default
 - After fixing, merge back to main via PR; if there are in-progress feat/ branches, sync the hotfix changes
 
 ---
@@ -221,7 +248,7 @@ hook 的配置和高危操作清单详见 [docs/process-observer.md -> 实时拦
 
 ### 事后审计触发
 
-在 /end-working 流程中，**Doc Engineer 文档审计之后、推分支/建 PR 之前**，Team Lead 派生 Process Observer sub-agent 执行合规审计。审计对照 5 个 Checklist（共 13 个检查项）输出偏差报告。
+在 /end-working 流程中，**Doc Engineer 文档审计之后、推分支/建 PR 之前**，Team Lead 派生 Process Observer sub-agent 执行合规审计。审计对照 5 个 Checklist（共 14 个检查项）输出偏差报告。
 
 审计报告输出到 session briefing 中，不自动修改文件。下次 /start-working 时 Lead 在 briefing 中提醒用户上次审计偏差。
 

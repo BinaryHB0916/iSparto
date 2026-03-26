@@ -63,7 +63,7 @@ Lead 根据任务特征自动选择模式，用户无需干预。
 
 /end-working 全自动执行（commit + push + 输出 briefing），不需要用户确认。分支任务全部完成时自动建 PR 并 merge；未完成时只 push，不 merge。
 
-**Codex Review Triggers:** 高风险代码（install.sh 核心逻辑、snapshot.sh）必须触发 code review + QA；纯文档调整只需 QA；小修小补不触发。
+**Codex Review Triggers:** 默认触发 code review + QA。仅以下情况可跳过：纯视觉改动（只需 QA）、纯文档/格式化（均可跳过）。每个 Wave 至少包含一次批量 review。详见 docs/workflow.md 触发条件表。
 
 **Branching & Merge:** main 锁定；feat/xxx 开发新功能，fix/xxx 修 bug，hotfix/xxx 紧急修复。完成全部审查后 Lead 自动建 PR 并 merge——不需要用户手动 review。
 
