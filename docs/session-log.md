@@ -336,3 +336,44 @@
 - 修复策略：upgrade 时检测当前项目（有 CLAUDE.md），自动补全缺失的 hooks 注册
 - Codex review 两次都抓到了关键问题：P1 会让安装流程中断，P2 会让 hooks 注册静默失败
 - 用户提出"两个视角"框架：本体开发者视角 + 用户体验视角，要同时具备
+
+## 2026-03-26 Session (continued 3)
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | Wave 5 (Dogfooding 验证) — 续 |
+| Tasks completed | v0.5.1 发布（语言匹配 + C4 检查）, v0.5.2 发布（upgrade hooks 注册）, README 首屏重组（EN + ZH-CN）, 自定义角色-模型绑定加入 v1.x 路线图 |
+| Developers spawned | 2 (README EN + ZH-CN 并行重组) |
+| Codex reviews | 3 (语言修复 QA 1 次, install.sh code review 2 次) |
+| Codex catches | 1 P1 — set-e + sys.exit(1) 中断安装; 1 P2 — python3 缺失静默失败 |
+| Key decisions | upgrade 区分用户内容/框架基础设施, README 首屏重组（对比表+安装命令前置，名字故事下移）, 自定义角色绑定延后到 v1.x（当前生态绑定最强模型无需配置）, Demo GIF 延后到 meic dogfooding 后录制 |
+
+### Files Changed
+```
+ CHANGELOG.md               | 13 ++++
+ README.md                  | 136 ++++++++++++++++++++------------------
+ README.zh-CN.md            | 136 ++++++++++++++++++++------------------
+ VERSION                    |   4 +-
+ commands/end-working.md    |   6 +-
+ commands/env-nogo.md       |   2 +
+ commands/init-project.md   |   2 +
+ commands/migrate.md        |   2 +
+ commands/plan.md           |   2 +
+ commands/restore.md        |   2 +
+ commands/start-working.md  |   2 +
+ docs/plan.md               |   6 +-
+ docs/process-observer.md   |   2 +
+ docs/session-log.md        | (this entry)
+ install.sh                 |  69 ++++++++++++++++++++
+ 14 files changed, ~380 insertions
+```
+
+### Notes
+- 今天 4 个 sub-session，10 个 PR 合并（#33-#42），2 个版本发布（v0.5.1, v0.5.2）
+- meic dogfooding 场景 4 正式启动，首次 /init-project 就发现语言匹配 bug，验证 dogfooding 价值
+- Process Observer hooks 首次实战拦截：在 main 上链式执行 git checkout -b && git commit 被 commit-on-main 规则 block
+- 用户提出"两个视角"框架（本体开发者 + 用户体验），推动了 upgrade hooks 注册功能
+- 外部反馈（X 用户问自定义 agent）触发路线图更新，但附带了前置判断条件（生态开放度）
+- README 重组采纳了外部产品建议中的 4/6 项，拒绝了 tagline 建议，延后了 GIF 录制
+- 下次优先：meic 项目 dogfooding 继续 + 终端录屏 GIF
