@@ -39,7 +39,7 @@ Process Observer 不参与开发决策，只监督流程合规性。它与 Doc E
 
 | 操作 | 拦截原因 |
 |------|---------|
-| `git push --force` / `git push -f` | 覆盖远程历史，其他协作者的工作可能丢失 |
+| `git push --force` / `git push -f`（到 main/master） | 覆盖远程保护分支历史，其他协作者的工作可能丢失 |
 | `git reset --hard` | 丢弃所有未提交的本地修改 |
 | `git clean -fd` / `git clean -f` | 删除未跟踪的文件，不可恢复 |
 | `git checkout -- .` / `git restore .` | 丢弃所有未暂存的修改 |
@@ -69,8 +69,10 @@ Process Observer 不参与开发决策，只监督流程合规性。它与 Doc E
 
 | 操作 | 拦截原因 |
 |------|---------|
-| 修改 `~/.claude/settings.json`（全局配置） | iSparto 承诺不修改用户全局配置 |
-| 修改 `install.sh` 的 backup 格式且无用户确认 | 破坏向后兼容性 |
+| 删除 `~/.isparto/backup` 目录 | 移除卸载/回滚能力 |
+| 删除 `~/.isparto/snapshots` 目录 | 移除所有配置还原点 |
+| 删除 `~/.isparto` 目录 | 移除全部 iSparto 数据 |
+| 删除 `~/.claude` 目录 | 移除全部 Claude Code 配置 |
 
 #### 6. 直接在 main 开发
 
