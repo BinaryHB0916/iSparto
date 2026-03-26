@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Process Observer role: real-time interception via PreToolUse hooks (20 rules, 6 categories) + post-session compliance audit (13 check items, 5 checklists)
+- dangerous-operations.json: configurable high-risk operation ruleset (git destructive, sensitive info leak, hook bypass, filesystem destructive, iSparto-specific, direct-on-main)
+- hooks/process-observer/scripts/pre-tool-check.sh: shell-based hook script, no jq dependency, POSIX ERE patterns
+- /end-working now includes Process Observer audit step with deviation report + rule correction suggestions
+- /init-project and /migrate auto-register Process Observer hooks in project settings.json
+- install.sh installs hooks to ~/.isparto/hooks/ and isparto.sh --uninstall cleans them up
+- Three-phase product roadmap: v0.x (developer tool) → v1.x (autonomous dev team) → v2.x (CEO workbench)
+- Three-layer capability model in product-spec.md (process autonomy → status visibility → requirement understanding)
+- docs/process-observer.md: complete role documentation with audit checklists, deviation report template, and feedback loop mechanism
+
 ## [0.4.1] - 2026-03-25
 
 ### Fixed
