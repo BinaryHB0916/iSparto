@@ -1,7 +1,7 @@
 # iSparto
 
 ## Project Overview
-iSparto 是一个 AI Agent Team 工作流框架，把 Claude Code 单 Agent 变成一支有分工的团队（Lead + Developer + Codex Reviewer + Doc Engineer）。目标用户是独立开发者，当前阶段：开源核心工作流已发布，dogfooding 中。
+iSparto 是一个 AI Agent Team 工作流框架，把 Claude Code 单 Agent 变成一支有分工的团队（Lead + Developer + Codex Reviewer + Doc Engineer + Process Observer）。目标用户是独立开发者，当前阶段：开源核心工作流已发布，dogfooding 中。
 
 ## Tech Stack
 - Language: Shell (Bash), Markdown
@@ -39,13 +39,15 @@ Lead 根据任务特征自动选择模式，用户无需干预。
 - Claude Developer (teammate, 仅 Agent Team 模式): 写代码 + 单元测试。在文件所有权范围内工作。Review Codex 的修改。
 - Codex Reviewer (MCP): 代码审查 + 直接修复 + QA 冒烟测试。按触发表由 Lead 调用。始终使用 xhigh reasoning。
 - Doc Engineer (Lead sub-agent): 团队的 context 来源。每个 Wave 结束后：(1) 确保代码和文档同步，(2) 检查产品术语一致性，(3) 审计产品叙事整合。
+- Process Observer (hooks + Lead sub-agent): 合规监督。Hooks 实时拦截灾难性操作（不可逆/共享状态/数据丢失）；事后审计回顾 session 执行过程，对照行为准则检查偏差，输出偏差报告 + 规则修正建议。
 
 **Development Workflow (Solo + Codex):**
 1. Lead 写代码 + 测试
 2. Lead 调 Codex 代码审查 + 修复（按触发表）
 3. Lead 调 Codex QA 冒烟测试（按触发表）
 4. Lead 跑 Doc Engineer 审计（sub-agent）
-5. Lead 推分支 -> 建 PR -> merge 到 main -> 清理分支
+5. Lead 跑 Process Observer 事后审计（sub-agent，与 Doc Engineer 可并行）
+6. Lead 推分支 -> 建 PR -> merge 到 main -> 清理分支
 
 /end-working 全自动执行（commit + push + 输出 briefing），不需要用户确认。分支任务全部完成时自动建 PR 并 merge；未完成时只 push，不 merge。
 
@@ -56,7 +58,8 @@ Lead 根据任务特征自动选择模式，用户无需干预。
 4. Lead 转发改动给 Developer review
 5. Lead 调 Codex QA 冒烟测试（增量，只测改动路径）
 6. Lead 派 Doc Engineer 文档审计（最后一步，确保 QA 修复也被审计）
-7. Lead 推分支 -> 建 PR -> merge 到 main -> 清理分支
+7. Lead 跑 Process Observer 事后审计（sub-agent，与 Doc Engineer 可并行）
+8. Lead 推分支 -> 建 PR -> merge 到 main -> 清理分支
 
 /end-working 全自动执行（commit + push + 输出 briefing），不需要用户确认。分支任务全部完成时自动建 PR 并 merge；未完成时只 push，不 merge。
 
@@ -77,12 +80,14 @@ Lead 根据任务特征自动选择模式，用户无需干预。
 | Project Docs | docs/ (product-spec, plan) | iSparto 自身的产品规格和开发计划 |
 | Release Script | scripts/release.sh | 自动化发版（bump version → changelog → tag → gh release） |
 | Assets | assets/*.svg | README 用的 SVG 图 |
+| Process Observer | hooks/process-observer/ | 实时拦截（hooks 脚本 + 高危清单）+ 事后审计 |
 | READMEs | README.md, README.zh-CN.md | 双语 README |
 
 ## Operational Guardrails
 - 删除文件前必须确认
 - 不直接 commit 到 main——始终通过 PR merge
 - install.sh 破坏性改动（改变 backup 格式、删除旧兼容逻辑）需要用户明确同意
+- 高危操作由 Process Observer hooks 自动拦截，清单见 hooks/process-observer/rules/dangerous-operations.json
 
 ## Common Commands
 - 安装测试: `./install.sh --dry-run`
@@ -99,3 +104,4 @@ Lead 根据任务特征自动选择模式，用户无需干预。
 - 用户交互 -> docs/user-guide.md
 - 问题排查 -> docs/troubleshooting.md
 - 设计决策 -> docs/design-decisions.md
+- Process Observer -> docs/process-observer.md

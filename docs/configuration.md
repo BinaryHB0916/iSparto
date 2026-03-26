@@ -90,7 +90,7 @@ Template files used during project initialization:
 | Content | Description |
 |---------|-------------|
 | 7 custom commands | `/start-working`, `/end-working`, `/plan`, `/init-project`, `/env-nogo`, `/migrate`, `/restore` are universal for all projects |
-| Role definitions | Responsibilities and rules for Team Lead, Developer, Codex Reviewer, Doc Engineer |
+| Role definitions | Responsibilities and rules for Team Lead, Developer, Codex Reviewer, Doc Engineer, Process Observer |
 | Trigger condition table | Trigger logic for code review + QA smoke testing |
 | Branching strategy | Branch model for main / feat / fix / hotfix |
 | Authorization & escalation mechanism | Team Lead's decision boundaries |
@@ -116,6 +116,35 @@ Template files used during project initialization:
 | content/ directory | Create when the project has content assets (story scripts, copy, etc.) |
 | Memory boundary definitions | Reference when discussing products using the Claude.ai web interface |
 | Multi-device sync | Configure when switching development between multiple computers |
+
+---
+
+## Hooks Configuration (Process Observer)
+
+Process Observer 的实时拦截功能通过 Claude Code PreToolUse hook 实现。
+
+### Hook 机制
+
+Claude Code 支持在工具调用前触发 hook 脚本。Process Observer 注册一个 PreToolUse hook，在每次 Bash 命令执行前检查是否匹配高危操作清单。
+
+### 拦截范围
+
+| 类别 | 示例操作 | 拦截原因 |
+|------|---------|---------|
+| Git 不可逆 | `git push --force`, `git reset --hard`, `git clean -f` | 覆盖历史/丢弃修改/删除文件 |
+| 敏感信息泄露 | `git add .env`, `git add *.key` | 敏感文件可能被推送到公开仓库 |
+| 跳过安全检查 | `--no-verify`, `--no-gpg-sign` | 绕过 pre-commit hook 或签名 |
+| 破坏性文件操作 | `rm -rf /`, `rm -rf ~` | 灾难性删除 |
+| iSparto 特有保护 | 修改 `~/.claude/settings.json` | 保证不修改用户全局配置 |
+| 直接在 main 开发 | main 分支上 `git commit` | main 锁定，必须通过分支开发 |
+
+### 拦截行为
+
+匹配高危操作时，hook 返回非零退出码阻止执行，并在 stderr 输出拦截原因和建议替代方案。
+
+### 自定义
+
+如需调整拦截规则（例如在特定项目中允许某些操作），可在项目级 hook 配置中覆盖。完整的高危操作清单和判断原则详见 [docs/process-observer.md](process-observer.md)。
 
 ---
 

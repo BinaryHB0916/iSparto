@@ -46,6 +46,7 @@ v2.x  CEO 工作台      用户 = 老板，说需求看结果，不碰过程
 - **文档自动同步**: Doc Engineer 每个 Wave 审计代码和文档一致性
 - **快照/恢复**: 每次操作前自动拍快照，/restore 一键回滚
 - **Session log**: docs/session-log.md 记录每次会话的开发指标
+- **Process Observer 合规监督**: 实时拦截高危操作（PreToolUse hooks） + 事后审计工作流合规性（sub-agent），自动输出偏差报告
 - **版本追踪与更新日志**: --upgrade 支持版本升级
 - **一键安装**: curl 一行命令搞定，支持 --dry-run 预览、--upgrade 升级、--uninstall 卸载
 

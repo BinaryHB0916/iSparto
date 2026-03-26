@@ -1,0 +1,205 @@
+# Process Observer
+
+## 概述
+
+Process Observer 是 iSparto 团队的合规监督角色，确保开发流程遵循 CLAUDE.md 和工作流规范。它由两部分组成：
+
+- **实时拦截（Hooks）**：通过 Claude Code PreToolUse hook 拦截灾难性操作，在执行前阻止
+- **事后审计（Sub-agent）**：/end-working 时回顾 session 执行过程，输出合规报告
+
+Process Observer 不参与开发决策，只监督流程合规性。它与 Doc Engineer 同级，都是 Team Lead 的 sub-agent。
+
+---
+
+## 实时拦截（Hooks）
+
+### 运行机制
+
+通过 Claude Code 的 PreToolUse hook 实现。hook 是一个 shell 脚本，在每次工具调用前被触发，检查命令是否匹配高危操作清单。如果匹配，阻止执行并输出原因。
+
+### 触发条件
+
+命令匹配高危操作清单时触发拦截。
+
+### 判断原则
+
+一个操作是否"高危"，基于三个判断维度：
+
+| 维度 | 说明 | 示例 |
+|------|------|------|
+| 不可逆 | 操作无法撤回，或撤回代价极高 | `git push --force`、`rm -rf` |
+| 影响共享状态 | 操作改变其他人（或其他 session）依赖的状态 | 直接 push 到 main、修改全局配置 |
+| 数据丢失 | 操作可能导致代码、文档或用户数据丢失 | `git reset --hard`、`git clean -f` |
+
+满足任一维度即视为高危。
+
+### 高危操作分类
+
+#### 1. Git 不可逆操作
+
+| 操作 | 拦截原因 |
+|------|---------|
+| `git push --force` / `git push -f` | 覆盖远程历史，其他协作者的工作可能丢失 |
+| `git reset --hard` | 丢弃所有未提交的本地修改 |
+| `git clean -fd` / `git clean -f` | 删除未跟踪的文件，不可恢复 |
+| `git checkout -- .` / `git restore .` | 丢弃所有未暂存的修改 |
+| `git branch -D`（大写 D） | 强制删除未合并的分支 |
+
+#### 2. 敏感信息泄露
+
+| 操作 | 拦截原因 |
+|------|---------|
+| `git add` 包含 `.env`、`credentials`、`secrets`、`*.pem`、`*.key` | 敏感文件可能被提交到公开仓库 |
+
+#### 3. 跳过安全检查
+
+| 操作 | 拦截原因 |
+|------|---------|
+| `--no-verify` 标志 | 跳过 pre-commit / pre-push hook |
+| `--no-gpg-sign` 标志 | 跳过 GPG 签名 |
+
+#### 4. 破坏性文件操作
+
+| 操作 | 拦截原因 |
+|------|---------|
+| `rm -rf /` 或 `rm -rf ~` 或 `rm -rf *` | 灾难性删除 |
+| 删除项目根目录下的关键文件（CLAUDE.md、.git/） | 项目结构被破坏 |
+
+#### 5. iSparto 特有保护
+
+| 操作 | 拦截原因 |
+|------|---------|
+| 修改 `~/.claude/settings.json`（全局配置） | iSparto 承诺不修改用户全局配置 |
+| 修改 `install.sh` 的 backup 格式且无用户确认 | 破坏向后兼容性 |
+
+#### 6. 直接在 main 开发
+
+| 操作 | 拦截原因 |
+|------|---------|
+| 当前分支为 main 时执行 `git commit` | main 锁定，所有开发必须在 feat/fix/hotfix 分支 |
+| `git push origin main`（非 PR merge） | 绕过 PR 流程直接推送 |
+
+### 拦截行为
+
+当检测到高危操作时：
+1. **阻止执行**：返回非零退出码，Claude Code 不执行该命令
+2. **输出原因**：在 stderr 输出拦截原因和建议替代方案
+
+示例输出：
+```
+[Process Observer] BLOCKED: git push --force
+Reason: Force push overwrites remote history and may destroy collaborators' work.
+Suggestion: Use `git push` (without --force) or `git push --force-with-lease` for safer alternatives.
+```
+
+---
+
+## 事后审计（Sub-agent）
+
+### 运行机制
+
+由 Team Lead 在 /end-working 流程中作为 sub-agent 派生，与 Doc Engineer 同级。审计当前 session 的执行过程，检查是否有违反工作流规范的行为。
+
+### 触发时机
+
+/end-working 流程中，在 Doc Engineer 文档审计之后、推分支/建 PR 之前执行。
+
+### 审计 Checklist
+
+#### Checklist A：分支规范
+
+| # | 检查项 | 判定标准 | 偏差级别 |
+|---|--------|---------|---------|
+| A1 | 当前分支是否为 feat/、fix/ 或 hotfix/ | 分支名前缀匹配 | P1 |
+| A2 | 是否有直接 commit 到 main 的记录 | git log 对比 session 开始时的 main HEAD | P1 |
+| A3 | 分支命名是否遵循约定 | feat/xxx、fix/xxx、hotfix/xxx 格式 | P2 |
+
+#### Checklist B：Codex Review 合规
+
+| # | 检查项 | 判定标准 | 偏差级别 |
+|---|--------|---------|---------|
+| B1 | 高风险代码是否触发 Codex code review | 涉及 install.sh / snapshot.sh 等高风险文件 + session 中有 review 调用记录 | P1 |
+| B2 | QA smoke testing 是否触发 | 根据 Codex Review Trigger Conditions 表判断是否应触发 + 实际是否触发 | P1 |
+| B3 | Codex 发现的问题是否被处理 | Codex review 输出的 catches 是否有对应的 fix commit | P1 |
+
+#### Checklist C：Doc Engineer 合规
+
+| # | 检查项 | 判定标准 | 偏差级别 |
+|---|--------|---------|---------|
+| C1 | Doc Engineer 是否运行 | session 中有 Doc Engineer 派生记录 | P1 |
+| C2 | 代码改动是否有对应文档更新 | diff 中 .md 文件变更与代码变更的对应关系 | P2 |
+| C3 | plan.md 是否更新 | plan.md 在 session 中有 diff 记录 | P1 |
+
+#### Checklist D：PR 流程合规
+
+| # | 检查项 | 判定标准 | 偏差级别 |
+|---|--------|---------|---------|
+| D1 | 是否通过 PR 合入 main | gh pr list 记录，main 的新 commit 来自 PR merge | P1 |
+| D2 | 合入后是否清理了分支 | 远程分支列表中不存在已合入的 feat/fix/hotfix 分支 | P3 |
+
+#### Checklist E：越权操作
+
+| # | 检查项 | 判定标准 | 偏差级别 |
+|---|--------|---------|---------|
+| E1 | Developer 是否修改了所有权外的文件 | git log --name-only 文件列表 vs Team Lead 分配的文件所有权 | P1 |
+| E2 | 不确定的产品决策是否上报了用户 | 对话上下文中是否有向用户确认的记录 | P2 |
+
+### 偏差级别说明
+
+| 级别 | 含义 | 处理方式 |
+|------|------|---------|
+| P1 | 严重偏差，违反核心工作流规范 | 必须在报告中标红，建议立即修正 |
+| P2 | 一般偏差，不影响交付质量但需改进 | 在报告中标记为 WARNING，建议下次改进 |
+| P3 | 轻微偏差，最佳实践建议 | 在报告中标记为 INFO，供参考 |
+
+---
+
+## 偏差报告模板
+
+```markdown
+### Compliance Audit
+
+| # | Check | Status | Detail |
+|---|-------|--------|--------|
+| A1 | Branch is feat/fix/hotfix | PASS/FAIL | Current branch: feat/xxx |
+| A2 | No direct commits to main | PASS/FAIL | ... |
+| A3 | Branch naming convention | PASS/FAIL | ... |
+| B1 | Codex code review triggered for high-risk code | PASS/FAIL/N/A | ... |
+| B2 | QA smoke testing triggered | PASS/FAIL/N/A | ... |
+| B3 | Codex catches resolved | PASS/FAIL/N/A | ... |
+| C1 | Doc Engineer executed | PASS/FAIL | ... |
+| C2 | Code changes have doc updates | PASS/FAIL | ... |
+| C3 | plan.md updated | PASS/FAIL | ... |
+| D1 | Merged to main via PR | PASS/FAIL/N/A | ... |
+| D2 | Branch cleaned up after merge | PASS/FAIL/N/A | ... |
+| E1 | No out-of-scope file modifications | PASS/FAIL/N/A | ... |
+| E2 | Uncertain decisions escalated to user | PASS/FAIL/N/A | ... |
+
+**Summary:** X passed, Y warnings, Z failures
+
+**Rule Corrections Suggested:**
+- [Specific suggestions for fixing failures and improving warnings]
+```
+
+---
+
+## 反馈闭环
+
+审计发现偏差后，不直接修改文件，而是通过报告和建议驱动改进：
+
+### 1. 根因分析
+分析偏差原因，区分：
+- **流程疏忽**：知道规则但忘了执行（如忘记触发 Codex review）
+- **规则不明确**：规则本身有歧义或边界不清晰
+- **工具限制**：当前工具/环境不支持自动执行
+
+### 2. 修正建议
+输出具体的修正建议，包括：
+- 对于流程疏忽：建议在哪个步骤增加检查点
+- 对于规则不明确：建议修改 CLAUDE.md 或 docs/ 中的具体措辞
+- 对于工具限制：记录为已知限制，等待工具升级
+
+### 3. 执行方式
+- 审计报告和修正建议输出到 /end-working 的 session briefing 中
+- **不自动修改任何文件**——修正建议仅作为建议输出
+- 下次 /start-working 时，Lead 在 briefing 中提醒用户上次审计的偏差和建议，由用户决定是否采纳

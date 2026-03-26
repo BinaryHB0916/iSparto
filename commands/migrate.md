@@ -42,7 +42,20 @@ Your job: scan the current project, report what exists and what's missing, propo
        "env": {
          "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
        },
-       "teammateMode": "tmux"
+       "teammateMode": "tmux",
+       "hooks": {
+         "PreToolUse": [
+           {
+             "matcher": "Bash",
+             "hooks": [
+               {
+                 "type": "command",
+                 "command": "bash ~/.isparto/hooks/process-observer/scripts/pre-tool-check.sh"
+               }
+             ]
+           }
+         ]
+       }
      }
      ```
      If .claude/settings.json already exists, merge these entries without removing existing settings.

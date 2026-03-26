@@ -23,7 +23,20 @@ Your responsibility: Based on the product description provided by the user, gene
      "env": {
        "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
      },
-     "teammateMode": "tmux"
+     "teammateMode": "tmux",
+     "hooks": {
+       "PreToolUse": [
+         {
+           "matcher": "Bash",
+           "hooks": [
+             {
+               "type": "command",
+               "command": "bash ~/.isparto/hooks/process-observer/scripts/pre-tool-check.sh"
+             }
+           ]
+         }
+       ]
+     }
    }
    ```
    If the project already has .claude/settings.json, merge these settings into it without removing existing entries.
