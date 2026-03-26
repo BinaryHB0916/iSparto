@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Process Observer C4 check: cross-references plan.md unchecked items against actual codebase state, catches implemented features that were not marked done
+
+### Fixed
+
+- All 7 command templates now detect user's language and respond accordingly (Chinese or English); previously always responded in English regardless of user input
+
 ## [0.5.0] - 2026-03-26
 
 ### Added
