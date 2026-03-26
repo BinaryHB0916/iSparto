@@ -131,6 +131,7 @@ Suggestion: Use `git push` (without --force) or `git push --force-with-lease` fo
 | C1 | Doc Engineer 是否运行 | session 中有 Doc Engineer 派生记录 | P1 |
 | C2 | 代码改动是否有对应文档更新 | diff 中 .md 文件变更与代码变更的对应关系 | P2 |
 | C3 | plan.md 是否更新 | plan.md 在 session 中有 diff 记录 | P1 |
+| C4 | plan.md 未完成项与实际状态一致 | 对照 plan.md 中标 `[ ]` 的条目，检查对应文件/功能是否已存在于代码库中。已实现但未标完成的条目视为偏差 | P1 |
 
 #### Checklist D：PR 流程合规
 
@@ -172,6 +173,7 @@ Suggestion: Use `git push` (without --force) or `git push --force-with-lease` fo
 | C1 | Doc Engineer executed | PASS/FAIL | ... |
 | C2 | Code changes have doc updates | PASS/FAIL | ... |
 | C3 | plan.md updated | PASS/FAIL | ... |
+| C4 | plan.md unchecked items match actual state | PASS/FAIL | ... |
 | D1 | Merged to main via PR | PASS/FAIL/N/A | ... |
 | D2 | Branch cleaned up after merge | PASS/FAIL/N/A | ... |
 | E1 | No out-of-scope file modifications | PASS/FAIL/N/A | ... |
