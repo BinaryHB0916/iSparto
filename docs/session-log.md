@@ -250,3 +250,35 @@
 - v0.4.0 发布后用户实际安装时发现 `;;` 语法错误，根因是 isparto.sh 在升级时被覆盖后 bash 继续从旧偏移读取新文件
 - 升级输出从 ~40 行压缩到 ~15 行：changelog 折叠、依赖汇总、文件计数、去掉 Next step
 - 两个 hotfix PR 均已合并，准备发布 v0.4.1
+
+## 2026-03-26 Session
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | Wave 5 (Dogfooding 验证) — 续 |
+| Tasks completed | 命令模板语言匹配修复（7 个 commands/*.md 全部加入语言检测指令） |
+| Developers spawned | 0 (Solo + Codex 模式) |
+| Codex reviews | 1 (QA review，通过，无问题) |
+| Codex catches | None |
+| Key decisions | meic（虚拟声纹/声纹卡）确认为 dogfooding 场景 4，commands 模板加入语言检测而非翻译模板本身 |
+
+### Files Changed
+```
+ commands/end-working.md   | 2 ++
+ commands/env-nogo.md      | 2 ++
+ commands/init-project.md  | 2 ++
+ commands/migrate.md       | 2 ++
+ commands/plan.md          | 2 ++
+ commands/restore.md       | 2 ++
+ commands/start-working.md | 2 ++
+ docs/plan.md              | 1 +
+ docs/session-log.md       | (this entry)
+ 9 files changed, 15 insertions(+)
+```
+
+### Notes
+- 用户在 meic 项目首次运行 /init-project 时发现中文输入得到英文回复，dogfooding 发现的第一个 UX bug
+- 根因：commands/*.md 模板全是英文指令且无语言检测说明，而 CLAUDE-TEMPLATE.md 的语言规则要到 CLAUDE.md 生成后才生效
+- 修复策略：在命令模板层加入语言检测（靠近执行时刻），而非翻译模板本身（模板是结构参考）
+- templates/*.md 保持英文结构不变——生成内容的语言由 commands 指令控制
