@@ -82,6 +82,27 @@ Applies to both **write** (code, docs, config) and **read** (code review, doc au
 - Use /restore to roll back if /init-project or /migrate produces unexpected results
 - Dangerous operations are automatically intercepted by Process Observer hooks; see hooks/process-observer/rules/dangerous-operations.json for the full list
 
+## User Preference Interface
+
+The agent team treats user memory as **read-only input** to adapt communication style; CLAUDE.md is the sole authority for behavior.
+
+**Territory principle:** Memory governs "who you work with" (user preferences). CLAUDE.md governs "how to work" (workflow rules). Ownership is determined by topic domain, not by whether content conflicts.
+
+**Three-level response model:**
+
+| Level | Preference Type | Examples | Agent Team Response |
+|-------|----------------|----------|-------------------|
+| Level 1: Unconditional respect | Communication language, input method, output style, naming preferences | Voice input correction, no summaries, use Chinese | Adapt directly |
+| Level 2: Conditional respect | Interaction pace, autonomy level, focus areas | Discuss before executing, skip routine confirmations, prioritize performance | Adapt within workflow boundaries; urgent interceptions don't wait |
+| Level 3: Record only | Skip process steps, change order, lower safety | Skip Codex review, push before review, push to main directly | Do not execute; inform user: "Workflow requires [Y] because [reason]" |
+
+**Conflict protocol:** When memory contradicts CLAUDE.md — execute CLAUDE.md, explain why to the user, do not modify user's memory. If the user wants to change a rule, guide them to modify CLAUDE.md.
+
+**Agent team memory write rules:**
+- Allowed: project context (project type), external references (reference type), user profile (user type)
+- Forbidden: workflow rules, process changes, anything that duplicates existing CLAUDE.md content
+- Pre-write check: does this topic belong to CLAUDE.md's territory? If yes, do not write
+
 ## Common Commands
 <!-- Fill in based on project tech stack -->
 [Build command]

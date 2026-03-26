@@ -114,7 +114,7 @@ Template files used during project initialization:
 | tech-spec.md | Create when you have backend/cloud functions/complex architecture; skip for simple front-end-only projects |
 | design-spec.md | Create for projects with UI; skip for pure backend/CLI tools |
 | content/ directory | Create when the project has content assets (story scripts, copy, etc.) |
-| Memory boundary definitions | Reference when discussing products using the Claude.ai web interface |
+| User Preference Interface | Reference when using Claude Code's auto-memory alongside iSparto workflow rules (see section below) |
 | Multi-device sync | Configure when switching development between multiple computers |
 
 ---
@@ -151,3 +151,49 @@ Claude Code 支持在工具调用前触发 hook 脚本。Process Observer 注册
 ## Multi-Device Sync (Optional)
 
 To share iSparto configuration across multiple computers, symlink `~/.claude/` (commands, templates, CLAUDE-TEMPLATE.md) to a synced directory (iCloud Drive, Dropbox, or a git repo). Runtime data under `~/.claude/` (history, cache) should not be synced.
+
+---
+
+## User Preference Interface
+
+Claude Code has a built-in auto-memory system that stores user preferences across conversations. iSparto defines a clear boundary between this memory and the workflow rules in CLAUDE.md.
+
+### Territory Principle
+
+The boundary is determined by **topic ownership**, not by whether content conflicts:
+
+- **Memory's territory** — "Who you work with": user's communication language, input method (voice), output style, interaction pace, naming preferences. These are personal habits that evolve naturally through user-agent interaction.
+- **CLAUDE.md's territory** — "How to work": workflow steps, branching strategy, review triggers, role definitions, operational guardrails. These are team rules defined by the project.
+
+If a topic belongs to CLAUDE.md's territory, it should not exist in memory — even if the memory entry currently agrees with CLAUDE.md. Redundancy creates drift risk.
+
+### Three-Level Response Model
+
+When the agent team encounters a user preference (from memory or conversation):
+
+| Level | Type | Examples | Response |
+|-------|------|----------|----------|
+| **Level 1: Unconditional** | Communication & style | Language, voice input correction, output verbosity, naming conventions | Adapt immediately, no judgment needed |
+| **Level 2: Conditional** | Interaction behavior | "Discuss before executing", autonomy level, review focus areas | Adapt within workflow boundaries. Example: respect "discuss first" for normal tasks, but Process Observer interceptions don't wait |
+| **Level 3: Record only** | Process overrides | "Skip Codex review", "push before review", "commit to main" | Do **not** execute. Inform the user: "The workflow requires [Y] because [reason]. To change this rule, modify CLAUDE.md." |
+
+### Conflict Protocol
+
+When a user's memory contradicts a CLAUDE.md rule:
+
+1. **Execute CLAUDE.md** — no exceptions, no partial compliance
+2. **Explain to the user** — state which preference was overridden and why
+3. **Do not modify the user's memory** — it's their space
+4. **Guide rule changes through CLAUDE.md** — if the user wants different behavior, the change belongs in CLAUDE.md, not memory
+
+### Agent Team Memory Write Rules
+
+The agent team must check before writing any memory entry:
+
+| Check | Action |
+|-------|--------|
+| Does this topic belong to CLAUDE.md's territory? | → Do not write |
+| Does this duplicate existing CLAUDE.md content? | → Do not write |
+| Is this a workflow rule, process change, or branching strategy? | → Do not write |
+| Is this project context (status, background, external references)? | → Allowed (project / reference type) |
+| Is this about the user's profile, role, or preferences? | → Allowed (user type) |
