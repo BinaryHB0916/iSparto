@@ -8,30 +8,25 @@
 
 ---
 
-## Origin of the Name
+**iSparto turns Claude Code from a single AI into a development team** — Lead coordinates, Developers code in parallel, Codex cross-reviews, Doc Engineer syncs documentation. You direct the team, not the agent.
 
-In Greek mythology, the hero Cadmus slew a dragon and sowed its teeth into the earth. A host of fully armed warriors sprang from the ground — they were called **Spartoi** (Σπαρτοί), meaning "the sown ones."
+### Who is this for
 
-This is the same story as iSparto's workflow: you sow your product requirements into `/init-project`, and an entire Agent Team assembles itself — Lead breaks down tasks, Developer writes code, Codex reviews and fixes, Doc Engineer keeps documentation in sync — a complete development team grown from a single seed.
+Solo developers on macOS who want to multiply their output with Claude Code. Requires Claude Max and ChatGPT subscriptions.
 
-The **i** was moved from the end of Spartoi to the front. Lowercase i = I = me, one person.
+> **Platform: macOS only.** Agent Team mode requires iTerm2's built-in tmux integration. Solo + Codex mode may work on other platforms, but is untested.
 
-**iSparto = I + Sparto = one-person army.**
+| Item | Requirement | Notes |
+|------|-------------|-------|
+| Claude Max subscription | $100/month | Claude Code + Auto mode (Solo + Codex / Agent Team) |
+| ChatGPT subscription | $20/month | Codex CLI (code review + QA) |
+| Node.js | 18+ | Runs Claude Code, Codex CLI, and MCP Server |
+| Git | Any version | Version control |
+| Terminal | iTerm2 (macOS) | Agent Team tmux mode relies on iTerm2's built-in tmux integration; no separate tmux installation needed |
 
----
+**Total cost: $120/month** — two top-tier models (Claude Opus + Codex), no additional API fees.
 
-## Role Architecture
-
-<p align="center">
-  <img src="assets/role-architecture.svg" alt="Role Architecture" width="100%"/>
-</p>
-
-- Lead / Developer / Doc Engineer: **Claude Opus 4.6** + max effort
-- Codex Reviewer: **Codex 5.3** (via MCP, using $20 ChatGPT subscription, max reasoning)
-
----
-
-## How iSparto Differs from Existing Tools
+### How iSparto Differs from Existing Tools
 
 Existing AI coding tools (Cursor, Windsurf, Copilot, Claude Code single session) all follow the same pattern — **you go back and forth with a single Agent**. The Agent has no team, no division of labor; everything depends on you and it trading messages back and forth.
 
@@ -47,22 +42,6 @@ iSparto turns a single Agent into **a team with clear roles**: Lead breaks down 
 | Documentation sync | Manual maintenance | Doc Engineer auto-audits every Wave |
 
 **In short: other tools have you directing one Agent. iSparto has you directing an entire team.**
-
----
-
-## Prerequisites
-
-> **Platform: macOS only.** Agent Team mode requires iTerm2's built-in tmux integration. Solo + Codex mode may work on other platforms, but is untested.
-
-| Item | Requirement | Notes |
-|------|-------------|-------|
-| Claude Max subscription | $100/month | Claude Code + Auto mode (Solo + Codex / Agent Team) |
-| ChatGPT subscription | $20/month | Codex CLI (code review + QA) |
-| Node.js | 18+ | Runs Claude Code, Codex CLI, and MCP Server |
-| Git | Any version | Version control |
-| Terminal | iTerm2 (macOS) | Agent Team tmux mode relies on iTerm2's built-in tmux integration; no separate tmux installation needed |
-
-**Total cost: $120/month** — two top-tier models (Claude Opus + Codex), no additional API fees.
 
 ---
 
@@ -108,39 +87,6 @@ git clone https://github.com/BinaryHB0916/iSparto.git
 cd iSparto && ./install.sh              # or: ./install.sh --dry-run
 ```
 </details>
-
----
-
-## Real-World Usage
-
-iSparto used its own Agent Team workflow to develop itself. Below is the first complete dogfooding run — building the "Session Log" feature (automatic session metrics collection in `/end-working` and `/start-working`).
-
-### Flow
-
-1. **`/start-working`** — Lead read `plan.md`, reported Wave 5 status, identified the session log feature as the next task.
-2. **Branch** — Lead created `feat/session-log`.
-3. **Task breakdown** — Lead assigned file ownership:
-   - Developer A: `commands/end-working.md` (add session report generation)
-   - Developer B: `commands/start-working.md` (add session log reading)
-4. **Parallel development** — Both Developers ran simultaneously and completed their tasks.
-5. **Codex Review** — Found 2 P2 issues:
-   - `git diff --stat` misses staged/untracked files. Fixed to `git diff HEAD --stat`.
-   - Diff output inside a Markdown table breaks rendering. Moved to a code block.
-6. **Fix** — Lead applied both Codex findings.
-7. **Doc audit** — Doc Engineer updated `workflow.md` and `plan.md`.
-8. **Merge** — Merged to `main` via `--no-ff` merge commit.
-
-### Stats
-
-| Metric | Value |
-|--------|-------|
-| Developers in parallel | 2 |
-| Codex review passes | 1 |
-| Issues caught by Codex | 2 (both fixed) |
-| Files changed | 4 |
-| Insertions / Deletions | +45 / -11 |
-| Full cycle | Task breakdown, parallel dev, Codex review, fix, doc audit, merge |
-
 
 ---
 
@@ -192,6 +138,50 @@ Occasionally Lead comes to you (escalate decisions / confirm commits)
     → Lead first reviews the product direction, produces a proposal
     → After you confirm the proposal, Lead writes it into plan.md and begins work
 ```
+
+---
+
+## Role Architecture
+
+<p align="center">
+  <img src="assets/role-architecture.svg" alt="Role Architecture" width="100%"/>
+</p>
+
+- Lead / Developer / Doc Engineer: **Claude Opus 4.6** + max effort
+- Codex Reviewer: **Codex 5.3** (via MCP, using $20 ChatGPT subscription, max reasoning)
+
+---
+
+## Real-World Usage
+
+iSparto used its own Agent Team workflow to develop itself. Below is the first complete dogfooding run — building the "Session Log" feature (automatic session metrics collection in `/end-working` and `/start-working`).
+
+### Flow
+
+1. **`/start-working`** — Lead read `plan.md`, reported Wave 5 status, identified the session log feature as the next task.
+2. **Branch** — Lead created `feat/session-log`.
+3. **Task breakdown** — Lead assigned file ownership:
+   - Developer A: `commands/end-working.md` (add session report generation)
+   - Developer B: `commands/start-working.md` (add session log reading)
+4. **Parallel development** — Both Developers ran simultaneously and completed their tasks.
+5. **Codex Review** — Found 2 P2 issues:
+   - `git diff --stat` misses staged/untracked files. Fixed to `git diff HEAD --stat`.
+   - Diff output inside a Markdown table breaks rendering. Moved to a code block.
+6. **Fix** — Lead applied both Codex findings.
+7. **Doc audit** — Doc Engineer updated `workflow.md` and `plan.md`.
+8. **Merge** — Merged to `main` via `--no-ff` merge commit.
+
+### Stats
+
+| Metric | Value |
+|--------|-------|
+| Developers in parallel | 2 |
+| Codex review passes | 1 |
+| Issues caught by Codex | 2 (both fixed) |
+| Files changed | 4 |
+| Insertions / Deletions | +45 / -11 |
+| Full cycle | Task breakdown, parallel dev, Codex review, fix, doc audit, merge |
+
 
 ---
 
@@ -259,6 +249,18 @@ iSparto/
     ├── troubleshooting.md     ← Common troubleshooting
     └── design-decisions.md    ← Design decision records
 ```
+
+---
+
+## Origin of the Name
+
+In Greek mythology, the hero Cadmus slew a dragon and sowed its teeth into the earth. A host of fully armed warriors sprang from the ground — they were called **Spartoi** (Σπαρτοί), meaning "the sown ones."
+
+This is the same story as iSparto's workflow: you sow your product requirements into `/init-project`, and an entire Agent Team assembles itself — Lead breaks down tasks, Developer writes code, Codex reviews and fixes, Doc Engineer keeps documentation in sync — a complete development team grown from a single seed.
+
+The **i** was moved from the end of Spartoi to the front. Lowercase i = I = me, one person.
+
+**iSparto = I + Sparto = one-person army.**
 
 ---
 
