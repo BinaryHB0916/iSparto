@@ -309,3 +309,30 @@
 - 根因：plan.md 更新依赖 Lead "记得"，没有系统性核对机制
 - 修复：在 Process Observer 审计 Checklist C 增加 C4 检查项，/end-working 审计指令也同步补充
 - 这是 Process Observer 角色的一次职责升级：从纯观察到主动兜底
+
+## 2026-03-26 Session (continued 2)
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | Wave 5 (Dogfooding 验证) — 续 |
+| Tasks completed | install.sh --upgrade 自动补全项目 hooks 注册, iSparto 自身 settings.json 补全 hooks |
+| Developers spawned | 0 (Solo + Codex 模式) |
+| Codex reviews | 2 (第一次发现 P1: set -e 下 sys.exit(1) 导致 install.sh 退出; 第二次发现 P2: python3 缺失时静默失败) |
+| Codex catches | 1 P1 — set -e + sys.exit(1) 会中断安装流程; 1 P2 — python3 缺失时静默跳过无警告 |
+| Key decisions | upgrade 区分"用户内容"(不碰)和"框架基础设施"(自动补全), 用 Python 做 JSON merge 避免 jq 依赖 |
+
+### Files Changed
+```
+ install.sh            | 69 ++++++++++++++++++++++++++++++++++++++
+ .claude/settings.json | (local only, not tracked)
+ docs/session-log.md   | (this entry)
+ 1 file changed, 69 insertions(+)
+```
+
+### Notes
+- 根因分析：iSparto 在 v0.5.0 加了 Process Observer hooks，但自身的 .claude/settings.json 没注册——"鞋匠不穿鞋"
+- 更深层原因：--upgrade 之前只更新全局文件，不碰项目级配置。但 hooks 注册属于框架基础设施，不是用户内容
+- 修复策略：upgrade 时检测当前项目（有 CLAUDE.md），自动补全缺失的 hooks 注册
+- Codex review 两次都抓到了关键问题：P1 会让安装流程中断，P2 会让 hooks 注册静默失败
+- 用户提出"两个视角"框架：本体开发者视角 + 用户体验视角，要同时具备
