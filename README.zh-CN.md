@@ -8,7 +8,7 @@
 
 ---
 
-**iSparto 把 Claude Code 从单个 AI 变成一支开发团队** — Lead 协调全局、Developer 并行写码、Codex 交叉审查、Doc Engineer 同步文档。你指挥的不是一个 Agent，而是一支团队。
+**iSparto 把 Claude Code 从单个 AI 变成一支开发团队** — Lead 组装 prompt、Developer (Codex) 实现代码、Teammate 并行执行、Doc Engineer 同步文档。你指挥的不是一个 Agent，而是一支团队。
 
 ### 适合谁用
 
@@ -30,14 +30,14 @@
 
 现有的 AI 编程工具（Cursor、Windsurf、Copilot、Claude Code 单会话）都是**你和一个 Agent 反复沟通**——Agent 没有团队，没有分工，所有事情都靠你和它一来一回地推进。
 
-iSparto 把单个 Agent 变成**一支有分工的团队**：Lead 拆任务、Developer 并行写代码、Codex 交叉审查、Doc Engineer 同步文档。你不再逐句指挥 Agent，而是确认方向和验收结果。
+iSparto 把单个 Agent 变成**一支有分工的团队**：Lead 组装结构化 prompt、Developer (Codex) 实现代码、Teammate 并行执行、Doc Engineer 同步文档。你不再逐句指挥 Agent，而是确认方向和验收结果。
 
 | | 单 Agent 工具 | iSparto |
 |--|--------------|---------|
 | 协作模式 | 你和一个 Agent 反复沟通 | Lead 自动选择：小任务 Solo + Codex，并行任务 Agent Team |
-| AI 的组织 | 单个 Agent，无分工 | 团队化（Lead + Developer + Reviewer + Doc Engineer） |
+| AI 的组织 | 单个 Agent，无分工 | 团队化（Lead + Teammate + Developer + Doc Engineer） |
 | 并行能力 | 无，单线程对话 | Solo 模式（默认）处理小任务；Agent Team 模式 Wave 内并行执行 |
-| 代码审查 | 自己审自己（同源） | Codex 审 Claude（异源），覆盖不同模型的盲区 |
+| 代码审查 | 自己审自己（同源） | Lead 审查 Developer (Codex) 输出（跨模型质量门） |
 | 跨会话状态 | 丢失，每次重新解释上下文 | plan.md 驱动，`/start-working` 自动恢复 |
 | 文档同步 | 手动维护 | Doc Engineer 每个 Wave 自动审计 |
 
@@ -147,8 +147,8 @@ Lead 团队自己跑（你不用盯着）
   <img src="assets/role-architecture-zh.svg" alt="角色架构" width="100%"/>
 </p>
 
-- Lead / Developer / Doc Engineer：**Claude Opus 4.6** + max effort
-- Codex Reviewer：**Codex 5.3**（通过 MCP，走 $20 ChatGPT 订阅，最高推理强度）
+- Lead / Teammate / Doc Engineer：Claude 主会话（见[模型配置](docs/configuration.md#agent-model-configuration)）
+- Developer：Codex 通过 MCP（见[模型配置](docs/configuration.md#agent-model-configuration)）
 
 ---
 

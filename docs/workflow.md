@@ -12,7 +12,7 @@ User reviews product direction:
   - Is there a better solution hidden behind the requirement?
   - What does the 10/10 version look like?
     |
-Codex 5.3 reviews technical architecture (Team Lead invokes via MCP, xhigh reasoning, based on tech-spec.md):
+Developer (Codex) reviews technical architecture (Team Lead invokes via MCP, based on tech-spec.md):
   - Architecture fitness and scalability
   - Data flow and state management
   - Potential performance bottlenecks and security issues
@@ -44,7 +44,7 @@ This applies to both **write** and **read** tasks:
 If either condition is not met, stay in Solo + Codex. The file count "≤ 3" is a quick heuristic, not a hard rule — what matters is whether parallel coordination saves more time than it costs.
 
 **Shared across both modes** (no difference):
-- Codex review / QA → triggered per the Codex Review Trigger Conditions table below
+- Developer invocation / QA → triggered per the Developer Trigger Conditions table below
 - Doc Engineer documentation audit → always the final step
 - Branching → feat/fix/hotfix branches, never develop on main
 - Merge → after full workflow, Lead auto-creates PR and merges to main (no manual user review needed — Codex review during development is the quality gate)
@@ -56,27 +56,22 @@ If either condition is not met, stay in Solo + Codex. The file count "≤ 3" is 
 ```
 Team Lead reads plan.md, confirms current Wave
     |
-Team Lead writes code directly
-  - Implements the task
-  - Writes unit tests for core logic
-  - Ensures build passes
+Lead assembles implementation prompt → calls Developer (Codex) via MCP
+  - Developer implements the task
+  - Developer writes unit tests for core logic
     |
-Codex Reviewer reviews (per trigger table below)
-  - Reviews code logic, edge conditions, security issues
-  - Directly fixes issues found
+Lead reviews Developer output
+  - Confirms implementation is correct
+  - If issues found: assembles fix prompt → calls Developer again → reviews
     |
-Team Lead reviews Codex fixes (if any)
-  - Confirms fix is correct
-  - Confirms no new issues introduced
-    |
-Codex QA smoke testing (per trigger table below)
+Lead assembles QA prompt → calls Developer for smoke testing (per trigger table below)
     |
 Team Lead runs Doc Engineer audit (as sub-agent)
   - Same checklist as Agent Team mode (see Doc Engineer role in roles.md)
     |
 Process Observer compliance audit (as sub-agent)
   - Branch convention check
-  - Codex review compliance check
+  - Developer invocation compliance check
   - Doc Engineer compliance check
   - Ownership violation check
   - Outputs deviation report to session briefing
@@ -89,28 +84,18 @@ Team Lead pushes branch -> creates PR -> merges to main -> cleans up branch
 ```
 Team Lead reads plan.md, confirms current Wave
     |
-Team Lead breaks down tasks: defines file ownership + interface contracts
+Team Lead breaks down tasks: defines file ownership + prompt scope for each Teammate
     |
-Claude Developer(s) develop in parallel
-  - Write code within file ownership scope
-  - Write unit tests for core logic
-  - Ensure build passes
+Teammate(s) execute in parallel, each independently:
+  - Assembles implementation prompt → calls Developer (Codex) via MCP
+  - Reviews Developer output
+  - If issues: assembles fix prompt → calls Developer again → reviews
     |
-Codex Reviewer reviews (per trigger table below)
-  - Reviews code logic, edge conditions, security issues
-  - Directly fixes issues found
-    |
-Claude Developer reviews Codex fixes (if review was triggered)
-  - Confirms fix is correct
-  - Confirms no new issues introduced
-  - Confirms adherence to project code style
-  - Build verification
-    |
-Codex QA smoke testing (per trigger table below)
+Lead assembles QA prompt → calls Developer for smoke testing (incremental, wave-scoped)
   - Identifies the change scope of this Wave, only tests feature paths affected by changes
   - Skips areas tested in previous Waves that are not affected by current changes
   - Simulates key user operation paths, verifies end-to-end functionality
-  - Records and directly fixes issues found (same workflow as code review)
+  - Records and directly fixes issues found
     |
 Team Lead spawns Doc Engineer (sub-agent) for documentation audit (placed last to ensure QA-fixed code is also audited)
   - Code vs product-spec.md consistency
@@ -123,7 +108,7 @@ Team Lead spawns Doc Engineer (sub-agent) for documentation audit (placed last t
     |
 Process Observer compliance audit (as sub-agent, after Doc Engineer)
   - Branch convention check (A1-A3)
-  - Codex review compliance check (B1-B4)
+  - Developer invocation compliance check (B1-B4)
   - Doc Engineer compliance check (C1-C3)
   - PR workflow compliance check (D1-D2)
   - Ownership violation check (E1-E2)
@@ -132,13 +117,13 @@ Process Observer compliance audit (as sub-agent, after Doc Engineer)
 Team Lead pushes branch -> creates PR -> merges to main -> cleans up branch
 ```
 
-## Codex Review Trigger Conditions
+## Developer Trigger Conditions
 
-**Default: trigger code review + QA.** Only skip for changes explicitly listed in the "QA only" or "Skip" tiers below. When in doubt, trigger.
+**Default: trigger implementation + QA.** Only skip for changes explicitly listed in the "QA only" or "Skip" tiers below. When in doubt, trigger.
 
-### Tier 1: Code Review + QA (default — everything not in Tier 2 or 3)
+### Tier 1: Implementation + QA (default — everything not in Tier 2 or 3)
 
-All code changes trigger both code review and QA unless they fall entirely within Tier 2 or Tier 3. This includes but is not limited to:
+All code changes trigger both implementation and QA unless they fall entirely within Tier 2 or Tier 3. This includes but is not limited to:
 
 | Category | Examples |
 |----------|----------|
@@ -151,7 +136,7 @@ All code changes trigger both code review and QA unless they fall entirely withi
 | Permissions / security | Entitlements, Info.plist, credentials handling, encryption |
 | Infrastructure | CI/CD pipelines, deployment config, install/upgrade scripts |
 
-### Tier 2: QA only (no code review needed)
+### Tier 2: QA only (no implementation review needed)
 
 | Category | Examples |
 |----------|----------|
@@ -167,7 +152,7 @@ All code changes trigger both code review and QA unless they fall entirely withi
 
 ### Wave-level safety net
 
-Each Wave must include at least one batch Codex review before completion, regardless of how individual changes are categorized. Do not defer all reviews to the delivery checkpoint — review at Wave boundaries to catch issues early.
+Each Wave must include at least one batch Developer review before completion, regardless of how individual changes are categorized. Do not defer all reviews to the delivery checkpoint — review at Wave boundaries to catch issues early.
 
 ---
 
@@ -222,17 +207,17 @@ Note: Auto PR merge only happens when all tasks on the current branch are comple
 
 ---
 
-## Codex 5.3 Integration
+## Developer (Codex) Integration
 
-> For the Codex role definition and three prompt templates, see [roles.md -> Codex Reviewer](roles.md#codex-reviewer).
+> For the Developer role definition and prompt templates, see [roles.md -> Developer (Codex MCP Call)](roles.md#developer-codex-mcp-call). Model configuration: see [Agent Model Configuration](configuration.md#agent-model-configuration).
 
-Codex intervenes in three scenarios, all configured with xhigh reasoning (via `codex` tool; `review` tool uses server defaults):
+Developer intervenes in three scenarios:
 
 | Scenario | Timing | Details |
 |----------|--------|---------|
-| A. Architecture pre-review | Phase 0, after product initialization, before development | roles.md -> Codex Reviewer -> Architecture pre-review prompt template |
-| B. Code review + fixes | Phase 1-N, after Developer completes | roles.md -> Codex Reviewer -> Code review prompt template |
-| C. QA smoke testing | Phase 1-N, after Developer review passes | roles.md -> Codex Reviewer -> QA smoke testing prompt template |
+| A. Architecture pre-review | Phase 0, after product initialization, before development | roles.md → Developer → Architecture pre-review prompt template |
+| B. Implementation | Phase 1-N, Lead/Teammate assembles prompt | roles.md → Developer → Implementation prompt template |
+| C. QA smoke testing | Phase 1-N, Lead orchestrates after implementation review | roles.md → Developer → QA smoke testing prompt template |
 
 ---
 
