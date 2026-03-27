@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Process Observer full workflow monitoring — expands from Bash-only (20 rules) to all tool calls: Edit/Write code file interception (blocks direct code editing by all roles except Developer), Codex MPC structured prompt enforcement (must contain ## heading), new workflow-rules.json with configurable extension lists
+- install.sh and project templates (init-project, migrate) register 4 hook matchers: Bash, Edit, Write, mcp__codex-reviewer__codex
+
+### Fixed
+
+- install.sh --upgrade now skips redundant tarball download when already on the target version
+
 ## [0.6.0] - 2026-03-27
 
 ### Changed
