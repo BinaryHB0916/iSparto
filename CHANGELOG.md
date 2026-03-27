@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-03-27
+
 ### Added
 
 - Process Observer full workflow monitoring — expands from Bash-only (20 rules) to all tool calls: Edit/Write code file interception (blocks direct code editing by all roles except Developer), Codex MPC structured prompt enforcement (must contain ## heading), new workflow-rules.json with configurable extension lists
