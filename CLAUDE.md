@@ -1,7 +1,7 @@
 # iSparto
 
 ## Project Overview
-iSparto 是一个 AI Agent Team 工作流框架，把 Claude Code 单 Agent 变成一支有分工的团队（Lead + Developer + Codex Reviewer + Doc Engineer + Process Observer）。目标用户是独立开发者，当前阶段：开源核心工作流已发布，dogfooding 中。
+iSparto 是一个 AI Agent Team 工作流框架，把 Claude Code 单 Agent 变成一支有分工的团队（Lead + Teammate + Developer + Doc Engineer + Process Observer）。目标用户是独立开发者，当前阶段：开源核心工作流已发布，dogfooding 中。
 
 ## Tech Stack
 - Language: Shell (Bash), Markdown
@@ -43,16 +43,16 @@ Lead 根据任务特征自动选择模式，用户无需干预。
 - 读：review 涉及多模块多文件 → Agent Team 按模块分组并行 review；少量文件 → Solo 串行 review
 
 **Roles:**
-- Team Lead (main session): 协调全流程、合代码。Solo 模式下自己写代码；Team 模式下委派 Developer。Lead 负责 Codex 和 Developer 之间的信息中转；用户不参与中间协调。可以独立做常规决策，不确定的事情必须上报用户。并行不限于写代码——代码审查、文档审计、调研任务都应尽可能并行执行。任务完成后主动对照 plan.md 建议下一步。
-- Claude Developer (teammate, 仅 Agent Team 模式): 写代码 + 单元测试。在文件所有权范围内工作。Review Codex 的修改。
-- Codex Reviewer (MCP): 代码审查 + 直接修复 + QA 冒烟测试。按触发表由 Lead 调用。始终使用 xhigh reasoning。
+- Team Lead (main session): 协调全流程、合代码。不直接写代码——组装结构化 prompt 调 Developer (Codex) 实现，然后审查 Developer 输出。Solo 模式下自己走 prompt→Developer→review 循环；Team 模式下委派 Teammate 并行走同样循环。可以独立做常规决策，不确定的事情必须上报用户。并行不限于写代码——代码审查、文档审计、调研任务都应尽可能并行执行。任务完成后主动对照 plan.md 建议下一步。
+- Teammate (tmux, 仅 Agent Team 模式): 并行执行单元。在文件所有权范围内，遵循与 Lead 相同的 prompt→Developer→review 循环。不直接写代码。每个 Teammate 独立调 Developer = 真正的并行 Codex 调用。
+- Developer (Codex MCP): 按 Lead/Teammate 组装的结构化 prompt 实现代码。也承担 QA 冒烟测试（不同 prompt，由 Lead 统一编排）。模型配置见 docs/configuration.md。
 - Doc Engineer (Lead sub-agent): 团队的 context 来源。每个 Wave 结束后：(1) 确保代码和文档同步，(2) 检查产品术语一致性，(3) 审计产品叙事整合。
 - Process Observer (hooks + Lead sub-agent): 合规监督。Hooks 实时拦截灾难性操作（不可逆/共享状态/数据丢失）；事后审计回顾 session 执行过程，对照行为准则检查偏差，输出偏差报告 + 规则修正建议。
 
 **Development Workflow (Solo + Codex):**
-1. Lead 写代码 + 测试
-2. Lead 调 Codex 代码审查 + 修复（按触发表）
-3. Lead 调 Codex QA 冒烟测试（按触发表）
+1. Lead 组装 implementation prompt → 调 Developer 实现代码 + 测试
+2. Lead 审查 Developer 输出，有问题则组装修复 prompt 再调 Developer
+3. Lead 组装 QA prompt → 调 Developer 冒烟测试（按触发表）
 4. Lead 跑 Doc Engineer 审计（sub-agent）
 5. Lead 跑 Process Observer 事后审计（sub-agent，与 Doc Engineer 可并行）
 6. Lead 推分支 -> 建 PR -> merge 到 main -> 清理分支
@@ -60,18 +60,16 @@ Lead 根据任务特征自动选择模式，用户无需干预。
 /end-working 全自动执行（commit + push + 输出 briefing），不需要用户确认。分支任务全部完成时自动建 PR 并 merge；未完成时只 push，不 merge。
 
 **Development Workflow (Agent Team):**
-1. Lead 拆任务 -> 定义文件所有权 + 接口契约
-2. Developer 开发 + 测试
-3. Lead 调 Codex 代码审查 + 修复
-4. Lead 转发改动给 Developer review
-5. Lead 调 Codex QA 冒烟测试（增量，只测改动路径）
-6. Lead 派 Doc Engineer 文档审计（最后一步，确保 QA 修复也被审计）
-7. Lead 跑 Process Observer 事后审计（sub-agent，与 Doc Engineer 可并行）
-8. Lead 推分支 -> 建 PR -> merge 到 main -> 清理分支
+1. Lead 拆任务 → 定义文件所有权 + prompt 范围
+2. Teammate(s) 各自走 prompt→Developer→review 循环
+3. Lead 组装 QA prompt → 调 Developer 冒烟测试（增量，只测改动路径）
+4. Lead 派 Doc Engineer 文档审计（最后一步，确保 QA 修复也被审计）
+5. Lead 跑 Process Observer 事后审计（sub-agent，与 Doc Engineer 可并行）
+6. Lead 推分支 -> 建 PR -> merge 到 main -> 清理分支
 
 /end-working 全自动执行（commit + push + 输出 briefing），不需要用户确认。分支任务全部完成时自动建 PR 并 merge；未完成时只 push，不 merge。
 
-**Codex Review Triggers:** 默认触发 code review + QA。仅以下情况可跳过：纯视觉改动（只需 QA）、纯文档/格式化（均可跳过）。每个 Wave 至少包含一次批量 review。详见 docs/workflow.md 触发条件表。
+**Developer Triggers:** 默认触发实现 + QA。仅以下情况可跳过：纯视觉改动（仅 QA）、纯文档/格式化（均可跳过）。每个 Wave 至少包含一次批量审查。详见 docs/workflow.md 触发条件表。
 
 **Branching & Merge:** main 锁定；feat/xxx 开发新功能，fix/xxx 修 bug，hotfix/xxx 紧急修复。完成全部审查后 Lead 自动建 PR 并 merge——不需要用户手动 review。
 

@@ -36,16 +36,16 @@ Applies to both **write** (code, docs, config) and **read** (code review, doc au
 - Read: review spans multiple modules → Agent Team splits by module for parallel review; few files → Solo serial review
 
 **Roles:**
-- Team Lead (main session): Coordinates the full workflow, merges code. In Solo + Codex mode, writes code directly. In Agent Team mode, delegates to Developer teammates. Lead handles information relay between Codex and Developer; the user does not participate in intermediate coordination. Lead may make routine decisions independently, but must escalate uncertain matters to the user. Parallelism applies to reading too — code review, documentation audit, and research tasks should be parallelized across agents when possible, not just code writing. After completing a task, Lead proactively suggests the next step from plan.md.
-- Claude Developer (teammate, Agent Team only): Writes code + unit tests. Works within file ownership scope. Reviews Codex fixes.
-- Codex Reviewer (MCP): Code review + direct fixes + QA smoke testing. Called by Lead per trigger table. Always uses xhigh reasoning.
+- Team Lead (main session): Coordinates the full workflow, merges code. Does NOT write code directly — assembles structured prompts for the Developer (Codex), then reviews Developer output. In Solo + Codex mode, runs the prompt→Developer→review loop alone. In Agent Team mode, delegates scoped tasks to Teammates who each run the same loop in parallel. Lead may make routine decisions independently, but must escalate uncertain matters to the user. Parallelism applies to reading too — code review, documentation audit, and research tasks should be parallelized across agents when possible. After completing a task, Lead proactively suggests the next step from plan.md.
+- Teammate (tmux, Agent Team only): Parallel execution unit. Follows the same prompt→Developer→review loop as Lead, scoped to assigned file ownership. Does not write code directly. Each Teammate independently calls Developer = true parallel Codex invocations.
+- Developer (Codex MCP): Implements code per structured prompts from Lead/Teammate. Also handles QA smoke testing (different prompt, orchestrated by Lead). Model configuration: see docs/configuration.md.
 - Doc Engineer (Lead sub-agent): The team's context source. After each Wave: (1) ensures code and docs stay in sync, (2) checks product terminology consistency, (3) audits product narrative integration.
 - Process Observer (hooks + Lead sub-agent): Compliance oversight. Hooks intercept catastrophic operations in real time (irreversible / shared state / data loss); post-session audit reviews execution against behavioral guidelines, outputs deviation report + rule correction suggestions.
 
 **Development Workflow (Solo + Codex):**
-1. Lead writes code + tests
-2. Lead calls Codex for code review + fixes (per trigger table)
-3. Lead calls Codex for QA smoke testing (per trigger table)
+1. Lead assembles implementation prompt → calls Developer to implement code + tests
+2. Lead reviews Developer output; if issues, assembles fix prompt → calls Developer again
+3. Lead assembles QA prompt → calls Developer for smoke testing (per trigger table)
 4. Lead runs Doc Engineer audit (as sub-agent)
 5. Lead runs Process Observer post-session audit (as sub-agent, can run in parallel with Doc Engineer)
 6. Lead pushes branch -> creates PR -> merges to main -> cleans up branch
@@ -53,18 +53,16 @@ Applies to both **write** (code, docs, config) and **read** (code review, doc au
 /end-working is fully autonomous (commit + push + briefing). When all branch tasks are complete, Lead auto-creates PR and merges; when mid-Wave, only pushes without merging.
 
 **Development Workflow (Agent Team):**
-1. Lead breaks down tasks -> defines file ownership + interface contracts
-2. Developer develops + unit tests
-3. Lead calls Codex for code review + fixes
-4. Lead forwards changes to Developer for review
-5. Lead calls Codex for QA smoke testing (incremental, only changed paths)
-6. Lead spawns Doc Engineer for documentation audit (last step, ensures QA fixes are also audited)
-7. Lead runs Process Observer post-session audit (as sub-agent, can run in parallel with Doc Engineer)
-8. Lead pushes branch -> creates PR -> merges to main -> cleans up branch
+1. Lead breaks down tasks → defines file ownership + prompt scope
+2. Teammate(s) each run prompt→Developer→review loop in parallel
+3. Lead assembles QA prompt → calls Developer for smoke testing (incremental, only changed paths)
+4. Lead spawns Doc Engineer for documentation audit (last step, ensures QA fixes are also audited)
+5. Lead runs Process Observer post-session audit (as sub-agent, can run in parallel with Doc Engineer)
+6. Lead pushes branch -> creates PR -> merges to main -> cleans up branch
 
 /end-working is fully autonomous (commit + push + briefing). When all branch tasks are complete, Lead auto-creates PR and merges; when mid-Wave, only pushes without merging.
 
-**Codex Review Triggers:** Default is to trigger code review + QA for all code changes. Only skip for: pure visual changes (QA only, no code review) and pure documentation/formatting (skip both). Each Wave must include at least one batch review. See docs/workflow.md for the full trigger table.
+**Developer Triggers:** Default is to trigger implementation + QA for all code changes. Only skip for: pure visual changes (QA only) and pure documentation/formatting (skip both). Each Wave must include at least one batch review. See docs/workflow.md for the full trigger table.
 
 **Branching & Merge:** main is locked; feat/xxx for development, fix/xxx for bug fixes, hotfix/xxx for urgent fixes. After full workflow, Lead auto-creates PR and merges — no manual user review needed.
 

@@ -38,11 +38,11 @@ v2.x  CEO 工作台      用户 = 老板，说需求看结果，不碰过程
 
 ## 核心功能
 
-- **Agent Team 角色分工**: Team Lead 协调、Developer 写代码、Codex Reviewer 审查修复、Doc Engineer 文档同步
+- **Agent Team 角色分工**: Team Lead 组装 prompt 协调、Developer (Codex) 实现代码、Teammate 并行执行、Doc Engineer 文档同步
 - **Wave 并行开发**: 一个 Wave 内多个 Developer 并行，tmux 分屏可视
 - **7 个 Slash Commands**: /init-project, /migrate, /start-working, /end-working, /plan, /env-nogo, /restore
 - **跨会话状态恢复**: plan.md 驱动，/start-working 自动恢复上下文
-- **Codex 异源审查**: Codex 审 Claude 代码，覆盖不同模型的盲区
+- **跨模型质量门**: Lead 审查 Developer (Codex) 输出，覆盖不同模型的盲区
 - **文档自动同步**: Doc Engineer 每个 Wave 审计代码和文档一致性
 - **快照/恢复**: 每次操作前自动拍快照，/restore 一键回滚
 - **Session log**: docs/session-log.md 记录每次会话的开发指标

@@ -59,7 +59,7 @@
     <rect x="160" y="175" width="680" height="220" rx="10" fill="url(#card-lead)" stroke="rgba(212,175,55,0.18)" stroke-width="1"/>
 
     <text x="500" y="225" text-anchor="middle" fill="rgba(255,255,255,0.92)" font-family="Georgia, 'Times New Roman', serif" font-size="28" font-weight="900" letter-spacing="0.1em">TEAM LEAD</text>
-    <text x="500" y="251" text-anchor="middle" fill="rgba(212,175,55,0.6)" font-family="'Courier New', monospace" font-size="13" letter-spacing="0.08em">CLAUDE OPUS 4.6 · MAIN SESSION</text>
+    <text x="500" y="251" text-anchor="middle" fill="rgba(212,175,55,0.6)" font-family="'Courier New', monospace" font-size="13" letter-spacing="0.08em">MAIN SESSION</text>
 
     <g fill="rgba(212,175,55,0.5)">
       <circle cx="272" cy="291" r="2.5"/>
@@ -68,8 +68,8 @@
       <circle cx="272" cy="360" r="2.5"/>
     </g>
     <g fill="rgba(255,255,255,0.6)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="15">
-      <text x="284" y="295">Break down tasks</text>
-      <text x="284" y="318">Interface contracts</text>
+      <text x="284" y="295">Assemble prompts</text>
+      <text x="284" y="318">Review Developer output</text>
       <text x="284" y="341">Coordinate workflow</text>
       <text x="284" y="364">Merge code</text>
     </g>
@@ -88,21 +88,21 @@
     <!-- ═══════════════ DEVELOPER CARD ═══════════════ -->
     <rect x="70" y="460" width="400" height="140" rx="10" fill="url(#card-exec)" stroke="rgba(180,255,180,0.15)" stroke-width="1"/>
 
-    <text x="270" y="508" text-anchor="middle" fill="rgba(0,255,65,0.06)" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="900" letter-spacing="0.1em" filter="url(#glow-green)">DEVELOPER</text>
-    <text x="270" y="508" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="900" letter-spacing="0.1em">DEVELOPER</text>
-    <text x="270" y="534" text-anchor="middle" fill="rgba(180,255,180,0.55)" font-family="'Courier New', monospace" font-size="12" letter-spacing="0.08em">CLAUDE OPUS 4.6 · TEAMMATE</text>
+    <text x="270" y="508" text-anchor="middle" fill="rgba(0,255,65,0.06)" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="900" letter-spacing="0.1em" filter="url(#glow-green)">TEAMMATE</text>
+    <text x="270" y="508" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="900" letter-spacing="0.1em">TEAMMATE</text>
+    <text x="270" y="534" text-anchor="middle" fill="rgba(180,255,180,0.55)" font-family="'Courier New', monospace" font-size="12" letter-spacing="0.08em">TMUX SESSION</text>
     <g fill="rgba(255,255,255,0.55)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="14" text-anchor="middle">
-      <text x="270" y="570">Write code · Unit tests · Review Codex fixes</text>
+      <text x="270" y="570">Parallel prompt assembly · Review Developer output</text>
     </g>
 
     <!-- ═══════════════ CODEX REVIEWER CARD ═══════════════ -->
     <rect x="530" y="460" width="400" height="140" rx="10" fill="url(#card-exec)" stroke="rgba(180,255,180,0.15)" stroke-width="1"/>
 
-    <text x="730" y="508" text-anchor="middle" fill="rgba(0,255,65,0.06)" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="900" letter-spacing="0.1em" filter="url(#glow-green)">CODEX REVIEWER</text>
-    <text x="730" y="508" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="900" letter-spacing="0.1em">CODEX REVIEWER</text>
-    <text x="730" y="534" text-anchor="middle" fill="rgba(180,255,180,0.55)" font-family="'Courier New', monospace" font-size="12" letter-spacing="0.08em">CODEX 5.3 · MCP CALL</text>
+    <text x="730" y="508" text-anchor="middle" fill="rgba(0,255,65,0.06)" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="900" letter-spacing="0.1em" filter="url(#glow-green)">DEVELOPER</text>
+    <text x="730" y="508" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="900" letter-spacing="0.1em">DEVELOPER</text>
+    <text x="730" y="534" text-anchor="middle" fill="rgba(180,255,180,0.55)" font-family="'Courier New', monospace" font-size="12" letter-spacing="0.08em">CODEX · MCP CALL</text>
     <g fill="rgba(255,255,255,0.55)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="14" text-anchor="middle">
-      <text x="730" y="570">Code review · Direct fixes · QA smoke testing</text>
+      <text x="730" y="570">Implement code · Fix issues · QA smoke testing</text>
     </g>
 
   </g>

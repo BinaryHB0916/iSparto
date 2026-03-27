@@ -8,7 +8,7 @@
 
 ---
 
-**iSparto turns Claude Code from a single AI into a development team** — Lead coordinates, Developers code in parallel, Codex cross-reviews, Doc Engineer syncs documentation. You direct the team, not the agent.
+**iSparto turns Claude Code from a single AI into a development team** — Lead assembles prompts, Developer (Codex) implements, Teammates parallelize, Doc Engineer syncs documentation. You direct the team, not the agent.
 
 ### Who is this for
 
@@ -30,14 +30,14 @@ Solo developers on macOS who want to multiply their output with Claude Code. Req
 
 Existing AI coding tools (Cursor, Windsurf, Copilot, Claude Code single session) all follow the same pattern — **you go back and forth with a single Agent**. The Agent has no team, no division of labor; everything depends on you and it trading messages back and forth.
 
-iSparto turns a single Agent into **a team with clear roles**: Lead breaks down tasks, Developers write code in parallel, Codex cross-reviews, and Doc Engineer keeps documentation in sync. Instead of directing an Agent line by line, you confirm the direction and accept the results.
+iSparto turns a single Agent into **a team with clear roles**: Lead assembles structured prompts, Developer (Codex) implements, Teammates parallelize, and Doc Engineer keeps documentation in sync. Instead of directing an Agent line by line, you confirm the direction and accept the results.
 
 | | Single-Agent Tools | iSparto |
 |--|---------------------|---------|
 | Collaboration mode | You go back and forth with a single Agent | Lead auto-selects: Solo + Codex for small tasks, Agent Team for parallel work |
-| AI organization | Single Agent, no division of labor | Team-based (Lead + Developer + Reviewer + Doc Engineer) |
+| AI organization | Single Agent, no division of labor | Team-based (Lead + Teammate + Developer + Doc Engineer) |
 | Parallelism | None — single-threaded conversation | Solo mode (default) for small tasks; Agent Team for parallel execution within a Wave |
-| Code review | Agent reviews its own code (same source) | Codex reviews Claude (different source), covering each model's blind spots |
+| Code review | Agent reviews its own code (same source) | Lead reviews Developer (Codex) output (cross-model quality gate) |
 | Cross-session state | Lost — must re-explain context every time | Driven by plan.md; `/start-working` auto-restores state |
 | Documentation sync | Manual maintenance | Doc Engineer auto-audits every Wave |
 
@@ -147,8 +147,8 @@ Occasionally Lead comes to you (escalate decisions / confirm commits)
   <img src="assets/role-architecture.svg" alt="Role Architecture" width="100%"/>
 </p>
 
-- Lead / Developer / Doc Engineer: **Claude Opus 4.6** + max effort
-- Codex Reviewer: **Codex 5.3** (via MCP, using $20 ChatGPT subscription, max reasoning)
+- Lead / Teammate / Doc Engineer: Claude primary sessions (see [model configuration](docs/configuration.md#agent-model-configuration))
+- Developer: Codex via MCP (see [model configuration](docs/configuration.md#agent-model-configuration))
 
 ---
 

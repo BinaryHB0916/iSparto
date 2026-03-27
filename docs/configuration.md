@@ -41,6 +41,27 @@ The repo includes a `settings.json` as a reference template — it is NOT instal
 
 ---
 
+## Agent Model Configuration
+
+角色与模型解耦。角色定义（docs/roles.md）只描述职责，不引用任何模型名。
+调换模型只改此表，角色定义文件不需要动。
+
+| 角色 | 当前模型 | 调用方式 | 认证 | reasoning |
+|------|---------|---------|------|-----------|
+| Lead | claude-opus-4-6 | 主会话 | Claude Max | max |
+| Teammate | claude-opus-4-6 | tmux session | Claude Max | max |
+| Developer | codex-5.3 | MCP (codex / review tool) | ChatGPT Plus | xhigh |
+| Doc Engineer | claude-opus-4-6 | sub-agent | Claude Max | max |
+| Process Observer | claude-opus-4-6 | hooks + sub-agent | Claude Max | max |
+
+**说明：**
+- Developer 是实现角色（原 Codex Reviewer），接收 Lead/Teammate 的结构化 prompt 写代码
+- Developer 也承担 QA 冒烟测试（不同 prompt 模板，同一模型），由 Lead 统一编排
+- Teammate 在 Agent Team 模式并行执行，每个 Teammate 独立调 Developer = 真正的并行 Codex 调用
+- 未来换模型只改此表 + 跑 Doc Engineer 审计
+
+---
+
 ## Document Naming Conventions
 
 ```
@@ -90,7 +111,7 @@ Template files used during project initialization:
 | Content | Description |
 |---------|-------------|
 | 7 custom commands | `/start-working`, `/end-working`, `/plan`, `/init-project`, `/env-nogo`, `/migrate`, `/restore` are universal for all projects |
-| Role definitions | Responsibilities and rules for Team Lead, Developer, Codex Reviewer, Doc Engineer, Process Observer |
+| Role definitions | Responsibilities and rules for Team Lead, Teammate, Developer, Doc Engineer, Process Observer |
 | Trigger condition table | Trigger logic for code review + QA smoke testing |
 | Branching strategy | Branch model for main / feat / fix / hotfix |
 | Authorization & escalation mechanism | Team Lead's decision boundaries |
