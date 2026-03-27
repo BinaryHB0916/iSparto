@@ -55,6 +55,33 @@ Your job: scan the current project, report what exists and what's missing, propo
                  "command": "bash ~/.isparto/hooks/process-observer/scripts/pre-tool-check.sh"
                }
              ]
+           },
+           {
+             "matcher": "Edit",
+             "hooks": [
+               {
+                 "type": "command",
+                 "command": "bash ~/.isparto/hooks/process-observer/scripts/pre-tool-check.sh"
+               }
+             ]
+           },
+           {
+             "matcher": "Write",
+             "hooks": [
+               {
+                 "type": "command",
+                 "command": "bash ~/.isparto/hooks/process-observer/scripts/pre-tool-check.sh"
+               }
+             ]
+           },
+           {
+             "matcher": "mcp__codex-reviewer__codex",
+             "hooks": [
+               {
+                 "type": "command",
+                 "command": "bash ~/.isparto/hooks/process-observer/scripts/pre-tool-check.sh"
+               }
+             ]
            }
          ]
        }

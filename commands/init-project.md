@@ -36,6 +36,33 @@ Your responsibility: Based on the product description provided by the user, gene
                "command": "bash ~/.isparto/hooks/process-observer/scripts/pre-tool-check.sh"
              }
            ]
+         },
+         {
+           "matcher": "Edit",
+           "hooks": [
+             {
+               "type": "command",
+               "command": "bash ~/.isparto/hooks/process-observer/scripts/pre-tool-check.sh"
+             }
+           ]
+         },
+         {
+           "matcher": "Write",
+           "hooks": [
+             {
+               "type": "command",
+               "command": "bash ~/.isparto/hooks/process-observer/scripts/pre-tool-check.sh"
+             }
+           ]
+         },
+         {
+           "matcher": "mcp__codex-reviewer__codex",
+           "hooks": [
+             {
+               "type": "command",
+               "command": "bash ~/.isparto/hooks/process-observer/scripts/pre-tool-check.sh"
+             }
+           ]
          }
        ]
      }

@@ -4,7 +4,7 @@
 
 Process Observer 是 iSparto 团队的合规监督角色，确保开发流程遵循 CLAUDE.md 和工作流规范。它由两部分组成：
 
-- **实时拦截（Hooks）**：通过 Claude Code PreToolUse hook 拦截灾难性操作，在执行前阻止
+- **实时拦截（Hooks）**：通过 Claude Code PreToolUse hook 监管所有工具调用（Bash / Edit / Write / Codex MPC），拦截违规操作
 - **事后审计（Sub-agent）**：/end-working 时回顾 session 执行过程，输出合规报告
 
 Process Observer 不参与开发决策，只监督流程合规性。它与 Doc Engineer 同级，都是 Team Lead 的 sub-agent。
@@ -19,7 +19,10 @@ Process Observer 不参与开发决策，只监督流程合规性。它与 Doc E
 
 ### 触发条件
 
-命令匹配高危操作清单时触发拦截。
+工具调用匹配以下任一规则时触发拦截：
+- **Bash**：命令匹配 dangerous-operations.json 高危操作清单
+- **Edit/Write**：目标文件为代码文件（按扩展名判定）
+- **Codex MPC**：prompt 缺少结构化标题（## 格式）
 
 ### 判断原则
 
@@ -80,6 +83,42 @@ Process Observer 不参与开发决策，只监督流程合规性。它与 Doc E
 |------|---------|
 | 当前分支为 main 时执行 `git commit` | main 锁定，所有开发必须在 feat/fix/hotfix 分支 |
 | `git push origin main`（非 PR merge） | 绕过 PR 流程直接推送 |
+
+#### 7. 工作流合规（Edit / Write / Codex 拦截）
+
+##### 代码直写拦截（Edit / Write）
+
+| 操作 | 拦截原因 |
+|------|---------|
+| Edit/Write 目标为代码文件（.sh, .py, .swift, .js, .ts 等） | 代码变更必须通过 Developer (Codex) 实现，不可直接编辑 |
+| Edit/Write 目标为无扩展名文件（Makefile 等） | 默认视为代码文件（fail-safe） |
+
+**判定逻辑：**
+- 提取 Edit/Write 工具的 `file_path` 参数
+- 根据文件扩展名判定：allowed_extensions 放行，其他拦截
+- 代码文件扩展名（拦截）：.sh, .py, .swift, .js, .ts, .jsx, .tsx, .go, .rs, .java, .kt, .c, .cpp, .h, .m, .mm, .rb 等
+- 允许的扩展名（放行）：.md, .json, .yaml, .yml, .toml, .txt, .svg, .png, .css, .html 等
+- 未识别的扩展名默认按代码文件处理（fail-safe）
+
+**谁会被拦：**
+
+Hooks 运行在所有带 project settings 的 Claude Code session 中：
+- **Lead**（主 session）→ 被拦
+- **Teammate**（tmux session，共享 project settings）→ 被拦
+- **Doc Engineer**（Lead 的 sub-agent，共享 session）→ 被拦
+- **Developer (Codex MPC)**（独立进程，不走 hooks）→ **不被拦**
+
+这是设计意图：只有 Developer (Codex) 应该写代码，其他角色都通过 Developer 间接操作。
+
+##### Codex 调用规范（mcp__codex-reviewer__codex）
+
+| 操作 | 拦截原因 |
+|------|---------|
+| 调用 Developer 时 prompt 不含 `## ` 结构化标题 | 必须使用结构化 prompt 描述任务 |
+
+**自定义扩展名列表：**
+
+扩展名列表定义在 `hooks/process-observer/rules/workflow-rules.json` 中，可根据项目需要调整 `code_extensions` 和 `allowed_extensions` 数组。
 
 ### 拦截行为
 

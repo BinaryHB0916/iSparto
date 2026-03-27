@@ -210,6 +210,8 @@ if ! $DRY_RUN; then
     chmod +x "$ISPARTO_HOME/hooks/process-observer/scripts/pre-tool-check.sh"
     cp "$SCRIPT_DIR/hooks/process-observer/rules/dangerous-operations.json" \
        "$ISPARTO_HOME/hooks/process-observer/rules/dangerous-operations.json"
+    cp "$SCRIPT_DIR/hooks/process-observer/rules/workflow-rules.json" \
+       "$ISPARTO_HOME/hooks/process-observer/rules/workflow-rules.json"
 fi
 
 # ── Install local stub (isparto.sh) ──────────────────────
@@ -449,6 +451,7 @@ import json, sys, os
 
 path = '$_project_settings'
 hook_cmd = 'bash ~/.isparto/hooks/process-observer/scripts/pre-tool-check.sh'
+required_matchers = ['Bash', 'Edit', 'Write', 'mcp__codex-reviewer__codex']
 
 try:
     if os.path.exists(path):
@@ -460,23 +463,57 @@ except Exception as e:
     print('ERROR: ' + str(e))
     sys.exit(0)
 
-hooks = settings.get('hooks', {})
-pre_tool_use = hooks.get('PreToolUse', [])
-already = any(
-    any(hook_cmd in h.get('command', '') for h in entry.get('hooks', []))
-    for entry in pre_tool_use if isinstance(entry, dict)
-)
+changed = False
 
-if already:
+hooks = settings.get('hooks')
+if not isinstance(hooks, dict):
+    hooks = {}
+    settings['hooks'] = hooks
+    changed = True
+
+pre_tool_use = hooks.get('PreToolUse')
+if not isinstance(pre_tool_use, list):
+    pre_tool_use = []
+    hooks['PreToolUse'] = pre_tool_use
+    changed = True
+
+for matcher in required_matchers:
+    matched_entry = None
+    for entry in pre_tool_use:
+        if isinstance(entry, dict) and entry.get('matcher') == matcher:
+            matched_entry = entry
+            break
+
+    if matched_entry is None:
+        pre_tool_use.append({
+            'matcher': matcher,
+            'hooks': [{
+                'type': 'command',
+                'command': hook_cmd
+            }]
+        })
+        changed = True
+        continue
+
+    entry_hooks = matched_entry.get('hooks')
+    if not isinstance(entry_hooks, list):
+        entry_hooks = []
+        matched_entry['hooks'] = entry_hooks
+        changed = True
+
+    has_hook_cmd = any(
+        isinstance(h, dict) and h.get('command') == hook_cmd
+        for h in entry_hooks
+    )
+    if not has_hook_cmd:
+        entry_hooks.append({
+            'type': 'command',
+            'command': hook_cmd
+        })
+        changed = True
+
+if not changed:
     sys.exit(0)
-
-settings.setdefault('hooks', {}).setdefault('PreToolUse', []).append({
-    'matcher': 'Bash',
-    'hooks': [{
-        'type': 'command',
-        'command': hook_cmd
-    }]
-})
 
 with open(path, 'w') as f:
     json.dump(settings, f, indent=2)
@@ -492,9 +529,20 @@ print('PATCHED')
         fi
     fi
 elif [ -f "CLAUDE.md" ] && $DRY_RUN; then
-    if [ -f "$_project_settings" ] && grep -q "pre-tool-check.sh" "$_project_settings" 2>/dev/null; then
-        : # already registered, skip
+    _needs_project_hook_patch=false
+    if [ ! -f "$_project_settings" ]; then
+        _needs_project_hook_patch=true
+    elif ! grep -q "pre-tool-check.sh" "$_project_settings" 2>/dev/null; then
+        _needs_project_hook_patch=true
     else
+        for _matcher in "Bash" "Edit" "Write" "mcp__codex-reviewer__codex"; do
+            if ! grep -q "\"matcher\"[[:space:]]*:[[:space:]]*\"$_matcher\"" "$_project_settings" 2>/dev/null; then
+                _needs_project_hook_patch=true
+                break
+            fi
+        done
+    fi
+    if $_needs_project_hook_patch; then
         printf "  ${BLUE}[dry-run]${NC} Would register Process Observer hooks in project settings\n"
     fi
 fi
