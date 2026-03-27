@@ -76,6 +76,7 @@ v2.x  CEO 工作台      用户 = 老板，说需求看结果，不碰过程
 **剩余工作：**
 - [ ] 安装脚本 ASCII art banner — 黑客帝国风格的 fancy 安装头（ASCII logo + 动画效果）
 - [ ] GitHub Actions CI 质量门 — PR 必须通过 CI 检查才能 merge
+- [ ] 按角色独立配置模型 — 当前 Teammate/DocEng/ProcObs 强制继承 Lead 模型，无法独立降级为 Sonnet 省 token。需要设计：按任务复杂度自动选模型 or 按角色指定模型。方案待定
 - [x] User Preference Interface — memory/CLAUDE.md 领地分界、三级偏好模型、冲突协议、memory 写入规则、Plan Mode 自动触发
 - [x] Process Observer 角色定义与文档 — 合规监督角色（实时拦截 hooks + 事后审计 sub-agent），docs/process-observer.md + 各文档集成
 - [x] Process Observer hooks 实现 — PreToolUse hook shell 脚本，拦截高危操作
