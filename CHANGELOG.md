@@ -7,6 +7,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- isparto.sh: `exec` replaced with `bash`+`exit` so EXIT trap fires and temp file is cleaned up
+- isparto.sh: snapshot restore failure now aborts uninstall to prevent data loss
+- snapshot.sh: `--keep` value validated as positive integer (rejects non-numeric input)
+- snapshot.sh: added corruption guard for missing `files.txt` in snapshots
+- snapshot.sh: replaced unsafe `ls`-in-for-loop with glob+array in `cmd_prune()`
+- release.sh: added error recovery for `gh pr create`/`gh pr merge` failures
+- MPC→MCP typo corrected across 7 locations
+- Checklist count corrected (13→14) in product-spec.md
+- Doc Engineer compliance reference corrected (C1-C3→C1-C4) in workflow.md
+- Developer model name standardized to `gpt-5.3-codex` across all docs
+- Process Observer rule docs aligned with actual hook implementation
+- CLAUDE-TEMPLATE.md: added Mode Selection Checkpoint and Plan Mode sections
+
+### Removed
+
+- Legacy manifest backup system from install.sh (replaced by snapshot engine)
+- Git-clone migration cleanup from install.sh (release-based install is the only method)
+- Unused `code_extensions` array from workflow-rules.json
+- Dead code: unused `snap_type` variable, no-op `UPGRADE` branch, unused `severity` parameter
+
+### Changed
+
+- isparto.sh: deduplicated mcp/npm manifest handlers into shared helper functions
+- pre-tool-check.sh: consolidated 3 duplicated awk JSON-extraction blocks into `extract_json_field()` helper
+- bootstrap.sh: renamed `TMPDIR` to `BOOTSTRAP_TMPDIR` to avoid shadowing system variable
+- release.sh: renamed `TMPDIR` to `RELEASE_TMPDIR` to avoid shadowing system variable
+- install.sh: standardized all `~/` paths to `$HOME/` for quoting safety
+- design-decisions.md: updated to reflect current role architecture
+- session-log.md + plan.md: removed unreleased project names for privacy
+
 ## [0.6.1] - 2026-03-27
 
 ### Added
