@@ -79,6 +79,7 @@ v2.x  CEO 工作台      用户 = 老板，说需求看结果，不碰过程
 - [x] User Preference Interface — memory/CLAUDE.md 领地分界、三级偏好模型、冲突协议、memory 写入规则、Plan Mode 自动触发
 - [x] Process Observer 角色定义与文档 — 合规监督角色（实时拦截 hooks + 事后审计 sub-agent），docs/process-observer.md + 各文档集成
 - [x] Process Observer hooks 实现 — PreToolUse hook shell 脚本，拦截高危操作
+- [x] Process Observer 全流量监管 — Edit/Write 代码直写拦截 + Codex 结构化 prompt 强制 + 所有角色覆盖（Lead/Teammate/Doc Engineer）
 - [x] Process Observer /end-working 集成 — end-working.md 中触发合规审计并输出偏差报告
 
 **已完成：**（折叠）
