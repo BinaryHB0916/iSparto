@@ -96,12 +96,20 @@ RELEASE_NOTES=$(sed -n "/^## \[$NEW_VERSION\]/,/^## \[/p" CHANGELOG.md | sed '$d
 PR_URL=$(gh pr create \
     --title "release: v$NEW_VERSION" \
     --body "$RELEASE_NOTES" \
-    --base main)
+    --base main) || {
+    printf "  ${RED}Error:${NC} PR creation failed. Branch '%s' has been pushed but no PR was created.\n" "$RELEASE_BRANCH" >&2
+    printf "  Clean up manually: git push origin --delete %s\n" "$RELEASE_BRANCH" >&2
+    exit 1
+}
 printf "  ${GREEN}✓${NC} PR created: $PR_URL\n"
 
 # ── 5. Merge PR ─────────────────────────────────────────────
 
-gh pr merge "$PR_URL" --merge --admin
+gh pr merge "$PR_URL" --merge --admin || {
+    printf "  ${RED}Error:${NC} PR merge failed. PR exists but was not merged.\n" >&2
+    printf "  Merge manually: gh pr merge %s --squash --delete-branch\n" "$RELEASE_BRANCH" >&2
+    exit 1
+}
 printf "  ${GREEN}✓${NC} PR merged to main\n"
 
 # ── 6. Tag merge commit ─────────────────────────────────────
@@ -120,18 +128,18 @@ printf "  ${GREEN}✓${NC} Cleaned up $RELEASE_BRANCH\n"
 
 # ── 8. Build release assets ─────────────────────────────────
 
-TMPDIR=$(mktemp -d)
-trap 'rm -rf "$TMPDIR"' EXIT
+RELEASE_TMPDIR=$(mktemp -d)
+trap 'rm -rf "$RELEASE_TMPDIR"' EXIT
 
-cp install.sh "$TMPDIR/install.sh"
-(cd "$TMPDIR" && shasum -a 256 install.sh > checksums.sha256)
+cp install.sh "$RELEASE_TMPDIR/install.sh"
+(cd "$RELEASE_TMPDIR" && shasum -a 256 install.sh > checksums.sha256)
 printf "  ${GREEN}✓${NC} Generated checksums.sha256\n"
 
 # ── 9. Create GitHub Release ────────────────────────────────
 
 gh release create "v$NEW_VERSION" \
-    "$TMPDIR/install.sh" \
-    "$TMPDIR/checksums.sha256" \
+    "$RELEASE_TMPDIR/install.sh" \
+    "$RELEASE_TMPDIR/checksums.sha256" \
     --title "v$NEW_VERSION" \
     --notes "$RELEASE_NOTES"
 

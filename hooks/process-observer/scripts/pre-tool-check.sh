@@ -28,6 +28,40 @@ INPUT=$(cat)
 # Parse tool_name from JSON without jq
 TOOL_NAME=$(echo "$INPUT" | grep -o '"tool_name"[[:space:]]*:[[:space:]]*"[^"]*"' | sed 's/.*:.*"\([^"]*\)"/\1/')
 
+# Extract a JSON string field value, handling escaped quotes
+extract_json_field() {
+    local input="$1"
+    local field="$2"
+    local unescape_newlines="${3:-false}"
+    echo "$input" | awk -v field="$field" -v unescape="$unescape_newlines" '
+        BEGIN { RS="\0" }
+        {
+            pattern = "\"" field "\"[[:space:]]*:[[:space:]]*\""
+            if (match($0, pattern)) {
+                s = substr($0, RSTART + RLENGTH)
+                result = ""
+                for (i = 1; i <= length(s); i++) {
+                    c = substr(s, i, 1)
+                    if (c == "\\" && substr(s, i+1, 1) == "\"") {
+                        result = result "\""
+                        i++
+                    } else if (c == "\\" && unescape == "true") {
+                        nc = substr(s, i+1, 1)
+                        if (nc == "n") { result = result "\n"; i++ }
+                        else if (nc == "t") { result = result "\t"; i++ }
+                        else { result = result c }
+                    } else if (c == "\"") {
+                        break
+                    } else {
+                        result = result c
+                    }
+                }
+                print result
+            }
+        }
+    '
+}
+
 # ── Helper: block and exit ───────────────────────────────────
 block() {
     local rule_id="$1"
@@ -46,30 +80,7 @@ case "$TOOL_NAME" in
         fi
 
         # ── Extract command from tool_input ──────────────────────────
-        # The command field may contain escaped quotes (\") inside the JSON string.
-        # We use awk to correctly parse the full value, handling \" sequences.
-        COMMAND=$(echo "$INPUT" | awk '
-            BEGIN { RS="\0" }
-            {
-                # Find "command" : "..." handling escaped quotes
-                if (match($0, /"command"[[:space:]]*:[[:space:]]*"/)) {
-                    s = substr($0, RSTART + RLENGTH)
-                    result = ""
-                    for (i = 1; i <= length(s); i++) {
-                        c = substr(s, i, 1)
-                        if (c == "\\" && substr(s, i+1, 1) == "\"") {
-                            result = result "\""
-                            i++
-                        } else if (c == "\"") {
-                            break
-                        } else {
-                            result = result c
-                        }
-                    }
-                    print result
-                }
-            }
-        ')
+        COMMAND=$(extract_json_field "$INPUT" "command")
 
         if [ -z "$COMMAND" ]; then
             exit 0
@@ -79,8 +90,7 @@ case "$TOOL_NAME" in
         check_rule() {
             local rule_id="$1"
             local pattern="$2"
-            local severity="$3"
-            local reason="$4"
+            local reason="$3"
 
             # Special handling for commit-on-main: only block if on main branch
             if [ "$rule_id" = "commit-on-main" ]; then
@@ -143,9 +153,9 @@ case "$TOOL_NAME" in
         ' "$RULES_FILE")
 
         # Iterate over parsed rules and check each one
-        while IFS=$'\t' read -r rule_id rule_pattern rule_severity rule_reason; do
+        while IFS=$'\t' read -r rule_id rule_pattern _rule_severity rule_reason; do
             [ -z "$rule_id" ] && continue
-            check_rule "$rule_id" "$rule_pattern" "$rule_severity" "$rule_reason"
+            check_rule "$rule_id" "$rule_pattern" "$rule_reason"
         done <<< "$PARSED_RULES"
 
         exit 0
@@ -158,27 +168,7 @@ case "$TOOL_NAME" in
         fi
 
         # Extract file_path from tool_input
-        FILE_PATH=$(echo "$INPUT" | awk '
-            BEGIN { RS="\0" }
-            {
-                if (match($0, /"file_path"[[:space:]]*:[[:space:]]*"/)) {
-                    s = substr($0, RSTART + RLENGTH)
-                    result = ""
-                    for (i = 1; i <= length(s); i++) {
-                        c = substr(s, i, 1)
-                        if (c == "\\" && substr(s, i+1, 1) == "\"") {
-                            result = result "\""
-                            i++
-                        } else if (c == "\"") {
-                            break
-                        } else {
-                            result = result c
-                        }
-                    }
-                    print result
-                }
-            }
-        ')
+        FILE_PATH=$(extract_json_field "$INPUT" "file_path")
 
         if [ -z "$FILE_PATH" ]; then
             exit 0
@@ -223,32 +213,7 @@ case "$TOOL_NAME" in
         fi
 
         # Extract prompt from tool_input
-        PROMPT_TEXT=$(echo "$INPUT" | awk '
-            BEGIN { RS="\0" }
-            {
-                if (match($0, /"prompt"[[:space:]]*:[[:space:]]*"/)) {
-                    s = substr($0, RSTART + RLENGTH)
-                    result = ""
-                    for (i = 1; i <= length(s); i++) {
-                        c = substr(s, i, 1)
-                        if (c == "\\" && substr(s, i+1, 1) == "\"") {
-                            result = result "\""
-                            i++
-                        } else if (c == "\\") {
-                            nc = substr(s, i+1, 1)
-                            if (nc == "n") { result = result "\n"; i++ }
-                            else if (nc == "t") { result = result "\t"; i++ }
-                            else { result = result c }
-                        } else if (c == "\"") {
-                            break
-                        } else {
-                            result = result c
-                        }
-                    }
-                    print result
-                }
-            }
-        ')
+        PROMPT_TEXT=$(extract_json_field "$INPUT" "prompt" "true")
 
         if [ -z "$PROMPT_TEXT" ]; then
             exit 0

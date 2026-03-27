@@ -56,6 +56,23 @@ do_upgrade() {
 
 # ── Uninstall: 100% offline ──────────────────────────────────
 
+handle_mcp_uninstall() {
+    local dry_run="$1"
+    if $dry_run; then
+        printf "  [dry-run] Would remove Codex MCP Server registration\n"
+    elif claude mcp remove codex-reviewer -s user 2>/dev/null; then
+        printf "  ${GREEN}✓${NC} Removed Codex MCP Server registration\n"
+    else
+        printf "  ${YELLOW}→${NC} MCP removal skipped (may not exist)\n"
+    fi
+}
+
+handle_npm_uninstall() {
+    local dry_run="$1"
+    local path="$2"
+    printf "  ${YELLOW}→${NC} Skipping %s (global npm package — remove manually with: npm uninstall -g %s)\n" "$path" "$path"
+}
+
 do_uninstall() {
     local dry_run=false
     for arg in "$@"; do
@@ -88,18 +105,8 @@ do_uninstall() {
         if [ -f "$MANIFEST" ]; then
             while IFS='|' read -r action path; do
                 case "$action" in
-                    mcp)
-                        if $dry_run; then
-                            printf "  [dry-run] Would remove Codex MCP Server registration\n"
-                        elif claude mcp remove codex-reviewer -s user 2>/dev/null; then
-                            printf "  ${GREEN}✓${NC} Removed Codex MCP Server registration\n"
-                        else
-                            printf "  ${YELLOW}→${NC} MCP removal skipped (may not exist)\n"
-                        fi
-                        ;;
-                    npm)
-                        printf "  ${YELLOW}→${NC} Skipping $path (global npm package — remove manually with: npm uninstall -g $path)\n"
-                        ;;
+                    mcp) handle_mcp_uninstall "$dry_run" ;;
+                    npm) handle_npm_uninstall "$dry_run" "$path" ;;
                 esac
             done < "$MANIFEST"
         fi
@@ -139,18 +146,8 @@ do_uninstall() {
                         printf "  ${GREEN}✓${NC} Removed empty directory $path\n"
                     fi
                     ;;
-                mcp)
-                    if $dry_run; then
-                        printf "  [dry-run] Would remove Codex MCP Server registration\n"
-                    elif claude mcp remove codex-reviewer -s user 2>/dev/null; then
-                        printf "  ${GREEN}✓${NC} Removed Codex MCP Server registration\n"
-                    else
-                        printf "  ${YELLOW}→${NC} MCP removal skipped (may not exist)\n"
-                    fi
-                    ;;
-                npm)
-                    printf "  ${YELLOW}→${NC} Skipping $path (global npm package — remove manually with: npm uninstall -g $path)\n"
-                    ;;
+                mcp) handle_mcp_uninstall "$dry_run" ;;
+                npm) handle_npm_uninstall "$dry_run" "$path" ;;
             esac
         done < "$MANIFEST"
     else
