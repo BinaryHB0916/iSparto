@@ -77,6 +77,12 @@ if ! $_use_local_source; then
         echo "  curl -fsSL https://raw.githubusercontent.com/$REPO/main/bootstrap.sh | bash" >&2
         exit 1
     fi
+    if $UPGRADE && [ -f "$ISPARTO_HOME/VERSION" ] && [ "$(cat "$ISPARTO_HOME/VERSION")" = "$INSTALL_VERSION" ]; then
+        echo ""
+        printf "  ${GREEN}✓${NC} Already up to date (v$INSTALL_VERSION)\n"
+        echo ""
+        exit 0
+    fi
 
     TAG="v${INSTALL_VERSION}"
     TARBALL_URL="https://github.com/$REPO/archive/refs/tags/$TAG.tar.gz"
