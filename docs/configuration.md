@@ -44,21 +44,56 @@ The repo includes a `settings.json` as a reference template — it is NOT instal
 ## Agent Model Configuration
 
 角色与模型解耦。角色定义（docs/roles.md）只描述职责，不引用任何模型名。
-调换模型只改此表，角色定义文件不需要动。
+调换模型只改配置，角色定义文件不需要动。
 
-| 角色 | 当前模型 | 调用方式 | 认证 | reasoning |
+### 角色-模型映射表
+
+| 角色 | 推荐模型 | 调用方式 | 认证 | reasoning |
 |------|---------|---------|------|-----------|
 | Lead | claude-opus-4-6 | 主会话 | Claude Max | max |
 | Teammate | claude-opus-4-6 | tmux session | Claude Max | max |
-| Developer | codex-5.3 | MCP (codex / review tool) | ChatGPT Plus | xhigh |
-| Doc Engineer | claude-opus-4-6 | sub-agent | Claude Max | max |
-| Process Observer | claude-opus-4-6 | hooks + sub-agent | Claude Max | max |
+| Developer | codex-5.3 | MCP (codex tool) | ChatGPT Plus | xhigh |
+| Doc Engineer | claude-opus-4-6 | sub-agent（继承 Lead） | Claude Max | max |
+| Process Observer | claude-opus-4-6 | hooks + sub-agent（继承 Lead） | Claude Max | max |
 
-**说明：**
-- Developer 是实现角色（原 Codex Reviewer），接收 Lead/Teammate 的结构化 prompt 写代码
-- Developer 也承担 QA 冒烟测试（不同 prompt 模板，同一模型），由 Lead 统一编排
-- Teammate 在 Agent Team 模式并行执行，每个 Teammate 独立调 Developer = 真正的并行 Codex 调用
-- 未来换模型只改此表 + 跑 Doc Engineer 审计
+### 配置点说明
+
+不同角色的模型由不同机制控制：
+
+| 控制对象 | 影响角色 | 配置位置 | 备注 |
+|---------|---------|---------|------|
+| Claude Code 模型 | Lead, Teammate, Doc Engineer, Process Observer | `~/.claude/settings.json` → `"model"` 字段，或 CLI `--model` 参数 | Teammate / Doc Engineer / Process Observer 继承 Lead 的模型设置 |
+| Codex 模型 | Developer | 调用 `mcp__codex-reviewer__codex` 时的 `model` 参数 | 默认 gpt-5.3-codex，可选 o3、o4-mini 等 |
+
+### 首次配置
+
+`/init-project` 和 `/migrate` 会创建项目级 `.claude/settings.json`（Agent Team 模式所需的最低配置）。模型设置需要用户自行配置：
+
+**1. 设置 Lead 模型（影响 Lead + Teammate + Doc Engineer + Process Observer）：**
+
+在 `~/.claude/settings.json`（全局）中添加：
+```json
+{
+  "model": "opus",
+  "effortLevel": "max"
+}
+```
+或每次启动时指定：`claude --model opus --effort max`
+
+**2. Developer 模型无需额外配置：**
+
+Developer (Codex) 的模型在 MPC 调用时通过 `model` 参数指定。Lead 组装 prompt 调用 Codex 时，默认使用 `gpt-5.3-codex`。如需更换，在调用时指定 `model` 参数即可。
+
+### 中途换模型
+
+| 场景 | 操作 |
+|------|------|
+| 换 Lead 模型（如 opus → sonnet） | 修改 `~/.claude/settings.json` 的 `"model"` 字段，重启 session 生效 |
+| 换 Developer 模型（如 codex-5.3 → o3） | 下次调用 Codex 时指定 `model` 参数（无需重启） |
+| 会话内临时切换 Lead 模型 | 使用 `/model` 命令（注意：可能降级 effortLevel，见上方 Warning） |
+| 换 Teammate 模型 | 同 Lead——Teammate 继承 Claude Code 模型设置 |
+
+**注意：** Doc Engineer 和 Process Observer 作为 Lead 的 sub-agent，始终继承 Lead 的模型，无法单独配置。
 
 ---
 
@@ -142,30 +177,33 @@ Template files used during project initialization:
 
 ## Hooks Configuration (Process Observer)
 
-Process Observer 的实时拦截功能通过 Claude Code PreToolUse hook 实现。
+Process Observer 的实时拦截功能通过 Claude Code PreToolUse hook 实现，覆盖 Bash、Edit、Write 和 Codex MPC 四种工具。
 
 ### Hook 机制
 
-Claude Code 支持在工具调用前触发 hook 脚本。Process Observer 注册一个 PreToolUse hook，在每次 Bash 命令执行前检查是否匹配高危操作清单。
+Claude Code 支持在工具调用前触发 hook 脚本。Process Observer 注册四个 PreToolUse hook matcher，在工具执行前检查是否违反操作规则或工作流规范。
 
 ### 拦截范围
 
-| 类别 | 示例操作 | 拦截原因 |
-|------|---------|---------|
-| Git 不可逆 | `git push --force`, `git reset --hard`, `git clean -f` | 覆盖历史/丢弃修改/删除文件 |
-| 敏感信息泄露 | `git add .env`, `git add *.key` | 敏感文件可能被推送到公开仓库 |
-| 跳过安全检查 | `--no-verify`, `--no-gpg-sign` | 绕过 pre-commit hook 或签名 |
-| 破坏性文件操作 | `rm -rf /`, `rm -rf ~` | 灾难性删除 |
-| iSparto 特有保护 | 修改 `~/.claude/settings.json` | 保证不修改用户全局配置 |
-| 直接在 main 开发 | main 分支上 `git commit` | main 锁定，必须通过分支开发 |
+| 类别 | 监控工具 | 拦截条件 | 拦截原因 |
+|------|---------|---------|---------|
+| Git 不可逆 | Bash | `git push --force`, `git reset --hard`, `git clean -f` | 覆盖历史/丢弃修改/删除文件 |
+| 敏感信息泄露 | Bash | `git add .env`, `git add *.key` | 敏感文件可能被推送到公开仓库 |
+| 跳过安全检查 | Bash | `--no-verify`, `--no-gpg-sign` | 绕过 pre-commit hook 或签名 |
+| 破坏性文件操作 | Bash | `rm -rf /`, `rm -rf ~` | 灾难性删除 |
+| 直接在 main 开发 | Bash | main 分支上 `git commit` | main 锁定，必须通过分支开发 |
+| 代码直写拦截 | Edit, Write | 目标文件为代码文件（按扩展名判定） | 代码变更必须通过 Developer (Codex) 实现 |
+| Codex 调用规范 | mcp__codex-reviewer__codex | prompt 缺少 `## ` 结构化标题 | 必须使用结构化 prompt 描述任务 |
 
 ### 拦截行为
 
-匹配高危操作时，hook 返回非零退出码阻止执行，并在 stderr 输出拦截原因和建议替代方案。
+匹配规则时，hook 返回非零退出码阻止执行，并输出 JSON 格式的拦截原因。
 
 ### 自定义
 
-如需调整拦截规则（例如在特定项目中允许某些操作），可在项目级 hook 配置中覆盖。完整的高危操作清单和判断原则详见 [docs/process-observer.md](process-observer.md)。
+- **Bash 规则**：编辑 `~/.isparto/hooks/process-observer/rules/dangerous-operations.json`
+- **Edit/Write 扩展名列表**：编辑 `~/.isparto/hooks/process-observer/rules/workflow-rules.json` 中的 `code_extensions` 和 `allowed_extensions` 数组
+- 完整规则和判断原则详见 [docs/process-observer.md](process-observer.md)
 
 ---
 
