@@ -43,6 +43,19 @@ This applies to both **write** and **read** tasks:
 
 If either condition is not met, stay in Solo + Codex. The file count "≤ 3" is a quick heuristic, not a hard rule — what matters is whether parallel coordination saves more time than it costs.
 
+### Mode Selection Checkpoint
+
+After plan approval and before starting the first implementation step, the Team Lead **must** explicitly evaluate and declare the collaboration mode. This is a mandatory step, not an optional optimization — skipping it is a process deviation.
+
+**Steps:**
+1. **Group files by ownership** — based on the approved plan, identify independent file groups (no overlap, no data dependency between groups)
+2. **Evaluate against criteria** — check both conditions: decomposable (≥2 independent groups) AND sufficient volume (total workload justifies coordination)
+3. **Declare mode:**
+   - **Agent Team** → state the number of Teammates and file ownership for each
+   - **Solo + Codex** → state the reason (e.g., "single file group" or "changes too small to parallelize")
+
+**Why this is mandatory:** Without an explicit checkpoint, the Lead defaults to Solo out of inertia — even when the plan clearly shows independent file groups that could be parallelized. The checkpoint forces a conscious decision at the plan→execution boundary.
+
 **Shared across both modes** (no difference):
 - Developer invocation / QA → triggered per the Developer Trigger Conditions table below
 - Doc Engineer documentation audit → always the final step
@@ -55,6 +68,11 @@ If either condition is not met, stay in Solo + Codex. The file count "≤ 3" is 
 
 ```
 Team Lead reads plan.md, confirms current Wave
+    |
+MODE SELECTION CHECKPOINT:
+  - Group files by ownership from the plan
+  - Evaluate: decomposable? sufficient volume?
+  - Declare: "Solo — reason: [why not Agent Team]"
     |
 Lead assembles implementation prompt → calls Developer (Codex) via MCP
   - Developer implements the task
@@ -83,6 +101,11 @@ Team Lead pushes branch -> creates PR -> merges to main -> cleans up branch
 
 ```
 Team Lead reads plan.md, confirms current Wave
+    |
+MODE SELECTION CHECKPOINT:
+  - Group files by ownership from the plan
+  - Evaluate: decomposable? sufficient volume?
+  - Declare: "Agent Team — N teammates, ownership: [groups]"
     |
 Team Lead breaks down tasks: defines file ownership + prompt scope for each Teammate
     |
