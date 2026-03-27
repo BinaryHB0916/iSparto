@@ -52,7 +52,7 @@ The repo includes a `settings.json` as a reference template — it is NOT instal
 |------|---------|---------|------|-----------|
 | Lead | claude-opus-4-6 | 主会话 | Claude Max | max |
 | Teammate | claude-opus-4-6 | tmux session | Claude Max | max |
-| Developer | codex-5.3 | MCP (codex tool) | ChatGPT Plus | xhigh |
+| Developer | gpt-5.3-codex | MCP (codex tool) | ChatGPT Plus | xhigh |
 | Doc Engineer | claude-opus-4-6 | sub-agent（继承 Lead） | Claude Max | max |
 | Process Observer | claude-opus-4-6 | hooks + sub-agent（继承 Lead） | Claude Max | max |
 
@@ -82,7 +82,7 @@ The repo includes a `settings.json` as a reference template — it is NOT instal
 
 **2. Developer 模型无需额外配置：**
 
-Developer (Codex) 的模型在 MPC 调用时通过 `model` 参数指定。Lead 组装 prompt 调用 Codex 时，默认使用 `gpt-5.3-codex`。如需更换，在调用时指定 `model` 参数即可。
+Developer (Codex) 的模型在 MCP 调用时通过 `model` 参数指定。Lead 组装 prompt 调用 Codex 时，默认使用 `gpt-5.3-codex`。如需更换，在调用时指定 `model` 参数即可。
 
 ### 中途换模型
 
@@ -177,7 +177,7 @@ Template files used during project initialization:
 
 ## Hooks Configuration (Process Observer)
 
-Process Observer 的实时拦截功能通过 Claude Code PreToolUse hook 实现，覆盖 Bash、Edit、Write 和 Codex MPC 四种工具。
+Process Observer 的实时拦截功能通过 Claude Code PreToolUse hook 实现，覆盖 Bash、Edit、Write 和 Codex MCP 四种工具。
 
 ### Hook 机制
 

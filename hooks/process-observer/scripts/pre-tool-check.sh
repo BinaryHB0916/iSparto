@@ -217,7 +217,7 @@ case "$TOOL_NAME" in
         ;;
 
     mcp__codex-reviewer__codex)
-        # ── Codex MPC: check prompt structure ──────────────────────
+        # ── Codex MCP: check prompt structure ──────────────────────
         if [ ! -f "$WORKFLOW_RULES_FILE" ]; then
             exit 0
         fi

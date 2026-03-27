@@ -4,7 +4,7 @@
 
 Process Observer 是 iSparto 团队的合规监督角色，确保开发流程遵循 CLAUDE.md 和工作流规范。它由两部分组成：
 
-- **实时拦截（Hooks）**：通过 Claude Code PreToolUse hook 监管所有工具调用（Bash / Edit / Write / Codex MPC），拦截违规操作
+- **实时拦截（Hooks）**：通过 Claude Code PreToolUse hook 监管所有工具调用（Bash / Edit / Write / Codex MCP），拦截违规操作
 - **事后审计（Sub-agent）**：/end-working 时回顾 session 执行过程，输出合规报告
 
 Process Observer 不参与开发决策，只监督流程合规性。它与 Doc Engineer 同级，都是 Team Lead 的 sub-agent。
@@ -22,7 +22,7 @@ Process Observer 不参与开发决策，只监督流程合规性。它与 Doc E
 工具调用匹配以下任一规则时触发拦截：
 - **Bash**：命令匹配 dangerous-operations.json 高危操作清单
 - **Edit/Write**：目标文件为代码文件（按扩展名判定）
-- **Codex MPC**：prompt 缺少结构化标题（## 格式）
+- **Codex MCP**：prompt 缺少结构化标题（## 格式）
 
 ### 判断原则
 
@@ -45,8 +45,8 @@ Process Observer 不参与开发决策，只监督流程合规性。它与 Doc E
 | `git push --force` / `git push -f`（到 main/master） | 覆盖远程保护分支历史，其他协作者的工作可能丢失 |
 | `git reset --hard` | 丢弃所有未提交的本地修改 |
 | `git clean -fd` / `git clean -f` | 删除未跟踪的文件，不可恢复 |
-| `git checkout -- .` / `git restore .` | 丢弃所有未暂存的修改 |
-| `git branch -D`（大写 D） | 强制删除未合并的分支 |
+| `git checkout -- .` | 丢弃所有未暂存的修改 |
+| `git branch -D main` / `git branch -d main`（保护分支） | 删除 main/master 分支 |
 
 #### 2. 敏感信息泄露
 
@@ -65,7 +65,7 @@ Process Observer 不参与开发决策，只监督流程合规性。它与 Doc E
 
 | 操作 | 拦截原因 |
 |------|---------|
-| `rm -rf /` 或 `rm -rf ~` 或 `rm -rf *` | 灾难性删除 |
+| `rm -rf /` 或 `rm -rf ~` | 灾难性删除（匹配根目录和 home 目录） |
 | 删除项目根目录下的关键文件（CLAUDE.md、.git/） | 项目结构被破坏 |
 
 #### 5. iSparto 特有保护
@@ -106,7 +106,7 @@ Hooks 运行在所有带 project settings 的 Claude Code session 中：
 - **Lead**（主 session）→ 被拦
 - **Teammate**（tmux session，共享 project settings）→ 被拦
 - **Doc Engineer**（Lead 的 sub-agent，共享 session）→ 被拦
-- **Developer (Codex MPC)**（独立进程，不走 hooks）→ **不被拦**
+- **Developer (Codex MCP)**（独立进程，不走 hooks）→ **不被拦**
 
 这是设计意图：只有 Developer (Codex) 应该写代码，其他角色都通过 Developer 间接操作。
 

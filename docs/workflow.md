@@ -132,7 +132,7 @@ Team Lead spawns Doc Engineer (sub-agent) for documentation audit (placed last t
 Process Observer compliance audit (as sub-agent, after Doc Engineer)
   - Branch convention check (A1-A3)
   - Developer invocation compliance check (B1-B4)
-  - Doc Engineer compliance check (C1-C3)
+  - Doc Engineer compliance check (C1-C4)
   - PR workflow compliance check (D1-D2)
   - Ownership violation check (E1-E2)
   - Outputs deviation report to session briefing

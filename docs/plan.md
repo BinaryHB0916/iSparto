@@ -46,8 +46,8 @@
 ### Wave 5: Dogfooding 验证
 - [x] 场景 1: isparto-website 项目 — /migrate 已完成
 - [x] 场景 2: 萌芽勇气 (iOS app) — /migrate 已完成
-- [ ] 场景 3: Heddle（暂定名，generative UI 运行时）— /init-project 从零开始（用户自行操作）
-- [ ] 场景 4: meic（暂定代号，虚拟声纹/声纹卡）— /init-project 从零开始（用户自行操作）
+- [ ] 场景 3: 内部项目 A — /init-project 从零开始（用户自行操作）
+- [ ] 场景 4: 内部项目 B — /init-project 从零开始（用户自行操作）
 - [x] Session Log 自动采集 — /end-working 自动生成 session report，/start-working 自动读取历史
 - [ ] 每个场景记录：Wave 数量、并行效率、Codex 拦截问题、截图（现在由 session-log.md 自动采集）
 
@@ -76,7 +76,7 @@ v2.x  CEO 工作台      用户 = 老板，说需求看结果，不碰过程
 **剩余工作：**
 - [ ] 安装脚本 ASCII art banner — 黑客帝国风格的 fancy 安装头（ASCII logo + 动画效果）
 - [ ] GitHub Actions CI 质量门 — PR 必须通过 CI 检查才能 merge
-- [ ] 按角色独立配置模型 — 当前 Teammate/DocEng/ProcObs 强制继承 Lead 模型，无法独立降级为 Sonnet 省 token。需要设计：按任务复杂度自动选模型 or 按角色指定模型。方案待定
+- [x] 按角色独立配置模型 — v0.6.0 实现声明式角色-模型映射表（docs/configuration.md#agent-model-configuration），角色定义与模型名解耦。运行时自动切换留给 v1.x
 - [x] User Preference Interface — memory/CLAUDE.md 领地分界、三级偏好模型、冲突协议、memory 写入规则、Plan Mode 自动触发
 - [x] Process Observer 角色定义与文档 — 合规监督角色（实时拦截 hooks + 事后审计 sub-agent），docs/process-observer.md + 各文档集成
 - [x] Process Observer hooks 实现 — PreToolUse hook shell 脚本，拦截高危操作

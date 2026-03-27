@@ -308,6 +308,11 @@ cmd_prune() {
         esac
     done
 
+    if ! [[ "$keep" =~ ^[0-9]+$ ]] || [ "$keep" -lt 1 ]; then
+        printf "${RED}Error:${NC} --keep requires a positive integer.\n" >&2
+        return 1
+    fi
+
     if [ ! -d "$SNAPSHOT_DIR" ]; then
         echo "No snapshots to prune."
         return

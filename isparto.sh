@@ -50,7 +50,8 @@ do_upgrade() {
         rm -f "$UPGRADE_TMPFILE"
         exit 1
     }
-    exec bash "$UPGRADE_TMPFILE" --upgrade
+    bash "$UPGRADE_TMPFILE" --upgrade
+    exit $?
 }
 
 # ── Uninstall: 100% offline ──────────────────────────────────
@@ -77,7 +78,10 @@ do_uninstall() {
             printf "  [dry-run] Would restore from snapshot: $LATEST_SNAP\n"
         else
             echo "  Restoring from snapshot: $LATEST_SNAP"
-            "$SNAPSHOT_SCRIPT" restore "$LATEST_SNAP"
+            "$SNAPSHOT_SCRIPT" restore "$LATEST_SNAP" || {
+                printf "  ${RED}Error:${NC} Snapshot restore failed. Aborting uninstall to prevent data loss.\n" >&2
+                exit 1
+            }
         fi
 
         # Snapshot doesn't handle MCP or npm — do those via legacy manifest

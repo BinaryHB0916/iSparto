@@ -4,8 +4,8 @@
 |----------|--------|-----------|
 | Remove Claude Reviewer | Codex as the sole reviewer | Same-source review has limited value; cross-source review covers blind spots more effectively |
 | Codex architecture pre-review | Intervene at Phase 0 | Catching architecture issues before coding begins costs far less than rework after development |
-| Codex role positioning | Hidden master | Does not participate in day-to-day development; provides oversight at key checkpoints and fixes issues along the way |
-| Team Lead handles information relay | Team Lead coordinates Codex-Developer communication | The user does not participate in copy-pasting between roles; Team Lead forwards automatically |
+| Codex role positioning | Developer (implementation engine) | Implements code per Lead's structured prompts; Lead reviews output. Cross-model review (Opus reviews Codex output) covers each model's blind spots |
+| Team Lead handles prompt assembly | Team Lead assembles structured prompts for Developer | The user does not participate in copy-pasting between roles; Team Lead orchestrates the prompt→Developer→review loop |
 | Doc Engineer is a sub-agent | Spawned by Team Lead | Requires Team Lead's global context; does not need an independent tmux pane |
 | Developer includes unit tests | Written alongside the code | Tests are part of the code, not a separate phase |
 | Platform-agnostic design | Template is not tied to any tech stack | Works for iOS / Android / macOS / Windows / Web / cross-platform |
