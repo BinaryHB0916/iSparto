@@ -94,7 +94,7 @@
 | Developers spawned | 0 (Solo + Codex 模式，Lead 全程独立完成) |
 | Codex reviews | 2 (PR #4 install.sh self-update, PR #5 workflow 更新) |
 | Codex catches | PR #5: 2 P2 — gh CLI 缺少 fallback + start-working 分支检查与 end-working 回 main 不兼容 |
-| Key decisions | Solo + Codex 判断标准(单任务+单模块+≤3文件), Auto PR merge(审查完自动建PR合并), GitHub Branch Protection(enforce admins), Heddle 作为场景 3, GitHub Actions CI 延后到 Heddle |
+| Key decisions | Solo + Codex 判断标准(单任务+单模块+≤3文件), Auto PR merge(审查完自动建PR合并), GitHub Branch Protection(enforce admins), 确认 dogfooding 场景 3, GitHub Actions CI 延后到场景 3 |
 
 ### Files Changed
 ```
@@ -116,8 +116,8 @@
 - 首次完整走通 Solo + Codex 工作流：Lead 独立写代码 → Codex review → Doc Engineer 审计 → auto PR merge
 - 首次启用 GitHub Branch Protection，main 分支正式锁定
 - Codex review 两次都有效拦截了问题（gh fallback、分支生命周期兼容性）
-- 产品决策：Heddle（暂定名，generative UI 运行时）确认为 dogfooding 场景 3
-- GitHub Actions CI 延后：web 项目用 Vercel 自带 CI 足够，等 Heddle 再验证独立 CI
+- 产品决策：确认 dogfooding 场景 3（内部项目）
+- GitHub Actions CI 延后：web 项目用 Vercel 自带 CI 足够，等场景 3 再验证独立 CI
 
 ## 2026-03-25 Session (continued)
 
@@ -261,7 +261,7 @@
 | Developers spawned | 0 (Solo + Codex 模式) |
 | Codex reviews | 1 (QA review，通过，无问题) |
 | Codex catches | None |
-| Key decisions | meic（虚拟声纹/声纹卡）确认为 dogfooding 场景 4，commands 模板加入语言检测而非翻译模板本身 |
+| Key decisions | 确认 dogfooding 场景 4（内部项目），commands 模板加入语言检测而非翻译模板本身 |
 
 ### Files Changed
 ```
@@ -278,7 +278,7 @@
 ```
 
 ### Notes
-- 用户在 meic 项目首次运行 /init-project 时发现中文输入得到英文回复，dogfooding 发现的第一个 UX bug
+- 用户在内部项目首次运行 /init-project 时发现中文输入得到英文回复，dogfooding 发现的第一个 UX bug
 - 根因：commands/*.md 模板全是英文指令且无语言检测说明，而 CLAUDE-TEMPLATE.md 的语言规则要到 CLAUDE.md 生成后才生效
 - 修复策略：在命令模板层加入语言检测（靠近执行时刻），而非翻译模板本身（模板是结构参考）
 - templates/*.md 保持英文结构不变——生成内容的语言由 commands 指令控制
@@ -347,7 +347,7 @@
 | Developers spawned | 2 (README EN + ZH-CN 并行重组) |
 | Codex reviews | 3 (语言修复 QA 1 次, install.sh code review 2 次) |
 | Codex catches | 1 P1 — set-e + sys.exit(1) 中断安装; 1 P2 — python3 缺失静默失败 |
-| Key decisions | upgrade 区分用户内容/框架基础设施, README 首屏重组（对比表+安装命令前置，名字故事下移）, 自定义角色绑定延后到 v1.x（当前生态绑定最强模型无需配置）, Demo GIF 延后到 meic dogfooding 后录制 |
+| Key decisions | upgrade 区分用户内容/框架基础设施, README 首屏重组（对比表+安装命令前置，名字故事下移）, 自定义角色绑定延后到 v1.x（当前生态绑定最强模型无需配置）, Demo GIF 延后到 dogfooding 后录制 |
 
 ### Files Changed
 ```
@@ -371,12 +371,12 @@
 
 ### Notes
 - 今天 4 个 sub-session，10 个 PR 合并（#33-#42），2 个版本发布（v0.5.1, v0.5.2）
-- meic dogfooding 场景 4 正式启动，首次 /init-project 就发现语言匹配 bug，验证 dogfooding 价值
+- dogfooding 场景 4 正式启动，首次 /init-project 就发现语言匹配 bug，验证 dogfooding 价值
 - Process Observer hooks 首次实战拦截：在 main 上链式执行 git checkout -b && git commit 被 commit-on-main 规则 block
 - 用户提出"两个视角"框架（本体开发者 + 用户体验），推动了 upgrade hooks 注册功能
 - 外部反馈（X 用户问自定义 agent）触发路线图更新，但附带了前置判断条件（生态开放度）
 - README 重组采纳了外部产品建议中的 4/6 项，拒绝了 tagline 建议，延后了 GIF 录制
-- 下次优先：meic 项目 dogfooding 继续 + 终端录屏 GIF
+- 下次优先：dogfooding 场景 4 继续 + 终端录屏 GIF
 
 ## 2026-03-26 Session (continued 4)
 

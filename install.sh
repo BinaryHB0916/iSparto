@@ -20,8 +20,6 @@ if [ "$(uname)" != "Darwin" ]; then
 fi
 
 ISPARTO_HOME="$HOME/.isparto"
-BACKUP_DIR="$ISPARTO_HOME/backup"
-MANIFEST="$BACKUP_DIR/manifest.txt"
 REPO="BinaryHB0916/iSparto"
 
 DRY_RUN=false
@@ -137,16 +135,6 @@ else
 fi
 echo ""
 
-# ── Detect need for migration (defer actual cleanup until after file copy) ──
-
-NEEDS_MIGRATION=false
-if [ -d "$ISPARTO_HOME/.git" ]; then
-    NEEDS_MIGRATION=true
-    if $DRY_RUN; then
-        printf "  ${BLUE}[dry-run]${NC} Would migrate from git-clone to release-based install\n"
-    fi
-fi
-
 # ── Detect upgrade and show what's new ─────────────────────
 
 OLD_VERSION=""
@@ -242,43 +230,6 @@ if ! $DRY_RUN; then
     fi
 fi
 
-# ── Legacy backup (kept for backward compatibility) ────────
-# Key invariant: the backup directory preserves the user's ORIGINAL files
-# from before iSparto was ever installed. Re-installs (updates) must NOT
-# overwrite these originals. We only back up a file if no backup exists yet.
-
-if ! $DRY_RUN; then
-    mkdir -p "$BACKUP_DIR"
-    # Do NOT clear manifest on re-install — append new entries only
-    touch "$MANIFEST"
-fi
-
-# Helper: compute backup filename for a given path
-backup_name_for() {
-    echo "$1" | sed 's|[/ ]|__|g'
-}
-
-# Helper: record an action in the manifest and back up if needed
-record() {
-    local action="$1"  # created | overwritten | mkdir | mcp | npm
-    local path="$2"
-    if ! $DRY_RUN; then
-        # Avoid duplicate manifest entries
-        if grep -qF "${action}|${path}" "$MANIFEST" 2>/dev/null; then
-            return
-        fi
-        echo "${action}|${path}" >> "$MANIFEST"
-        if [[ "$action" == "overwritten" && -f "$path" ]]; then
-            local bname
-            bname="$(backup_name_for "$path")"
-            # Only back up if we don't already have the original
-            if [ ! -f "$BACKUP_DIR/$bname" ]; then
-                cp "$path" "$BACKUP_DIR/$bname"
-            fi
-        fi
-    fi
-}
-
 # ── Dependencies ─────────────────────────────────────────────
 # On upgrade: collapse to one line when all pass.
 # On fresh install: show each step for clarity.
@@ -314,7 +265,6 @@ else
     else
         printf "  ${YELLOW}→${NC} Installing Claude Code...\n"
         npm install -g @anthropic-ai/claude-code
-        record npm "@anthropic-ai/claude-code"
         printf "  ${GREEN}✓${NC} Claude Code installed\n"
     fi
 fi
@@ -329,7 +279,6 @@ else
     else
         printf "  ${YELLOW}→${NC} Installing Codex CLI...\n"
         npm install -g @openai/codex
-        record npm "@openai/codex"
         printf "  ${GREEN}✓${NC} Codex CLI installed\n"
     fi
 fi
@@ -355,8 +304,8 @@ fi
 # ── 5. Copy config to ~/.claude/ ────────────────────────────
 
 if ! $DRY_RUN; then
-    [ ! -d ~/.claude/commands ] && mkdir -p ~/.claude/commands && record mkdir "$HOME/.claude/commands"
-    [ ! -d ~/.claude/templates ] && mkdir -p ~/.claude/templates && record mkdir "$HOME/.claude/templates"
+    [ ! -d ~/.claude/commands ] && mkdir -p ~/.claude/commands
+    [ ! -d ~/.claude/templates ] && mkdir -p ~/.claude/templates
 fi
 
 _file_count=0
@@ -376,11 +325,6 @@ install_file() {
             printf "  ${BLUE}[dry-run]${NC} Would install $label\n"
         fi
     else
-        if [ -f "$dst" ]; then
-            record overwritten "$dst"
-        else
-            record created "$dst"
-        fi
         cp "$src" "$dst"
         _file_count=$((_file_count + 1))
         # Fresh install: show each file; upgrade: silent (summary below)
@@ -422,7 +366,6 @@ if $DRY_RUN; then
     fi
 else
     if claude mcp add codex-reviewer -s user -- npx -y codex-mcp-server 2>/dev/null; then
-        record mcp "codex-reviewer"
         printf "  ${GREEN}✓${NC} Codex MCP Server registered\n"
     else
         # Already registered — only mention on fresh install
@@ -551,21 +494,6 @@ fi
 
 if ! $DRY_RUN; then
     echo "$INSTALL_VERSION" > "$ISPARTO_HOME/VERSION"
-fi
-
-# ── Migrate: clean up old git-clone files (deferred until after copy) ──
-
-if $NEEDS_MIGRATION && ! $DRY_RUN; then
-    printf "  ${YELLOW}→${NC} Cleaning up old git-clone files...\n"
-    rm -rf "$ISPARTO_HOME/.git"
-    rm -rf "$ISPARTO_HOME/commands" "$ISPARTO_HOME/templates" "$ISPARTO_HOME/docs"
-    rm -rf "$ISPARTO_HOME/assets" "$ISPARTO_HOME/.github"
-    rm -f "$ISPARTO_HOME/README.md" "$ISPARTO_HOME/README.zh-CN.md"
-    rm -f "$ISPARTO_HOME/CLAUDE.md" "$ISPARTO_HOME/CLAUDE-TEMPLATE.md"
-    rm -f "$ISPARTO_HOME/CONTRIBUTING.md" "$ISPARTO_HOME/LICENSE"
-    rm -f "$ISPARTO_HOME/CHANGELOG.md" "$ISPARTO_HOME/.gitignore"
-    rm -f "$ISPARTO_HOME/.DS_Store" "$ISPARTO_HOME/settings.json"
-    printf "  ${GREEN}✓${NC} Migrated to release-based install\n"
 fi
 
 # ── Done ────────────────────────────────────────────────────

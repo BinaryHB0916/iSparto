@@ -148,8 +148,8 @@ Never do:
 
 ```
 Developer invocation configuration:
-- "codex" tool (implementation, architecture pre-review, QA): specify model "codex-5.3" and reasoningEffort "xhigh" in MCP parameters.
-- "review" tool (code review of existing code): specify model "codex-5.3". Note: the review tool does not expose a reasoningEffort parameter — it uses the server default.
+- "codex" tool (implementation, architecture pre-review, QA): specify model "gpt-5.3-codex" and reasoningEffort "xhigh" in MCP parameters.
+- "review" tool (code review of existing code): specify model "gpt-5.3-codex". Note: the review tool does not expose a reasoningEffort parameter — it uses the server default.
 - Fast mode: not available via MCP (the codex-mcp-server does not expose a fast mode parameter).
 - Model configuration: see the Agent Model Configuration table in configuration.md.
 

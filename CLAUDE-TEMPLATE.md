@@ -26,10 +26,22 @@
 
 Lead automatically selects the mode — no user action needed.
 
+Lead automatically selects the mode based on criteria below. Selection must be completed explicitly before execution (see Mode Selection Checkpoint).
+
+**Mode Selection Checkpoint (mandatory):** After plan approval, before the first execution step, Lead must explicitly evaluate and declare which mode to use. Steps: (1) group by file ownership; (2) evaluate against the two conditions below; (3) if both met → declare Agent Team and spawn Teammates; if not → declare Solo and record the reason. This is a mandatory step, not an optional optimization — skipping it is a process deviation.
+
 **Solo + Codex** (Lead completes the task alone) — the default mode.
 **Agent Team** (Lead spawns teammates for parallel execution) — upgrade when BOTH conditions are met:
 1. Decomposable: work can be split into independent parallel sub-tasks (no file overlap, no data dependency)
 2. Sufficient volume: file count × workload per file justifies coordination overhead
+
+**Plan Mode:** Lead autonomously decides whether to enter plan mode — no user instruction needed. Auto-enter when any condition is met:
+- Changes span multiple modules (≥2 modules in Module Boundaries table)
+- Changes involve core design (CLAUDE.md, workflow definitions, role definitions)
+- Changes affect user-facing behavior (slash commands, install flow)
+- Changes are hard to reverse (data format changes, breaking API changes)
+
+No plan mode needed: single-module bug fix, pure doc updates, formatting/typo.
 
 Applies to both **write** (code, docs, config) and **read** (code review, doc audit, research/debug) tasks:
 - Write: 5 files with large logic changes → Agent Team; 5 files with 1-line edits → Solo
@@ -43,6 +55,7 @@ Applies to both **write** (code, docs, config) and **read** (code review, doc au
 - Process Observer (hooks + Lead sub-agent): Compliance oversight. Hooks intercept catastrophic operations in real time (irreversible / shared state / data loss); post-session audit reviews execution against behavioral guidelines, outputs deviation report + rule correction suggestions.
 
 **Development Workflow (Solo + Codex):**
+0. **Mode Selection Checkpoint** — Lead groups by file ownership, evaluates two conditions, declares Solo (records reason)
 1. Lead assembles implementation prompt → calls Developer to implement code + tests
 2. Lead reviews Developer output; if issues, assembles fix prompt → calls Developer again
 3. Lead assembles QA prompt → calls Developer for smoke testing (per trigger table)
@@ -53,6 +66,7 @@ Applies to both **write** (code, docs, config) and **read** (code review, doc au
 /end-working is fully autonomous (commit + push + briefing). When all branch tasks are complete, Lead auto-creates PR and merges; when mid-Wave, only pushes without merging.
 
 **Development Workflow (Agent Team):**
+0. **Mode Selection Checkpoint** — Lead groups by file ownership, evaluates two conditions, declares Agent Team + defines Teammate count
 1. Lead breaks down tasks → defines file ownership + prompt scope
 2. Teammate(s) each run prompt→Developer→review loop in parallel
 3. Lead assembles QA prompt → calls Developer for smoke testing (incremental, only changed paths)
