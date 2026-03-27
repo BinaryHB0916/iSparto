@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Role swap: Lead/Teammate no longer write code directly — they assemble structured prompts for Developer (Codex) and review output. Codex moves from Reviewer to primary implementer
+- 5-role architecture: Lead, Teammate, Developer, Doc Engineer, Process Observer (QA merged into Developer as a prompt mode, replacing the former 4-role model)
+- New Agent Model Configuration table in docs/configuration.md — single source of truth for role-model binding; all hardcoded model names removed from role definitions, workflows, READMEs, and SVG diagrams
+- Terminology migration across 12 files, 6 modules: "Codex Reviewer" → "Developer", "Claude Developer" → "Teammate", model names replaced with configuration table references
+- Implementation prompt template added to roles.md (replaces code review prompt for the new Developer role)
+- Developer Trigger Conditions table (renamed from Codex Review Trigger Conditions) with updated terminology
+
 ## [0.5.4] - 2026-03-27
 
 ### Added
