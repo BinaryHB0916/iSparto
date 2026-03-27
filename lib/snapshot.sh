@@ -131,9 +131,6 @@ cmd_restore() {
 
     local project_dir
     project_dir="$(read_meta "$snap_dir" "project_dir")"
-    local snap_type
-    snap_type="$(read_meta "$snap_dir" "type")"
-
     if $dry_run; then
         printf "${BLUE}[dry-run]${NC} Restore preview for snapshot: $id\n"
     else
@@ -142,6 +139,11 @@ cmd_restore() {
 
     local restored=0
     local removed=0
+
+    if [ ! -f "$snap_dir/files.txt" ]; then
+        printf "${RED}Error:${NC} Snapshot is corrupted (missing files.txt).\n" >&2
+        exit 1
+    fi
 
     while IFS='|' read -r status rel_path; do
         local full_path
@@ -322,8 +324,13 @@ cmd_prune() {
 
     for type in install migrate init-project; do
         local count=0
-        # List snapshot dirs for this type, sorted newest first (lexicographic works for our ID format)
-        for snap_dir in $(ls -d "$SNAPSHOT_DIR"/${type}-*/ 2>/dev/null | sort -r); do
+        local snap_dirs=()
+        for d in "$SNAPSHOT_DIR"/${type}-*/; do
+            [ -d "$d" ] && snap_dirs+=("$d")
+        done
+        # Sort newest first (lexicographic on our YYYYMMDD-HHMMSS ID format)
+        IFS=$'\n' snap_dirs=($(printf '%s\n' "${snap_dirs[@]}" | sort -r)); unset IFS
+        for snap_dir in "${snap_dirs[@]}"; do
             [ ! -f "$snap_dir/metadata.txt" ] && continue
             count=$((count + 1))
             if [ "$count" -gt "$keep" ]; then

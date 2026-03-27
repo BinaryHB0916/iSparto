@@ -1,24 +1,6 @@
 {
   "version": "1.0",
-  "description": "Workflow compliance rules — enforces role boundaries for all roles",
-  "code_extensions": [
-    ".sh", ".bash", ".zsh",
-    ".py", ".pyw",
-    ".swift",
-    ".js", ".jsx", ".ts", ".tsx", ".mjs", ".cjs",
-    ".go",
-    ".rs",
-    ".java", ".kt", ".kts",
-    ".c", ".cpp", ".cc", ".cxx", ".h", ".hpp",
-    ".m", ".mm",
-    ".rb",
-    ".php",
-    ".scala",
-    ".dart",
-    ".lua",
-    ".r", ".R",
-    ".pl", ".pm"
-  ],
+  "description": "Workflow compliance rules — enforces role boundaries. Logic: extensions NOT in allowed_extensions are treated as code files and blocked from direct Edit/Write.",
   "allowed_extensions": [
     ".md", ".txt", ".rst",
     ".json", ".yaml", ".yml", ".toml", ".ini", ".cfg", ".conf",

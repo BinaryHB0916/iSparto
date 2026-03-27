@@ -1,5 +1,5 @@
 #!/bin/bash
-# iSparto Installer — installs commands, templates, and tools to ~/.claude/
+# iSparto Installer — installs commands, templates, and tools to $HOME/.claude/
 # Invoked by bootstrap.sh (verified) or directly from a local repo clone.
 #
 # When run via bootstrap.sh, ISPARTO_INSTALL_VERSION is set.
@@ -35,7 +35,7 @@ for arg in "$@"; do
                 exec "$ISPARTO_HOME/bin/isparto.sh" "$@"
             else
                 echo "iSparto is not installed or uses an older version."
-                echo "Try: rm -rf ~/.isparto && reinstall with:"
+                echo "Try: rm -rf $HOME/.isparto && reinstall with:"
                 echo "  curl -fsSL https://raw.githubusercontent.com/$REPO/main/bootstrap.sh | bash"
                 exit 1
             fi
@@ -124,12 +124,10 @@ fi
 echo ""
 if $UPGRADE && $DRY_RUN; then
     echo "  iSparto Upgrader (DRY RUN)"
-elif $UPGRADE; then
-    : # upgrade header is just the version line below
-elif $DRY_RUN; then
+elif ! $UPGRADE && $DRY_RUN; then
     echo "  iSparto Installer (DRY RUN — no changes will be made)"
     echo "  ─────────────────"
-else
+elif ! $UPGRADE; then
     echo "  iSparto Installer"
     echo "  ─────────────────"
 fi
@@ -180,7 +178,7 @@ elif [ -z "$OLD_VERSION" ] && [ -n "$NEW_VERSION" ]; then
     fi
 fi
 
-# ── Install lib/snapshot.sh to ~/.isparto/lib/ ────────────
+# ── Install lib/snapshot.sh to $HOME/.isparto/lib/ ────────────
 
 if ! $DRY_RUN; then
     mkdir -p "$ISPARTO_HOME/lib"
@@ -208,7 +206,7 @@ if ! $DRY_RUN; then
     mkdir -p "$ISPARTO_HOME/bin"
     cp "$SCRIPT_DIR/isparto.sh" "$ISPARTO_HOME/bin/isparto.sh"
     chmod +x "$ISPARTO_HOME/bin/isparto.sh"
-    # Backward compat: ~/.isparto/install.sh -> bin/isparto.sh
+    # Backward compat: $HOME/.isparto/install.sh -> bin/isparto.sh
     ln -sf "$ISPARTO_HOME/bin/isparto.sh" "$ISPARTO_HOME/install.sh"
 fi
 
@@ -301,11 +299,11 @@ if $_dep_ok; then
     printf "  ${GREEN}✓${NC} Dependencies OK (${_node_label}, Claude Code, Codex)\n"
 fi
 
-# ── 5. Copy config to ~/.claude/ ────────────────────────────
+# ── 5. Copy config to $HOME/.claude/ ────────────────────────────
 
 if ! $DRY_RUN; then
-    [ ! -d ~/.claude/commands ] && mkdir -p ~/.claude/commands
-    [ ! -d ~/.claude/templates ] && mkdir -p ~/.claude/templates
+    [ ! -d "$HOME/.claude/commands" ] && mkdir -p "$HOME/.claude/commands"
+    [ ! -d "$HOME/.claude/templates" ] && mkdir -p "$HOME/.claude/templates"
 fi
 
 _file_count=0
@@ -335,20 +333,20 @@ install_file() {
 }
 
 if [ -z "$OLD_VERSION" ]; then
-    echo "Installing global commands & templates to ~/.claude/ ..."
+    echo "Installing global commands & templates to $HOME/.claude/ ..."
     echo "  (project-level config will be created when you run /init-project or /migrate)"
 fi
 
-install_file "$SCRIPT_DIR/CLAUDE-TEMPLATE.md" ~/.claude/CLAUDE-TEMPLATE.md "~/.claude/CLAUDE-TEMPLATE.md"
+install_file "$SCRIPT_DIR/CLAUDE-TEMPLATE.md" "$HOME/.claude/CLAUDE-TEMPLATE.md" "$HOME/.claude/CLAUDE-TEMPLATE.md"
 
 for f in "$SCRIPT_DIR"/commands/*.md; do
     name=$(basename "$f")
-    install_file "$f" ~/.claude/commands/"$name" "~/.claude/commands/$name"
+    install_file "$f" "$HOME/.claude/commands/$name" "$HOME/.claude/commands/$name"
 done
 
 for f in "$SCRIPT_DIR"/templates/*.md; do
     name=$(basename "$f")
-    install_file "$f" ~/.claude/templates/"$name" "~/.claude/templates/$name"
+    install_file "$f" "$HOME/.claude/templates/$name" "$HOME/.claude/templates/$name"
 done
 
 # Upgrade: single summary line
@@ -393,7 +391,7 @@ if [ -f "CLAUDE.md" ] && ! $DRY_RUN; then
 import json, sys, os
 
 path = '$_project_settings'
-hook_cmd = 'bash ~/.isparto/hooks/process-observer/scripts/pre-tool-check.sh'
+hook_cmd = 'bash $HOME/.isparto/hooks/process-observer/scripts/pre-tool-check.sh'
 required_matchers = ['Bash', 'Edit', 'Write', 'mcp__codex-reviewer__codex']
 
 try:
@@ -510,7 +508,7 @@ else
     else
         printf "${GREEN}Done!${NC} iSparto is ready.\n"
     fi
-    printf "  Rollback: ~/.isparto/install.sh --uninstall\n"
+    printf "  Rollback: $HOME/.isparto/install.sh --uninstall\n"
     # Fresh install: show next steps
     if [ -z "$OLD_VERSION" ]; then
         echo ""

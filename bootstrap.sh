@@ -30,13 +30,13 @@ if [ -z "$VERSION" ]; then
     if [ -z "$VERSION" ]; then
         # Fallback: no releases yet, run install.sh directly from main branch
         printf "${YELLOW}No releases found. Installing from main branch (unverified).${NC}\n" >&2
-        TMPDIR=$(mktemp -d)
-        trap 'rm -rf "$TMPDIR"' EXIT
-        curl -fsSL "https://raw.githubusercontent.com/$REPO/main/install.sh" -o "$TMPDIR/install.sh" || {
+        BOOTSTRAP_TMPDIR=$(mktemp -d)
+        trap 'rm -rf "$BOOTSTRAP_TMPDIR"' EXIT
+        curl -fsSL "https://raw.githubusercontent.com/$REPO/main/install.sh" -o "$BOOTSTRAP_TMPDIR/install.sh" || {
             printf "${RED}Error:${NC} Failed to download install.sh from main branch.\n" >&2
             exit 1
         }
-        bash "$TMPDIR/install.sh" "${PASSTHROUGH_ARGS[@]}"
+        bash "$BOOTSTRAP_TMPDIR/install.sh" "${PASSTHROUGH_ARGS[@]}"
         exit $?
     fi
 fi
@@ -45,22 +45,22 @@ TAG="v${VERSION}"
 BASE_URL="https://github.com/$REPO/releases/download/$TAG"
 
 # ── Download install.sh + checksums to temp dir ──────────────
-TMPDIR=$(mktemp -d)
-trap 'rm -rf "$TMPDIR"' EXIT
+BOOTSTRAP_TMPDIR=$(mktemp -d)
+trap 'rm -rf "$BOOTSTRAP_TMPDIR"' EXIT
 
-curl -fsSL "$BASE_URL/install.sh" -o "$TMPDIR/install.sh" || {
+curl -fsSL "$BASE_URL/install.sh" -o "$BOOTSTRAP_TMPDIR/install.sh" || {
     printf "${RED}Error:${NC} Failed to download install.sh for $TAG\n" >&2
     echo "  Check that release $TAG exists: https://github.com/$REPO/releases/tag/$TAG" >&2
     exit 1
 }
 
-curl -fsSL "$BASE_URL/checksums.sha256" -o "$TMPDIR/checksums.sha256" || {
+curl -fsSL "$BASE_URL/checksums.sha256" -o "$BOOTSTRAP_TMPDIR/checksums.sha256" || {
     printf "${RED}Error:${NC} Failed to download checksums for $TAG\n" >&2
     exit 1
 }
 
 # ── Verify SHA256 checksum ───────────────────────────────────
-(cd "$TMPDIR" && shasum -a 256 -c checksums.sha256 --status 2>/dev/null) || {
+(cd "$BOOTSTRAP_TMPDIR" && shasum -a 256 -c checksums.sha256 --status 2>/dev/null) || {
     printf "${RED}Error:${NC} Checksum verification failed. Aborting.\n" >&2
     echo "  The downloaded install.sh does not match the expected checksum." >&2
     echo "  This could indicate a corrupted download or a tampered file." >&2
@@ -70,4 +70,4 @@ curl -fsSL "$BASE_URL/checksums.sha256" -o "$TMPDIR/checksums.sha256" || {
 
 # ── Execute verified installer ───────────────────────────────
 export ISPARTO_INSTALL_VERSION="$VERSION"
-bash "$TMPDIR/install.sh" "${PASSTHROUGH_ARGS[@]}"
+bash "$BOOTSTRAP_TMPDIR/install.sh" "${PASSTHROUGH_ARGS[@]}"
