@@ -82,7 +82,7 @@ Lead reviews Developer output
   - Confirms implementation is correct
   - If issues found: assembles fix prompt → calls Developer again → reviews
     |
-Lead assembles QA prompt → calls Developer for smoke testing (per trigger table below)
+Lead assembles QA prompt → calls Developer for smoke testing (using acceptance script from plan.md, per trigger table)
     |
 Team Lead runs Doc Engineer audit (as sub-agent)
   - Same checklist as Agent Team mode (see Doc Engineer role in roles.md)
@@ -114,7 +114,8 @@ Teammate(s) execute in parallel, each independently:
   - Reviews Developer output
   - If issues: assembles fix prompt → calls Developer again → reviews
     |
-Lead assembles QA prompt → calls Developer for smoke testing (incremental, wave-scoped)
+Lead assembles QA prompt → calls Developer for smoke testing (using acceptance script from plan.md, incremental, wave-scoped)
+  - Executes acceptance script action/eval steps as the minimum test coverage
   - Identifies the change scope of this Wave, only tests feature paths affected by changes
   - Skips areas tested in previous Waves that are not affected by current changes
   - Simulates key user operation paths, verifies end-to-end functionality

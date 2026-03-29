@@ -16,6 +16,7 @@ Your responsibility: First review the product direction, then output an actionab
    - If parallel tasks need to exchange data, define the interface contracts
    - Whether to invoke Codex MCP for an architecture pre-review
    - Whether high-risk code requires Codex code review
+   - For each team task, define an acceptance script (setup/action/eval steps) that specifies objectively verifiable completion criteria before development starts
 4. After the user confirms the plan, you (Lead) append it to docs/plan.md, then launch the team for development
 
 $ARGUMENTS
