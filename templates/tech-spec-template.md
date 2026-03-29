@@ -98,3 +98,14 @@
 
 ### Exception Fallback Strategy
 <!-- Network errors, data anomalies, crash recovery, etc. -->
+
+---
+
+## Decisions & Lessons Learned (per module, optional)
+
+> Use this section to record module-level technical decisions and implementation lessons that should survive across development sessions. This serves as the module's persistent memory — preventing repeated mistakes and preserving context that plan.md compresses away when phases complete.
+
+| Module | Decision / Lesson | Context | Date |
+|--------|-------------------|---------|------|
+| [module name] | [what was decided or learned] | [why — the situation that prompted this] | [YYYY-MM-DD] |
+<!-- Add rows as the project evolves. Review this table at the start of each Wave that touches the module. -->

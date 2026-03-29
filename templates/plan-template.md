@@ -63,12 +63,21 @@ Wave N ...
 
 **Codex Review:** [Yes/No] -- [Reason]
 
+**Acceptance Script:**
+0. setup  [precondition — environment, test data, initial state]
+1. action [user operation or API call]
+2. eval   [expected result — what to assert]
+3. action [next operation]
+4. eval   [expected result]
+<!-- Extend with more action/eval pairs as needed. Each eval must be objectively verifiable. -->
+
 **Completion Criteria:**
 - Build passes
 - Unit tests pass
 - Codex code review passes (if triggered)
 - Developer review of fixes passes
 - Codex QA smoke testing passes (if triggered)
+- Acceptance script eval steps all pass
 - Doc Engineer documentation audit passes
 - plan.md updated
 

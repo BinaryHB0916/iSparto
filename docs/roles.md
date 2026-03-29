@@ -52,6 +52,7 @@ When breaking down tasks, you must:
 - When multiple Developers have data interactions, define interface contracts first
 - Assign modifications to shared files to only one Developer, or specify a clear sequence
 - If tasks cannot be fully decoupled, split into smaller Waves — do not force parallelism at the risk of conflicts
+- Estimate context load per team task: the Developer's full input (task description + all files in scope + relevant spec sections + interface contracts) must fit within a single context window. If a task's input exceeds this, split it further — context overflow causes silent quality degradation even when decoupling is clean
 
 Authorization and escalation mechanism:
 
@@ -224,7 +225,7 @@ If you encounter issues outside the file scope, describe what's needed but don't
 QA smoke testing prompt template (Lead orchestrates, Developer executes):
 
 ---
-Run smoke tests on the following changes.
+Run smoke tests based on the acceptance script defined in plan.md.
 
 Product context:
 [Paste relevant interaction flows from product-spec.md]
@@ -232,24 +233,26 @@ Product context:
 Changed files in this Wave:
 [List of changed files]
 
+Acceptance script for this task:
+[Paste the action/eval steps from the team task block in plan.md]
+
+Execute each action step sequentially and verify each eval assertion.
+
+Report format: [step number] / [pass/fail] / [evidence if fail]
+
 Previously tested and unchanged areas:
 [List of features tested in prior Waves — skip these unless current changes affect their dependencies]
 
-Test focus:
-- Simulate key user operation paths end-to-end for changed features
-- Verify data flows correctly through the changed code paths
-- Check edge cases at integration boundaries (module A calls module B)
-- Verify error handling works as expected in user-facing scenarios
-
 Efficiency rules:
-- SKIP any feature path that was tested in a previous Wave AND is not affected by current changes
-- ONLY test paths that touch changed files or their direct dependents
-- Report which paths were tested vs skipped and why
+- Execute ALL acceptance script steps — these are the minimum coverage
+- SKIP exploratory testing of areas tested in previous Waves AND not affected by current changes
+- After acceptance script steps, add targeted edge case checks at integration boundaries if time permits
+- Report which acceptance steps were tested, which exploratory checks were added, and which areas were skipped
 
 If you find issues:
 1. Fix them directly in the code
-2. List every change you made with clear explanations
-3. Report: [tested paths] / [skipped paths with reason] / [issues found and fixed]
+2. Re-run the failed eval steps to confirm the fix
+3. Report full results: [acceptance step results] / [exploratory findings] / [issues found and fixed]
 ---
 ```
 
