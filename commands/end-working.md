@@ -49,9 +49,9 @@ Your responsibility: Ensure all changes and decisions from this session are capt
    - This step can run in parallel with the Doc Engineer audit in step 1
 5. git add -A && git commit && git push
 6. If all tasks on the current branch are complete (all reviews passed, docs updated):
-   - If `gh` CLI is available: create PR via `gh pr create`, merge via `gh pr merge --merge`
-   - If `gh` CLI is NOT available: merge locally via `git checkout main && git merge --no-ff <branch> && git push`
+   - Create PR via `gh pr create`, merge via `gh pr merge --merge`
    - Delete local branch and switch back to main: `git checkout main && git pull && git branch -d <branch>` (remote branch is auto-deleted by GitHub on merge)
+   - If `gh` CLI is NOT available: push the branch and inform the user to create and merge the PR manually on GitHub
    - If tasks are NOT complete (mid-Wave), just push — PR will be created when the branch is done
 
 After completing all steps, output a brief session summary to the user (what changed, issues caught, next steps suggested). This is a briefing, not a confirmation gate — proceed without waiting for user approval.

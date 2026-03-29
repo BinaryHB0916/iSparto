@@ -136,6 +136,20 @@
       "reason": "Deleting iSparto snapshots directory removes all configuration restore points"
     },
     {
+      "id": "merge-on-main",
+      "tool": "Bash",
+      "pattern": "git[[:space:]]+merge[[:space:]]",
+      "severity": "high",
+      "reason": "Merging on main branch is not allowed — use PR to merge feature branches into main"
+    },
+    {
+      "id": "push-on-main",
+      "tool": "Bash",
+      "pattern": "git[[:space:]]+push",
+      "severity": "high",
+      "reason": "Pushing from main branch is not allowed — switch to a feature branch, or use PR to merge"
+    },
+    {
       "id": "commit-on-main",
       "tool": "Bash",
       "pattern": "git[[:space:]]+commit[[:space:]]",

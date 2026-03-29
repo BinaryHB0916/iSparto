@@ -373,25 +373,23 @@ else
     fi
 fi
 
-# ── Patch project-level settings (hooks registration) ────────
-# If we're inside a project directory (has CLAUDE.md), ensure Process Observer
-# hooks are registered in .claude/settings.json. This covers projects that were
-# init'd before Process Observer existed.
+# ── Patch user-level settings (hooks registration) ──────────
+# Register Process Observer hooks in user-level ~/.claude/settings.json so all
+# projects share the same hooks. This replaces the old project-level approach
+# which required per-project registration and didn't propagate on upgrade.
 
-_project_settings=".claude/settings.json"
-if [ -f "CLAUDE.md" ] && ! $DRY_RUN; then
-    mkdir -p .claude
-    # Use Python (available on macOS) for reliable JSON merge
-    # Prints "PATCHED" if modified, empty if already registered, "ERROR:..." on failure
+_user_settings="$HOME/.claude/settings.json"
+if ! $DRY_RUN; then
+    mkdir -p "$HOME/.claude"
     if ! command -v python3 &>/dev/null; then
-        printf "  ${YELLOW}→${NC} python3 not found — skipped project hooks registration\n"
-        printf "    Add Process Observer hooks to .claude/settings.json manually or run /migrate\n"
+        printf "  ${YELLOW}→${NC} python3 not found — skipped user hooks registration\n"
+        printf "    Add Process Observer hooks to ~/.claude/settings.json manually\n"
     else
         _patch_result=$(python3 -c "
 import json, sys, os
 
-path = '$_project_settings'
-hook_cmd = 'bash $HOME/.isparto/hooks/process-observer/scripts/pre-tool-check.sh'
+path = os.path.expanduser('~/.claude/settings.json')
+hook_cmd = 'bash ' + os.path.expanduser('~/.isparto/hooks/process-observer/scripts/pre-tool-check.sh')
 required_matchers = ['Bash', 'Edit', 'Write', 'mcp__codex-reviewer__codex']
 
 try:
@@ -463,28 +461,85 @@ with open(path, 'w') as f:
 print('PATCHED')
 " 2>&1 || true)
         if [ "$_patch_result" = "PATCHED" ]; then
-            printf "  ${GREEN}✓${NC} Process Observer hooks registered in project settings\n"
+            printf "  ${GREEN}✓${NC} Process Observer hooks registered in user settings (~/.claude/settings.json)\n"
         elif echo "$_patch_result" | grep -q "^ERROR:"; then
-            printf "  ${YELLOW}→${NC} Could not patch .claude/settings.json: ${_patch_result#ERROR: }\n"
-            printf "    Add Process Observer hooks manually or run /migrate\n"
+            printf "  ${YELLOW}→${NC} Could not patch ~/.claude/settings.json: ${_patch_result#ERROR: }\n"
+            printf "    Add Process Observer hooks to ~/.claude/settings.json manually\n"
         fi
     fi
-elif [ -f "CLAUDE.md" ] && $DRY_RUN; then
-    _needs_project_hook_patch=false
-    if [ ! -f "$_project_settings" ]; then
-        _needs_project_hook_patch=true
-    elif ! grep -q "pre-tool-check.sh" "$_project_settings" 2>/dev/null; then
-        _needs_project_hook_patch=true
+
+    # Clean up project-level hook residues (from older versions)
+    if [ -f ".claude/settings.json" ] && command -v python3 &>/dev/null; then
+        _cleanup_result=$(python3 -c "
+import json, sys, os
+
+path = '.claude/settings.json'
+hook_cmd = 'bash ' + os.path.expanduser('~/.isparto/hooks/process-observer/scripts/pre-tool-check.sh')
+
+try:
+    with open(path) as f:
+        settings = json.load(f)
+except:
+    sys.exit(0)
+
+hooks = settings.get('hooks', {})
+pre_tool_use = hooks.get('PreToolUse', [])
+if not isinstance(pre_tool_use, list) or not pre_tool_use:
+    sys.exit(0)
+
+changed = False
+new_pre_tool_use = []
+for entry in pre_tool_use:
+    if not isinstance(entry, dict):
+        new_pre_tool_use.append(entry)
+        continue
+    entry_hooks = entry.get('hooks', [])
+    new_entry_hooks = [h for h in entry_hooks if not (isinstance(h, dict) and h.get('command', '').endswith('pre-tool-check.sh'))]
+    if len(new_entry_hooks) != len(entry_hooks):
+        changed = True
+    if new_entry_hooks:
+        entry['hooks'] = new_entry_hooks
+        new_pre_tool_use.append(entry)
+    else:
+        changed = True
+
+if not changed:
+    sys.exit(0)
+
+if new_pre_tool_use:
+    hooks['PreToolUse'] = new_pre_tool_use
+else:
+    del hooks['PreToolUse']
+    if not hooks:
+        del settings['hooks']
+
+with open(path, 'w') as f:
+    json.dump(settings, f, indent=2)
+    f.write('\n')
+
+print('CLEANED')
+" 2>&1 || true)
+        if [ "$_cleanup_result" = "CLEANED" ]; then
+            printf "  ${GREEN}✓${NC} Removed old project-level Process Observer hooks (now in user settings)\n"
+        fi
+    fi
+else
+    # Dry-run mode
+    _needs_user_hook_patch=false
+    if [ ! -f "$_user_settings" ]; then
+        _needs_user_hook_patch=true
+    elif ! grep -q "pre-tool-check.sh" "$_user_settings" 2>/dev/null; then
+        _needs_user_hook_patch=true
     else
         for _matcher in "Bash" "Edit" "Write" "mcp__codex-reviewer__codex"; do
-            if ! grep -q "\"matcher\"[[:space:]]*:[[:space:]]*\"$_matcher\"" "$_project_settings" 2>/dev/null; then
-                _needs_project_hook_patch=true
+            if ! grep -q "\"matcher\"[[:space:]]*:[[:space:]]*\"$_matcher\"" "$_user_settings" 2>/dev/null; then
+                _needs_user_hook_patch=true
                 break
             fi
         done
     fi
-    if $_needs_project_hook_patch; then
-        printf "  ${BLUE}[dry-run]${NC} Would register Process Observer hooks in project settings\n"
+    if $_needs_user_hook_patch; then
+        printf "  ${BLUE}[dry-run]${NC} Would register Process Observer hooks in user settings (~/.claude/settings.json)\n"
     fi
 fi
 

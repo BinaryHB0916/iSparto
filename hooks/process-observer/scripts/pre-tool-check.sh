@@ -92,19 +92,21 @@ case "$TOOL_NAME" in
             local pattern="$2"
             local reason="$3"
 
-            # Special handling for commit-on-main: only block if on main branch
-            if [ "$rule_id" = "commit-on-main" ]; then
-                if echo "$COMMAND" | grep -qE -- "$pattern" 2>/dev/null; then
-                    local current_branch
-                    current_branch=$(git branch --show-current 2>/dev/null || echo "")
-                    if [ "$current_branch" = "main" ] || [ "$current_branch" = "master" ]; then
-                        printf '{"decision": "block", "reason": "[%s] %s (current branch: %s)"}\n' \
-                            "$rule_id" "$reason" "$current_branch"
-                        exit 2
+            # Branch-gated rules: only block if on main/master branch
+            case "$rule_id" in
+                commit-on-main|merge-on-main|push-on-main)
+                    if echo "$COMMAND" | grep -qE -- "$pattern" 2>/dev/null; then
+                        local current_branch
+                        current_branch=$(git branch --show-current 2>/dev/null || echo "")
+                        if [ "$current_branch" = "main" ] || [ "$current_branch" = "master" ]; then
+                            printf '{"decision": "block", "reason": "[%s] %s (current branch: %s)"}\n' \
+                                "$rule_id" "$reason" "$current_branch"
+                            exit 2
+                        fi
                     fi
-                fi
-                return
-            fi
+                    return
+                    ;;
+            esac
 
             # Special handling for commit-env-file-bulk: only block if .env exists
             if [ "$rule_id" = "commit-env-file-bulk" ]; then

@@ -2,10 +2,10 @@
 
 ## 概述
 
-Process Observer 是 iSparto 团队的合规监督角色，确保开发流程遵循 CLAUDE.md 和工作流规范。它由两部分组成：
+Process Observer 是 iSparto 团队的合规监督角色。它由两部分组成，优先级不同：
 
-- **实时拦截（Hooks）**：通过 Claude Code PreToolUse hook 监管所有工具调用（Bash / Edit / Write / Codex MCP），拦截违规操作
-- **事后审计（Sub-agent）**：/end-working 时回顾 session 执行过程，输出合规报告
+- **实时拦截（Hooks）— 核心层**：通过 Claude Code PreToolUse hook 监管所有工具调用（Bash / Edit / Write / Codex MCP），拦截违规操作。这是不可绕过的硬性保障。
+- **事后审计（Sub-agent）— 建议层**：/end-working 时回顾 session 执行过程，输出合规报告和改进建议。此层依赖 Lead 主动 spawn，不保证每次执行。关键合规检查已由 Hooks 层覆盖，sub-agent 的价值是发现流程改进机会，而非作为合规的唯一防线。
 
 Process Observer 不参与开发决策，只监督流程合规性。它与 Doc Engineer 同级，都是 Team Lead 的 sub-agent。
 
@@ -16,6 +16,8 @@ Process Observer 不参与开发决策，只监督流程合规性。它与 Doc E
 ### 运行机制
 
 通过 Claude Code 的 PreToolUse hook 实现。hook 是一个 shell 脚本，在每次工具调用前被触发，检查命令是否匹配高危操作清单。如果匹配，阻止执行并输出原因。
+
+Hooks 注册在用户级 `~/.claude/settings.json` 中，所有项目共享。`install.sh --upgrade` 自动注册到用户级配置。
 
 ### 触发条件
 
