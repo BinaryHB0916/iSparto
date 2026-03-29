@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Acceptance script (action/eval format) field in plan template — QA tests against pre-defined behavioral criteria instead of ad-hoc prompts
+- Context window capacity as 4th Wave decoupling criterion alongside file/data/logic levels
+- Module Memory placeholder in tech-spec template ("Decisions & Lessons Learned" per module), forming a three-layer memory model (Project/Module/Personal)
+- `merge-on-main` and `push-on-main` hook rules — closes blind spots where git merge/push on main bypassed interception
+- Process Observer core/suggestion layer distinction — Hooks = hard guarantee, Sub-agent = best-effort
+- Self-development rule in CLAUDE.md for editing iSparto's own hook scripts
+
+### Changed
+
+- Hooks registration moved from project-level to user-level `~/.claude/settings.json` — upgrade once, all projects benefit
+- QA smoke testing prompt template now references acceptance scripts from plan.md
+- `pre-tool-check.sh` refactored: unified branch-gated `case` statement for commit/merge/push-on-main
+- `/plan` command now requires acceptance scripts per team task in output
+
+### Removed
+
+- Local merge fallback from end-working (`git checkout main && git merge`) — contradicted "no direct ops on main" principle
+- Project-level hooks JSON blocks from init-project.md and migrate.md (replaced by user-level registration)
+
 ## [0.6.2] - 2026-03-27
 
 ### Fixed
