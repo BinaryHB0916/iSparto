@@ -25,54 +25,18 @@ Your responsibility: Based on the product description provided by the user, gene
      "env": {
        "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
      },
-     "teammateMode": "tmux",
-     "hooks": {
-       "PreToolUse": [
-         {
-           "matcher": "Bash",
-           "hooks": [
-             {
-               "type": "command",
-               "command": "bash ~/.isparto/hooks/process-observer/scripts/pre-tool-check.sh"
-             }
-           ]
-         },
-         {
-           "matcher": "Edit",
-           "hooks": [
-             {
-               "type": "command",
-               "command": "bash ~/.isparto/hooks/process-observer/scripts/pre-tool-check.sh"
-             }
-           ]
-         },
-         {
-           "matcher": "Write",
-           "hooks": [
-             {
-               "type": "command",
-               "command": "bash ~/.isparto/hooks/process-observer/scripts/pre-tool-check.sh"
-             }
-           ]
-         },
-         {
-           "matcher": "mcp__codex-reviewer__codex",
-           "hooks": [
-             {
-               "type": "command",
-               "command": "bash ~/.isparto/hooks/process-observer/scripts/pre-tool-check.sh"
-             }
-           ]
-         }
-       ]
-     }
+     "teammateMode": "tmux"
    }
    ```
    If the project already has .claude/settings.json, merge these settings into it without removing existing entries.
    If the project needs platform-specific plugins (e.g., swift-lsp for iOS), add enabledPlugins here too.
-7. Initialize the git repository and create the main branch
-8. Invoke Codex MCP for an architecture pre-review (based on tech-spec.md, using the architecture review prompt template) and report the review results to the user
-9. After the user confirms all documentation and architecture pre-review results, project initialization is complete and you may begin /start-working
+   Note: Process Observer hooks are registered in user-level ~/.claude/settings.json (managed by install.sh), NOT in project-level settings. Do NOT add hooks here.
+7. Verify Process Observer hooks are registered in user-level ~/.claude/settings.json:
+   - Check if ~/.claude/settings.json contains PreToolUse hooks with Bash/Edit/Write/mcp__codex-reviewer__codex matchers
+   - If missing: inform the user to run `~/.isparto/install.sh --upgrade` to register hooks globally
+8. Initialize the git repository and create the main branch
+9. Invoke Codex MCP for an architecture pre-review (based on tech-spec.md, using the architecture review prompt template) and report the review results to the user
+10. After the user confirms all documentation and architecture pre-review results, project initialization is complete and you may begin /start-working
 
 Note: If anything goes wrong during initialization, the user can run `/restore <snapshot_id>` to roll back all changes.
 

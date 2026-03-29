@@ -44,50 +44,14 @@ Your job: scan the current project, report what exists and what's missing, propo
        "env": {
          "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
        },
-       "teammateMode": "tmux",
-       "hooks": {
-         "PreToolUse": [
-           {
-             "matcher": "Bash",
-             "hooks": [
-               {
-                 "type": "command",
-                 "command": "bash ~/.isparto/hooks/process-observer/scripts/pre-tool-check.sh"
-               }
-             ]
-           },
-           {
-             "matcher": "Edit",
-             "hooks": [
-               {
-                 "type": "command",
-                 "command": "bash ~/.isparto/hooks/process-observer/scripts/pre-tool-check.sh"
-               }
-             ]
-           },
-           {
-             "matcher": "Write",
-             "hooks": [
-               {
-                 "type": "command",
-                 "command": "bash ~/.isparto/hooks/process-observer/scripts/pre-tool-check.sh"
-               }
-             ]
-           },
-           {
-             "matcher": "mcp__codex-reviewer__codex",
-             "hooks": [
-               {
-                 "type": "command",
-                 "command": "bash ~/.isparto/hooks/process-observer/scripts/pre-tool-check.sh"
-               }
-             ]
-           }
-         ]
-       }
+       "teammateMode": "tmux"
      }
      ```
      If .claude/settings.json already exists, merge these entries without removing existing settings.
+     Note: Process Observer hooks are registered in user-level ~/.claude/settings.json (managed by install.sh), NOT in project-level settings. Do NOT add hooks here.
+   - Verify Process Observer hooks are registered in user-level ~/.claude/settings.json:
+     - Check if ~/.claude/settings.json contains PreToolUse hooks with Bash/Edit/Write/mcp__codex-reviewer__codex matchers
+     - If missing: inform the user to run `~/.isparto/install.sh --upgrade` to register hooks globally
    - Append iSparto sections to CLAUDE.md (do not replace existing content)
    - Create missing docs from templates
    - Generate plan.md based on current project state

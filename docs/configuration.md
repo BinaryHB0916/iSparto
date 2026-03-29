@@ -179,6 +179,10 @@ Template files used during project initialization:
 
 Process Observer 的实时拦截功能通过 Claude Code PreToolUse hook 实现，覆盖 Bash、Edit、Write 和 Codex MCP 四种工具。
 
+### Hook 注册位置
+
+Hooks 注册在**用户级** `~/.claude/settings.json` 中，所有项目共享同一份 hook 规则。`install.sh --upgrade` 一次即全局生效，无需逐项目配置。
+
 ### Hook 机制
 
 Claude Code 支持在工具调用前触发 hook 脚本。Process Observer 注册四个 PreToolUse hook matcher，在工具执行前检查是否违反操作规则或工作流规范。
@@ -191,7 +195,7 @@ Claude Code 支持在工具调用前触发 hook 脚本。Process Observer 注册
 | 敏感信息泄露 | Bash | `git add .env`, `git add *.key` | 敏感文件可能被推送到公开仓库 |
 | 跳过安全检查 | Bash | `--no-verify`, `--no-gpg-sign` | 绕过 pre-commit hook 或签名 |
 | 破坏性文件操作 | Bash | `rm -rf /`, `rm -rf ~` | 灾难性删除 |
-| 直接在 main 开发 | Bash | main 分支上 `git commit` | main 锁定，必须通过分支开发 |
+| 直接在 main 开发 | Bash | main 分支上 `git commit` / `git merge` / `git push` | main 锁定，必须通过分支开发 |
 | 代码直写拦截 | Edit, Write | 目标文件为代码文件（按扩展名判定） | 代码变更必须通过 Developer (Codex) 实现 |
 | Codex 调用规范 | mcp__codex-reviewer__codex | prompt 缺少 `## ` 结构化标题 | 必须使用结构化 prompt 描述任务 |
 

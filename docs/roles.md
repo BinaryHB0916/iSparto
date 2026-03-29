@@ -333,10 +333,10 @@ Key principles:
 
 ## Process Observer (Team Lead's sub-agent)
 
-Process Observer 是团队的合规监督角色，确保开发流程遵循 CLAUDE.md 和工作流规范。它由两部分组成：
+Process Observer 是团队的合规监督角色，确保开发流程遵循 CLAUDE.md 和工作流规范。它由两部分组成，优先级不同：
 
-- **实时拦截（Hooks）**：通过 Claude Code PreToolUse hook 在命令执行前拦截灾难性操作（git push --force、直接 commit 到 main、泄露敏感文件等）
-- **事后审计（Sub-agent）**：/end-working 流程中，在 Doc Engineer 之后运行，对照 5 个 Checklist（共 14 个检查项：A1-A3 分支规范、B1-B4 Codex Review 合规、C1-C4 Doc Engineer 合规、D1-D2 PR 流程合规、E1-E2 越权操作）输出偏差报告
+- **实时拦截（Hooks）— 核心层**：通过 Claude Code PreToolUse hook 在命令执行前拦截灾难性操作和分支违规（git push --force、直接 commit/merge/push 在 main、泄露敏感文件等）。不可绕过的硬性保障。
+- **事后审计（Sub-agent）— 建议层**：/end-working 流程中，在 Doc Engineer 之后运行，对照 5 个 Checklist（共 14 个检查项）输出偏差报告。依赖 Lead 主动 spawn，不保证每次执行；关键合规检查已由 Hooks 层覆盖。
 
 Process Observer 不参与开发决策，只监督流程合规性。审计报告输出到 session briefing，不自动修改文件。
 

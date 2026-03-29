@@ -218,7 +218,7 @@ main              <- Stable version, releases are made from here
 **Merge workflow (both modes):**
 1. Lead pushes the feature/fix/hotfix branch
 2. If `gh` CLI is available: create PR via `gh pr create`, merge via `gh pr merge --merge`
-3. If `gh` CLI is NOT available: merge locally via `git checkout main && git merge --no-ff <branch> && git push`
+3. If `gh` CLI is NOT available: push the branch and inform the user to create and merge the PR manually on GitHub
 4. Lead deletes the branch (local + remote) and switches back to main
 
 Note: Auto PR merge only happens when all tasks on the current branch are complete (all reviews passed, docs updated). If work is mid-Wave, the branch is pushed but not merged — the PR will be created when the branch is done.
