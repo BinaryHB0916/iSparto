@@ -41,7 +41,7 @@ Your responsibility: Ensure all changes and decisions from this session are capt
      ```
 
    - This file will be committed together with the other changes in the next step
-4. Spawn a Process Observer sub-agent to audit this session:
+4. Spawn the "Process Observer Audit" agent (Sonnet model) to audit this session:
    - Audit scope: review the session against CLAUDE.md behavioral guidelines — branching conventions, Codex review triggers, Doc Engineer execution, PR workflow, unauthorized operations, plan.md accuracy
    - Input: `git log` (commits in this session), `git diff --stat` (file changes), current branch name, plan.md (check unchecked items against actual codebase state)
    - Output: deviation report (append to session briefing)

@@ -50,7 +50,7 @@ Lead 根据任务特征选择模式，用户无需干预。选择必须在执行
 - Teammate (tmux, 仅 Agent Team 模式): 并行执行单元。在文件所有权范围内，遵循与 Lead 相同的 prompt→Developer→review 循环。不直接写代码。每个 Teammate 独立调 Developer = 真正的并行 Codex 调用。
 - Developer (Codex MCP): 按 Lead/Teammate 组装的结构化 prompt 实现代码。也承担 QA 冒烟测试（不同 prompt，由 Lead 统一编排）。模型配置见 docs/configuration.md。
 - Doc Engineer (Lead sub-agent): 团队的 context 来源。每个 Wave 结束后：(1) 确保代码和文档同步，(2) 检查产品术语一致性，(3) 审计产品叙事整合。
-- Process Observer (hooks + Lead sub-agent): 合规监督。**核心层**：Hooks 实时拦截灾难性操作和分支违规（不可绕过）。**建议层**：事后审计回顾 session 合规性（依赖 Lead spawn，不保证每次执行；关键检查已由 Hooks 覆盖）。
+- Process Observer (hooks + Sonnet sub-agent): 合规监督。**核心层**：Hooks 实时拦截灾难性操作和分支违规（不可绕过，无模型依赖）。**建议层**：Sonnet 4.6 事后审计回顾 session 合规性（降低 token 消耗；关键检查已由 Hooks 覆盖）。
 
 **Development Workflow (Solo + Codex):**
 0. **Mode Selection Checkpoint** — Lead 按文件分组、评估两个条件、声明 Solo（记录原因）
