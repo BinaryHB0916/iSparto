@@ -448,3 +448,43 @@
 - v0.8 前三项验收条件本次全部完成，只剩"1 个外部用户冷启动验证"
 - 用户决定不立即发版，等后续工作一起打包为 v0.7.0
 - 累计统计（10 sessions）：~29 Developer spawned, ~17 Codex reviews, ~18 issues caught
+
+## 2026-03-30 Session (continued)
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | v0.6 架构加固 — 续（v0.6.5 + v0.6.6 发布） |
+| Tasks completed | Process Observer Sonnet 降级, agent 定义文件安装修复, rejected approaches 追踪机制, "no direct code" 理由集中化 + 行为模板 Tier 2b, v0.6.5 发布, v0.6.6 发布 |
+| Developers spawned | 0 (Solo 模式) |
+| Codex reviews | 0 |
+| Codex catches | N/A |
+| Key decisions | Process Observer 审计从 Opus 降级 Sonnet 4.6（降低 token 消耗，关键检查已由 hooks 覆盖）, 行为模板（commands/*.md, templates/*.md）归类为 Tier 2b（Developer review only, 跳过 QA）, rejected approaches 写入 plan 模板防止 AI 重复尝试已否决路径 |
+
+### Files Changed
+```
+ CHANGELOG.md                     | 25 +++++++++++++++++++++
+ CLAUDE-TEMPLATE.md               | 10 ++++---
+ CLAUDE.md                        | 16 ++++----
+ VERSION                          |  2 +-
+ agents/process-observer-audit.md | 30 ++++++++++++++++++++++++++++++
+ commands/end-working.md          |  3 ++-
+ commands/start-working.md        |  1 +
+ docs/concepts.md                 |  1 +
+ docs/configuration.md            | 11 ++++---
+ docs/design-decisions.md         |  4 ++++
+ docs/process-observer.md         |  2 ++
+ docs/roles.md                    | 14 ++++----
+ docs/workflow.md                 | 14 ++++++++++--
+ install.sh                       |  3 +++
+ templates/plan-template.md       | 10 +++++++++
+ docs/session-log.md              | (this entry)
+ 15 files changed, 122 insertions(+), 24 deletions(-)
+```
+
+### Notes
+- 本次 session 未走 /end-working 收工流程，session log 由下次 session 补录
+- v0.6.5 修复 agent 定义文件缺失（v0.6.4 的 Sonnet 降级因缺文件静默回退 Opus）
+- v0.6.6 引入两个框架级改进：rejected approaches 追踪 + 行为模板分类
+- 8 个 PR 合并（#80-#87），2 个版本发布
+- 累计统计（11 sessions）：~29 Developer spawned, ~17 Codex reviews, ~18 issues caught
