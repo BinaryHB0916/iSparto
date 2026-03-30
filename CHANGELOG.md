@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.5] - 2026-03-30
+
 ### Fixed
 
 - Process Observer Audit agent definition file (`agents/process-observer-audit.md`) now installed by `install.sh` — without this file the Sonnet model downgrade from v0.6.4 silently fell back to Lead's Opus model
