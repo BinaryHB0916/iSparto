@@ -114,6 +114,16 @@ Wave N ...
 
 ---
 
+## Rejected Approaches
+
+> Approaches tried and rejected during development. Prevents AI from re-attempting disproven paths.
+> Lead records entries during /end-working; Lead surfaces relevant entries during /start-working.
+
+| Date | Module/Feature | What was tried | Why rejected | Notes |
+|------|---------------|---------------|-------------|-------|
+
+---
+
 ## To-Do (Non-Code)
 
 1. Pending: [to-do item] -- [description]

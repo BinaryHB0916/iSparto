@@ -9,6 +9,7 @@ Your responsibility: Report current status and suggest next steps. Do not write 
    - Which Wave is currently active
    - What Teams are in this Wave and each team's status (not started / in progress / completed)
    - Remaining issues from the last session
+   - Rejected approaches relevant to the current Wave's tasks (if any exist in plan.md's "Rejected Approaches" table)
 3. If docs/session-log.md exists, read it and include in your status report:
    - Last session summary: date, tasks completed, issues noted
    - Cumulative project stats: total sessions, total Codex reviews, total issues caught

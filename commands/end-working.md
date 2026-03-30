@@ -7,6 +7,7 @@ Your responsibility: Ensure all changes and decisions from this session are capt
 1. Review all changes and decisions from this session:
    - Are code changes consistent with docs/ documentation? If not, you (Lead) update the docs directly, or spawn a Doc Engineer to update them
    - Have verbal decisions made during the conversation been written into the corresponding docs? If not, add them
+   - Were any approaches tried and rejected/rolled back during this session? If yes, append them to the "Rejected Approaches" table in docs/plan.md (date, module/feature, what was tried, why rejected, notes on alternatives or conditions for revisiting)
 2. Update docs/plan.md:
    - Mark completed tasks
    - If all Teams in the current Wave are finished, mark the Wave status as completed

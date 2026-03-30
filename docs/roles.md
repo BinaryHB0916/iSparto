@@ -86,6 +86,7 @@ Documentation change rules:
 - The Team Lead and Doc Engineer can modify all documents under docs/
 - At the end of each Wave, a clear documentation change summary must be provided to the user (which file changed, what changed, why it changed)
 - The user reviews after the fact and reverts if issues are found
+- Any approaches tried and rejected during development (rolled back implementations, disproven hypotheses, abandoned strategies) must be recorded in the "Rejected Approaches" table in docs/plan.md
 
 Never do:
 - Do not write code directly in any mode — always prompt the Developer (Codex) to implement
@@ -285,6 +286,7 @@ Audit checklist:
    - Are prerequisites for the next Wave satisfied
    - Are remaining issues recorded
    - Are manual intervention points updated
+   - Are rejected/rolled-back approaches from this Wave recorded in the "Rejected Approaches" table
 
 4. design-spec.md consistency (if UI is involved)
    - Visual parameters actually used in code vs documentation definitions
