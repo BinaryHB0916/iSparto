@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.6] - 2026-03-30
+
 ### Added
 
 - Rejected approaches tracking: `templates/plan-template.md` adds "Rejected Approaches" table; `/end-working` records rejected paths, `/start-working` surfaces them, Lead role requires recording, Doc Engineer audits coverage
