@@ -215,6 +215,7 @@ fi
 if ! $DRY_RUN; then
     SNAPSHOT_FILES=()
     SNAPSHOT_FILES+=("$HOME/.claude/CLAUDE-TEMPLATE.md")
+    SNAPSHOT_FILES+=("$HOME/.claude/agents/process-observer-audit.md")
     for f in "$SCRIPT_DIR"/commands/*.md; do
         SNAPSHOT_FILES+=("$HOME/.claude/commands/$(basename "$f")")
     done
@@ -304,6 +305,7 @@ fi
 if ! $DRY_RUN; then
     [ ! -d "$HOME/.claude/commands" ] && mkdir -p "$HOME/.claude/commands"
     [ ! -d "$HOME/.claude/templates" ] && mkdir -p "$HOME/.claude/templates"
+    [ ! -d "$HOME/.claude/agents" ] && mkdir -p "$HOME/.claude/agents"
 fi
 
 _file_count=0
@@ -338,6 +340,7 @@ if [ -z "$OLD_VERSION" ]; then
 fi
 
 install_file "$SCRIPT_DIR/CLAUDE-TEMPLATE.md" "$HOME/.claude/CLAUDE-TEMPLATE.md" "$HOME/.claude/CLAUDE-TEMPLATE.md"
+install_file "$SCRIPT_DIR/agents/process-observer-audit.md" "$HOME/.claude/agents/process-observer-audit.md" "$HOME/.claude/agents/process-observer-audit.md"
 
 for f in "$SCRIPT_DIR"/commands/*.md; do
     name=$(basename "$f")
