@@ -45,9 +45,11 @@ Lead 根据任务特征选择模式，用户无需干预。选择必须在执行
 - 写：改 5 个文件每个大段逻辑 → Agent Team；改 5 个文件每个 1 行 → Solo
 - 读：review 涉及多模块多文件 → Agent Team 按模块分组并行 review；少量文件 → Solo 串行 review
 
+**Why Lead/Teammate do not write code directly:** Codex 通过结构化 prompt 产出的代码质量显著高于 Lead 模型（当前为 Opus）直写。Lead 模型的优势在上下文理解、任务拆解、prompt 组装和审查，而非无 bug 实现——直写代码小 bug 多、review 成本反而更高。因此所有代码实现必须经由 Developer (Codex)，Lead/Teammate 只负责组装 prompt 和审查输出。
+
 **Roles:**
-- Team Lead (main session): 协调全流程、合代码。不直接写代码——组装结构化 prompt 调 Developer (Codex) 实现，然后审查 Developer 输出。Solo 模式下自己走 prompt→Developer→review 循环；Team 模式下委派 Teammate 并行走同样循环。可以独立做常规决策，不确定的事情必须上报用户。并行不限于写代码——代码审查、文档审计、调研任务都应尽可能并行执行。任务完成后主动对照 plan.md 建议下一步。
-- Teammate (tmux, 仅 Agent Team 模式): 并行执行单元。在文件所有权范围内，遵循与 Lead 相同的 prompt→Developer→review 循环。不直接写代码。每个 Teammate 独立调 Developer = 真正的并行 Codex 调用。
+- Team Lead (main session): 协调全流程、合代码。不直接写代码（见上方架构动机）——组装结构化 prompt 调 Developer (Codex) 实现，然后审查 Developer 输出。Solo 模式下自己走 prompt→Developer→review 循环；Team 模式下委派 Teammate 并行走同样循环。可以独立做常规决策，不确定的事情必须上报用户。并行不限于写代码——代码审查、文档审计、调研任务都应尽可能并行执行。任务完成后主动对照 plan.md 建议下一步。
+- Teammate (tmux, 仅 Agent Team 模式): 并行执行单元。在文件所有权范围内，遵循与 Lead 相同的 prompt→Developer→review 循环。不直接写代码（见上方架构动机）。每个 Teammate 独立调 Developer = 真正的并行 Codex 调用。
 - Developer (Codex MCP): 按 Lead/Teammate 组装的结构化 prompt 实现代码。也承担 QA 冒烟测试（不同 prompt，由 Lead 统一编排）。模型配置见 docs/configuration.md。
 - Doc Engineer (Lead sub-agent): 团队的 context 来源。每个 Wave 结束后：(1) 确保代码和文档同步，(2) 检查产品术语一致性，(3) 审计产品叙事整合。
 - Process Observer (hooks + Sonnet sub-agent): 合规监督。**核心层**：Hooks 实时拦截灾难性操作和分支违规（不可绕过，无模型依赖）。**建议层**：Sonnet 4.6 事后审计回顾 session 合规性（降低 token 消耗；关键检查已由 Hooks 覆盖）。
@@ -74,7 +76,7 @@ Lead 根据任务特征选择模式，用户无需干预。选择必须在执行
 
 /end-working 全自动执行（commit + push + 输出 briefing），不需要用户确认。分支任务全部完成时自动建 PR 并 merge；未完成时只 push，不 merge。
 
-**Developer Triggers:** 默认触发实现 + QA。仅以下情况可跳过：纯视觉改动（仅 QA）、纯文档/格式化（均可跳过）。每个 Wave 至少包含一次批量审查。QA 按 plan.md 中定义的 acceptance script 执行。详见 docs/workflow.md 触发条件表。
+**Developer Triggers:** 默认触发实现 + QA。部分跳过：纯视觉/配置微调（仅 QA）、行为模板 commands/*.md 和 templates/*.md（仅 Developer review，跳过 QA）、纯文档/格式化（均可跳过）。每个 Wave 至少包含一次批量审查。QA 按 plan.md 中定义的 acceptance script 执行。详见 docs/workflow.md 触发条件表。
 
 **Branching & Merge:** main 锁定；feat/xxx 开发新功能，fix/xxx 修 bug，hotfix/xxx 紧急修复。完成全部审查后 Lead 自动建 PR 并 merge——不需要用户手动 review。
 
@@ -84,8 +86,8 @@ Lead 根据任务特征选择模式，用户无需干预。选择必须在执行
 | Bootstrap | bootstrap.sh | 薄引导入口（解析版本、校验 checksum、拉取 install.sh） |
 | Installer | install.sh, isparto.sh | 安装/升级/卸载；isparto.sh 是本地 stub |
 | Snapshot Engine | lib/snapshot.sh | 快照/恢复引擎 |
-| Slash Commands | commands/*.md | 7 个用户命令模板 |
-| Doc Templates | templates/*.md | 4 个文档模板 |
+| Slash Commands | commands/*.md | 7 个行为定义（系统 prompt，驱动 Agent 行为，改动按 Tier 2b 处理） |
+| Doc Templates | templates/*.md | 4 个结构模板（/init-project 生成文档的蓝图，改动按 Tier 2b 处理） |
 | Project Template | CLAUDE-TEMPLATE.md | 新项目 CLAUDE.md 生成模板 |
 | Framework Docs | docs/ (concepts, roles, workflow, configuration, user-guide, troubleshooting, design-decisions) | 面向用户的框架文档 |
 | Project Docs | docs/ (product-spec, plan) | iSparto 自身的产品规格和开发计划 |
