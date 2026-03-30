@@ -91,7 +91,7 @@ Lead 根据任务特征选择模式，用户无需干预。选择必须在执行
 | Project Docs | docs/ (product-spec, plan) | iSparto 自身的产品规格和开发计划 |
 | Release Script | scripts/release.sh | 自动化发版（bump version → changelog → tag → gh release） |
 | Assets | assets/*.svg | README 用的 SVG 图 |
-| Process Observer | hooks/process-observer/ | 实时拦截（hooks 脚本 + 高危清单）+ 事后审计 |
+| Process Observer | hooks/process-observer/, agents/ | 实时拦截（hooks 脚本 + 高危清单）+ 事后审计 + agent 定义 |
 | READMEs | README.md, README.zh-CN.md | 双语 README |
 
 ## Operational Guardrails
