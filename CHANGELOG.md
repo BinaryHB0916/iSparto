@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.7] - 2026-03-30
+
 ### Added
 
 - Self-validating startup: `/start-working` runs build/test smoke check from CLAUDE.md's "Common Commands" section after docs drift check — non-blocking (report only), skipped if no commands defined
