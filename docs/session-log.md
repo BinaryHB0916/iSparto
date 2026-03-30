@@ -408,3 +408,43 @@
 - 这是框架级改动，影响所有安装 iSparto 的项目（通过 CLAUDE-TEMPLATE.md）
 - Codex review 再次证明价值：一次 review 发现 3 个交叉引用一致性问题，人工很难全部定位
 - 新增 B4 Wave 级兜底检查：确保即使单次改动被分类跳过，Wave 结束时仍有至少一次批量 review
+
+## 2026-03-30 Session
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | 阶段性 Review（跨 Wave，v0.8 准备） |
+| Tasks completed | 四视角并行 Review（57 发现）、系统决策（14 接受/18 拒绝/9 延后）、3 Wave 执行（产品方向+代码修复+文档修复）、v0.5/v0.6 里程碑标记、v0.8 验收条件定义 |
+| Developers spawned | 4 (四视角 Review) + 2 (Doc Engineer + Process Observer 审计) |
+| Codex reviews | 3 (Wave B 实现 6 项代码修复, snapshot 向后兼容修复, QA 全量 review) |
+| Codex catches | QA review: 无 defect; Doc Engineer 发现 snapshot 编码向后兼容问题（已修复） |
+| Key decisions | 删掉 ASCII banner 和 CI 质量门、v0.8 验收条件重新定义（4 项，3 项已完成）、不立即发版（等 v0.7.0 打包）、57 个 review 发现的系统性取舍（接受/拒绝/延后） |
+
+### Files Changed
+```
+ CHANGELOG.md             |  2 --
+ README.md                |  2 ++
+ README.zh-CN.md          |  2 ++
+ commands/init-project.md |  5 +++++
+ docs/configuration.md    |  2 +-
+ docs/plan.md             | 33 ++++++++++++++++++---------------
+ docs/product-spec.md     |  4 ++--
+ docs/troubleshooting.md  | 10 ++++++++++
+ docs/workflow.md         |  9 +++++----
+ install.sh               |  5 +++--
+ isparto.sh               |  4 ++--
+ lib/snapshot.sh          | 20 +++++++++++++++++++-
+ scripts/release.sh       | 16 +++++++++++-----
+ docs/session-log.md      | (this entry)
+ 14 files changed, 80 insertions(+), 34 deletions(-)
+```
+
+### Notes
+- 首次对项目做系统性阶段 Review：四视角并行（新用户体验/产品完整度/代码健壮性/文档一致性），产出 57 个发现
+- 系统决策模式：不逐项讨论，一次性出决策表让用户 review，高效对齐
+- Doc Engineer 发现 snapshot.sh 编码变更的向后兼容问题——旧快照用 `__` 编码，新代码用 `%XX`，已加 legacy_encode_path fallback
+- Process Observer 审计标记 B3（QA 缺失）为 FAIL，补跑 Codex QA review 后通过
+- v0.8 前三项验收条件本次全部完成，只剩"1 个外部用户冷启动验证"
+- 用户决定不立即发版，等后续工作一起打包为 v0.7.0
+- 累计统计（10 sessions）：~29 Developer spawned, ~17 Codex reviews, ~18 issues caught

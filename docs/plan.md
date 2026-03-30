@@ -75,9 +75,9 @@ v2.x  CEO 工作台      用户 = 老板，说需求看结果，不碰过程
 | 正式发布 | v1.0 | 稳定（连续版本无 hotfix）+ Getting Started 教程 + 基本 issue 响应机制 | — |
 
 **v0.8 验收条件：**
-- [ ] 新用户入门修复（README Prerequisites、/init-project Next Steps、troubleshooting 安装问题）
-- [ ] 代码关键修复（snapshot 路径编码、release.sh 跨平台、install.sh Python3 检查）
-- [ ] 文档对齐（命令计数、术语统一、Solo Checklist、Setup Assistant 脚注）
+- [x] 新用户入门修复（README Prerequisites、/init-project Next Steps、troubleshooting 安装问题）— PR #78
+- [x] 代码关键修复（snapshot 路径编码+向后兼容、release.sh 跨平台、install.sh Python3 检查）— PR #78
+- [x] 文档对齐（命令计数、术语统一、Solo Checklist）— PR #78
 - [ ] 1 个外部用户冷启动验证（看 README → 安装 → /init-project → /start-working → /end-working 全流程）
 - [x] 按角色独立配置模型 — v0.6.0 实现声明式角色-模型映射表（docs/configuration.md#agent-model-configuration），角色定义与模型名解耦。运行时自动切换留给 v1.x
 - [x] User Preference Interface — memory/CLAUDE.md 领地分界、三级偏好模型、冲突协议、memory 写入规则、Plan Mode 自动触发
