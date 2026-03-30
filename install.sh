@@ -571,6 +571,19 @@ else
     if $_needs_user_hook_patch; then
         printf "  ${BLUE}[dry-run]${NC} Would register Process Observer hooks in user settings (~/.claude/settings.json)\n"
     fi
+    # Check for workflow matchers that would be cleaned from user level
+    _needs_user_hook_cleanup=false
+    if [ -f "$_user_settings" ]; then
+        for _wf_matcher in "Edit" "Write" "mcp__codex-reviewer__codex"; do
+            if grep -q "\"matcher\"[[:space:]]*:[[:space:]]*\"$_wf_matcher\"" "$_user_settings" 2>/dev/null; then
+                _needs_user_hook_cleanup=true
+                break
+            fi
+        done
+    fi
+    if $_needs_user_hook_cleanup; then
+        printf "  ${BLUE}[dry-run]${NC} Would remove workflow hooks (Edit/Write/Codex) from user settings (moved to project level)\n"
+    fi
 fi
 
 # ── Track installed version ──────────────────────────────────
