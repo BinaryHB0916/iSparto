@@ -15,8 +15,8 @@ Your responsibility: Report current status and suggest next steps. Do not write 
    - If the log doesn't exist yet, skip this — it will be created on the first /end-working
 4. Quick check: Is the current code state consistent with docs/ documentation, or has any drift occurred?
 5. Verify project-level Process Observer hooks:
-   - Check if .claude/settings.json contains PreToolUse hooks with Edit/Write/mcp__codex-reviewer__codex matchers
-   - If missing: auto-add them (same JSON as /init-project step 6) and inform the user: "Added iSparto workflow hooks to project settings"
+   - Check if .claude/settings.json contains PreToolUse hooks with Edit/Write/mcp__codex-reviewer__codex matchers **and** each matcher's hooks array includes the `pre-tool-check.sh` command
+   - If any matcher is missing or its hook command is absent: auto-add them (same JSON as /init-project step 6) and inform the user: "Added iSparto workflow hooks to project settings"
    - This auto-repair ensures projects created before the layered hooks architecture get patched on first /start-working
 6. Confirm the current branch:
    - If on main (expected after last session's merge): create a new feat/fix/hotfix branch for the upcoming task
