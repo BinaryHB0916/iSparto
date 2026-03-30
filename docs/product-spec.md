@@ -66,8 +66,8 @@ v2.x  CEO 工作台      用户 = 老板，说需求看结果，不碰过程
 ### 第一层：流程自治（v0.x → v1.x 的桥梁）
 团队能自己跑完 plan → code → review → test → merge 全流程，不需要用户在中间审批。
 
-- v0.x 已实现：Solo + Codex 模式、auto PR merge、end-working 全自动
-- 缺口：跨 session 任务续接、多任务并行管理、失败自动重试与回滚
+- v0.x 已实现：Solo + Codex 模式、auto PR merge、end-working 全自动、plan.md 驱动的跨 session 续接、Agent Team 并行读写
+- 缺口：多任务并行管理（同时推进多个独立任务）、失败自动重试与回滚
 
 ### 第二层：状态可见性（v1.x 的核心）
 用户不写代码，但需要知道团队在干嘛、进展如何、有没有卡住。

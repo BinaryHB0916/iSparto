@@ -3,7 +3,7 @@
 ## 已完成
 
 ### Wave 0: 核心框架
-- [x] 6 个 slash commands (start-working, end-working, plan, init-project, migrate, env-nogo)（Wave 2 新增 /restore 后扩展为 7 个）
+- [x] 7 个 slash commands (start-working, end-working, plan, init-project, migrate, env-nogo, restore)
 - [x] 4 个文档模板 (product-spec, tech-spec, design-spec, plan)
 - [x] CLAUDE-TEMPLATE.md 项目模板
 - [x] settings.json 参考配置
@@ -41,15 +41,15 @@
 ### Wave 4: 自举迁移
 - [x] iSparto 项目自身迁移到 iSparto 工作流 (CLAUDE.md, settings.json, product-spec, plan.md)
 
-## 当前 Wave
-
 ### Wave 5: Dogfooding 验证
 - [x] 场景 1: isparto-website 项目 — /migrate 已完成
 - [x] 场景 2: 萌芽勇气 (iOS app) — /migrate 已完成
-- [ ] 场景 3: 内部项目 A — /init-project 从零开始（用户自行操作）
-- [ ] 场景 4: 内部项目 B — /init-project 从零开始（用户自行操作）
+- [x] 场景 3: 内部项目 A（勇芽 iOS）— /init-project 已完成（用户自行操作）
+- [x] 场景 4: 内部项目 B（meic）— /init-project 已完成（用户自行操作）
 - [x] Session Log 自动采集 — /end-working 自动生成 session report，/start-working 自动读取历史
-- [ ] 每个场景记录：Wave 数量、并行效率、Codex 拦截问题、截图（现在由 session-log.md 自动采集）
+- [x] 每个场景记录：Wave 数量、并行效率、Codex 拦截问题、截图（由 session-log.md 自动采集替代）
+
+## 当前阶段
 
 ## 产品路线图
 
@@ -67,15 +67,18 @@ v2.x  CEO 工作台      用户 = 老板，说需求看结果，不碰过程
 
 **交付标准：一个没见过 iSparto 的 Claude Code 用户，看 README 就能装好、用起来、不找你问。**
 
-| 里程碑 | 版本 | 标志 |
-|--------|------|------|
-| 自用可靠 | v0.5 | 3 个 dogfooding 场景全部跑通 |
-| 外部可用 | v0.8 | 至少 1 个外部用户完整跑通，无需手把手指导 |
-| 正式发布 | v1.0 | 稳定（连续版本无 hotfix）+ Getting Started 教程 + 基本 issue 响应机制 |
+| 里程碑 | 版本 | 标志 | 状态 |
+|--------|------|------|------|
+| 自用可靠 | v0.5 | 4 个 dogfooding 场景全部跑通 | ✅ v0.5.0 达成 |
+| 架构加固 | v0.6 | Process Observer 全流量监管、角色-模型解耦、review 触发翻转 | ✅ v0.6.4 达成 |
+| 外部可用 | v0.8 | 至少 1 个外部用户完整跑通，无需手把手指导 | 进行中 |
+| 正式发布 | v1.0 | 稳定（连续版本无 hotfix）+ Getting Started 教程 + 基本 issue 响应机制 | — |
 
-**剩余工作：**
-- [ ] 安装脚本 ASCII art banner — 黑客帝国风格的 fancy 安装头（ASCII logo + 动画效果）
-- [ ] GitHub Actions CI 质量门 — PR 必须通过 CI 检查才能 merge
+**v0.8 验收条件：**
+- [ ] 新用户入门修复（README Prerequisites、/init-project Next Steps、troubleshooting 安装问题）
+- [ ] 代码关键修复（snapshot 路径编码、release.sh 跨平台、install.sh Python3 检查）
+- [ ] 文档对齐（命令计数、术语统一、Solo Checklist、Setup Assistant 脚注）
+- [ ] 1 个外部用户冷启动验证（看 README → 安装 → /init-project → /start-working → /end-working 全流程）
 - [x] 按角色独立配置模型 — v0.6.0 实现声明式角色-模型映射表（docs/configuration.md#agent-model-configuration），角色定义与模型名解耦。运行时自动切换留给 v1.x
 - [x] User Preference Interface — memory/CLAUDE.md 领地分界、三级偏好模型、冲突协议、memory 写入规则、Plan Mode 自动触发
 - [x] Process Observer 角色定义与文档 — 合规监督角色（实时拦截 hooks + 事后审计 sub-agent），docs/process-observer.md + 各文档集成

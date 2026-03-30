@@ -47,6 +47,8 @@ iSparto turns a single Agent into **a team with clear roles**: Lead assembles st
 
 ## Installation
 
+**Prerequisites:** [Claude Max](https://claude.ai) ($100/mo) + [ChatGPT Plus](https://chatgpt.com) ($20/mo) subscriptions are required. iSparto uses Claude Code as the runtime and Codex CLI as the Developer role.
+
 ```bash
 curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/bootstrap.sh | bash
 ```

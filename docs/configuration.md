@@ -145,7 +145,7 @@ Template files used during project initialization:
 
 | Content | Description |
 |---------|-------------|
-| 7 custom commands | `/start-working`, `/end-working`, `/plan`, `/init-project`, `/env-nogo`, `/migrate`, `/restore` are universal for all projects |
+| 7 slash commands | `/start-working`, `/end-working`, `/plan`, `/init-project`, `/env-nogo`, `/migrate`, `/restore` are universal for all projects |
 | Role definitions | Responsibilities and rules for Team Lead, Teammate, Developer, Doc Engineer, Process Observer |
 | Trigger condition table | Trigger logic for code review + QA smoke testing |
 | Branching strategy | Branch model for main / feat / fix / hotfix |

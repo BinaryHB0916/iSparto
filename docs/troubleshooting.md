@@ -1,5 +1,15 @@
 # Troubleshooting
 
+## Installation Issues
+
+| Problem | Cause | Solution |
+|---------|-------|----------|
+| `python3 not found` during install | Python 3 is not installed or not in PATH | Install Python 3: `brew install python3` (macOS) or `apt install python3` (Linux), then re-run the installer |
+| `npm: command not found` | Node.js/npm is not installed | Install Node.js from https://nodejs.org/ (LTS recommended) or via `brew install node` |
+| Codex login fails | ChatGPT subscription is inactive or network issue | Verify your ChatGPT Plus subscription is active at https://chatgpt.com, then run `codex login` manually |
+
+## Runtime Issues
+
 | Problem | Cause | Solution |
 |---------|-------|----------|
 | Codex MCP status shows ✘ failed | MCP Server command is incorrect, or Codex CLI is not installed/not logged in | Verify that `codex --version` and `codex login status` work correctly, then run `claude mcp remove codex-reviewer -s user && claude mcp add codex-reviewer -s user -- npx -y codex-mcp-server` and restart Claude Code |

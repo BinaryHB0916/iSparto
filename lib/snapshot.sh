@@ -28,7 +28,15 @@ SNAPSHOT_DIR="$ISPARTO_HOME/snapshots"
 # ── Helpers ──────────────────────────────────────────────────
 
 encode_path() {
+    echo "$1" | sed 's|%|%25|g; s|/|%2F|g; s| |%20|g'
+}
+
+legacy_encode_path() {
     echo "$1" | sed 's|[/ ]|__|g'
+}
+
+decode_path() {
+    echo "$1" | sed 's|%20| |g; s|%2F|/|g; s|%25|%|g'
 }
 
 resolve_path() {
@@ -151,6 +159,14 @@ cmd_restore() {
 
         local encoded
         encoded="$(encode_path "$rel_path")"
+        # Backward compatibility: try legacy encoding if file not found with new encoding
+        if [ "$status" = "exists" ] && [ ! -f "$snap_dir/files/$encoded" ]; then
+            local legacy_encoded
+            legacy_encoded="$(legacy_encode_path "$rel_path")"
+            if [ -f "$snap_dir/files/$legacy_encoded" ]; then
+                encoded="$legacy_encoded"
+            fi
+        fi
 
         case "$status" in
             exists)
@@ -329,7 +345,9 @@ cmd_prune() {
             [ -d "$d" ] && snap_dirs+=("$d")
         done
         # Sort newest first (lexicographic on our YYYYMMDD-HHMMSS ID format)
-        IFS=$'\n' snap_dirs=($(printf '%s\n' "${snap_dirs[@]}" | sort -r)); unset IFS
+        local _saved_ifs="$IFS"
+        IFS=$'\n' snap_dirs=($(printf '%s\n' "${snap_dirs[@]}" | sort -r))
+        IFS="$_saved_ifs"
         for snap_dir in "${snap_dirs[@]}"; do
             [ ! -f "$snap_dir/metadata.txt" ] && continue
             count=$((count + 1))

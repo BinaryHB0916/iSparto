@@ -88,10 +88,11 @@ Team Lead runs Doc Engineer audit (as sub-agent)
   - Same checklist as Agent Team mode (see Doc Engineer role in roles.md)
     |
 Process Observer compliance audit (as sub-agent)
-  - Branch convention check
-  - Developer invocation compliance check
-  - Doc Engineer compliance check
-  - Ownership violation check
+  - Branch convention check (A1-A3)
+  - Developer invocation compliance check (B1-B4)
+  - Doc Engineer compliance check (C1-C4)
+  - PR workflow compliance check (D1-D2)
+  - Ownership violation check (E1-E2)
   - Outputs deviation report to session briefing
     |
 Team Lead pushes branch -> creates PR -> merges to main -> cleans up branch
