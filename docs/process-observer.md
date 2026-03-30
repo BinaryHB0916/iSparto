@@ -17,7 +17,7 @@ Process Observer 不参与开发决策，只监督流程合规性。它与 Doc E
 
 通过 Claude Code 的 PreToolUse hook 实现。hook 是一个 shell 脚本，在每次工具调用前被触发，检查命令是否匹配高危操作清单。如果匹配，阻止执行并输出原因。
 
-Hooks 注册在用户级 `~/.claude/settings.json` 中，所有项目共享。`install.sh --upgrade` 自动注册到用户级配置。
+Hooks 分两层注册：用户级 `~/.claude/settings.json` 放 Bash 安全规则（`install.sh` 管理），项目级 `.claude/settings.json` 放 Edit/Write/Codex 工作流规则（`/init-project` 注册，`/start-working` 校验）。
 
 ### 触发条件
 

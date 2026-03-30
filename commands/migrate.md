@@ -48,10 +48,22 @@ Your job: scan the current project, report what exists and what's missing, propo
      }
      ```
      If .claude/settings.json already exists, merge these entries without removing existing settings.
-     Note: Process Observer hooks are registered in user-level ~/.claude/settings.json (managed by install.sh), NOT in project-level settings. Do NOT add hooks here.
-   - Verify Process Observer hooks are registered in user-level ~/.claude/settings.json:
-     - Check if ~/.claude/settings.json contains PreToolUse hooks with Bash/Edit/Write/mcp__codex-reviewer__codex matchers
-     - If missing: inform the user to run `~/.isparto/install.sh --upgrade` to register hooks globally
+     Also merge iSparto workflow hooks into the project-level .claude/settings.json (Edit/Write/Codex matchers only — Bash safety hook is at user level, managed by install.sh):
+     ```json
+     {
+       "hooks": {
+         "PreToolUse": [
+           { "matcher": "Edit", "hooks": [{ "type": "command", "command": "bash ~/.isparto/hooks/process-observer/scripts/pre-tool-check.sh" }] },
+           { "matcher": "Write", "hooks": [{ "type": "command", "command": "bash ~/.isparto/hooks/process-observer/scripts/pre-tool-check.sh" }] },
+           { "matcher": "mcp__codex-reviewer__codex", "hooks": [{ "type": "command", "command": "bash ~/.isparto/hooks/process-observer/scripts/pre-tool-check.sh" }] }
+         ]
+       }
+     }
+     ```
+     If .claude/settings.json already has these hooks, skip. Do not duplicate entries.
+   - Verify user-level Bash safety hook is registered in ~/.claude/settings.json:
+     - Check if ~/.claude/settings.json contains a PreToolUse hook with `Bash` matcher
+     - If missing: inform the user to run `~/.isparto/install.sh --upgrade` to register the Bash safety hook
    - Append iSparto sections to CLAUDE.md (do not replace existing content)
    - Create missing docs from templates
    - Generate plan.md based on current project state

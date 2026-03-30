@@ -374,9 +374,10 @@ else
 fi
 
 # ── Patch user-level settings (hooks registration) ──────────
-# Register Process Observer hooks in user-level ~/.claude/settings.json so all
-# projects share the same hooks. This replaces the old project-level approach
-# which required per-project registration and didn't propagate on upgrade.
+# Register Process Observer Bash safety hook in user-level ~/.claude/settings.json.
+# Bash rules (git dangerous ops, sensitive files, destructive deletes) are universal
+# and benefit all projects. Workflow hooks (Edit/Write/Codex) are registered at
+# project level by /init-project and /migrate.
 
 _user_settings="$HOME/.claude/settings.json"
 if ! $DRY_RUN; then
@@ -390,7 +391,7 @@ import json, sys, os
 
 path = os.path.expanduser('~/.claude/settings.json')
 hook_cmd = 'bash ' + os.path.expanduser('~/.isparto/hooks/process-observer/scripts/pre-tool-check.sh')
-required_matchers = ['Bash', 'Edit', 'Write', 'mcp__codex-reviewer__codex']
+required_matchers = ['Bash']
 
 try:
     if os.path.exists(path):
@@ -451,8 +452,33 @@ for matcher in required_matchers:
         })
         changed = True
 
+# Clean up workflow matchers that should not be at user level (PR #69 residue)
+workflow_matchers_to_remove = ['Edit', 'Write', 'mcp__codex-reviewer__codex']
+new_ptu = []
+for entry in pre_tool_use:
+    if isinstance(entry, dict) and entry.get('matcher') in workflow_matchers_to_remove:
+        eh = entry.get('hooks', [])
+        new_eh = [h for h in eh if not (isinstance(h, dict) and h.get('command', '').endswith('pre-tool-check.sh'))]
+        if len(new_eh) != len(eh):
+            changed = True
+        if new_eh:
+            entry['hooks'] = new_eh
+            new_ptu.append(entry)
+        else:
+            changed = True
+    else:
+        new_ptu.append(entry)
+hooks['PreToolUse'] = new_ptu
+
 if not changed:
     sys.exit(0)
+
+# Clean up empty structures
+if not hooks.get('PreToolUse'):
+    if 'PreToolUse' in hooks:
+        del hooks['PreToolUse']
+    if not hooks:
+        del settings['hooks']
 
 with open(path, 'w') as f:
     json.dump(settings, f, indent=2)
@@ -461,20 +487,20 @@ with open(path, 'w') as f:
 print('PATCHED')
 " 2>&1 || true)
         if [ "$_patch_result" = "PATCHED" ]; then
-            printf "  ${GREEN}✓${NC} Process Observer hooks registered in user settings (~/.claude/settings.json)\n"
+            printf "  ${GREEN}✓${NC} Process Observer Bash hook registered in user settings (~/.claude/settings.json)\n"
         elif echo "$_patch_result" | grep -q "^ERROR:"; then
             printf "  ${YELLOW}→${NC} Could not patch ~/.claude/settings.json: ${_patch_result#ERROR: }\n"
             printf "    Add Process Observer hooks to ~/.claude/settings.json manually\n"
         fi
     fi
 
-    # Clean up project-level hook residues (from older versions)
+    # Clean up project-level Bash hook residue (Bash is now at user level;
+    # Edit/Write/Codex remain at project level — do not remove them)
     if [ -f ".claude/settings.json" ] && command -v python3 &>/dev/null; then
         _cleanup_result=$(python3 -c "
 import json, sys, os
 
 path = '.claude/settings.json'
-hook_cmd = 'bash ' + os.path.expanduser('~/.isparto/hooks/process-observer/scripts/pre-tool-check.sh')
 
 try:
     with open(path) as f:
@@ -493,15 +519,19 @@ for entry in pre_tool_use:
     if not isinstance(entry, dict):
         new_pre_tool_use.append(entry)
         continue
-    entry_hooks = entry.get('hooks', [])
-    new_entry_hooks = [h for h in entry_hooks if not (isinstance(h, dict) and h.get('command', '').endswith('pre-tool-check.sh'))]
-    if len(new_entry_hooks) != len(entry_hooks):
-        changed = True
-    if new_entry_hooks:
-        entry['hooks'] = new_entry_hooks
-        new_pre_tool_use.append(entry)
+    # Only remove Bash matcher from project level (now managed at user level)
+    if entry.get('matcher') == 'Bash':
+        entry_hooks = entry.get('hooks', [])
+        new_eh = [h for h in entry_hooks if not (isinstance(h, dict) and h.get('command', '').endswith('pre-tool-check.sh'))]
+        if len(new_eh) != len(entry_hooks):
+            changed = True
+        if new_eh:
+            entry['hooks'] = new_eh
+            new_pre_tool_use.append(entry)
+        else:
+            changed = True
     else:
-        changed = True
+        new_pre_tool_use.append(entry)
 
 if not changed:
     sys.exit(0)
@@ -520,7 +550,7 @@ with open(path, 'w') as f:
 print('CLEANED')
 " 2>&1 || true)
         if [ "$_cleanup_result" = "CLEANED" ]; then
-            printf "  ${GREEN}✓${NC} Removed old project-level Process Observer hooks (now in user settings)\n"
+            printf "  ${GREEN}✓${NC} Removed old project-level Bash hook (now in user settings)\n"
         fi
     fi
 else
@@ -531,7 +561,7 @@ else
     elif ! grep -q "pre-tool-check.sh" "$_user_settings" 2>/dev/null; then
         _needs_user_hook_patch=true
     else
-        for _matcher in "Bash" "Edit" "Write" "mcp__codex-reviewer__codex"; do
+        for _matcher in "Bash"; do
             if ! grep -q "\"matcher\"[[:space:]]*:[[:space:]]*\"$_matcher\"" "$_user_settings" 2>/dev/null; then
                 _needs_user_hook_patch=true
                 break

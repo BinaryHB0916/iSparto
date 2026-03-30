@@ -19,5 +19,6 @@
 | Upgrade fails with checksum error | Downloaded file does not match the expected checksum | Re-run the upgrade command. If persistent, check your network connection or try `curl -fsSL .../bootstrap.sh \| bash` for a fresh install |
 | session-log.md not created after /end-working | Using an older version of end-working.md that predates the session log feature | Run `~/.isparto/install.sh --upgrade` to update commands, then run `/end-working` again |
 | /restore shows 'no snapshots found' | Snapshot script not installed, or operation was performed before the snapshot feature existed | Run `~/.isparto/install.sh --upgrade` to install the snapshot system. For operations done before the feature existed, use `git log` and `git checkout` to revert manually |
-| Lead 直接写代码不被拦截 | hooks 未注册或只注册了部分 matcher | 检查 `~/.claude/settings.json` 中 PreToolUse 是否包含 Bash/Edit/Write/Codex 四个 matcher。跑 `~/.isparto/install.sh --upgrade` 补全 |
-| 升级后旧项目 hooks 不生效 | 旧版 hooks 注册在项目级，upgrade 不传播 | 跑 `~/.isparto/install.sh --upgrade`（新版自动注册到用户级） |
+| Lead 直接写代码不被拦截 | 项目级 `.claude/settings.json` 缺少 Edit/Write matcher | 跑 `/migrate` 补全，或下次 `/start-working` 会自动校验补全 |
+| 升级后旧项目 hooks 不生效 | 旧版 hooks 注册方式与当前分层架构不一致 | 跑 `~/.isparto/install.sh --upgrade` 更新用户级 Bash hook，再跑 `/start-working` 自动补全项目级工作流 hooks |
+| 非 iSparto 项目被 Edit/Write hook 拦截 | 用户级错误注册了工作流 matcher（v0.6.3 遗留） | 跑 `~/.isparto/install.sh --upgrade`（新版自动清理用户级中的工作流 matcher） |
