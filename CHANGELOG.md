@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.4] - 2026-03-30
+
+### Fixed
+
+- Hooks registration layered: user-level registers only `Bash` (universal safety), project-level registers `Edit`/`Write`/`Codex` (iSparto workflow rules) — non-iSparto projects no longer affected by Edit/Write interception (PR #69 regression)
+- `install.sh --upgrade` auto-cleans v0.6.3 residual workflow matchers (Edit/Write/Codex) from user-level `~/.claude/settings.json`
+- `--dry-run` now reports pending workflow matcher cleanup from user-level settings
+- `/start-working` auto-repair validates specific `pre-tool-check.sh` command per matcher, not just matcher existence
+- Hardcoded model name `"gpt-5.3-codex"` removed from `docs/roles.md` Developer role definition — replaced with configuration table reference (completes role-model decoupling)
+
+### Added
+
+- `/start-working` project-level hooks auto-validation step — auto-adds missing Edit/Write/Codex hooks on session start
+- `/init-project` and `/migrate` now register Edit/Write/Codex workflow hooks at project level
+- MCP server name coupling recorded as known limitation in design-decisions.md
+
+### Changed
+
+- design-decisions.md: "Hooks 注册位置" updated to "Hooks 注册分层" reflecting layered architecture
+- troubleshooting.md: updated hooks-related entries for layered architecture + added entry for PR #69 residue cleanup
+
 ## [0.6.3] - 2026-03-30
 
 ### Added
