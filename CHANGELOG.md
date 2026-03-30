@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Self-validating startup: `/start-working` runs build/test smoke check from CLAUDE.md's "Common Commands" section after docs drift check — non-blocking (report only), skipped if no commands defined
+- "Stateless Session" concept in `docs/concepts.md` — explicit declaration that each session starts with zero memory, all state reconstructed from plan.md + session-log.md + git + CLAUDE.md. Inspired by 12 Factor Agents (HumanLayer) Factor 12: Stateless Reducer
+- CLAUDE-TEMPLATE.md exception documented in "不直写代码"动机集中化 design decision — template carries full copy since generated projects cannot reference framework internals
+
+### Fixed
+
+- Runtime health check command source: restricted to "Common Commands" section only, not the descriptive "Build" field in Tech Stack (Codex review P2)
+
 ## [0.6.6] - 2026-03-30
 
 ### Added
