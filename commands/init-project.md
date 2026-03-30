@@ -30,10 +30,22 @@ Your responsibility: Based on the product description provided by the user, gene
    ```
    If the project already has .claude/settings.json, merge these settings into it without removing existing entries.
    If the project needs platform-specific plugins (e.g., swift-lsp for iOS), add enabledPlugins here too.
-   Note: Process Observer hooks are registered in user-level ~/.claude/settings.json (managed by install.sh), NOT in project-level settings. Do NOT add hooks here.
-7. Verify Process Observer hooks are registered in user-level ~/.claude/settings.json:
-   - Check if ~/.claude/settings.json contains PreToolUse hooks with Bash/Edit/Write/mcp__codex-reviewer__codex matchers
-   - If missing: inform the user to run `~/.isparto/install.sh --upgrade` to register hooks globally
+   Also merge iSparto workflow hooks into the project-level .claude/settings.json (Edit/Write/Codex matchers only — Bash safety hook is at user level, managed by install.sh):
+   ```json
+   {
+     "hooks": {
+       "PreToolUse": [
+         { "matcher": "Edit", "hooks": [{ "type": "command", "command": "bash ~/.isparto/hooks/process-observer/scripts/pre-tool-check.sh" }] },
+         { "matcher": "Write", "hooks": [{ "type": "command", "command": "bash ~/.isparto/hooks/process-observer/scripts/pre-tool-check.sh" }] },
+         { "matcher": "mcp__codex-reviewer__codex", "hooks": [{ "type": "command", "command": "bash ~/.isparto/hooks/process-observer/scripts/pre-tool-check.sh" }] }
+       ]
+     }
+   }
+   ```
+   If .claude/settings.json already has these hooks, skip. Do not duplicate entries.
+7. Verify user-level Bash safety hook is registered in ~/.claude/settings.json:
+   - Check if ~/.claude/settings.json contains a PreToolUse hook with `Bash` matcher
+   - If missing: inform the user to run `~/.isparto/install.sh --upgrade` to register the Bash safety hook
 8. Initialize the git repository and create the main branch
 9. Invoke Codex MCP for an architecture pre-review (based on tech-spec.md, using the architecture review prompt template) and report the review results to the user
 10. After the user confirms all documentation and architecture pre-review results, project initialization is complete and you may begin /start-working
