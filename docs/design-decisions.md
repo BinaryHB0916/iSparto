@@ -44,3 +44,4 @@
 | Hooks 注册分层 | 用户级 = Bash 安全规则，项目级 = Edit/Write/Codex 工作流规则 | Edit/Write 拦截是 iSparto 特有规则，放用户级会影响非 iSparto 项目。Bash 安全规则是通用的，放用户级 upgrade 一次全局生效。`/start-working` 校验解决项目级传播问题 |
 | Process Observer Audit 用 Sonnet | sub-agent 降级为 Sonnet 4.6 | Hooks 核心层已覆盖所有关键合规检查，sub-agent 是建议层。降级不引入人工兜底依赖——质量下降由 Hooks 结构性保障兜底，不需要人 |
 | MCP server 名称耦合（known limitation） | 未解决——当前 `codex-reviewer` 名称散落在 install.sh、settings.json matcher、workflow-rules.json、init-project/migrate 验证逻辑中 | Hook matcher 名由 Claude Code 根据 MCP 注册名自动生成（`mcp__<server>__<tool>`），无法像模型名一样抽成变量。更换 Developer 实现（如 Codex → Kimi）需同步修改所有散落点。角色-模型解耦已完成，但角色-MCP server 解耦受限于 Claude Code hook 机制 |
+| Rejected approaches tracking | plan.md "Rejected Approaches" table | Prevents AI from re-attempting disproven paths. Inspired by Pretext (chenglou/pretext) AGENTS.md pattern of explicitly recording "tried and rejected" approaches. Stored in plan.md because it is read every /start-working — a separate file risks being ignored |
