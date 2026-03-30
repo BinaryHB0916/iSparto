@@ -16,10 +16,11 @@ Your responsibility: Report current status and suggest next steps. Do not write 
    - If the log doesn't exist yet, skip this — it will be created on the first /end-working
 4. Quick check: Is the current code state consistent with docs/ documentation, or has any drift occurred?
 5. Runtime health check (if applicable):
-   - If the project has a build command defined in CLAUDE.md: run the build and verify it succeeds
-   - If the project has test commands defined in CLAUDE.md: run the test suite and verify it passes
+   - Check CLAUDE.md's "Common Commands" section for explicit build/test commands (e.g., `npm run build`, `swift build`, `./gradlew test`). Do NOT use the "Build" field in Tech Stack — it is descriptive (e.g., "Xcode", "Vite"), not executable
+   - If a build command exists: run it and verify it succeeds
+   - If a test command exists: run the test suite and verify it passes
    - Report failures in the briefing but do not block — user decides whether to fix first or proceed with new work
-   - If the project has no build/test commands: skip this step
+   - If no explicit build/test commands are found: skip this step
    - This step catches environment issues invisible to documentation checks: dependency updates, build environment drift, incomplete syncs from previous sessions
 6. Verify project-level Process Observer hooks:
    - Check if .claude/settings.json contains PreToolUse hooks with Edit/Write/mcp__codex-reviewer__codex matchers **and** each matcher's hooks array includes the `pre-tool-check.sh` command
