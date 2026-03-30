@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Process Observer Audit agent definition file (`agents/process-observer-audit.md`) now installed by `install.sh` — without this file the Sonnet model downgrade from v0.6.4 silently fell back to Lead's Opus model
+
+### Added
+
+- iSparto framework reference line in `CLAUDE-TEMPLATE.md` for generated project CLAUDE.md files
+
 ## [0.6.4] - 2026-03-30
 
 ### Fixed
