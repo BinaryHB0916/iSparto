@@ -143,6 +143,8 @@ Suggestion: Use `git push` (without --force) or `git push --force-with-lease` fo
 
 由 Team Lead 在 /end-working 流程中作为 sub-agent 派生，与 Doc Engineer 同级。审计当前 session 的执行过程，检查是否有违反工作流规范的行为。
 
+事后审计使用 Sonnet 4.6 模型（通过 `~/.claude/agents/process-observer-audit.md` 定义），而非 Lead 的 Opus 模型。这是有意的降级——审计工作是结构化的 checklist 比对，Sonnet 足以胜任，且关键合规检查已前移到 Hooks 层。
+
 ### 触发时机
 
 /end-working 流程中，在 Doc Engineer 文档审计之后、推分支/建 PR 之前执行。
