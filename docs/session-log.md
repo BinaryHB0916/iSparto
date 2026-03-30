@@ -488,3 +488,33 @@
 - v0.6.6 引入两个框架级改进：rejected approaches 追踪 + 行为模板分类
 - 8 个 PR 合并（#80-#87），2 个版本发布
 - 累计统计（11 sessions）：~29 Developer spawned, ~17 Codex reviews, ~18 issues caught
+
+## 2026-03-30 Session (continued 2)
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | v0.8 准备（Harness Engineering 研究吸收） |
+| Tasks completed | session log 补录(PR #88), design-decisions CLAUDE-TEMPLATE 例外(PR #89), 自验证启动+Stateless Session 原则(PR #90), health check 命令源修复(PR #91), v0.6.7 发布(PR #92-#93) |
+| Developers spawned | 0 (Solo 模式) |
+| Codex reviews | 1 (Tier 2b review: start-working.md runtime health check) |
+| Codex catches | 1 P2 — CLAUDE.md Build 字段是描述性文本(如 "Xcode")，直接执行会误报；限制为 Common Commands 区域 |
+| Key decisions | 吸收 Harness Engineering 研究(Anthropic long-running agent harness + 12 Factor Agents)，自验证启动设为非阻塞(通知而非门禁)，排除 5 项大团队需求(依赖层级/垃圾回收/JSON 替代 Markdown/自动 refactoring/Benchmark) |
+
+### Files Changed
+```
+ CHANGELOG.md               | 12 ++++++++++++
+ VERSION                    |  2 +-
+ commands/start-working.md  | 17 +++++++++++++----
+ docs/concepts.md           |  1 +
+ docs/design-decisions.md   |  4 +++-
+ docs/session-log.md        | (this entry + backfill)
+ 6 files changed, ~36 insertions
+```
+
+### Notes
+- 首次基于外部研究（OpenAI Harness Engineering + Anthropic long-running agent + 12 Factor Agents）系统性吸收改进
+- Codex review 补跑流程验证：Tier 2b 行为模板改动 Lead 直接写、Codex review，本次初始遗漏 review 后补跑，Codex 抓到 P2
+- 用户澄清 Solo 模式理解：确认 Lead 写行为模板 + Codex review 是 Tier 2b 正确流程
+- 6 个 PR 合并（#88-#93），1 个版本发布（v0.6.7）
+- 累计统计（12 sessions）：~29 Developer spawned, ~18 Codex reviews, ~19 issues caught
