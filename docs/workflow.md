@@ -161,23 +161,33 @@ All code changes trigger both implementation and QA unless they fall entirely wi
 | Permissions / security | Entitlements, Info.plist, credentials handling, encryption |
 | Infrastructure | CI/CD pipelines, deployment config, install/upgrade scripts |
 
-### Tier 2: QA only (no implementation review needed)
+### Tier 2: Partial review
+
+#### Tier 2a: QA only (no implementation review needed)
 
 | Category | Examples |
 |----------|----------|
 | Pure visual | Colors, fonts, layout constants, animation parameters, copy text |
 | Config value tweaks | Non-security config changes (timeouts, feature flags, display limits) |
 
+#### Tier 2b: Developer review only (no QA needed)
+
+| Category | Examples |
+|----------|----------|
+| Behavioral templates | `commands/*.md` and `templates/*.md` — system prompts that drive AI agent behavior. These iterate frequently (prompt engineering); Developer reviews for correctness, but QA smoke testing is not applicable to prompt wording |
+
 ### Tier 3: Skip (neither code review nor QA)
 
 | Category | Examples |
 |----------|----------|
-| Pure documentation | Markdown files, comments, READMEs — with zero code changes |
+| Pure documentation | Markdown files, comments, READMEs — with zero code changes. **Excludes** behavioral templates (`commands/*.md`, `templates/*.md`) — see Tier 2b |
 | Formatting only | Whitespace, indentation, linter auto-fixes — with zero logic changes |
 
 ### Wave-level safety net
 
 Each Wave must include at least one batch Developer review before completion, regardless of how individual changes are categorized. Do not defer all reviews to the delivery checkpoint — review at Wave boundaries to catch issues early.
+
+> **Behavioral templates are not documentation.** Files in `commands/*.md` and `templates/*.md` are system prompts that define AI agent behavior — they are executable definitions, not passive documentation. The `.md` extension does not make them Tier 3. Changes go through Tier 2b (Developer review, no QA).
 
 ---
 
