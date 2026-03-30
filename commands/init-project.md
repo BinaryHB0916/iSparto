@@ -52,4 +52,9 @@ Your responsibility: Based on the product description provided by the user, gene
 
 Note: If anything goes wrong during initialization, the user can run `/restore <snapshot_id>` to roll back all changes.
 
+After initialization is complete, tell the user the next steps:
+- Run `/start-working` to begin your first development session
+- Run `/env-nogo` if you want to verify your environment setup first
+- Run `/plan` if you want to review or adjust the development plan before starting
+
 $ARGUMENTS

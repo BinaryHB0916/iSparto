@@ -87,10 +87,10 @@ do_uninstall() {
     # Try snapshot system first, fall back to legacy manifest
     LATEST_SNAP=""
     if [ -x "$SNAPSHOT_SCRIPT" ]; then
-        LATEST_SNAP=$("$SNAPSHOT_SCRIPT" list --type=install 2>/dev/null | tail -1 | awk '{print $1}')
+        LATEST_SNAP=$("$SNAPSHOT_SCRIPT" list --type=install --latest 2>/dev/null || true)
     fi
 
-    if [ -n "$LATEST_SNAP" ] && [ "$LATEST_SNAP" != "No" ] && [ "$LATEST_SNAP" != "ID" ]; then
+    if [ -n "$LATEST_SNAP" ]; then
         if $dry_run; then
             printf "  [dry-run] Would restore from snapshot: $LATEST_SNAP\n"
         else

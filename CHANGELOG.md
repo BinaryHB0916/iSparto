@@ -9,8 +9,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.6.4] - 2026-03-30
 
-## [0.6.4] - 2026-03-30
-
 ### Fixed
 
 - Hooks registration layered: user-level registers only `Bash` (universal safety), project-level registers `Edit`/`Write`/`Codex` (iSparto workflow rules) — non-iSparto projects no longer affected by Edit/Write interception (PR #69 regression)

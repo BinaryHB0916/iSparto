@@ -80,8 +80,12 @@ printf "  ${GREEN}✓${NC} VERSION → $NEW_VERSION\n"
 # ── 3. Update CHANGELOG ─────────────────────────────────────
 
 # Replace [Unreleased] with [Unreleased]\n\n## [x.y.z] - date
-# Note: sed -i '' is macOS/BSD syntax. This script is designed for local macOS use only.
-sed -i '' "s/## \[Unreleased\]/## [Unreleased]\n\n## [$NEW_VERSION] - $TODAY/" CHANGELOG.md
+# Note: sed -i '' is macOS/BSD syntax.
+if [ "$(uname)" = "Darwin" ]; then
+    sed -i '' "s/## \[Unreleased\]/## [Unreleased]\n\n## [$NEW_VERSION] - $TODAY/" CHANGELOG.md
+else
+    sed -i "s/## \[Unreleased\]/## [Unreleased]\n\n## [$NEW_VERSION] - $TODAY/" CHANGELOG.md
+fi
 printf "  ${GREEN}✓${NC} CHANGELOG.md → [$NEW_VERSION] - $TODAY\n"
 
 # ── 4. Commit, push, and create PR ──────────────────────────
@@ -92,10 +96,12 @@ git push -u origin "$RELEASE_BRANCH"
 printf "  ${GREEN}✓${NC} Pushed $RELEASE_BRANCH\n"
 
 RELEASE_NOTES=$(sed -n "/^## \[$NEW_VERSION\]/,/^## \[/p" CHANGELOG.md | sed '$d' | sed '1d')
+RELEASE_NOTES_FILE=$(mktemp)
+echo "$RELEASE_NOTES" > "$RELEASE_NOTES_FILE"
 
 PR_URL=$(gh pr create \
     --title "release: v$NEW_VERSION" \
-    --body "$RELEASE_NOTES" \
+    --body-file "$RELEASE_NOTES_FILE" \
     --base main) || {
     printf "  ${RED}Error:${NC} PR creation failed. Branch '%s' has been pushed but no PR was created.\n" "$RELEASE_BRANCH" >&2
     printf "  Clean up manually: git push origin --delete %s\n" "$RELEASE_BRANCH" >&2
@@ -129,7 +135,7 @@ printf "  ${GREEN}✓${NC} Cleaned up $RELEASE_BRANCH\n"
 # ── 8. Build release assets ─────────────────────────────────
 
 RELEASE_TMPDIR=$(mktemp -d)
-trap 'rm -rf "$RELEASE_TMPDIR"' EXIT
+trap 'rm -rf "$RELEASE_TMPDIR" "${RELEASE_NOTES_FILE:-}"' EXIT
 
 cp install.sh "$RELEASE_TMPDIR/install.sh"
 (cd "$RELEASE_TMPDIR" && shasum -a 256 install.sh > checksums.sha256)
@@ -141,7 +147,7 @@ gh release create "v$NEW_VERSION" \
     "$RELEASE_TMPDIR/install.sh" \
     "$RELEASE_TMPDIR/checksums.sha256" \
     --title "v$NEW_VERSION" \
-    --notes "$RELEASE_NOTES"
+    --notes-file "$RELEASE_NOTES_FILE"
 
 printf "  ${GREEN}✓${NC} GitHub Release created\n"
 

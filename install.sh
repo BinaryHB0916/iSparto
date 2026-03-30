@@ -383,8 +383,9 @@ _user_settings="$HOME/.claude/settings.json"
 if ! $DRY_RUN; then
     mkdir -p "$HOME/.claude"
     if ! command -v python3 &>/dev/null; then
-        printf "  ${YELLOW}→${NC} python3 not found — skipped user hooks registration\n"
-        printf "    Add Process Observer hooks to ~/.claude/settings.json manually\n"
+        printf "  ${RED}✘${NC} python3 not found — required for Process Observer hooks registration\n"
+        printf "    Install Python 3 and re-run the installer.\n"
+        exit 1
     else
         _patch_result=$(python3 -c "
 import json, sys, os
