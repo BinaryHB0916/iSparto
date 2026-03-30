@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Rejected approaches tracking: `templates/plan-template.md` adds "Rejected Approaches" table; `/end-working` records rejected paths, `/start-working` surfaces them, Lead role requires recording, Doc Engineer audits coverage
+- "Behavioral Template" concept in `docs/concepts.md` — distinguishes executable system prompts (`commands/*.md`, `templates/*.md`) from passive documentation
+- Tier 2b (Developer review only, no QA) in `docs/workflow.md` for behavioral template changes — balances correctness review with prompt engineering iteration speed
+
+### Changed
+
+- Centralized "no direct code" rationale: single definition in CLAUDE.md Collaboration Mode section; all other locations (`docs/roles.md`, `CLAUDE-TEMPLATE.md`) reference it instead of duplicating
+- Module Boundaries table: Slash Commands and Doc Templates descriptions updated to reflect behavioral nature (system prompts, not passive docs)
+- Tier 3 now explicitly excludes behavioral templates (`commands/*.md`, `templates/*.md`)
+- `docs/design-decisions.md`: style unified to Chinese for all entries
+
 ## [0.6.5] - 2026-03-30
 
 ### Fixed
