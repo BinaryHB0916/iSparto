@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.9] - 2026-03-31
+
 ### Changed
 
 - Sensitive file detection rules (`commit-env-file`, `commit-env-file-bulk`, `commit-credentials`, `commit-ssh-keys`, `commit-aws-credentials`) removed from `dangerous-operations.json` — responsibility migrated to three-layer security system (`security-patterns.json`), which scans actual staged files and content instead of command string substrings, eliminating false positives
