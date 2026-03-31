@@ -40,13 +40,13 @@ v2.x  CEO 工作台      用户 = 老板，说需求看结果，不碰过程
 
 - **Agent Team 角色分工**: Team Lead 组装 prompt 协调、Developer (Codex) 实现代码、Teammate 并行执行、Doc Engineer 文档同步
 - **Wave 并行开发**: 一个 Wave 内多个 Developer 并行，tmux 分屏可视
-- **7 个 Slash Commands**: /init-project, /migrate, /start-working, /end-working, /plan, /env-nogo, /restore
+- **8 个 Slash Commands**: /init-project, /migrate, /start-working, /end-working, /plan, /env-nogo, /restore, /security-audit
 - **跨会话状态恢复**: plan.md 驱动，/start-working 自动恢复上下文
 - **跨模型质量门**: Lead 审查 Developer (Codex) 输出，覆盖不同模型的盲区
 - **文档自动同步**: Doc Engineer 每个 Wave 审计代码和文档一致性
 - **快照/恢复**: 每次操作前自动拍快照，/restore 一键回滚
 - **Session log**: docs/session-log.md 记录每次会话的开发指标
-- **Process Observer 合规监督**: 两层机制——Hooks 实时拦截灾难性操作（不可逆/数据丢失/敏感信息泄露），事后审计对照行为准则检查 session 全流程合规性（14 项 checklist）。Observer 不参与开发决策，只监督；偏差报告输出到 session briefing，不自动修改文件；修正建议反馈到规则中形成自我改进闭环
+- **Process Observer 合规监督**: 三层安全防御——L1 Write/Edit 实时内容扫描（拦截 critical secret）、L2 pre-commit 全量 secret/PII 扫描、L3 /security-audit 里程碑全量审计（含 git 历史和依赖检查）。事后审计对照行为准则检查 session 全流程合规性（14 项 checklist）。Observer 不参与开发决策，只监督；偏差报告输出到 session briefing，不自动修改文件；修正建议反馈到规则中形成自我改进闭环
 - **版本追踪与更新日志**: --upgrade 支持版本升级
 - **一键安装**: curl 一行命令搞定，支持 --dry-run 预览、--upgrade 升级、--uninstall 卸载
 

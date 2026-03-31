@@ -198,6 +198,11 @@ if ! $DRY_RUN; then
        "$ISPARTO_HOME/hooks/process-observer/rules/dangerous-operations.json"
     cp "$SCRIPT_DIR/hooks/process-observer/rules/workflow-rules.json" \
        "$ISPARTO_HOME/hooks/process-observer/rules/workflow-rules.json"
+    cp "$SCRIPT_DIR/hooks/process-observer/scripts/pre-commit-security.sh" \
+       "$ISPARTO_HOME/hooks/process-observer/scripts/pre-commit-security.sh"
+    chmod +x "$ISPARTO_HOME/hooks/process-observer/scripts/pre-commit-security.sh"
+    cp "$SCRIPT_DIR/hooks/process-observer/rules/security-patterns.json" \
+       "$ISPARTO_HOME/hooks/process-observer/rules/security-patterns.json"
 fi
 
 # ── Install local stub (isparto.sh) ──────────────────────
@@ -216,6 +221,8 @@ if ! $DRY_RUN; then
     SNAPSHOT_FILES=()
     SNAPSHOT_FILES+=("$HOME/.claude/CLAUDE-TEMPLATE.md")
     SNAPSHOT_FILES+=("$HOME/.claude/agents/process-observer-audit.md")
+    SNAPSHOT_FILES+=("$HOME/.isparto/hooks/process-observer/scripts/pre-commit-security.sh")
+    SNAPSHOT_FILES+=("$HOME/.isparto/hooks/process-observer/rules/security-patterns.json")
     for f in "$SCRIPT_DIR"/commands/*.md; do
         SNAPSHOT_FILES+=("$HOME/.claude/commands/$(basename "$f")")
     done

@@ -46,9 +46,15 @@ Your responsibility: Based on the product description provided by the user, gene
 7. Verify user-level Bash safety hook is registered in ~/.claude/settings.json:
    - Check if ~/.claude/settings.json contains a PreToolUse hook with `Bash` matcher
    - If missing: inform the user to run `~/.isparto/install.sh --upgrade` to register the Bash safety hook
-8. Initialize the git repository and create the main branch
-9. Invoke Codex MCP for an architecture pre-review (based on tech-spec.md, using the architecture review prompt template) and report the review results to the user
-10. After the user confirms all documentation and architecture pre-review results, project initialization is complete and you may begin /start-working
+8. Security baseline initialization:
+   - Read `~/.claude/templates/gitignore-security-baseline.md` to get the baseline .gitignore entries
+   - If the project already has a .gitignore, append any missing baseline entries (do not duplicate existing ones)
+   - If no .gitignore exists, create one from the baseline template
+   - Uncomment the dependency directory entries matching the project's tech stack (e.g., Node.js → uncomment node_modules/)
+   - Create an empty `.secureignore` file in the project root (for future false positive whitelisting)
+9. Initialize the git repository and create the main branch
+10. Invoke Codex MCP for an architecture pre-review (based on tech-spec.md, using the architecture review prompt template) and report the review results to the user
+11. After the user confirms all documentation and architecture pre-review results, project initialization is complete and you may begin /start-working
 
 Note: If anything goes wrong during initialization, the user can run `/restore <snapshot_id>` to roll back all changes.
 

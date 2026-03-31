@@ -22,6 +22,8 @@
 - Update docs/plan.md after completing tasks
 - Do not develop directly on main branch; use feat/ branches for new features, fix/ branches for bug fixes, hotfix/ branches for urgent production fixes
 - Core business logic must have unit tests
+- Sensitive data (API keys, tokens, passwords, personal information) must NOT be hardcoded in source code — use environment variables or config file references
+- .gitignore must cover the security baseline (see ~/.claude/templates/gitignore-security-baseline.md)
 <!-- Add or remove project-specific rules as needed; keep the total under 10 -->
 
 ## Collaboration Mode: Auto (Solo + Codex / Agent Team)
@@ -97,6 +99,7 @@ Applies to both **write** (code, docs, config) and **read** (code review, doc au
 - Do not commit directly to main branch
 - Use /restore to roll back if /init-project or /migrate produces unexpected results
 - Dangerous operations are automatically intercepted by Process Observer hooks; see hooks/process-observer/rules/dangerous-operations.json for the full list
+- Pre-commit security scan runs automatically before every commit; secrets found will block the commit
 
 ## User Preference Interface
 

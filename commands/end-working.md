@@ -48,8 +48,13 @@ Your responsibility: Ensure all changes and decisions from this session are capt
    - Output: deviation report (append to session briefing)
    - If rule correction suggestions are identified, record them in the briefing for the next /start-working session to reference
    - This step can run in parallel with the Doc Engineer audit in step 1
-5. git add -A && git commit && git push
-6. If all tasks on the current branch are complete (all reviews passed, docs updated):
+5. Security scan (before commit):
+   - Execute `bash $HOME/.isparto/hooks/process-observer/scripts/pre-commit-security.sh`
+   - If output contains BLOCK → stop the commit, report the specific issues and remediation suggestions to the user in the session briefing
+   - If output contains WARNING → include warnings in the session briefing, proceed with commit
+   - If passed → proceed to next step
+6. git add -A && git commit && git push
+7. If all tasks on the current branch are complete (all reviews passed, docs updated):
    - Create PR via `gh pr create`, merge via `gh pr merge --merge`
    - Delete local branch and switch back to main: `git checkout main && git pull && git branch -d <branch>` (remote branch is auto-deleted by GitHub on merge)
    - If `gh` CLI is NOT available: push the branch and inform the user to create and merge the PR manually on GitHub

@@ -69,7 +69,14 @@ Your job: scan the current project, report what exists and what's missing, propo
    - Generate plan.md based on current project state
    - Initialize git if not already done
 
-6. Run /env-nogo to verify the environment is ready
+6. Security baseline check:
+   - Read `~/.claude/templates/gitignore-security-baseline.md` and compare against the project's .gitignore
+   - Append any missing baseline entries to .gitignore (do not remove existing entries)
+   - Execute a full security scan equivalent to `/security-audit` on the existing codebase
+   - Record scan findings in docs/plan.md under a "Security" section, tagged with [SECURITY]
+   - If critical issues found, report them prominently in the migration output
+
+7. Run /env-nogo to verify the environment is ready
 
 Note: If anything goes wrong during migration, the user can run `/restore <snapshot_id>` to roll back all changes to the pre-migration state.
 
