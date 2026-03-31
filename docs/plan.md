@@ -56,6 +56,8 @@
 - [x] pre-tool-check.sh L1 扩展 — Write/Edit 实时内容安全扫描（5 个 critical patterns）
 - [x] /security-audit 命令 — 里程碑全量审计（代码 + .gitignore + git 历史 + 依赖）
 - [x] /end-working 集成 — commit 前安全扫描步骤
+- [x] /end-working 分支守卫 — commit 前检查是否在 main，是则先创建 docs/ 分支（修复 session log 提交撞 hook 的流程缺陷）
+- [x] 分支前缀规范化 — docs/ 和 release/ 正式加入 CLAUDE.md 和 Process Observer 审计 checklist
 - [x] /init-project + /migrate 集成 — 安全基线初始化 / 检查
 - [x] Codex QA + Developer prompt + Doc Engineer 审计清单增加安全检查
 - [x] gitignore-security-baseline.md 模板
