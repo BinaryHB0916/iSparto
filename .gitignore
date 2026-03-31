@@ -3,3 +3,10 @@
 *.swo
 *~
 .claude/
+
+# Security — secrets & credentials
+.env
+.env.*
+*.key
+*.pem
+*.p12
