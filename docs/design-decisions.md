@@ -59,3 +59,5 @@
 | 构建输出目录不加入 sensitive_files | 只在 gitignore_baseline 中 | dist/、build/ 等目录不含 secret 本身，只是不应提交到 repo；用 .gitignore 覆盖即可，不需要 pre-commit 硬阻断 |
 | L1 不扩展 | 保持 5 个 critical pattern | 构建产物是文件级问题不是内容级问题，L1 的 Write/Edit 拦截不适用；L2 文件名匹配已足够 |
 | inline source map 加入 secrets | content scan 拦截 | 有些项目不生成独立 .map 文件，而是用 data URI 内联在 bundle 里；需要内容扫描补位 |
+| /end-working 分支守卫 | commit 前检查当前分支，main 上自动创建 docs/ 分支 | /end-working 模板的 step 6 假定 commit 时在 feature branch，但主工作已 merge 时 session log 提交在 main 上会撞 push-on-main hook。分支守卫解决时序假设问题 |
+| docs/ 和 release/ 分支前缀正式化 | 加入 CLAUDE.md 分支规则和 Process Observer A1/A3 checklist | 实践中已在使用（session log 用 docs/、发版用 release/），但未写入规则，导致 Process Observer 审计报假阳性。Codex review 在 end-working 修复中指出了这个不一致 |

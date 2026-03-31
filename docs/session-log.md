@@ -603,3 +603,30 @@ PR #101 (fix/security-patterns-fullstack): 5 files changed, +128, -3
 - Process Observer 审计：9 PASS, 3 WARNING (均为 mid-session 预期状态), 0 FAIL
 - 发布 v0.6.10
 - 累计统计（14 sessions）：~29 Developer spawned, ~20 Codex reviews, ~22 issues caught
+
+## 2026-03-31 Session #3
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | Wave 6 (安全审计系统) — 流程修复 |
+| Tasks completed | /end-working 分支守卫（commit 前检查分支）+ docs/release/ 分支前缀正式化 |
+| Developers spawned | 0 (Solo 模式) |
+| Codex reviews | 1 |
+| Codex catches | P2 — docs/session-log-MMDD 分支名不在 feat/fix/hotfix/ 允许列表中，需同步更新 CLAUDE.md 和 Process Observer checklist |
+| Key decisions | /end-working step 6 加分支守卫解决 session log 提交撞 hook 的时序问题；docs/ 和 release/ 正式纳入允许的分支前缀 |
+
+### Files Changed
+```
+PR #104 (fix/end-working-branch-guard): 3 files changed, +11, -5
+ CLAUDE.md                  | 4 ++--
+ commands/end-working.md    | 8 ++++++-
+ docs/process-observer.md   | 4 ++--
+```
+
+### Notes
+- 用户发现 /end-working 流程设计缺陷：session log commit 时机未考虑"主分支已 merge、当前在 main"的场景，每次先犯错再被 hook 拦截
+- 根因是模板执行顺序的时序假设问题，不是模型不理解规则
+- Codex review 发现修复引入了新的不一致（docs/ 分支前缀未在规则中），一并修复
+- 同时解决了上个 session Process Observer 建议的 "CLAUDE.md 分支规则补充 docs/ 和 release/ 前缀"
+- 累计统计（15 sessions）：~29 Developer spawned, ~21 Codex reviews, ~23 issues caught
