@@ -51,4 +51,5 @@
 | Stateless Session 原则显式化 | 在 concepts.md 中声明 session 无状态设计 | iSparto 已通过 plan.md + session-log.md + git 实现了 stateless session，但从未显式声明该原则。声明后帮助用户理解为什么文档同步不可跳过——文档就是 agent 的唯一记忆。来源：12 Factor Agents (HumanLayer) Factor 12: Stateless Reducer |
 | 安全审计三层防御 | L1 Write/Edit 实时拦截 + L2 pre-commit 扫描 + L3 /security-audit 全量审计 | 仅 pre-commit 不够——secret 写入文件后到 commit 之间可能被其他操作泄露。L1 在 PreToolUse hook 中拦截 5 个 critical pattern（热路径，仅子集），L2 commit 前全量扫描，L3 覆盖历史和依赖。三层各有性能/覆盖取舍，互为兜底 |
 | security-patterns.json 单一数据源 | 所有安全扫描共用一个 JSON 规则库 | 避免 patterns 散落在脚本和 JSON 中各维护一份。pre-tool-check.sh 和 pre-commit-security.sh 都从 JSON 读取——增删 pattern 只改一处。realtime_critical 字段选择子集解决 L1 性能约束 |
-| security-patterns.json 与 dangerous-operations.json 分工 | dangerous-operations = 命令拦截，security-patterns = 内容扫描 | 前者防止执行危险命令（git add .env），后者防止写入含 secret 的内容（代码中硬编码 API key）。功能互补不重叠，各有明确的拦截层 |
+| security-patterns.json 与 dangerous-operations.json 分工 | dangerous-operations = 操作安全（命令拦截），security-patterns = 数据安全（内容扫描） | 前者拦截危险操作（force-push、rm -rf、reset --hard），后者扫描文件内容和 staged 文件。职责清晰不重叠 |
+| 敏感文件检测职责归属 | 从 dangerous-operations.json 移除，交给 security-patterns.json 三层系统 | 旧规则对命令字符串做子串匹配，commit message 含 .env 字样即误报；新系统扫描实际 staged 文件和内容，精度更高；职责分离避免重复拦截和冲突 |
