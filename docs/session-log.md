@@ -518,3 +518,58 @@
 - 用户澄清 Solo 模式理解：确认 Lead 写行为模板 + Codex review 是 Tier 2b 正确流程
 - 6 个 PR 合并（#88-#93），1 个版本发布（v0.6.7）
 - 累计统计（12 sessions）：~29 Developer spawned, ~18 Codex reviews, ~19 issues caught
+
+## 2026-03-31 Session
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | Wave 6 (安全审计系统) + post-Wave cleanup |
+| Tasks completed | Wave 6 全部 11 项（security-patterns.json、pre-commit-security.sh、pre-tool-check.sh L1 扩展、/security-audit 命令、/end-working 集成、/init-project+/migrate 集成、Codex/Developer/DocEng prompt 安全段、gitignore-security-baseline.md、docs/security.md、install.sh 注册、README+design-decisions 更新）+ dangerous-ops 敏感文件检测迁移 |
+| Developers spawned | 0 (Solo 模式，4 次 Codex 实现调用 + 1 次 Codex review) |
+| Codex reviews | 1 (发现 1 个 critical bug) |
+| Codex catches | 1 Critical — pre-commit-security.sh regex 双重解码 bug（extract_json_string + decode_json_escapes 双重处理反斜杠，`\s` → `s`，导致所有 regex pattern 失效） |
+| Key decisions | 三层安全防御架构(L1 实时/L2 pre-commit/L3 里程碑)、security-patterns.json 单一数据源、realtime_critical 子集解决 L1 性能、dangerous-ops 敏感文件检测迁移到安全系统(子串匹配误报→staged 文件扫描)、Process Observer WARNING 噪音暂不处理(观察再决定) |
+
+### Files Changed
+```
+PR #96 (feat/security-audit): 23 files changed, +1140, -20
+ CHANGELOG.md                                     | 26 +
+ CLAUDE-TEMPLATE.md                               |  3 +
+ CLAUDE.md                                        |  7 +-
+ README.md                                        | 10 +-
+ README.zh-CN.md                                  | 10 +-
+ VERSION                                          |  2 +-
+ commands/end-working.md                          |  9 +-
+ commands/env-nogo.md                             |  2 +-
+ commands/init-project.md                         | 12 +-
+ commands/migrate.md                              |  9 +-
+ commands/security-audit.md (NEW)                 | 58 +
+ docs/design-decisions.md                         |  3 +
+ docs/plan.md                                     | 13 +
+ docs/process-observer.md                         | 27 +
+ docs/product-spec.md                             |  4 +-
+ docs/roles.md                                    | 35 +
+ docs/security.md (NEW)                           | 89 +
+ docs/user-guide.md                               |  3 +-
+ hooks/.../security-patterns.json (NEW)           |154 +
+ hooks/.../pre-commit-security.sh (NEW)           |571 +
+ hooks/.../pre-tool-check.sh                      | 52 +
+ install.sh                                       |  7 +
+ templates/gitignore-security-baseline.md (NEW)   | 54 +
+
+PR #97 (fix/dangerous-ops-dedup): 3 files changed, +3, -39
+ docs/design-decisions.md                         |  3 +-
+ docs/process-observer.md                         |  4 +-
+ hooks/.../dangerous-operations.json              | 35 -
+```
+
+### Notes
+- 本次 session 跨越了 context compaction（从上一个对话延续），Wave 6 实现在 compaction 前完成，本 session 完成了 commit/push/PR/merge + post-Wave cleanup + 发版
+- Codex 发现的 critical bug（regex 双重解码）如果未修复，会导致 L2 pre-commit 扫描对所有 pattern 完全失效——这是 cross-model review 的价值体现
+- 发布 2 个版本：v0.6.8（三层安全审计系统）、v0.6.9（敏感文件检测迁移）
+- 4 个 PR 合并（#96-#99）
+- 待验证：在实际项目（Meic/Yonya）中跑 L1 Write 拦截和 L2 .secureignore 白名单的端到端测试
+- Process Observer 审计：17 PASS, 1 WARNING (C1: session log 未显式记录 Doc Engineer 执行), 0 FAIL
+- Process Observer 改进建议：(1) CLAUDE.md 分支规则补充 docs/ 和 release/ 前缀；(2) session log 模板增加 Doc Engineer 执行记录行
+- 累计统计（13 sessions）：~29 Developer spawned, ~19 Codex reviews, ~20 issues caught
