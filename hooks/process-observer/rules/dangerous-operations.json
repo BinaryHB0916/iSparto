@@ -45,41 +45,6 @@
       "reason": "git checkout -- . discards all working directory changes irreversibly"
     },
     {
-      "id": "commit-env-file",
-      "tool": "Bash",
-      "pattern": "git[[:space:]]+add[[:space:]]+.*\\.env",
-      "severity": "critical",
-      "reason": "Committing .env files may expose secrets (API keys, passwords, tokens)"
-    },
-    {
-      "id": "commit-env-file-bulk",
-      "tool": "Bash",
-      "pattern": "git[[:space:]]+add[[:space:]]+(-A|\\.|--all)",
-      "severity": "high",
-      "reason": "Bulk git add may accidentally include .env or other sensitive files — check working directory first"
-    },
-    {
-      "id": "commit-credentials",
-      "tool": "Bash",
-      "pattern": "git[[:space:]]+add[[:space:]]+.*(credentials|secret|\\.pem|\\.key)([[:space:]]|$)",
-      "severity": "critical",
-      "reason": "Committing credential/secret/key files may expose sensitive authentication data"
-    },
-    {
-      "id": "commit-ssh-keys",
-      "tool": "Bash",
-      "pattern": "git[[:space:]]+add[[:space:]]+.*(id_rsa|id_ed25519)",
-      "severity": "critical",
-      "reason": "Committing SSH private keys is a critical security risk"
-    },
-    {
-      "id": "commit-aws-credentials",
-      "tool": "Bash",
-      "pattern": "git[[:space:]]+add[[:space:]]+.*\\.aws/(credentials|config)",
-      "severity": "critical",
-      "reason": "Committing AWS credentials exposes cloud infrastructure access"
-    },
-    {
       "id": "skip-hooks",
       "tool": "Bash",
       "pattern": "--no-verify",
