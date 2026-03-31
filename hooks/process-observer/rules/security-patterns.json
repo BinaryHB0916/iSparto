@@ -77,6 +77,20 @@
         "name": "Database Connection String",
         "regex": "(?i)(mongodb|postgres|mysql|redis)://[^\\s'\"]{10,}",
         "severity": "high"
+      },
+      {
+        "id": "inline-sourcemap",
+        "name": "Inline Source Map in Bundle",
+        "regex": "sourceMappingURL=data:application/json;base64,[A-Za-z0-9+/=]{100,}",
+        "severity": "high",
+        "description": "Inline source map embedded in JS bundle — exposes original source code"
+      },
+      {
+        "id": "terraform-secret",
+        "name": "Terraform Sensitive Value",
+        "regex": "(?i)(password|secret_key|access_key)\\s*=\\s*\"[^\"]{8,}\"",
+        "severity": "high",
+        "exclude_files": ["*.md", "*.template", "*.example"]
       }
     ]
   },
@@ -123,7 +137,29 @@
       "id_rsa", "id_ed25519", "id_ecdsa",
       "*.cert", "*.crt",
       "credentials.json", "service-account*.json",
-      "*.sqlite", "*.db"
+      "*.sqlite", "*.db",
+
+      "*.map",
+      "proguard-mapping.txt", "mapping.txt",
+      "*.ipa", "*.apk", "*.aab",
+      "*.dmg", "*.pkg",
+      "*.msi", "*.exe", "*.dll", "*.so", "*.dylib",
+
+      "terraform.tfstate", "terraform.tfstate.backup", "*.tfvars",
+      "docker-compose.override.yml", ".docker/config.json",
+      "kubeconfig", "*.kubeconfig",
+      "vault-token", "ansible-vault-password",
+
+      "core.*", "*.core",
+      "*.hprof", "hs_err_pid*.log", "*.dmp",
+      "npm-debug.log*", "yarn-debug.log*", "yarn-error.log*",
+
+      ".idea/workspace.xml", ".idea/tasks.xml",
+      ".idea/dataSources.xml", ".idea/dataSources.local.xml",
+
+      "*.tgz", "*.whl", "*.egg", "*.gem", "*.nupkg",
+
+      "*.bak", "*.backup", "*.old", "*.orig"
     ]
   },
 
@@ -137,7 +173,27 @@
       ".claude/",
       "node_modules/", "Pods/",
       "__pycache__/", "*.pyc",
-      ".DS_Store", "Thumbs.db"
+      ".DS_Store", "Thumbs.db",
+
+      "*.map", "*.dSYM/",
+      "proguard-mapping.txt", "mapping.txt",
+      "*.ipa", "*.apk", "*.aab", "*.tgz",
+
+      "dist/", "build/", "out/",
+      ".next/", ".nuxt/", ".output/",
+      "DerivedData/", "*.xcuserdata/",
+
+      "terraform.tfstate", "terraform.tfstate.backup",
+      "*.tfvars", ".terraform/",
+
+      "*.hprof", "*.dmp",
+      "npm-debug.log*", "yarn-debug.log*", "yarn-error.log*",
+
+      ".idea/workspace.xml",
+      ".idea/dataSources.xml", ".idea/dataSources.local.xml",
+      ".vscode/settings.json", ".vscode/launch.json",
+
+      "*.bak", "*.backup", "*.sql"
     ]
   },
 

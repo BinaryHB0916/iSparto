@@ -52,3 +52,51 @@ Thumbs.db
 
 # Rust
 # target/
+
+## ── 构建产物 ──
+*.map
+*.dSYM/
+proguard-mapping.txt
+mapping.txt
+*.ipa
+*.apk
+*.aab
+*.tgz
+
+## ── 构建输出目录（按技术栈选用） ──
+# Web
+# dist/
+# build/
+# out/
+# .next/
+# .nuxt/
+# .output/
+
+# iOS/macOS
+# DerivedData/
+# *.xcuserdata/
+
+## ── 基础设施 ──
+terraform.tfstate
+terraform.tfstate.backup
+*.tfvars
+.terraform/
+
+## ── 调试与运行时产物 ──
+*.hprof
+*.dmp
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+## ── IDE 敏感文件 ──
+.idea/workspace.xml
+.idea/dataSources.xml
+.idea/dataSources.local.xml
+.vscode/settings.json
+.vscode/launch.json
+
+## ── 备份文件 ──
+*.bak
+*.backup
+*.sql

@@ -42,6 +42,20 @@
 - Git 历史中的泄露痕迹（使用 `git log -G` 正则扫描）
 - 依赖安全漏洞
 
+### 敏感文件分类
+
+security-patterns.json 的 sensitive_files 按以下分类组织：
+
+| 分类 | 典型文件 | 风险 |
+|------|---------|------|
+| 凭证文件 | .env, *.key, *.pem, *.p12 | 直接暴露密钥 |
+| 构建产物 | *.map, *.dSYM, proguard-mapping.txt | 暴露完整源码（source map 事件） |
+| 基础设施状态 | terraform.tfstate, *.tfvars | 含明文密码和连接字符串 |
+| 调试产物 | core dump, *.hprof, hs_err_pid*.log | 含内存中的敏感数据 |
+| IDE 配置 | .idea/dataSources.xml, .idea/tasks.xml | 含数据库密码、服务器凭证 |
+| 发布产物 | *.tgz, *.whl, *.ipa, *.apk | 不应进入源码仓库 |
+| 备份文件 | *.bak, *.old, *.orig | 可含旧版凭证或敏感数据 |
+
 ### Wave-level Review（嵌入现有流程）
 
 每个 Wave 的 Codex 代码审查和 Doc Engineer 文档审计中自动包含安全检查：

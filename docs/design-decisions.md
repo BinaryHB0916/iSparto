@@ -53,3 +53,9 @@
 | security-patterns.json 单一数据源 | 所有安全扫描共用一个 JSON 规则库 | 避免 patterns 散落在脚本和 JSON 中各维护一份。pre-tool-check.sh 和 pre-commit-security.sh 都从 JSON 读取——增删 pattern 只改一处。realtime_critical 字段选择子集解决 L1 性能约束 |
 | security-patterns.json 与 dangerous-operations.json 分工 | dangerous-operations = 操作安全（命令拦截），security-patterns = 数据安全（内容扫描） | 前者拦截危险操作（force-push、rm -rf、reset --hard），后者扫描文件内容和 staged 文件。职责清晰不重叠 |
 | 敏感文件检测职责归属 | 从 dangerous-operations.json 移除，交给 security-patterns.json 三层系统 | 旧规则对命令字符串做子串匹配，commit message 含 .env 字样即误报；新系统扫描实际 staged 文件和内容，精度更高；职责分离避免重复拦截和冲突 |
+| sensitive_files 全栈覆盖 | 7 类 ~50+ pattern | iSparto 是通用框架，必须覆盖 iOS/Android/macOS/Windows/Web/基础设施/数据工程全场景；Claude Code source map 事件证明构建产物是真实攻击面 |
+| *.map 默认阻断 | sensitive_files 级别（BLOCK） | source map 含完整源码（sourcesContent 字段），等同于泄露全部代码；需要保留的项目走 .secureignore 白名单 |
+| *.log 不加入 sensitive_files | 误报率过高 | 很多项目把日志提交到 repo 用于调试/CI；secrets 内容扫描（L2 content scan）已覆盖日志中的 secret；文件名拦截收益不大 |
+| 构建输出目录不加入 sensitive_files | 只在 gitignore_baseline 中 | dist/、build/ 等目录不含 secret 本身，只是不应提交到 repo；用 .gitignore 覆盖即可，不需要 pre-commit 硬阻断 |
+| L1 不扩展 | 保持 5 个 critical pattern | 构建产物是文件级问题不是内容级问题，L1 的 Write/Edit 拦截不适用；L2 文件名匹配已足够 |
+| inline source map 加入 secrets | content scan 拦截 | 有些项目不生成独立 .map 文件，而是用 data URI 内联在 bundle 里；需要内容扫描补位 |
