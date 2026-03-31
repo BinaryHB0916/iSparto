@@ -573,3 +573,33 @@ PR #97 (fix/dangerous-ops-dedup): 3 files changed, +3, -39
 - Process Observer 审计：17 PASS, 1 WARNING (C1: session log 未显式记录 Doc Engineer 执行), 0 FAIL
 - Process Observer 改进建议：(1) CLAUDE.md 分支规则补充 docs/ 和 release/ 前缀；(2) session log 模板增加 Doc Engineer 执行记录行
 - 累计统计（13 sessions）：~29 Developer spawned, ~19 Codex reviews, ~20 issues caught
+
+## 2026-03-31 Session #2
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | Wave 6 (安全审计系统) — 后续扩展 |
+| Tasks completed | security-patterns.json 全栈覆盖扩展（7 类 ~50+ sensitive_files pattern + 2 个 secrets pattern + gitignore 基线同步 + 文档更新） |
+| Developers spawned | 0 (Solo 模式，Lead 直接编辑 rules/*.json — 自引用边界) |
+| Codex reviews | 1 |
+| Codex catches | P1 — bundle 目录模式（*.dSYM/*.xcarchive/\*.app）在 pre-commit scanner 中无法匹配内部路径，移除改为仅 gitignore 覆盖；P2 — gitignore 中 core.\* 会静默隐藏 core.ts 等合法源文件，从 gitignore 移除 |
+| Key decisions | *.map 默认 BLOCK（source map = 完整源码泄露）、*.log 不加入 sensitive_files（误报率高，L2 内容扫描已覆盖）、构建输出目录只进 gitignore 不进 sensitive_files、L1 不扩展（构建产物是文件级非内容级）、inline source map 加入 secrets（data URI 内联补位）、*.sql/core/.vscode 从 sensitive_files 降级到 gitignore_baseline（误报风险） |
+
+### Files Changed
+```
+PR #101 (fix/security-patterns-fullstack): 5 files changed, +128, -3
+ docs/design-decisions.md                           |  6 +++
+ docs/plan.md                                       |  3 +-
+ docs/security.md                                   | 14 +++++
+ hooks/.../security-patterns.json                   | 60 ++-
+ templates/gitignore-security-baseline.md           | 48 +++
+```
+
+### Notes
+- 动机：Claude Code source map 泄露事件暴露构建产物安全盲区，iSparto 作为通用框架需全栈覆盖
+- Plan mode 讨论阶段调整了 6 个高误报 pattern 的归属（sensitive_files → gitignore_baseline only）
+- Codex review 发现 2 个 pattern 有效性问题并修复；Doc Engineer 审计发现 gitignore 模板缺 .vscode 条目并补齐
+- Process Observer 审计：9 PASS, 3 WARNING (均为 mid-session 预期状态), 0 FAIL
+- 发布 v0.6.10
+- 累计统计（14 sessions）：~29 Developer spawned, ~20 Codex reviews, ~22 issues caught
