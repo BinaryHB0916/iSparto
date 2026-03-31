@@ -180,9 +180,9 @@ Suggestion: Use `git push` (without --force) or `git push --force-with-lease` fo
 
 | # | 检查项 | 判定标准 | 偏差级别 |
 |---|--------|---------|---------|
-| A1 | 当前分支是否为 feat/、fix/ 或 hotfix/ | 分支名前缀匹配 | P1 |
+| A1 | 当前分支是否为 feat/、fix/、hotfix/、docs/ 或 release/ | 分支名前缀匹配 | P1 |
 | A2 | 是否有直接 commit 到 main 的记录 | git log 对比 session 开始时的 main HEAD | P1 |
-| A3 | 分支命名是否遵循约定 | feat/xxx、fix/xxx、hotfix/xxx 格式 | P2 |
+| A3 | 分支命名是否遵循约定 | feat/xxx、fix/xxx、hotfix/xxx、docs/xxx、release/vX.Y.Z 格式 | P2 |
 
 #### Checklist B：Codex Review 合规
 

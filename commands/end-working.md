@@ -53,7 +53,13 @@ Your responsibility: Ensure all changes and decisions from this session are capt
    - If output contains BLOCK → stop the commit, report the specific issues and remediation suggestions to the user in the session briefing
    - If output contains WARNING → include warnings in the session briefing, proceed with commit
    - If passed → proceed to next step
-6. git add -A && git commit && git push
+6. Branch guard before commit:
+   - Run `git branch --show-current` to check the current branch
+   - If on main and there are uncommitted changes (session log, docs updates, etc.):
+     - Create a `docs/session-log-MMDD` branch: `git checkout -b docs/session-log-MMDD`
+     - This happens when the main work was already merged via PR before /end-working ran
+   - If already on a feature branch: stay on it
+   Then: git add relevant files && git commit && git push
 7. If all tasks on the current branch are complete (all reviews passed, docs updated):
    - Create PR via `gh pr create`, merge via `gh pr merge --merge`
    - Delete local branch and switch back to main: `git checkout main && git pull && git branch -d <branch>` (remote branch is auto-deleted by GitHub on merge)
