@@ -5,6 +5,7 @@
 Process Observer 是 iSparto 团队的合规监督角色。它由两部分组成，优先级不同：
 
 - **实时拦截（Hooks）— 核心层**：通过 Claude Code PreToolUse hook 监管所有工具调用（Bash / Edit / Write / Codex MCP），拦截违规操作。这是不可绕过的硬性保障。
+- **内容安全扫描（Hooks 扩展）— 核心层**：在 Edit/Write 工具写入内容时，实时扫描 critical 级别的 secret patterns（API key、private key 等）。这是 PreToolUse hook 的扩展，与操作拦截共享同一脚本。
 - **事后审计（Sub-agent）— 建议层**：/end-working 时回顾 session 执行过程，输出合规报告和改进建议。此层依赖 Lead 主动 spawn，不保证每次执行。关键合规检查已由 Hooks 层覆盖，sub-agent 的价值是发现流程改进机会，而非作为合规的唯一防线。
 
 Process Observer 不参与开发决策，只监督流程合规性。它与 Doc Engineer 同级，都是 Team Lead 的 sub-agent。
@@ -121,6 +122,32 @@ Hooks 运行在所有带 project settings 的 Claude Code session 中：
 **自定义扩展名列表：**
 
 扩展名列表定义在 `hooks/process-observer/rules/workflow-rules.json` 中，可根据项目需要调整 `code_extensions` 和 `allowed_extensions` 数组。
+
+#### 8. 内容安全扫描（Write / Edit 实时拦截）
+
+| 操作 | 拦截原因 |
+|------|---------|
+| Write/Edit 写入的内容包含 AWS Access Key (AKIA...) | 硬编码 secret 泄露风险 |
+| Write/Edit 写入的内容包含 Anthropic API Key (sk-ant-...) | 硬编码 secret 泄露风险 |
+| Write/Edit 写入的内容包含 Private Key Header (-----BEGIN...PRIVATE KEY-----) | 私钥文件内容泄露 |
+| Write/Edit 写入的内容包含 Stripe Key (sk_test_/sk_live_...) | 支付凭证泄露风险 |
+| Write/Edit 写入的内容包含 GitHub Token (ghp_/gho_...) | 仓库访问凭证泄露 |
+
+**判定逻辑：**
+- 在 Edit/Write 扩展名检查通过后、放行之前，提取写入内容
+- Write 工具：扫描 `content` 字段
+- Edit 工具：扫描 `new_string` 字段
+- 仅检查 `realtime_critical` 子集（5 个 critical 级别 pattern），不做全量扫描——hook 在热路径上，性能优先
+- 完整扫描由 pre-commit-security.sh（commit 前）和 /security-audit（里程碑）覆盖
+- Pattern 定义：`hooks/process-observer/rules/security-patterns.json` 的 `realtime_critical` 字段
+
+**与 Layer 2/3 的关系：**
+
+| 层 | 时机 | 范围 | 性能要求 |
+|----|------|------|---------|
+| PreToolUse content scan | 每次 Write/Edit | critical patterns only | 高（热路径） |
+| pre-commit-security.sh | 每次 commit | 全部 patterns | 中 |
+| /security-audit | 手动触发 | 全量 + 历史 + 依赖 | 低 |
 
 ### 拦截行为
 

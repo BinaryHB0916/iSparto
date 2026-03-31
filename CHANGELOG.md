@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.8] - 2026-03-31
+
+### Added
+
+- Three-layer security audit system: Layer 1 (real-time Write/Edit content scanning for critical secrets), Layer 2 (pre-commit full secret/PII/sensitive-file scanning), Layer 3 (`/security-audit` milestone-level full audit including git history and dependency checks)
+- `security-patterns.json` — single source of truth for all security scanning patterns (12 secret patterns, 4 PII patterns, sensitive file globs, gitignore baseline)
+- `pre-commit-security.sh` — pre-commit scanner that reads patterns from JSON, supports `.secureignore` whitelist
+- `/security-audit` slash command — full project security audit with git history scanning (`-G` regex), dependency checks, and structured report output
+- `.secureignore` convention — per-project whitelist for false positive management (format: `file:pattern_id:reason`)
+- `gitignore-security-baseline.md` template — security .gitignore entries applied by `/init-project` and `/migrate`
+- Security compliance check added to Doc Engineer audit checklist (item 8)
+- Security review added to Codex QA prompt template
+- Security rules added to Developer implementation prompt template
+- `docs/security.md` — full documentation of the three-layer defense system
+
+### Changed
+
+- `pre-tool-check.sh` — Edit/Write branch now scans content for 5 critical secret patterns before allowing writes (L1 real-time gate)
+- `/end-working` — security scan step inserted before git commit (L2 pre-commit gate)
+- `/init-project` — adds security baseline to .gitignore and creates empty .secureignore
+- `/migrate` — checks .gitignore against security baseline and runs full security scan on existing code
+- `CLAUDE-TEMPLATE.md` — added security rules to Development Rules and Operational Guardrails
+- `docs/process-observer.md` — added content security scanning (category 8) and three-layer comparison table
+- `docs/roles.md` — security checks in Codex QA, Developer implementation, and Doc Engineer audit
+- `install.sh` — copies `pre-commit-security.sh` and `security-patterns.json` to `$ISPARTO_HOME`
+
 ## [0.6.7] - 2026-03-30
 
 ### Added

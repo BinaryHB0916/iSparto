@@ -151,6 +151,7 @@ Lead 团队自己跑（你不用盯着）
 
 - Lead / Teammate / Doc Engineer：Claude 主会话（见[模型配置](docs/configuration.md#agent-model-configuration)）
 - Developer：Codex 通过 MCP（见[模型配置](docs/configuration.md#agent-model-configuration)）
+- Process Observer：三层安全防御 — Write/Edit 实时内容扫描（Layer 1）、commit 前 secret/PII 扫描（Layer 2）、里程碑全量审计 `/security-audit`（Layer 3）。详见 [docs/security.md](docs/security.md)。
 
 ---
 
@@ -233,18 +234,21 @@ iSparto/
 │   ├── init-project.md        ← 初始化项目命令
 │   ├── env-nogo.md            ← 环境就绪检查
 │   ├── migrate.md             ← 迁移已有项目到 iSparto
-│   └── restore.md             ← 恢复项目到之前的快照
+│   ├── restore.md             ← 恢复项目到之前的快照
+│   └── security-audit.md     ← 里程碑级全量安全审计
 ├── templates/
 │   ├── product-spec-template.md
 │   ├── tech-spec-template.md
 │   ├── design-spec-template.md
-│   └── plan-template.md
+│   ├── plan-template.md
+│   └── gitignore-security-baseline.md  ← 安全 .gitignore 基线
 └── docs/
     ├── product-spec.md        ← 产品规格（iSparto 自身的，用于自举）
     ├── plan.md                ← 按 Wave 组织的开发计划
     ├── session-log.md         ← 自动生成的会话指标（由 /end-working 创建）
     ├── concepts.md            ← 核心概念（解耦、Wave、文件所有权）⭐ 建议先读
-    ├── user-guide.md          ← 用户交互手册（7 命令 + 2 通知）⭐ 建议先读
+    ├── security.md            ← 安全审计系统（三层防御）
+    ├── user-guide.md          ← 用户交互手册（8 命令 + 2 通知）⭐ 建议先读
     ├── roles.md               ← 角色定义 + Codex prompt 模板
     ├── workflow.md            ← 完整开发流程 + 分支策略 + Codex 集成
     ├── configuration.md       ← 全局配置 + 适配指南 + 多设备同步

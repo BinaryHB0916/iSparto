@@ -10,7 +10,7 @@ Global environment:
 3. Node.js: 18+ (check node -v)
 4. Claude Code: installed (check claude --version)
 5. Codex CLI: installed and logged in (check codex --version and codex login status)
-6. ~/.claude/ completeness: CLAUDE-TEMPLATE.md, commands/ (7 commands including restore.md), templates/ (4 templates)
+6. ~/.claude/ completeness: CLAUDE-TEMPLATE.md, commands/ (8 commands including restore.md and security-audit.md), templates/ (5 templates including gitignore-security-baseline.md)
 7. Snapshot system: ~/.isparto/lib/snapshot.sh exists and is executable
 
 Project environment (if the current directory has a CLAUDE.md, you are inside a project — run these additional checks):

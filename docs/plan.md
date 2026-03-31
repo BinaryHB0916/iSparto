@@ -49,6 +49,19 @@
 - [x] Session Log 自动采集 — /end-working 自动生成 session report，/start-working 自动读取历史
 - [x] 每个场景记录：Wave 数量、并行效率、Codex 拦截问题、截图（由 session-log.md 自动采集替代）
 
+### Wave 6: 安全审计系统
+- [x] security-patterns.json — 统一安全规则库（12 secret + 4 PII + 敏感文件 + gitignore 基线 + realtime_critical 子集）
+- [x] pre-commit-security.sh — commit 前全量扫描（从 JSON 读取 patterns，支持 .secureignore 白名单）
+- [x] pre-tool-check.sh L1 扩展 — Write/Edit 实时内容安全扫描（5 个 critical patterns）
+- [x] /security-audit 命令 — 里程碑全量审计（代码 + .gitignore + git 历史 + 依赖）
+- [x] /end-working 集成 — commit 前安全扫描步骤
+- [x] /init-project + /migrate 集成 — 安全基线初始化 / 检查
+- [x] Codex QA + Developer prompt + Doc Engineer 审计清单增加安全检查
+- [x] gitignore-security-baseline.md 模板
+- [x] docs/security.md + process-observer.md 更新
+- [x] install.sh 注册新文件
+- [x] README 双语更新 + design-decisions.md 架构决策记录
+
 ## 当前阶段
 
 ## 产品路线图

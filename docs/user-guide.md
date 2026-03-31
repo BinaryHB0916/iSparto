@@ -2,7 +2,7 @@
 
 > As a user, you only need to focus on the following interaction points when collaborating with the Agent Team.
 
-## What You Initiate (7 Commands)
+## What You Initiate (8 Commands)
 
 | Command | When | What You Do |
 |---------|------|-------------|
@@ -13,6 +13,7 @@
 | `/plan xxx` | When there's a new requirement | Describe the requirement, review the Team Lead's proposal |
 | `/env-nogo` | When there are environment concerns | Review check results, fix items marked with a cross |
 | `/restore` | When you want to undo a migration or init | Review snapshot details, confirm restore to roll back all changes |
+| `/security-audit` | Before a release or milestone | Receive the full audit report (code + .gitignore + git history + dependencies); fix any CRITICAL/HIGH items before proceeding |
 
 **Upgrading iSparto:** Run `~/.isparto/install.sh --upgrade` to pull the latest version and see what's new.
 

@@ -200,6 +200,58 @@ case "$TOOL_NAME" in
 
         # Check if extension is in allowed list
         if echo "$ALLOWED_EXTS" | grep -qxF "$EXT"; then
+            # ── Security: scan content for critical secrets ──
+            SECURITY_PATTERNS_FILE="$SCRIPT_DIR/../rules/security-patterns.json"
+            if [ -f "$SECURITY_PATTERNS_FILE" ]; then
+                if [ "$TOOL_NAME" = "Write" ]; then
+                    CONTENT_TO_SCAN=$(extract_json_field "$INPUT" "content" "true")
+                else
+                    CONTENT_TO_SCAN=$(extract_json_field "$INPUT" "new_string" "true")
+                fi
+
+                if [ -n "$CONTENT_TO_SCAN" ]; then
+                    CRITICAL_PATTERN_IDS=$(awk '
+                        /"realtime_critical"/ { in_rt=1; next }
+                        in_rt && /"pattern_ids"/ { in_ids=1; next }
+                        in_ids && /\]/ { in_ids=0; next }
+                        in_ids {
+                            n = split($0, arr, "\"")
+                            for (i = 1; i <= n; i++) {
+                                if (arr[i] ~ /^[A-Za-z0-9][A-Za-z0-9_-]*$/) print arr[i]
+                            }
+                        }
+                        in_rt && /\}/ { if (!in_ids) in_rt=0 }
+                    ' "$SECURITY_PATTERNS_FILE")
+
+                    while IFS= read -r PATTERN_ID; do
+                        [ -z "$PATTERN_ID" ] && continue
+
+                        PATTERN_INFO=$(awk -F'"' -v target_id="$PATTERN_ID" '
+                            /"secrets"/ { in_secrets=1; next }
+                            in_secrets && /"pii"/ { in_secrets=0 }
+                            in_secrets && /"patterns"/ { in_patterns=1; next }
+                            in_patterns && /"id"/ { current_id=$4; next }
+                            in_patterns && current_id == target_id && /"name"/ { name=$4; next }
+                            in_patterns && current_id == target_id && /"regex"/ {
+                                regex = $4
+                                gsub(/\\\\/, "\\", regex)
+                                if (name == "") name = target_id
+                                print name "\t" regex
+                                exit
+                            }
+                        ' "$SECURITY_PATTERNS_FILE")
+
+                        [ -z "$PATTERN_INFO" ] && continue
+                        MATCHED_NAME=${PATTERN_INFO%%$'\t'*}
+                        MATCHED_REGEX=${PATTERN_INFO#*$'\t'}
+
+                        if [ -n "$MATCHED_REGEX" ] && printf '%s' "$CONTENT_TO_SCAN" | grep -qE -e "$MATCHED_REGEX" 2>/dev/null; then
+                            block "security-secret-in-content" "检测到疑似 $MATCHED_NAME — 不允许将 secret 写入文件 ($FILE_PATH)。请使用环境变量或配置引用。"
+                        fi
+                    done <<< "$CRITICAL_PATTERN_IDS"
+                fi
+            fi
+
             exit 0
         fi
 

@@ -1,0 +1,154 @@
+{
+  "version": "1.0",
+  "description": "Security patterns for iSparto pre-commit and audit scanning",
+
+  "secrets": {
+    "description": "Hardcoded secrets — match triggers BLOCK",
+    "patterns": [
+      {
+        "id": "aws-access-key",
+        "name": "AWS Access Key",
+        "regex": "AKIA[0-9A-Z]{16}",
+        "severity": "critical"
+      },
+      {
+        "id": "aws-secret-key",
+        "name": "AWS Secret Key",
+        "regex": "(?i)(aws_secret_access_key|aws_secret_key)\\s*[=:]\\s*['\"]?[A-Za-z0-9/+=]{40}",
+        "severity": "critical"
+      },
+      {
+        "id": "openai-api-key",
+        "name": "OpenAI API Key",
+        "regex": "sk-(proj-)?[A-Za-z0-9_-]{20,}",
+        "severity": "critical"
+      },
+      {
+        "id": "anthropic-api-key",
+        "name": "Anthropic API Key",
+        "regex": "sk-ant-[A-Za-z0-9_-]{20,}",
+        "severity": "critical"
+      },
+      {
+        "id": "generic-api-key",
+        "name": "Generic API Key assignment",
+        "regex": "(?i)(api[_-]?key|apikey|api[_-]?secret)\\s*[=:]\\s*['\"][A-Za-z0-9_\\-/.+=]{16,}['\"]",
+        "severity": "high"
+      },
+      {
+        "id": "private-key-header",
+        "name": "Private Key File Header",
+        "regex": "-----BEGIN (RSA |EC |DSA |OPENSSH )?PRIVATE KEY-----",
+        "severity": "critical"
+      },
+      {
+        "id": "bearer-token",
+        "name": "Bearer Token",
+        "regex": "(?i)(bearer|authorization)\\s*[=:]\\s*['\"]?[A-Za-z0-9_\\-/.+=]{20,}",
+        "severity": "high"
+      },
+      {
+        "id": "password-assignment",
+        "name": "Hardcoded Password",
+        "regex": "(?i)(password|passwd|pwd)\\s*[=:]\\s*['\"][^'\"]{8,}['\"]",
+        "severity": "high",
+        "exclude_files": ["*.md", "*.txt", "*.template"]
+      },
+      {
+        "id": "stripe-key",
+        "name": "Stripe API Key",
+        "regex": "(sk|pk|rk)_(test|live)_[A-Za-z0-9]{20,}",
+        "severity": "critical"
+      },
+      {
+        "id": "github-token",
+        "name": "GitHub Token",
+        "regex": "(ghp|gho|ghu|ghs|ghr)_[A-Za-z0-9_]{36,}",
+        "severity": "critical"
+      },
+      {
+        "id": "generic-secret-assignment",
+        "name": "Generic Secret Assignment",
+        "regex": "(?i)(secret|token|credential)\\s*[=:]\\s*['\"][A-Za-z0-9_\\-/.+=]{16,}['\"]",
+        "severity": "medium"
+      },
+      {
+        "id": "connection-string",
+        "name": "Database Connection String",
+        "regex": "(?i)(mongodb|postgres|mysql|redis)://[^\\s'\"]{10,}",
+        "severity": "high"
+      }
+    ]
+  },
+
+  "pii": {
+    "description": "Personal Identifiable Information — match triggers WARNING",
+    "patterns": [
+      {
+        "id": "china-phone",
+        "name": "China Mobile Phone",
+        "regex": "1[3-9]\\d{9}",
+        "severity": "warning",
+        "context_check": true
+      },
+      {
+        "id": "china-id-card",
+        "name": "China ID Card Number",
+        "regex": "[1-9]\\d{5}(19|20)\\d{2}(0[1-9]|1[0-2])(0[1-9]|[12]\\d|3[01])\\d{3}[0-9Xx]",
+        "severity": "high"
+      },
+      {
+        "id": "bank-card",
+        "name": "Bank Card Number (16-19 digits)",
+        "regex": "(?<![0-9])[3-6]\\d{15,18}(?![0-9])",
+        "severity": "warning",
+        "context_check": true
+      },
+      {
+        "id": "email-hardcoded",
+        "name": "Hardcoded Email in Code",
+        "regex": "(?i)['\"][a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}['\"]",
+        "severity": "warning",
+        "exclude_files": ["*.md", "*.txt", "package.json", "*.lock", "CLAUDE*.md"]
+      }
+    ]
+  },
+
+  "sensitive_files": {
+    "description": "File patterns that should never be committed",
+    "patterns": [
+      ".env", ".env.*", "*.pem", "*.key", "*.p12", "*.pfx",
+      "*.keystore", "*.jks", "*.mobileprovision",
+      "*.secret", "*.secrets",
+      "id_rsa", "id_ed25519", "id_ecdsa",
+      "*.cert", "*.crt",
+      "credentials.json", "service-account*.json",
+      "*.sqlite", "*.db"
+    ]
+  },
+
+  "gitignore_baseline": {
+    "description": "Minimum .gitignore entries for security",
+    "required": [
+      ".env", ".env.*", ".env.local", ".env.production",
+      "*.pem", "*.key", "*.p12", "*.pfx", "*.keystore", "*.jks",
+      "*.mobileprovision",
+      "*.secret", "*.secrets",
+      ".claude/",
+      "node_modules/", "Pods/",
+      "__pycache__/", "*.pyc",
+      ".DS_Store", "Thumbs.db"
+    ]
+  },
+
+  "realtime_critical": {
+    "description": "Subset of secrets patterns used by PreToolUse Write/Edit hook for real-time blocking. Only critical severity — keep this list small for hook performance.",
+    "pattern_ids": [
+      "aws-access-key",
+      "anthropic-api-key",
+      "private-key-header",
+      "stripe-key",
+      "github-token"
+    ]
+  }
+}

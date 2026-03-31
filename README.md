@@ -151,6 +151,7 @@ Occasionally Lead comes to you (escalate decisions / confirm commits)
 
 - Lead / Teammate / Doc Engineer: Claude primary sessions (see [model configuration](docs/configuration.md#agent-model-configuration))
 - Developer: Codex via MCP (see [model configuration](docs/configuration.md#agent-model-configuration))
+- Process Observer: three-layer security defense — real-time Write/Edit content scanning (Layer 1), pre-commit secret/PII scanning (Layer 2), and milestone-level full audit via `/security-audit` (Layer 3). See [docs/security.md](docs/security.md).
 
 ---
 
@@ -233,18 +234,21 @@ iSparto/
 │   ├── init-project.md        ← Initialize project command
 │   ├── env-nogo.md            ← Environment readiness check
 │   ├── migrate.md             ← Migrate existing project to iSparto
-│   └── restore.md             ← Restore project to a previous snapshot
+│   ├── restore.md             ← Restore project to a previous snapshot
+│   └── security-audit.md     ← Milestone-level full security audit
 ├── templates/
 │   ├── product-spec-template.md
 │   ├── tech-spec-template.md
 │   ├── design-spec-template.md
-│   └── plan-template.md
+│   ├── plan-template.md
+│   └── gitignore-security-baseline.md  ← Security .gitignore baseline
 └── docs/
     ├── product-spec.md        ← Product spec (iSparto's own, for self-bootstrapping)
     ├── plan.md                ← Development plan by Wave
     ├── session-log.md         ← Auto-generated session metrics (created by /end-working)
     ├── concepts.md            ← Core concepts (decoupling, Wave, file ownership) ⭐ Recommended reading
-    ├── user-guide.md          ← User interaction guide (7 commands + 2 notifications) ⭐ Recommended reading
+    ├── security.md            ← Security audit system (three-layer defense)
+    ├── user-guide.md          ← User interaction guide (8 commands + 2 notifications) ⭐ Recommended reading
     ├── roles.md               ← Role definitions + Codex prompt templates
     ├── workflow.md            ← Full development workflow + branching strategy + Codex integration
     ├── configuration.md       ← Global configuration + adaptation guide + multi-device sync

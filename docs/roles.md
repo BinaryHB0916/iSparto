@@ -220,6 +220,19 @@ Implementation rules:
 - Do NOT modify files outside the file scope
 - Do NOT change architecture decisions that are intentional
 
+Security rules (MANDATORY — check every implementation):
+- No hardcoded secrets: API keys, tokens, passwords, connection strings must use environment variables or config references
+- No personal data as string literals: phone numbers, ID numbers, email addresses (unless they are config placeholders)
+- No debug/test credentials left in production code paths
+- No logging or print statements that expose sensitive data at runtime
+- No configuration files with real credentials (use environment variable references)
+- If you encounter existing secrets in the codebase, flag them with [SECURITY] in your output — do NOT silently leave them
+
+If security issues found in code you're modifying:
+1. REMOVE the secret/PII from code
+2. Replace with environment variable reference or config placeholder
+3. Flag in output with [SECURITY] prefix so Lead escalates to user
+
 If you encounter issues outside the file scope, describe what's needed but don't modify those files.
 ---
 
@@ -249,6 +262,20 @@ Efficiency rules:
 - SKIP exploratory testing of areas tested in previous Waves AND not affected by current changes
 - After acceptance script steps, add targeted edge case checks at integration boundaries if time permits
 - Report which acceptance steps were tested, which exploratory checks were added, and which areas were skipped
+
+Security review (MANDATORY — check every QA run):
+- Hardcoded secrets: API keys, tokens, passwords, connection strings in source code or comments
+- Personal data: phone numbers, ID numbers, email addresses as string literals (not config references)
+- Debug/test credentials left in production code paths
+- Logging or print statements that expose sensitive data at runtime
+- Configuration files with real credentials instead of environment variable references
+- Files matching sensitive patterns (.env, *.key, *.pem) not covered by .gitignore
+- Suspicious or unknown dependencies added in this change (typosquatting risk)
+
+If security issues found:
+1. REMOVE the secret/PII from code immediately
+2. Replace with environment variable reference or config placeholder
+3. Flag in review output with [SECURITY] prefix so Lead escalates to user
 
 If you find issues:
 1. Fix them directly in the code
@@ -306,6 +333,14 @@ Audit checklist:
    - Is the feature discoverable — can a new user find it through Quick Start, command tables, and docs navigation?
    - Does the overall product story still flow coherently after this change?
    - Audit scope: README, product-spec, Quick Start, troubleshooting, command tables — not just the files that changed
+
+8. Security compliance check
+   - Are there hardcoded secrets in code (API key, token, password, credential — literal values, not environment variable references)?
+   - Does .gitignore cover sensitive file types defined in security-patterns.json?
+   - Could logging/debug output expose user data or credentials at runtime?
+   - Do docs/ files accidentally contain real credentials, real phone numbers, or real email addresses?
+   - Are newly added third-party dependencies from trusted sources?
+   - Result: ✅ Security check passed / ⚠️ Security issue: [specific description]
 
 Output format (the following is the report template from Doc Engineer to the Team Lead, not a section of this document):
 
