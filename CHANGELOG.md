@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.11] - 2026-04-01
+
 ### Fixed
 
 - Bootstrap push-to-main: `push-on-main` and `git-push-main-direct` rules now allow initial push when remote has no main/master branch yet (detected via `git rev-parse --verify`)
