@@ -1,5 +1,33 @@
 # Session Log
 
+## 2026-04-01 Session
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | Bugfix (Process Observer hooks) |
+| Tasks completed | Bootstrap push-to-main exception, git-rule false positive prevention, .sh allowed_extensions, v0.6.11 release |
+| Developers spawned | 0 (Lead direct edit per CLAUDE.md self-referential exception) |
+| Codex reviews | 2 (bootstrap fix review + false positive design review) |
+| Codex catches | P1: push-on-main only checked origin/$current_branch, should check both origin/main and origin/master; applied to all git rules as helper function |
+| Key decisions | User rejected all 10 Claude Code repo improvements — "不需要就够了", continue dogfooding to find real pain points |
+
+### Files Changed
+```
+ hooks/process-observer/rules/workflow-rules.json |  1 +
+ hooks/process-observer/scripts/pre-tool-check.sh | 46 ++++++++++++++++++++----
+ CHANGELOG.md                                     | 12 ++++++
+ VERSION                                          |  2 +-
+ 4 files changed, 55 insertions(+), 6 deletions(-)
+```
+
+### Notes
+- 问题来源：在 meic-website 新项目 /init-project 后首次推 main 分支被 hook 拦截
+- 修复过程中暴露第二个问题：gh pr create --body 中的 git 命令示例文本触发 git-push-main-direct 规则
+- Codex 建议将 quote-stripping 做成 git-rule 家族 helper 而非单点修复，最终覆盖 5 条规则
+- 深度研究了 anthropics/claude-code 仓库（plugin 系统、hook 类型、agent team 协调原语等），用户评估后认为当前项目规模不需要这些改进
+- installed copy (~/.isparto/) 与 repo 同步更新
+
 ## 2026-03-24 Session
 
 | Metric | Value |
