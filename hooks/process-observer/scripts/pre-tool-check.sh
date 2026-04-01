@@ -99,10 +99,28 @@ case "$TOOL_NAME" in
                         local current_branch
                         current_branch=$(git branch --show-current 2>/dev/null || echo "")
                         if [ "$current_branch" = "main" ] || [ "$current_branch" = "master" ]; then
+                            # Bootstrap: allow push when remote has no main/master yet (initial repo setup)
+                            if [ "$rule_id" = "push-on-main" ]; then
+                                if ! git rev-parse --verify origin/main >/dev/null 2>&1 && \
+                                   ! git rev-parse --verify origin/master >/dev/null 2>&1; then
+                                    return
+                                fi
+                            fi
                             printf '{"decision": "block", "reason": "[%s] %s (current branch: %s)"}\n' \
                                 "$rule_id" "$reason" "$current_branch"
                             exit 2
                         fi
+                    fi
+                    return
+                    ;;
+                git-push-main-direct)
+                    if echo "$COMMAND" | grep -qE -- "$pattern" 2>/dev/null; then
+                        # Bootstrap: allow when remote has no main/master yet (initial repo setup)
+                        if ! git rev-parse --verify origin/main >/dev/null 2>&1 && \
+                           ! git rev-parse --verify origin/master >/dev/null 2>&1; then
+                            return
+                        fi
+                        block "$rule_id" "$reason"
                     fi
                     return
                     ;;
