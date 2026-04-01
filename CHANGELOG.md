@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Bootstrap push-to-main: `push-on-main` and `git-push-main-direct` rules now allow initial push when remote has no main/master branch yet (detected via `git rev-parse --verify`)
+- Git-rule false positives: added `matches_outside_quotes()` helper that strips quoted content before re-checking patterns, preventing commands like `gh pr create --body "...git push main..."` from being blocked; applied to 5 git rules (`commit/merge/push-on-main`, `git-push-main-direct`, `git-force-push-protected`); filesystem rules unaffected
+
+### Changed
+
+- `.sh` added to `workflow-rules.json` `allowed_extensions`, enabling Lead to directly edit hooks/ scripts per CLAUDE.md
+
 ## [0.6.10] - 2026-03-31
 
 ## [0.6.9] - 2026-03-31
