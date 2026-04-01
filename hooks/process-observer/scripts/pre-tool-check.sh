@@ -86,16 +86,32 @@ case "$TOOL_NAME" in
             exit 0
         fi
 
+        # ── Git-rule helper: check pattern outside quoted strings ───
+        # Returns 0 if pattern matches outside quotes, 1 otherwise.
+        # Used by git rules to avoid false positives from text in arguments
+        # (e.g., gh pr create --body "...git push origin main...").
+        # Not applied to filesystem rules where quoted paths are real targets.
+        matches_outside_quotes() {
+            local cmd="$1" pat="$2"
+            local stripped
+            stripped=$(printf '%s' "$cmd" | sed "s/\"[^\"]*\"//g; s/'[^']*'//g")
+            printf '%s' "$stripped" | grep -qE -- "$pat" 2>/dev/null
+        }
+
         # ── Check a single rule against COMMAND ──────────────────────
         check_rule() {
             local rule_id="$1"
             local pattern="$2"
             local reason="$3"
 
-            # Branch-gated rules: only block if on main/master branch
+            # Git rules with special handling (quote-aware + conditional logic)
             case "$rule_id" in
                 commit-on-main|merge-on-main|push-on-main)
                     if echo "$COMMAND" | grep -qE -- "$pattern" 2>/dev/null; then
+                        # Skip if pattern only appears inside quoted strings
+                        if ! matches_outside_quotes "$COMMAND" "$pattern"; then
+                            return
+                        fi
                         local current_branch
                         current_branch=$(git branch --show-current 2>/dev/null || echo "")
                         if [ "$current_branch" = "main" ] || [ "$current_branch" = "master" ]; then
@@ -113,12 +129,18 @@ case "$TOOL_NAME" in
                     fi
                     return
                     ;;
-                git-push-main-direct)
+                git-push-main-direct|git-force-push-protected)
                     if echo "$COMMAND" | grep -qE -- "$pattern" 2>/dev/null; then
-                        # Bootstrap: allow when remote has no main/master yet (initial repo setup)
-                        if ! git rev-parse --verify origin/main >/dev/null 2>&1 && \
-                           ! git rev-parse --verify origin/master >/dev/null 2>&1; then
+                        # Skip if pattern only appears inside quoted strings
+                        if ! matches_outside_quotes "$COMMAND" "$pattern"; then
                             return
+                        fi
+                        # Bootstrap: allow when remote has no main/master yet (git-push-main-direct only)
+                        if [ "$rule_id" = "git-push-main-direct" ]; then
+                            if ! git rev-parse --verify origin/main >/dev/null 2>&1 && \
+                               ! git rev-parse --verify origin/master >/dev/null 2>&1; then
+                                return
+                            fi
                         fi
                         block "$rule_id" "$reason"
                     fi
