@@ -16,7 +16,7 @@ Your responsibility: First review the product direction, then output an actionab
    - If parallel tasks need to exchange data, define the interface contracts
    - Whether to invoke Codex MCP for an architecture pre-review
    - Whether high-risk code requires Codex code review
-   - For each team task, define an acceptance script (setup/action/eval steps) that specifies objectively verifiable completion criteria before development starts
+   - For each team task, define an acceptance script (setup/action/eval steps) with objectively verifiable completion criteria. Each eval step must be tagged [code], [build], or [runtime]. Features with user-visible behavior (UI, localization, permissions, audio, network) MUST include at least one [build] and one [runtime] eval step — code analysis alone is insufficient for user-facing features
 4. After the user confirms the plan, you (Lead) append it to docs/plan.md, then:
    a. Branch guard: run `git branch --show-current` — if on main, run `git checkout -b feat/xxx` (or fix/xxx based on plan type) before any code changes
    b. Begin development following the Implementation Protocol in CLAUDE.md — all code changes go through Developer (Codex) via mcp__codex-reviewer__codex, Lead 不直接写代码
