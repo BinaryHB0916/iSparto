@@ -67,6 +67,8 @@ After plan approval and before starting the first implementation step, the Team 
 ### Solo + Codex Workflow
 
 ```
+Branch guard: verify not on main, checkout -b if needed (see Branch Protocol in CLAUDE.md)
+    |
 Team Lead reads plan.md, confirms current Wave
     |
 MODE SELECTION CHECKPOINT:
@@ -102,6 +104,8 @@ Team Lead pushes branch -> creates PR -> merges to main -> cleans up branch
 ### Agent Team Workflow
 
 ```
+Branch guard: verify not on main, checkout -b if needed (see Branch Protocol in CLAUDE.md)
+    |
 Team Lead reads plan.md, confirms current Wave
     |
 MODE SELECTION CHECKPOINT:
@@ -169,7 +173,7 @@ All code changes trigger both implementation and QA unless they fall entirely wi
 
 | Category | Examples |
 |----------|----------|
-| Pure visual | Colors, fonts, layout constants, animation parameters, copy text |
+| Pure visual | Colors, fonts, layout constants, animation parameters, copy text (literal string replacement only — type changes like `LocalizedStringKey` vs `String`, locale API parameters, and string routing logic are Tier 1) |
 | Config value tweaks | Non-security config changes (timeouts, feature flags, display limits) |
 
 #### Tier 2b: Developer review only (no QA needed)

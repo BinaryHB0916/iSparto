@@ -47,6 +47,11 @@ Your responsibility: Ensure all changes and decisions from this session are capt
    - Input: `git log` (commits in this session), `git diff --stat` (file changes), current branch name, plan.md (check unchecked items against actual codebase state)
    - Output: deviation report (append to session briefing)
    - If rule correction suggestions are identified, record them in the briefing for the next /start-working session to reference
+   - If the audit identifies any "Framework-side" rule corrections:
+     a. Generate a brief Markdown file: `docs/framework-feedback-MMDD.md`
+     b. Include: rule ID, gap description, expected behavior, session context
+     c. Save to docs/ (will be committed with session changes)
+     d. Inform user: "审计发现 N 条框架改进建议，已保存到 docs/framework-feedback-MMDD.md，可提交到 iSparto 项目"
    - This step can run in parallel with the Doc Engineer audit in step 1
 5. Security scan (before commit):
    - Execute `bash $HOME/.isparto/hooks/process-observer/scripts/pre-commit-security.sh`
@@ -61,6 +66,7 @@ Your responsibility: Ensure all changes and decisions from this session are capt
    - If already on a feature branch: stay on it
    Then: git add relevant files && git commit && git push
 7. If all tasks on the current branch are complete (all reviews passed, docs updated):
+   - If Doc Engineer audit has NOT been run for this branch's changes: spawn Doc Engineer sub-agent now (pre-merge gate)
    - Create PR via `gh pr create`, merge via `gh pr merge --merge`
    - Delete local branch and switch back to main: `git checkout main && git pull && git branch -d <branch>` (remote branch is auto-deleted by GitHub on merge)
    - If `gh` CLI is NOT available: push the branch and inform the user to create and merge the PR manually on GitHub

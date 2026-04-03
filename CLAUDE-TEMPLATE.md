@@ -19,7 +19,7 @@
 - Any code change must include corresponding documentation updates
 - Product decision changes must be written into docs, not just discussed in conversation
 - Ask me first about uncertain product questions; do not decide on your own
-- Update docs/plan.md after completing tasks
+- Update docs/plan.md immediately after completing tasks (in the same commit, not deferred to /end-working)
 - Do not develop directly on main branch; use feat/ branches for new features, fix/ branches for bug fixes, hotfix/ branches for urgent production fixes
 - Core business logic must have unit tests
 - Sensitive data (API keys, tokens, passwords, personal information) must NOT be hardcoded in source code — use environment variables or config file references
@@ -100,6 +100,18 @@ Lead 和 Teammate 不得使用 Edit、Write、Bash 直接创建或修改代码�
 此协议同时适用于 Solo 模式和 Agent Team 模式。Solo 模式下 Lead 自己执行全部步骤；Agent Team 模式下每个 Teammate 在各自文件范围内执行同样步骤。
 
 例外：见 Development Rules 中的自引用边界（iSparto 框架编辑自身 hooks/rules）。
+
+**Branch Protocol (mandatory — applies to every session):**
+
+Never make any changes on the main branch. main is only for receiving PR merges.
+
+First action of every session (before reading docs or code):
+1. `git branch --show-current` to check the current branch
+2. If on main → immediately `git checkout -b <type>/<name>` to create and switch
+3. Branch types: feat/ for new features, fix/ for bug fixes, hotfix/ for urgent fixes, docs/ for pure documentation, release/ for releases
+4. Only start work after confirming you are on the correct branch
+
+This protocol is enforced by Process Observer hooks — commits, merges, and pushes on main will be blocked.
 
 **Developer Triggers:** Default is to trigger implementation + QA. Partial skip: pure visual / config tweaks (QA only), behavioral templates commands/*.md and templates/*.md (Developer review only, skip QA), pure documentation / formatting (skip both). Each Wave must include at least one batch review. QA tests against the acceptance script defined in plan.md. See docs/workflow.md for the full trigger table.
 
