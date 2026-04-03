@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.13] - 2026-04-03
+
 ### Added
 
 - **Branch Protocol** — entrance defense for main branch protection: branch check moved from Step 7 to Step 0 in `start-working.md` (before reading any files), `plan.md` Step 4 adds branch guard before development, new Branch Protocol section in CLAUDE.md and CLAUDE-TEMPLATE.md
