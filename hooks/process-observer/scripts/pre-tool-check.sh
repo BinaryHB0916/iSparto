@@ -167,11 +167,11 @@ case "$TOOL_NAME" in
             # Special handling for commit-env-file-bulk: only block if .env exists
             if [ "$rule_id" = "commit-env-file-bulk" ]; then
                 if echo "$COMMAND" | grep -qE -- "$pattern" 2>/dev/null; then
-                    # Check if .env file exists in the working directory or subdirectories
+                    # Check if .env file exists via git index (fast, skips node_modules etc.)
+                    # --cached = tracked files, --others --exclude-standard = untracked minus gitignored
+                    # Non-git repos: git ls-files fails → grep returns 1 → env_found stays false (correct fail-open)
                     local env_found=false
-                    if ls .env .env.* 2>/dev/null | grep -q . 2>/dev/null; then
-                        env_found=true
-                    elif find . -maxdepth 10 \( -name ".env" -o -name ".env.*" \) -print -quit 2>/dev/null | grep -q . 2>/dev/null; then
+                    if git ls-files --cached --others --exclude-standard 2>/dev/null | grep -qE '(^|/)\.env(\.|$)'; then
                         env_found=true
                     fi
                     if $env_found; then

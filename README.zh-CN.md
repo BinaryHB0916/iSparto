@@ -214,7 +214,7 @@ iSparto/
 ├── README.zh-CN.md            ← 你正在读的这份文档
 ├── CLAUDE.md                  ← Claude Code 项目指令
 ├── CONTRIBUTING.md            ← 贡献指南
-├── settings.json              ← 项目级 .claude/settings.json 的参考模板
+├── settings.example.json      ← 项目级 .claude/settings.json 的参考模板
 ├── CLAUDE-TEMPLATE.md         ← 新项目 CLAUDE.md 生成模板
 ├── LICENSE
 ├── .gitignore

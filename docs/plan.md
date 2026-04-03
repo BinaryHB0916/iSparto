@@ -101,6 +101,11 @@
 ### CLAUDE-TEMPLATE 同步审计 — 已完成
 - [x] Doc Engineer 审计清单新增 CLAUDE.md ↔ CLAUDE-TEMPLATE.md 内容一致性检查（替代 section 注入方案，复杂度更低）
 
+### Hook 性能修复 + 清理 — 已完成
+- [x] pre-tool-check.sh: .env 检测从 find 遍历改为 git ls-files 索引查询
+- [x] docs/independent-review.md placeholder 创建
+- [x] settings.json → settings.example.json 重命名 + 引用更新
+
 ### 下一步
 - [ ] P1 仓库结构重组：内部文件（plan.md, product-spec.md, design-decisions.md, process-observer.md, security.md, session-log.md）移到 .project/ 目录，与用户文档物理隔离（约束：CLAUDE.md 不能移，Claude Code 从项目根读取）
 - [ ] 本地 hook 更新：用户需跑 `install.sh --upgrade` 才能用上新的复合命令检测和可操作拦截消息
