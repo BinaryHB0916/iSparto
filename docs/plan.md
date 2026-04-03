@@ -82,7 +82,7 @@
 - [x] CLAUDE-TEMPLATE.md — 英文版同步
 - [x] docs/workflow.md — Solo + Agent Team QA 描述强化，"Simulates" → "Runs the app and verifies"
 
-### Independent Reviewer 角色 — 进行中
+### Independent Reviewer 角色 — 已完成
 - [x] agents/independent-reviewer.md — 新建完整审查流程 + 输出格式 + CRITICAL 恢复协议
 - [x] docs/roles.md — 新增 Independent Reviewer 角色定义（Teammate，非 sub-agent）
 - [x] CLAUDE.md — Roles 加 IR + workflow 加 step 3.5 + Module Boundaries 更新
