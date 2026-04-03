@@ -1,5 +1,35 @@
 # Session Log
 
+## 2026-04-03 Session (#2)
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | v0.6 架构加固（延续） |
+| Tasks completed | Branch Protocol 入口防御, 3 条审计规则修正, 审计回流机制, 用户产出去内部化, v0.6.13 发版 |
+| Key decisions | P1 仓库结构重组推迟到下个版本; CLAUDE.md 不能移（Claude Code 硬约束）; framework-feedback 文件放 docs/ 不放项目根 |
+
+### Files Changed
+```
+ CHANGELOG.md                                     | 23 +++++++++++++++++++++++
+ CLAUDE-TEMPLATE.md                               | 16 ++++++++++++++--
+ CLAUDE.md                                        | 18 +++++++++++++++---
+ VERSION                                          |  2 +-
+ agents/process-observer-audit.md                 | 21 ++++++++++++++++++---
+ commands/end-working.md                          | 14 ++++++++++----
+ commands/plan.md                                 |  4 +++-
+ commands/start-working.md                        | 16 ++++++++++------
+ docs/workflow.md                                 |  6 +++++-
+ hooks/process-observer/scripts/pre-tool-check.sh | 20 ++++++++++++++++++--
+ 10 files changed, 117 insertions(+), 23 deletions(-)
+```
+
+### Notes
+- 来源：Meic 项目 Session #13 审计（8 passed / 3 failed）暴露的框架侧缺口 + 外部用户视角产出物审视
+- 4 个 PR 合并（#115 Branch Protocol, #116 用户产出去内部化, #117 CHANGELOG, #118 Release v0.6.13）
+- 已安装的 hook（~/.isparto/）还是旧版本，需要 install.sh --upgrade 才能用上新的复合命令检测
+- 发现并修复 CLAUDE-TEMPLATE.md L3 死链（~/.isparto/docs/ 不存在，改为 GitHub URL）
+
 ## 2026-04-01 Session
 
 | Metric | Value |
