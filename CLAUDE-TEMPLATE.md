@@ -1,6 +1,6 @@
 # [Project Name]
 
-本项目使用 iSparto 工作流框架（isparto.dev）管理 Agent Team 协作。框架文档见 ~/.isparto/docs/。
+本项目使用 iSparto 工作流框架（isparto.dev）管理 Agent Team 协作。框架文档见 https://github.com/BinaryHB0916/iSparto/tree/main/docs 。
 
 ## Project Overview
 <!-- One sentence: what it is, who it's for, current stage -->

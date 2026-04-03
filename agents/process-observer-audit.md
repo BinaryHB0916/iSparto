@@ -14,9 +14,19 @@ Audit scope:
 - Unauthorized operations (file ownership violations)
 - plan.md accuracy (unchecked items vs actual codebase state)
 
-Output format:
+Output format (two sections — Lead uses User-facing Summary for the session briefing, keeps Full Report for internal reference):
 
-### Compliance Audit
+### User-facing Summary
+
+[If all checks PASS:]
+No workflow deviations detected.
+
+[If any checks FAIL:]
+⚠ 本次 session 发现 N 个流程偏差：
+- [Failed check description]: [actionable recovery suggestion]
+- ...
+
+### Full Compliance Report
 
 | # | Check | Status | Detail |
 |---|-------|--------|--------|
