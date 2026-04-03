@@ -59,12 +59,14 @@ Applies to both **write** (code, docs, config) and **read** (code review, doc au
 - Developer (Codex MCP): Implements code per structured prompts from Lead/Teammate. Also handles QA smoke testing (different prompt, orchestrated by Lead). Model configuration: see docs/configuration.md.
 - Doc Engineer (Lead sub-agent): The team's context source. After each Wave: (1) ensures code and docs stay in sync, (2) checks product terminology consistency, (3) audits product narrative integration.
 - Process Observer (hooks + Lead sub-agent): Compliance oversight. Hooks intercept catastrophic operations in real time (irreversible / shared state / data loss); post-session audit reviews execution against behavioral guidelines, outputs deviation report + rule correction suggestions.
+- Independent Reviewer (Teammate — tmux): Product-technical alignment reviewer. Spawned as a Teammate (zero inherited context), independently reads product-spec then tech-spec to verify the technical approach actually implements what the product requires. Lead spawns with a fixed one-liner — no additional context or framing allowed. Report written directly to docs/independent-review.md, not filtered through Lead. Mandatory at Phase 0; conditionally triggered at Wave boundaries (when user-visible behavior changes).
 
 **Development Workflow (Solo + Codex):**
 0. **Mode Selection Checkpoint** — Lead groups by file ownership, evaluates two conditions, declares Solo (records reason)
 1. Lead assembles implementation prompt → calls Developer to implement code + tests
 2. Lead reviews Developer output; if issues, assembles fix prompt → calls Developer again
 3. Lead assembles QA prompt → calls Developer for smoke testing (per trigger table) — Developer MUST build the project first, then verify each acceptance step at its tagged level: [code]/[build]/[runtime]
+3.5 (Phase 0 only, or Waves with user-visible behavior changes) Lead spawns Independent Reviewer (Teammate, fixed prompt: "You are the Independent Reviewer. Read agents/independent-reviewer.md and execute."), waits for report. CRITICAL finding → stop development, resolve alignment first; after CRITICAL fix, must re-trigger Independent Reviewer to verify
 4. Lead runs Doc Engineer audit (as sub-agent)
 5. Lead runs Process Observer post-session audit (as sub-agent, can run in parallel with Doc Engineer)
 6. Lead pushes branch -> creates PR -> merges to main -> cleans up branch
@@ -76,6 +78,7 @@ Applies to both **write** (code, docs, config) and **read** (code review, doc au
 1. Lead breaks down tasks → defines file ownership + prompt scope
 2. Teammate(s) each run prompt→Developer→review loop in parallel
 3. Lead assembles QA prompt → calls Developer for smoke testing (incremental, only changed paths) — Developer MUST build the project first, then verify each acceptance step at its tagged level: [code]/[build]/[runtime]
+3.5 (Phase 0 only, or Waves with user-visible behavior changes) Lead spawns Independent Reviewer (Teammate, fixed prompt), waits for report. CRITICAL finding → stop development, resolve alignment first; after CRITICAL fix, must re-trigger
 4. Lead spawns Doc Engineer for documentation audit (last step, ensures QA fixes are also audited)
 5. Lead runs Process Observer post-session audit (as sub-agent, can run in parallel with Doc Engineer)
 6. Lead pushes branch -> creates PR -> merges to main -> cleans up branch
