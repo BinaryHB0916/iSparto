@@ -334,6 +334,7 @@ Audit checklist:
 5. CLAUDE.md update
    - Do module boundaries need adjustment (new directories, file ownership changes)
    - Does the project structure diagram need updating
+   - If workflow sections (Collaboration Mode, Implementation Protocol, User Preference Interface) were changed: is CLAUDE-TEMPLATE.md (English) in sync with CLAUDE.md (Chinese)? These two files share ~90 lines of structurally identical content in different languages
 
 6. Product terminology consistency
    - Are command counts, feature names, and role names consistent across all docs

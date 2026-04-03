@@ -98,6 +98,9 @@
 - [x] /start-working 项目级 hook matcher 自动迁移
 - [x] design-decisions.md 标记为已解决
 
+### CLAUDE-TEMPLATE 同步审计 — 已完成
+- [x] Doc Engineer 审计清单新增 CLAUDE.md ↔ CLAUDE-TEMPLATE.md 内容一致性检查（替代 section 注入方案，复杂度更低）
+
 ### 下一步
 - [ ] P1 仓库结构重组：内部文件（plan.md, product-spec.md, design-decisions.md, process-observer.md, security.md, session-log.md）移到 .project/ 目录，与用户文档物理隔离（约束：CLAUDE.md 不能移，Claude Code 从项目根读取）
 - [ ] 本地 hook 更新：用户需跑 `install.sh --upgrade` 才能用上新的复合命令检测和可操作拦截消息
