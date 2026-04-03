@@ -60,7 +60,7 @@ handle_mcp_uninstall() {
     local dry_run="$1"
     if $dry_run; then
         printf "  [dry-run] Would remove Codex MCP Server registration\n"
-    elif claude mcp remove codex-reviewer -s user 2>/dev/null; then
+    elif claude mcp remove codex-dev -s user 2>/dev/null; then
         printf "  ${GREEN}✓${NC} Removed Codex MCP Server registration\n"
     else
         printf "  ${YELLOW}→${NC} MCP removal skipped (may not exist)\n"
@@ -159,7 +159,7 @@ do_uninstall() {
         echo "    rm -f ~/.claude/CLAUDE-TEMPLATE.md"
         echo "    rm -f ~/.claude/commands/{start-working,end-working,plan,init-project,env-nogo,migrate,restore}.md"
         echo "    rm -f ~/.claude/templates/{product-spec,tech-spec,design-spec,plan}-template.md"
-        echo "    claude mcp remove codex-reviewer -s user"
+        echo "    claude mcp remove codex-dev -s user"
         echo ""
         exit 1
     fi

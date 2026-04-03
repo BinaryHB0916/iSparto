@@ -367,14 +367,24 @@ fi
 # ── 6. Register Codex MCP Server (global) ───────────────────
 
 if $DRY_RUN; then
-    if claude mcp list -s user 2>/dev/null | grep -q codex-reviewer; then
+    if claude mcp list -s user 2>/dev/null | grep -q codex-dev; then
         printf "  ${GREEN}✓${NC} Codex MCP Server OK\n"
+    elif claude mcp list -s user 2>/dev/null | grep -q codex-reviewer; then
+        printf "  ${BLUE}[dry-run]${NC} Would migrate MCP: codex-reviewer → codex-dev\n"
     else
         printf "  ${BLUE}[dry-run]${NC} Would register Codex MCP Server globally\n"
     fi
 else
-    if claude mcp add codex-reviewer -s user -- npx -y codex-mcp-server 2>/dev/null; then
-        printf "  ${GREEN}✓${NC} Codex MCP Server registered\n"
+    # Migrate old name if present
+    if claude mcp list -s user 2>/dev/null | grep -q codex-reviewer; then
+        claude mcp remove codex-reviewer -s user 2>/dev/null
+    fi
+    if claude mcp add codex-dev -s user -- npx -y codex-mcp-server 2>/dev/null; then
+        if [ -n "$OLD_VERSION" ]; then
+            printf "  ${GREEN}✓${NC} Migrated MCP: codex-reviewer → codex-dev\n"
+        else
+            printf "  ${GREEN}✓${NC} Codex MCP Server registered\n"
+        fi
     else
         # Already registered — only mention on fresh install
         if [ -z "$OLD_VERSION" ]; then
@@ -464,7 +474,7 @@ for matcher in required_matchers:
         changed = True
 
 # Clean up workflow matchers that should not be at user level (PR #69 residue)
-workflow_matchers_to_remove = ['Edit', 'Write', 'mcp__codex-reviewer__codex']
+workflow_matchers_to_remove = ['Edit', 'Write', 'mcp__codex-dev__codex', 'mcp__codex-reviewer__codex']
 new_ptu = []
 for entry in pre_tool_use:
     if isinstance(entry, dict) and entry.get('matcher') in workflow_matchers_to_remove:
@@ -585,7 +595,7 @@ else
     # Check for workflow matchers that would be cleaned from user level
     _needs_user_hook_cleanup=false
     if [ -f "$_user_settings" ]; then
-        for _wf_matcher in "Edit" "Write" "mcp__codex-reviewer__codex"; do
+        for _wf_matcher in "Edit" "Write" "mcp__codex-dev__codex" "mcp__codex-reviewer__codex"; do
             if grep -q "\"matcher\"[[:space:]]*:[[:space:]]*\"$_wf_matcher\"" "$_user_settings" 2>/dev/null; then
                 _needs_user_hook_cleanup=true
                 break

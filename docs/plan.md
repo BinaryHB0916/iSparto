@@ -92,6 +92,12 @@
 - [x] docs/workflow.md — Phase 0 + Solo/Agent Team 流程加 IR 步骤
 - [x] docs/design-decisions.md — 4 条决策记录
 
+### MCP Server 重命名 — 已完成
+- [x] codex-reviewer → codex-dev：14 个文件全量替换（工具调用名 + MCP 注册名）
+- [x] install.sh 旧用户迁移逻辑（检测旧名 → remove → add 新名）
+- [x] /start-working 项目级 hook matcher 自动迁移
+- [x] design-decisions.md 标记为已解决
+
 ### 下一步
 - [ ] P1 仓库结构重组：内部文件（plan.md, product-spec.md, design-decisions.md, process-observer.md, security.md, session-log.md）移到 .project/ 目录，与用户文档物理隔离（约束：CLAUDE.md 不能移，Claude Code 从项目根读取）
 - [ ] 本地 hook 更新：用户需跑 `install.sh --upgrade` 才能用上新的复合命令检测和可操作拦截消息

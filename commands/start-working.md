@@ -31,7 +31,8 @@ Your responsibility: Report current status and suggest next steps. Do not write 
    - If no explicit build/test commands are found: skip this step
    - This step catches environment issues invisible to documentation checks: dependency updates, build environment drift, incomplete syncs from previous sessions
 6. Verify project-level Process Observer hooks:
-   - Check if .claude/settings.json contains PreToolUse hooks with Edit/Write/mcp__codex-reviewer__codex matchers **and** each matcher's hooks array includes the `pre-tool-check.sh` command
+   - Check if .claude/settings.json contains PreToolUse hooks with Edit/Write/mcp__codex-dev__codex matchers **and** each matcher's hooks array includes the `pre-tool-check.sh` command
+   - If old matcher `mcp__codex-reviewer__codex` is found: rename it to `mcp__codex-dev__codex` and inform the user: "Migrated hook matcher: codex-reviewer → codex-dev"
    - If any matcher is missing or its hook command is absent: auto-add them (same JSON as /init-project step 6) and inform the user: "Added iSparto workflow hooks to project settings"
    - This auto-repair ensures projects created before the layered hooks architecture get patched on first /start-working
 7. Determine the collaboration mode (transparent to user, no mode switch needed):

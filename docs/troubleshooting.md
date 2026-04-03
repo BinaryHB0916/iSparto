@@ -12,7 +12,7 @@
 
 | Problem | Cause | Solution |
 |---------|-------|----------|
-| Codex MCP status shows ✘ failed | MCP Server command is incorrect, or Codex CLI is not installed/not logged in | Verify that `codex --version` and `codex login status` work correctly, then run `claude mcp remove codex-reviewer -s user && claude mcp add codex-reviewer -s user -- npx -y codex-mcp-server` and restart Claude Code |
+| Codex MCP status shows ✘ failed | MCP Server command is incorrect, or Codex CLI is not installed/not logged in | Verify that `codex --version` and `codex login status` work correctly, then run `claude mcp remove codex-dev -s user && claude mcp add codex-dev -s user -- npx -y codex-mcp-server` and restart Claude Code |
 | Claude Code context window is full | Long sessions accumulate too many tokens | Run `/compact` to compress context. If still full, run `/end-working` to wrap up, then start a new session with `/start-working` to continue (plan.md ensures no context is lost) |
 | Developer modified files they shouldn't have | File ownership directives were ignored | Team Lead rolls back the changes to that file, re-clarifies file ownership, and has the Developer redo the work. Add project-specific rules to CLAUDE.md to emphasize this |
 | Merge conflicts (multiple Developers in parallel) | File ownership boundaries overlap, or shared files lack a clear modification order | Team Lead ensures file ownership does not overlap when splitting tasks. Assign shared file modifications to only one Developer, or define a clear order |

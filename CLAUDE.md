@@ -81,15 +81,15 @@ Lead 根据任务特征选择模式，用户无需干预。选择必须在执行
 
 **Implementation Protocol（强制 — 适用于每一次代码变更）：**
 
-Lead 和 Teammate 不得使用 Edit、Write、Bash 直接创建或修改代码文件。所有代码实现必须通过 `mcp__codex-reviewer__codex` MCP 工具调用 Developer (Codex)。这不是偏好，而是由 Process Observer hooks 强制执行的硬性约束。
+Lead 和 Teammate 不得使用 Edit、Write、Bash 直接创建或修改代码文件。所有代码实现必须通过 `mcp__codex-dev__codex` MCP 工具调用 Developer (Codex)。这不是偏好，而是由 Process Observer hooks 强制执行的硬性约束。
 
 执行步骤（每个实现任务必须遵循）：
 1. 从 plan.md（或用户请求）读取任务范围
 2. 读取相关上下文：product-spec.md、tech-spec.md、实际源代码文件
 3. 按 docs/roles.md 的 Implementation prompt template 组装结构化 prompt — prompt 必须包含 `## ` 标题（hook 会验证）
-4. 调用 `mcp__codex-reviewer__codex`
+4. 调用 `mcp__codex-dev__codex`
 5. Review Developer 输出：正确性、bug、风格、文件范围
-6. 有问题 → 组装修复 prompt → 再次调用 `mcp__codex-reviewer__codex` → review
+6. 有问题 → 组装修复 prompt → 再次调用 `mcp__codex-dev__codex` → review
 7. 通过 review → 进入 QA（工作流步骤 3）
 
 "代码文件" = 扩展名不在 workflow-rules.json allowed_extensions 中的文件。不确定时，用 Developer。

@@ -239,7 +239,7 @@ case "$TOOL_NAME" in
         else
             # No extension (e.g., Makefile, Dockerfile) — treat as code (fail-safe)
             TOOL_NAME_LOWER=$(echo "$TOOL_NAME" | tr '[:upper:]' '[:lower:]')
-            block "direct-code-${TOOL_NAME_LOWER}" "代码变更必须通过 Developer (Codex) 实现，不可直接编辑 ($FILE_PATH)。请使用 mcp__codex-reviewer__codex 工具调用 Developer，按 docs/roles.md 的 Implementation prompt template 组装结构化 prompt。"
+            block "direct-code-${TOOL_NAME_LOWER}" "代码变更必须通过 Developer (Codex) 实现，不可直接编辑 ($FILE_PATH)。请使用 mcp__codex-dev__codex 工具调用 Developer，按 docs/roles.md 的 Implementation prompt template 组装结构化 prompt。"
         fi
 
         # Parse allowed_extensions from workflow-rules.json
@@ -313,10 +313,10 @@ case "$TOOL_NAME" in
 
         # Not in allowed list — block as code file
         TOOL_NAME_LOWER=$(echo "$TOOL_NAME" | tr '[:upper:]' '[:lower:]')
-        block "direct-code-${TOOL_NAME_LOWER}" "代码变更必须通过 Developer (Codex) 实现，不可直接编辑 ($FILE_PATH)。请使用 mcp__codex-reviewer__codex 工具调用 Developer，按 docs/roles.md 的 Implementation prompt template 组装结构化 prompt。"
+        block "direct-code-${TOOL_NAME_LOWER}" "代码变更必须通过 Developer (Codex) 实现，不可直接编辑 ($FILE_PATH)。请使用 mcp__codex-dev__codex 工具调用 Developer，按 docs/roles.md 的 Implementation prompt template 组装结构化 prompt。"
         ;;
 
-    mcp__codex-reviewer__codex)
+    mcp__codex-dev__codex)
         # ── Codex MCP: check prompt structure ──────────────────────
         if [ ! -f "$WORKFLOW_RULES_FILE" ]; then
             exit 0
