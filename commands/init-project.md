@@ -54,7 +54,12 @@ Your responsibility: Based on the product description provided by the user, gene
    - Create an empty `.secureignore` file in the project root (for future false positive whitelisting)
 9. Initialize the git repository and create the main branch
 10. Invoke Codex MCP for an architecture pre-review (based on tech-spec.md, using the architecture review prompt template) and report the review results to the user
-11. After the user confirms all documentation and architecture pre-review results, project initialization is complete and you may begin /start-working
+11. Spawn Independent Reviewer as a Teammate (tmux mode) with the following fixed prompt — do NOT add any context, framing, or explanation:
+    "You are the Independent Reviewer. Read agents/independent-reviewer.md and execute."
+    Wait for the reviewer to complete and write docs/independent-review.md. Report findings to the user.
+    - If CRITICAL misalignment found: flag to user, do NOT proceed to development until resolved. After resolution (e.g., tech-spec modified), re-trigger Independent Reviewer to verify alignment.
+    - If no critical issues: proceed to step 12
+12. After the user confirms all documentation, architecture pre-review, AND independent review results, project initialization is complete and you may begin /start-working
 
 Note: If anything goes wrong during initialization, the user can run `/restore <snapshot_id>` to roll back all changes.
 

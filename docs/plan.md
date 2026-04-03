@@ -73,13 +73,24 @@
 - [x] 审计回流机制（User-side / Framework-side 分类 + framework-feedback 文件生成）
 - [x] 用户产出去内部化（session-log 删内部指标、审计报告分层、CLAUDE-TEMPLATE.md 死链修复）
 
-### QA 验证层级修复 — 进行中
+### QA 验证层级修复 — 已完成
+
 - [x] templates/plan-template.md — acceptance script 格式升级 + Completion Criteria 三层拆分
 - [x] docs/roles.md — QA prompt 加构建前置 + [code]/[build]/[runtime] 分级验证 + evidence 要求
 - [x] commands/plan.md — acceptance script 指导含 [build]/[runtime] 要求
 - [x] CLAUDE.md — Solo + Agent Team workflow step 3 强化
 - [x] CLAUDE-TEMPLATE.md — 英文版同步
 - [x] docs/workflow.md — Solo + Agent Team QA 描述强化，"Simulates" → "Runs the app and verifies"
+
+### Independent Reviewer 角色 — 进行中
+- [x] agents/independent-reviewer.md — 新建完整审查流程 + 输出格式 + CRITICAL 恢复协议
+- [x] docs/roles.md — 新增 Independent Reviewer 角色定义（Teammate，非 sub-agent）
+- [x] CLAUDE.md — Roles 加 IR + workflow 加 step 3.5 + Module Boundaries 更新
+- [x] CLAUDE-TEMPLATE.md — 英文版同步
+- [x] commands/init-project.md — Phase 0 加 Independent Review（Step 11）
+- [x] commands/plan.md — Wave 条件触发（Step 4b）
+- [x] docs/workflow.md — Phase 0 + Solo/Agent Team 流程加 IR 步骤
+- [x] docs/design-decisions.md — 4 条决策记录
 
 ### 下一步
 - [ ] P1 仓库结构重组：内部文件（plan.md, product-spec.md, design-decisions.md, process-observer.md, security.md, session-log.md）移到 .project/ 目录，与用户文档物理隔离（约束：CLAUDE.md 不能移，Claude Code 从项目根读取）

@@ -61,3 +61,7 @@
 | inline source map 加入 secrets | content scan 拦截 | 有些项目不生成独立 .map 文件，而是用 data URI 内联在 bundle 里；需要内容扫描补位 |
 | /end-working 分支守卫 | commit 前检查当前分支，main 上自动创建 docs/ 分支 | /end-working 模板的 step 6 假定 commit 时在 feature branch，但主工作已 merge 时 session log 提交在 main 上会撞 push-on-main hook。分支守卫解决时序假设问题 |
 | docs/ 和 release/ 分支前缀正式化 | 加入 CLAUDE.md 分支规则和 Process Observer A1/A3 checklist | 实践中已在使用（session log 用 docs/、发版用 release/），但未写入规则，导致 Process Observer 审计报假阳性。Codex review 在 end-working 修复中指出了这个不一致 |
+| Independent Reviewer 角色 | Teammate (tmux) 而非 Sub-agent | Sub-agent 继承 Lead 的对话片段（包括偏见和错误假设）；Teammate 是全新 session，天然上下文隔离，类比学术论文的盲审 |
+| Independent Reviewer 阅读顺序 | product-spec → tech-spec（强制） | 先读技术方案会被技术方案锚定，先读产品需求才能形成独立判断 |
+| Independent Reviewer spawn prompt | 固定一行话，不允许 Lead 加描��� | Lead 的任何描述都可能携带偏见，"只收自己声音"被 Lead 理解为"二值门控"后，Lead 的描述会把 reviewer 也带偏 |
+| Independent Reviewer 输出 | 直接写文件，不经 Lead 过滤 | Lead 可能淡化或重新解释 reviewer 的发现，直接写文件让用户看到原始判断 |

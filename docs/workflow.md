@@ -18,7 +18,14 @@ Developer (Codex) reviews technical architecture (Team Lead invokes via MCP, bas
   - Potential performance bottlenecks and security issues
   - Whether tech choices match requirements
     |
-User confirms -> enter Wave development
+Independent Reviewer (Teammate — zero inherited context, reads product-spec then tech-spec independently):
+  - Product-technical alignment: does tech-spec implement what product-spec describes?
+  - Implicit assumptions check: any simplifications that change user-facing behavior?
+  - Requirement coverage: any product requirements with no technical approach?
+  - Report written directly to docs/independent-review.md
+  - CRITICAL finding → BLOCK — resolve before development; after fix, re-trigger reviewer to verify
+    |
+User confirms (docs + architecture review + independent review) -> enter Wave development
 ```
 
 ## Collaboration Mode Selection
@@ -91,6 +98,13 @@ Lead assembles QA prompt → calls Developer for smoke testing (using acceptance
   - Each eval step verified at its tagged level: [code] by analysis, [build] by checking artifacts, [runtime] by actually running the app
   - "Looks correct from code" is NOT valid evidence for [build] or [runtime] steps
     |
+(If Phase 0, or Wave involves user-visible behavior changes)
+Independent Reviewer (Teammate — zero inherited context):
+  - Spawned with fixed prompt: "You are the Independent Reviewer. Read agents/independent-reviewer.md and execute."
+  - Verifies product-spec ↔ implementation alignment for this Wave's scope
+  - CRITICAL finding → stop, resolve alignment before proceeding; after fix, re-trigger reviewer
+  - Report written to docs/independent-review.md (Phase 0: overwrite; Wave boundary: append with date header)
+    |
 Team Lead runs Doc Engineer audit (as sub-agent)
   - Same checklist as Agent Team mode (see Doc Engineer role in roles.md)
     |
@@ -134,6 +148,13 @@ Lead assembles QA prompt → calls Developer for smoke testing (using acceptance
   - Skips areas tested in previous Waves that are not affected by current changes
   - Runs the app and verifies key user operation paths at runtime (not just code simulation)
   - Records and directly fixes issues found
+    |
+(If Phase 0, or Wave involves user-visible behavior changes)
+Independent Reviewer (Teammate — zero inherited context):
+  - Spawned with fixed prompt: "You are the Independent Reviewer. Read agents/independent-reviewer.md and execute."
+  - Verifies product-spec ↔ implementation alignment for this Wave's scope
+  - CRITICAL finding → stop, resolve alignment before proceeding; after fix, re-trigger reviewer
+  - Report written to docs/independent-review.md (Phase 0: overwrite; Wave boundary: append with date header)
     |
 Team Lead spawns Doc Engineer (sub-agent) for documentation audit (placed last to ensure QA-fixed code is also audited)
   - Code vs product-spec.md consistency
