@@ -53,6 +53,7 @@
 | security-patterns.json 单一数据源 | 所有安全扫描共用一个 JSON 规则库 | 避免 patterns 散落在脚本和 JSON 中各维护一份。pre-tool-check.sh 和 pre-commit-security.sh 都从 JSON 读取——增删 pattern 只改一处。realtime_critical 字段选择子集解决 L1 性能约束 |
 | security-patterns.json 与 dangerous-operations.json 分工 | dangerous-operations = 操作安全（命令拦截），security-patterns = 数据安全（内容扫描） | 前者拦截危险操作（force-push、rm -rf、reset --hard），后者扫描文件内容和 staged 文件。职责清晰不重叠 |
 | settings.json 重命名 | settings.json → settings.example.json | 根目录裸 settings.json 易被误认为项目配置文件；加 .example 后缀明确其参考模板定位 |
+| pre-tool-check.sh JSON 解析限制（known limitation） | extract_json_field 用 awk 逐字符解析，不支持 \uXXXX Unicode escape 和嵌套 JSON 对象 | 当前使用场景（command、file_path、prompt 字段）均为平坦字符串，无触发风险。如未来 Claude Code tool_input 结构变更引入嵌套或 Unicode escape，需改用 Python JSON 解析（install.sh 已依赖 Python 3） |
 | 敏感文件检测职责归属 | 从 dangerous-operations.json 移除，交给 security-patterns.json 三层系统 | 旧规则对命令字符串做子串匹配，commit message 含 .env 字样即误报；新系统扫描实际 staged 文件和内容，精度更高；职责分离避免重复拦截和冲突 |
 | sensitive_files 全栈覆盖 | 7 类 ~50+ pattern | iSparto 是通用框架，必须覆盖 iOS/Android/macOS/Windows/Web/基础设施/数据工程全场景；Claude Code source map 事件证明构建产物是真实攻击面 |
 | *.map 默认阻断 | sensitive_files 级别（BLOCK） | source map 含完整源码（sourcesContent 字段），等同于泄露全部代码；需要保留的项目走 .secureignore 白名单 |
