@@ -47,6 +47,11 @@ Your responsibility: Ensure all changes and decisions from this session are capt
    - Input: `git log` (commits in this session), `git diff --stat` (file changes), current branch name, plan.md (check unchecked items against actual codebase state)
    - Output: deviation report (append to session briefing)
    - If rule correction suggestions are identified, record them in the briefing for the next /start-working session to reference
+   - If the audit identifies any "Framework-side" rule corrections:
+     a. Generate a brief Markdown file: `docs/framework-feedback-MMDD.md`
+     b. Include: rule ID, gap description, expected behavior, session context
+     c. Save to docs/ (will be committed with session changes)
+     d. Inform user: "审计发现 N 条框架改进建议，已保存到 docs/framework-feedback-MMDD.md，可提交到 iSparto 项目"
    - This step can run in parallel with the Doc Engineer audit in step 1
 5. Security scan (before commit):
    - Execute `bash $HOME/.isparto/hooks/process-observer/scripts/pre-commit-security.sh`

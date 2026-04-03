@@ -27,4 +27,9 @@ Output format:
 **Summary:** X passed, Y warnings, Z failures
 
 **Rule Corrections Suggested:**
-- [Specific suggestions if any]
+
+User-side (stays in session-log — rule is clear, user didn't follow it):
+- [Specific user behavior that violated existing clear rules]
+
+Framework-side (needs iSparto update — rule itself is imprecise or lacks enforcement):
+- [Rule] [Specific gap description] [Expected behavior]
