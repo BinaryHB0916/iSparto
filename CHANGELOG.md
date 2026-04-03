@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Implementation Protocol** in CLAUDE.md and CLAUDE-TEMPLATE.md — mandatory 7-step sequence with explicit `mcp__codex-reviewer__codex` tool name, enforcing Codex-first code implementation for both Solo and Agent Team modes
+
+### Changed
+
+- `commands/plan.md` Step 4 now explicitly references Implementation Protocol with tool name at the plan→execution boundary
+- Hook block messages in `pre-tool-check.sh` now include actionable guidance: tool name (`mcp__codex-reviewer__codex`) and prompt template reference (`docs/roles.md`)
+- `workflow-rules.json` reason fields updated to match enhanced block messages
+- `docs/workflow.md` Solo and Agent Team flows now reference Implementation Protocol
+
 ## [0.6.11] - 2026-04-01
 
 ### Fixed
