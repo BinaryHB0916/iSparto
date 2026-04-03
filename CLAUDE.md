@@ -76,6 +76,25 @@ Lead 根据任务特征选择模式，用户无需干预。选择必须在执行
 
 /end-working 全自动执行（commit + push + 输出 briefing），不需要用户确认。分支任务全部完成时自动建 PR 并 merge；未完成时只 push，不 merge。
 
+**Implementation Protocol（强制 — 适用于每一次代码变更）：**
+
+Lead 和 Teammate 不得使用 Edit、Write、Bash 直接创建或修改代码文件。所有代码实现必须通过 `mcp__codex-reviewer__codex` MCP 工具调用 Developer (Codex)。这不是偏好，而是由 Process Observer hooks 强制执行的硬性约束。
+
+执行步骤（每个实现任务必须遵循）：
+1. 从 plan.md（或用户请求）读取任务范围
+2. 读取相关上下文：product-spec.md、tech-spec.md、实际源代码文件
+3. 按 docs/roles.md 的 Implementation prompt template 组装结构化 prompt — prompt 必须包含 `## ` 标题（hook 会验证）
+4. 调用 `mcp__codex-reviewer__codex`
+5. Review Developer 输出：正确性、bug、风格、文件范围
+6. 有问题 → 组装修复 prompt → 再次调用 `mcp__codex-reviewer__codex` → review
+7. 通过 review → 进入 QA（工作流步骤 3）
+
+"代码文件" = 扩展名不在 workflow-rules.json allowed_extensions 中的文件。不确定时，用 Developer。
+
+此协议同时适用于 Solo 模式和 Agent Team 模式。Solo 模式下 Lead 自己执行全部步骤；Agent Team 模式下每个 Teammate 在各自文件范围内执行同样步骤。
+
+例外：见 Development Rules 中的自引用边界（iSparto 框架编辑自身 hooks/rules）。
+
 **Developer Triggers:** 默认触发实现 + QA。部分跳过：纯视觉/配置微调（仅 QA）、行为模板 commands/*.md 和 templates/*.md（仅 Developer review，跳过 QA）、纯文档/格式化（均可跳过）。每个 Wave 至少包含一次批量审查。QA 按 plan.md 中定义的 acceptance script 执行。详见 docs/workflow.md 触发条件表。
 
 **Branching & Merge:** main 锁定；feat/xxx 开发新功能，fix/xxx 修 bug，hotfix/xxx 紧急修复，docs/xxx 纯文档提交，release/vX.Y.Z 发版。完成全部审查后 Lead 自动建 PR 并 merge——不需要用户手动 review。

@@ -17,6 +17,6 @@ Your responsibility: First review the product direction, then output an actionab
    - Whether to invoke Codex MCP for an architecture pre-review
    - Whether high-risk code requires Codex code review
    - For each team task, define an acceptance script (setup/action/eval steps) that specifies objectively verifiable completion criteria before development starts
-4. After the user confirms the plan, you (Lead) append it to docs/plan.md, then launch the team for development
+4. After the user confirms the plan, you (Lead) append it to docs/plan.md, then begin development following the Implementation Protocol in CLAUDE.md — all code changes go through Developer (Codex) via mcp__codex-reviewer__codex, Lead 不直接写代码
 
 $ARGUMENTS
