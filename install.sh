@@ -184,6 +184,7 @@ if ! $DRY_RUN; then
     mkdir -p "$ISPARTO_HOME/lib"
     cp "$SCRIPT_DIR/lib/snapshot.sh" "$ISPARTO_HOME/lib/snapshot.sh"
     chmod +x "$ISPARTO_HOME/lib/snapshot.sh"
+    cp "$SCRIPT_DIR/lib/patch-settings.py" "$ISPARTO_HOME/lib/patch-settings.py"
 fi
 
 # ── Install hooks/process-observer ───────────────────────
@@ -407,106 +408,8 @@ if ! $DRY_RUN; then
         printf "    Install Python 3 and re-run the installer.\n"
         exit 1
     else
-        _patch_result=$(python3 -c "
-import json, sys, os
-
-path = os.path.expanduser('~/.claude/settings.json')
-hook_cmd = 'bash ' + os.path.expanduser('~/.isparto/hooks/process-observer/scripts/pre-tool-check.sh')
-required_matchers = ['Bash']
-
-try:
-    if os.path.exists(path):
-        with open(path) as f:
-            settings = json.load(f)
-    else:
-        settings = {}
-except Exception as e:
-    print('ERROR: ' + str(e))
-    sys.exit(0)
-
-changed = False
-
-hooks = settings.get('hooks')
-if not isinstance(hooks, dict):
-    hooks = {}
-    settings['hooks'] = hooks
-    changed = True
-
-pre_tool_use = hooks.get('PreToolUse')
-if not isinstance(pre_tool_use, list):
-    pre_tool_use = []
-    hooks['PreToolUse'] = pre_tool_use
-    changed = True
-
-for matcher in required_matchers:
-    matched_entry = None
-    for entry in pre_tool_use:
-        if isinstance(entry, dict) and entry.get('matcher') == matcher:
-            matched_entry = entry
-            break
-
-    if matched_entry is None:
-        pre_tool_use.append({
-            'matcher': matcher,
-            'hooks': [{
-                'type': 'command',
-                'command': hook_cmd
-            }]
-        })
-        changed = True
-        continue
-
-    entry_hooks = matched_entry.get('hooks')
-    if not isinstance(entry_hooks, list):
-        entry_hooks = []
-        matched_entry['hooks'] = entry_hooks
-        changed = True
-
-    has_hook_cmd = any(
-        isinstance(h, dict) and h.get('command') == hook_cmd
-        for h in entry_hooks
-    )
-    if not has_hook_cmd:
-        entry_hooks.append({
-            'type': 'command',
-            'command': hook_cmd
-        })
-        changed = True
-
-# Clean up workflow matchers that should not be at user level (PR #69 residue)
-workflow_matchers_to_remove = ['Edit', 'Write', 'mcp__codex-dev__codex', 'mcp__codex-reviewer__codex']
-new_ptu = []
-for entry in pre_tool_use:
-    if isinstance(entry, dict) and entry.get('matcher') in workflow_matchers_to_remove:
-        eh = entry.get('hooks', [])
-        new_eh = [h for h in eh if not (isinstance(h, dict) and h.get('command', '').endswith('pre-tool-check.sh'))]
-        if len(new_eh) != len(eh):
-            changed = True
-        if new_eh:
-            entry['hooks'] = new_eh
-            new_ptu.append(entry)
-        else:
-            changed = True
-    else:
-        new_ptu.append(entry)
-hooks['PreToolUse'] = new_ptu
-
-if not changed:
-    sys.exit(0)
-
-# Clean up empty structures
-if not hooks.get('PreToolUse'):
-    if 'PreToolUse' in hooks:
-        del hooks['PreToolUse']
-    if not hooks:
-        del settings['hooks']
-
-with open(path, 'w') as f:
-    json.dump(settings, f, indent=2)
-    f.write('\n')
-
-print('PATCHED')
-" 2>&1 || true)
+        _hook_cmd="bash $ISPARTO_HOME/hooks/process-observer/scripts/pre-tool-check.sh"
+        _patch_result=$(python3 "$SCRIPT_DIR/lib/patch-settings.py" patch-user "$_user_settings" "$_hook_cmd" "Bash" 2>&1 || true)
         if [ "$_patch_result" = "PATCHED" ]; then
             printf "  ${GREEN}✓${NC} Process Observer Bash hook registered in user settings (~/.claude/settings.json)\n"
         elif echo "$_patch_result" | grep -q "^ERROR:"; then
@@ -518,58 +421,7 @@ print('PATCHED')
     # Clean up project-level Bash hook residue (Bash is now at user level;
     # Edit/Write/Codex remain at project level — do not remove them)
     if [ -f ".claude/settings.json" ] && command -v python3 &>/dev/null; then
-        _cleanup_result=$(python3 -c "
-import json, sys, os
-
-path = '.claude/settings.json'
-
-try:
-    with open(path) as f:
-        settings = json.load(f)
-except:
-    sys.exit(0)
-
-hooks = settings.get('hooks', {})
-pre_tool_use = hooks.get('PreToolUse', [])
-if not isinstance(pre_tool_use, list) or not pre_tool_use:
-    sys.exit(0)
-
-changed = False
-new_pre_tool_use = []
-for entry in pre_tool_use:
-    if not isinstance(entry, dict):
-        new_pre_tool_use.append(entry)
-        continue
-    # Only remove Bash matcher from project level (now managed at user level)
-    if entry.get('matcher') == 'Bash':
-        entry_hooks = entry.get('hooks', [])
-        new_eh = [h for h in entry_hooks if not (isinstance(h, dict) and h.get('command', '').endswith('pre-tool-check.sh'))]
-        if len(new_eh) != len(entry_hooks):
-            changed = True
-        if new_eh:
-            entry['hooks'] = new_eh
-            new_pre_tool_use.append(entry)
-        else:
-            changed = True
-    else:
-        new_pre_tool_use.append(entry)
-
-if not changed:
-    sys.exit(0)
-
-if new_pre_tool_use:
-    hooks['PreToolUse'] = new_pre_tool_use
-else:
-    del hooks['PreToolUse']
-    if not hooks:
-        del settings['hooks']
-
-with open(path, 'w') as f:
-    json.dump(settings, f, indent=2)
-    f.write('\n')
-
-print('CLEANED')
-" 2>&1 || true)
+        _cleanup_result=$(python3 "$SCRIPT_DIR/lib/patch-settings.py" clean-project ".claude/settings.json" 2>&1 || true)
         if [ "$_cleanup_result" = "CLEANED" ]; then
             printf "  ${GREEN}✓${NC} Removed old project-level Bash hook (now in user settings)\n"
         fi

@@ -106,6 +106,11 @@
 - [x] docs/independent-review.md placeholder 创建
 - [x] settings.json → settings.example.json 重命名 + 引用更新
 
+### install.sh Python 提取 + 文档修正 — 已完成
+- [x] lib/patch-settings.py：从 install.sh 提取 ~150 行内联 Python，合并为独立脚本（patch-user / clean-project）
+- [x] end-working.md：修正 "can run in parallel" 误导措辞
+- [x] design-decisions.md：标注 extract_json_field JSON 解析限制
+
 ### 下一步
 - [ ] P1 仓库结构重组：内部文件（plan.md, product-spec.md, design-decisions.md, process-observer.md, security.md, session-log.md）移到 .project/ 目录，与用户文档物理隔离（约束：CLAUDE.md 不能移，Claude Code 从项目根读取）
 - [ ] 本地 hook 更新：用户需跑 `install.sh --upgrade` 才能用上新的复合命令检测和可操作拦截消息
