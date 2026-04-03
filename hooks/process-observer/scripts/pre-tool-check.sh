@@ -115,6 +115,15 @@ case "$TOOL_NAME" in
                         local current_branch
                         current_branch=$(git branch --show-current 2>/dev/null || echo "")
                         if [ "$current_branch" = "main" ] || [ "$current_branch" = "master" ]; then
+                            # Compound command safety: if git checkout -b / git switch -c
+                            # appears in the same command, the branch will change before
+                            # the matched operation executes — allow it through.
+                            # TODO: reverse order (e.g., git commit && git checkout -b) is not
+                            # handled — extremely rare in practice, and Branch Protocol entrance
+                            # defense prevents working on main in the first place.
+                            if printf '%s' "$COMMAND" | grep -qE 'git[[:space:]]+(checkout[[:space:]]+-[bB]|switch[[:space:]]+-c)' 2>/dev/null; then
+                                return
+                            fi
                             # Bootstrap: allow push when remote has no main/master yet (initial repo setup)
                             if [ "$rule_id" = "push-on-main" ]; then
                                 if ! git rev-parse --verify origin/main >/dev/null 2>&1 && \
@@ -122,8 +131,15 @@ case "$TOOL_NAME" in
                                     return
                                 fi
                             fi
-                            printf '{"decision": "block", "reason": "[%s] %s (current branch: %s)"}\n' \
-                                "$rule_id" "$reason" "$current_branch"
+                            local action_desc
+                            case "$rule_id" in
+                                commit-on-main) action_desc="提交" ;;
+                                merge-on-main)  action_desc="合并" ;;
+                                push-on-main)   action_desc="推送" ;;
+                                *)              action_desc="操作" ;;
+                            esac
+                            printf '{"decision": "block", "reason": "[%s] 不可在 main 分支上%s。请先执行 `git checkout -b <type>/<name>` 创建分支（type = feat/fix/hotfix/docs/release），然后重试。工作区已有的改动会自动带到新分支。(current branch: %s)"}\n' \
+                                "$rule_id" "$action_desc" "$current_branch"
                             exit 2
                         fi
                     fi

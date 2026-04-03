@@ -67,6 +67,8 @@ After plan approval and before starting the first implementation step, the Team 
 ### Solo + Codex Workflow
 
 ```
+Branch guard: verify not on main, checkout -b if needed (see Branch Protocol in CLAUDE.md)
+    |
 Team Lead reads plan.md, confirms current Wave
     |
 MODE SELECTION CHECKPOINT:
@@ -102,6 +104,8 @@ Team Lead pushes branch -> creates PR -> merges to main -> cleans up branch
 ### Agent Team Workflow
 
 ```
+Branch guard: verify not on main, checkout -b if needed (see Branch Protocol in CLAUDE.md)
+    |
 Team Lead reads plan.md, confirms current Wave
     |
 MODE SELECTION CHECKPOINT:
