@@ -7,6 +7,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Independent Reviewer role** — product-technical alignment blind reviewer, spawned as Teammate (tmux) with zero inherited context. Independently reads product-spec then tech-spec to verify the technical approach implements what the product requires. Mandatory at Phase 0, conditional at Wave boundaries. CRITICAL findings block development; after fix, must re-trigger reviewer to verify.
+- **QA three-level verification tags** — acceptance script eval steps now require `[code]`, `[build]`, or `[runtime]` tags. Features with user-visible behavior MUST include at least one `[build]` and one `[runtime]` step. QA prompt now includes "MANDATORY: Build before testing" and requires evidence for every eval step.
+
+### Changed
+
+- `templates/plan-template.md` acceptance script format updated with verification level tags and explanatory comments
+- `templates/plan-template.md` Completion Criteria split into three verification levels (`[code]`/`[build]`/`[runtime]`)
+- `docs/roles.md` QA prompt template: added build-first mandate, three-level verification instructions, evidence requirements, updated report format
+- `docs/roles.md` new Independent Reviewer section with role definition and trigger conditions
+- `commands/plan.md` acceptance script guidance now requires verification level tags
+- `commands/init-project.md` Phase 0 adds Independent Review step (Step 11) before user confirmation
+- `docs/workflow.md` Phase 0 adds Independent Reviewer between Codex architecture review and user confirmation
+- `docs/workflow.md` Solo and Agent Team workflows add step 3.5 for conditional Independent Review
+- `docs/workflow.md` "Simulates key user operation paths" changed to "Runs the app and verifies key user operation paths at runtime"
+- CLAUDE.md and CLAUDE-TEMPLATE.md workflow step 3 strengthened with build-first + verification levels
+- CLAUDE.md and CLAUDE-TEMPLATE.md add Independent Reviewer to Roles and workflow step 3.5
+- CLAUDE.md Module Boundaries table updated: agents/ split into Process Observer and Independent Reviewer entries
+
 ## [0.6.13] - 2026-04-03
 
 ### Added
