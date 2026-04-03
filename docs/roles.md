@@ -241,6 +241,12 @@ QA smoke testing prompt template (Lead orchestrates, Developer executes):
 ---
 Run smoke tests based on the acceptance script defined in plan.md.
 
+**MANDATORY: Build before testing.**
+Before executing any acceptance steps:
+1. Run the build command from CLAUDE.md "Common Commands" section
+2. Verify the build succeeds with zero errors
+3. If the build fails, stop and report — do not proceed to acceptance steps
+
 Product context:
 [Paste relevant interaction flows from product-spec.md]
 
@@ -250,9 +256,15 @@ Changed files in this Wave:
 Acceptance script for this task:
 [Paste the action/eval steps from the team task block in plan.md]
 
-Execute each action step sequentially and verify each eval assertion.
+Execute each action step sequentially. For each eval step, verify at the level indicated:
+- [code] — read source code or config files to verify the assertion
+- [build] — check the build output, generated artifacts, or compiled resources to verify
+- [runtime] — actually run the app/server, perform the action, and observe the result
 
-Report format: [step number] / [pass/fail] / [evidence if fail]
+**Every eval step must include evidence** — command output, file content, or observed behavior.
+"Looks correct from code analysis" is NOT valid evidence for [build] or [runtime] steps.
+
+Report format: [step number] / [code|build|runtime] / [pass/fail] / [evidence]
 
 Previously tested and unchanged areas:
 [List of features tested in prior Waves — skip these unless current changes affect their dependencies]

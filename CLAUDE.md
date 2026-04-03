@@ -58,7 +58,7 @@ Lead 根据任务特征选择模式，用户无需干预。选择必须在执行
 0. **Mode Selection Checkpoint** — Lead 按文件分组、评估两个条件、声明 Solo（记录原因）
 1. Lead 组装 implementation prompt → 调 Developer 实现代码 + 测试
 2. Lead 审查 Developer 输出，有问题则组装修复 prompt 再调 Developer
-3. Lead 组装 QA prompt → 调 Developer 冒烟测试（按触发表）
+3. Lead 组装 QA prompt → 调 Developer 冒烟测试（按触发表）— Developer 必须先构建项目，再按 acceptance script 的 [code]/[build]/[runtime] 层级逐步验证
 4. Lead 跑 Doc Engineer 审计（sub-agent）— 必须在 step 6 push/merge 之前完成，不可推迟到 /end-working
 5. Lead 跑 Process Observer 事后审计（sub-agent，与 Doc Engineer 可并行）
 6. Lead 推分支 -> 建 PR -> merge 到 main -> 清理分支
@@ -69,7 +69,7 @@ Lead 根据任务特征选择模式，用户无需干预。选择必须在执行
 0. **Mode Selection Checkpoint** — Lead 按文件分组、评估两个条件、声明 Agent Team + 定义 Teammate 数量
 1. Lead 拆任务 → 定义文件所有权 + prompt 范围
 2. Teammate(s) 各自走 prompt→Developer→review 循环
-3. Lead 组装 QA prompt → 调 Developer 冒烟测试（增量，只测改动路径）
+3. Lead 组装 QA prompt → 调 Developer 冒烟测试（增量，只测改动路径）— Developer 必须先构建项目，再按 acceptance script 的 [code]/[build]/[runtime] 层级逐步验证
 4. Lead 派 Doc Engineer 文档审计（最后一步，确保 QA 修复也被审计）— 必须在 step 6 push/merge 之前完成，不可推迟到 /end-working
 5. Lead 跑 Process Observer 事后审计（sub-agent，与 Doc Engineer 可并行）
 6. Lead 推分支 -> 建 PR -> merge 到 main -> 清理分支

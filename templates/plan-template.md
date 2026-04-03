@@ -64,20 +64,33 @@ Wave N ...
 **Codex Review:** [Yes/No] -- [Reason]
 
 **Acceptance Script:**
-0. setup  [precondition — environment, test data, initial state]
-1. action [user operation or API call]
-2. eval   [expected result — what to assert]
+0. setup  [precondition — build command, environment, test data, initial state]
+1. action [user operation, command, or API call]
+2. eval   [code|build|runtime] [expected result — what to assert and how to verify]
 3. action [next operation]
-4. eval   [expected result]
-<!-- Extend with more action/eval pairs as needed. Each eval must be objectively verifiable. -->
+4. eval   [code|build|runtime] [expected result]
+<!-- 
+  Verification levels:
+  - [code]    = verify by reading/analyzing source code or config files
+  - [build]   = verify by running the build command and checking the output/artifact
+  - [runtime] = verify by actually running the app/server and observing behavior
+  
+  Rule: features with user-visible behavior (UI, localization, permissions, audio, 
+  network) MUST include at least one [build] and one [runtime] eval step.
+  Pure backend/data logic may use [code] only.
+  
+  The setup step MUST include the build command (from CLAUDE.md "Common Commands").
+-->
 
 **Completion Criteria:**
-- Build passes
-- Unit tests pass
+- Build passes (run the actual build command, not just check code compiles in analysis)
+- Unit tests pass (run the actual test command)
 - Codex code review passes (if triggered)
 - Developer review of fixes passes
 - Codex QA smoke testing passes (if triggered)
-- Acceptance script eval steps all pass
+- All [code] eval steps pass
+- All [build] eval steps pass (Developer ran the build command and verified output)
+- All [runtime] eval steps pass (Developer ran the app and verified behavior)
 - Doc Engineer documentation audit passes
 - plan.md updated
 

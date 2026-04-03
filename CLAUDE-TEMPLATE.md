@@ -64,7 +64,7 @@ Applies to both **write** (code, docs, config) and **read** (code review, doc au
 0. **Mode Selection Checkpoint** — Lead groups by file ownership, evaluates two conditions, declares Solo (records reason)
 1. Lead assembles implementation prompt → calls Developer to implement code + tests
 2. Lead reviews Developer output; if issues, assembles fix prompt → calls Developer again
-3. Lead assembles QA prompt → calls Developer for smoke testing (per trigger table)
+3. Lead assembles QA prompt → calls Developer for smoke testing (per trigger table) — Developer MUST build the project first, then verify each acceptance step at its tagged level: [code]/[build]/[runtime]
 4. Lead runs Doc Engineer audit (as sub-agent)
 5. Lead runs Process Observer post-session audit (as sub-agent, can run in parallel with Doc Engineer)
 6. Lead pushes branch -> creates PR -> merges to main -> cleans up branch
@@ -75,7 +75,7 @@ Applies to both **write** (code, docs, config) and **read** (code review, doc au
 0. **Mode Selection Checkpoint** — Lead groups by file ownership, evaluates two conditions, declares Agent Team + defines Teammate count
 1. Lead breaks down tasks → defines file ownership + prompt scope
 2. Teammate(s) each run prompt→Developer→review loop in parallel
-3. Lead assembles QA prompt → calls Developer for smoke testing (incremental, only changed paths)
+3. Lead assembles QA prompt → calls Developer for smoke testing (incremental, only changed paths) — Developer MUST build the project first, then verify each acceptance step at its tagged level: [code]/[build]/[runtime]
 4. Lead spawns Doc Engineer for documentation audit (last step, ensures QA fixes are also audited)
 5. Lead runs Process Observer post-session audit (as sub-agent, can run in parallel with Doc Engineer)
 6. Lead pushes branch -> creates PR -> merges to main -> cleans up branch

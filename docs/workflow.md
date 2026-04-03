@@ -86,6 +86,10 @@ Lead reviews Developer output
   - If issues found: assembles fix prompt → calls Developer again → reviews
     |
 Lead assembles QA prompt → calls Developer for smoke testing (using acceptance script from plan.md, per trigger table)
+  - Developer MUST build the project first (using build command from CLAUDE.md)
+  - Executes acceptance script action/eval steps as the minimum test coverage
+  - Each eval step verified at its tagged level: [code] by analysis, [build] by checking artifacts, [runtime] by actually running the app
+  - "Looks correct from code" is NOT valid evidence for [build] or [runtime] steps
     |
 Team Lead runs Doc Engineer audit (as sub-agent)
   - Same checklist as Agent Team mode (see Doc Engineer role in roles.md)
@@ -122,10 +126,13 @@ Teammate(s) execute in parallel, each independently:
   - If issues: assembles fix prompt → calls Developer again → reviews
     |
 Lead assembles QA prompt → calls Developer for smoke testing (using acceptance script from plan.md, incremental, wave-scoped)
+  - Developer MUST build the project first (using build command from CLAUDE.md)
   - Executes acceptance script action/eval steps as the minimum test coverage
+  - Each eval step verified at its tagged level: [code] by analysis, [build] by checking artifacts, [runtime] by actually running the app
+  - "Looks correct from code" is NOT valid evidence for [build] or [runtime] steps
   - Identifies the change scope of this Wave, only tests feature paths affected by changes
   - Skips areas tested in previous Waves that are not affected by current changes
-  - Simulates key user operation paths, verifies end-to-end functionality
+  - Runs the app and verifies key user operation paths at runtime (not just code simulation)
   - Records and directly fixes issues found
     |
 Team Lead spawns Doc Engineer (sub-agent) for documentation audit (placed last to ensure QA-fixed code is also audited)
