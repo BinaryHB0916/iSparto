@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.12] - 2026-04-03
+
 ### Added
 
 - **Implementation Protocol** in CLAUDE.md and CLAUDE-TEMPLATE.md — mandatory 7-step sequence with explicit `mcp__codex-reviewer__codex` tool name, enforcing Codex-first code implementation for both Solo and Agent Team modes
