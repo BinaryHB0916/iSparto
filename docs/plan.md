@@ -67,6 +67,16 @@
 
 ## 当前阶段
 
+### v0.6.13 — 已完成（2026-04-03）
+- [x] Branch Protocol 入口防御（分支检查前置到 Step 0）
+- [x] 3 条审计规则修正（Doc Engineer 时序、plan.md 同 commit、Tier 2a 区分）
+- [x] 审计回流机制（User-side / Framework-side 分类 + framework-feedback 文件生成）
+- [x] 用户产出去内部化（session-log 删内部指标、审计报告分层、CLAUDE-TEMPLATE.md 死链修复）
+
+### 下一步
+- [ ] P1 仓库结构重组：内部文件（plan.md, product-spec.md, design-decisions.md, process-observer.md, security.md, session-log.md）移到 .project/ 目录，与用户文档物理隔离（约束：CLAUDE.md 不能移，Claude Code 从项目根读取）
+- [ ] 本地 hook 更新：用户需跑 `install.sh --upgrade` 才能用上新的复合命令检测和可操作拦截消息
+
 ## 产品路线图
 
 iSparto 的演进分三个阶段（详见 product-spec.md）：
