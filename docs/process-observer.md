@@ -111,7 +111,7 @@ Hooks 运行在所有带 project settings 的 Claude Code session 中：
 
 这是设计意图：只有 Developer (Codex) 应该写代码，其他角色都通过 Developer 间接操作。
 
-##### Codex 调用规范（mcp__codex-reviewer__codex）
+##### Codex 调用规范（mcp__codex-dev__codex）
 
 | 操作 | 拦截原因 |
 |------|---------|
