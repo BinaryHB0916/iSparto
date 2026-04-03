@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.14] - 2026-04-03
+
 ### Added
 
 - **Independent Reviewer role** — product-technical alignment blind reviewer, spawned as Teammate (tmux) with zero inherited context. Independently reads product-spec then tech-spec to verify the technical approach implements what the product requires. Mandatory at Phase 0, conditional at Wave boundaries. CRITICAL findings block development; after fix, must re-trigger reviewer to verify.
