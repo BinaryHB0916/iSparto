@@ -61,6 +61,7 @@ Your responsibility: Ensure all changes and decisions from this session are capt
    - If already on a feature branch: stay on it
    Then: git add relevant files && git commit && git push
 7. If all tasks on the current branch are complete (all reviews passed, docs updated):
+   - If Doc Engineer audit has NOT been run for this branch's changes: spawn Doc Engineer sub-agent now (pre-merge gate)
    - Create PR via `gh pr create`, merge via `gh pr merge --merge`
    - Delete local branch and switch back to main: `git checkout main && git pull && git branch -d <branch>` (remote branch is auto-deleted by GitHub on merge)
    - If `gh` CLI is NOT available: push the branch and inform the user to create and merge the PR manually on GitHub

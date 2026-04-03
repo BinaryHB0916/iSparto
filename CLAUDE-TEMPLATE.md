@@ -19,7 +19,7 @@
 - Any code change must include corresponding documentation updates
 - Product decision changes must be written into docs, not just discussed in conversation
 - Ask me first about uncertain product questions; do not decide on your own
-- Update docs/plan.md after completing tasks
+- Update docs/plan.md immediately after completing tasks (in the same commit, not deferred to /end-working)
 - Do not develop directly on main branch; use feat/ branches for new features, fix/ branches for bug fixes, hotfix/ branches for urgent production fixes
 - Core business logic must have unit tests
 - Sensitive data (API keys, tokens, passwords, personal information) must NOT be hardcoded in source code — use environment variables or config file references

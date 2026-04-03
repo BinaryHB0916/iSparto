@@ -173,7 +173,7 @@ All code changes trigger both implementation and QA unless they fall entirely wi
 
 | Category | Examples |
 |----------|----------|
-| Pure visual | Colors, fonts, layout constants, animation parameters, copy text |
+| Pure visual | Colors, fonts, layout constants, animation parameters, copy text (literal string replacement only — type changes like `LocalizedStringKey` vs `String`, locale API parameters, and string routing logic are Tier 1) |
 | Config value tweaks | Non-security config changes (timeouts, feature flags, display limits) |
 
 #### Tier 2b: Developer review only (no QA needed)
