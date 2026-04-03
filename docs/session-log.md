@@ -658,3 +658,35 @@ PR #104 (fix/end-working-branch-guard): 3 files changed, +11, -5
 - Codex review 发现修复引入了新的不一致（docs/ 分支前缀未在规则中），一并修复
 - 同时解决了上个 session Process Observer 建议的 "CLAUDE.md 分支规则补充 docs/ 和 release/ 前缀"
 - 累计统计（15 sessions）：~29 Developer spawned, ~21 Codex reviews, ~23 issues caught
+
+## 2026-04-03 Session
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | 跨 Wave 修复（Codex-first 执行流程缺陷） |
+| Tasks completed | Implementation Protocol 添加到 CLAUDE.md/CLAUDE-TEMPLATE.md；Hook 拦截消息改进；plan.md/workflow.md 引用补全；v0.6.12 发版 |
+| Developers spawned | 0（自引用边界：框架编辑自身 .md/.sh/.json 文件） |
+| Codex reviews | 0（同上，自引用例外） |
+| Codex catches | None |
+| Key decisions | 三层防御策略（指令预防 + Hook 拦截 + 文档引用）；不改 allowed_extensions；不新增 slash command |
+
+### Files Changed
+```
+ CHANGELOG.md                                     | 13 +++++++++++++
+ CLAUDE-TEMPLATE.md                               | 19 +++++++++++++++++++
+ CLAUDE.md                                        | 19 +++++++++++++++++++
+ VERSION                                          |  2 +-
+ commands/plan.md                                 |  2 +-
+ docs/workflow.md                                 |  2 ++
+ hooks/process-observer/rules/workflow-rules.json |  4 ++--
+ hooks/process-observer/scripts/pre-tool-check.sh |  6 +++---
+ 8 files changed, 60 insertions(+), 7 deletions(-)
+```
+
+### Notes
+- 用户反馈 Lead (Opus) 从不主动调 Codex 先写代码，诊断发现规则→实践的转化链条断裂：文档说了"要做什么"但没说"怎么做"
+- 根因：(1) plan→执行之间无桥梁 (2) CLAUDE.md 指令太软、无工具名 (3) Hook 拦截消息不可操作
+- 修复：Implementation Protocol 写入 CLAUDE.md，明确 `mcp__codex-reviewer__codex` 工具名和 7 步执行序列
+- 用户提出 3 个增量优化全部采纳：plan.md 触发点显式约束、Solo/Agent Team 双适用声明、Codex prompt 拦截消息引用模板
+- 累计统计（16 sessions）：~29 Developer spawned, ~21 Codex reviews, ~23 issues caught
