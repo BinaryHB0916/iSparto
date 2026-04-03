@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Branch Protocol** — entrance defense for main branch protection: branch check moved from Step 7 to Step 0 in `start-working.md` (before reading any files), `plan.md` Step 4 adds branch guard before development, new Branch Protocol section in CLAUDE.md and CLAUDE-TEMPLATE.md
+- **Audit-to-framework feedback mechanism** — Process Observer audit now classifies deviations as user-side (stays in session-log) vs framework-side (generates `docs/framework-feedback-MMDD.md` for iSparto improvement)
+- **Audit output layering** — session briefing shows only FAIL items with actionable suggestions (all PASS = silent); full compliance report stays in Lead's internal context
+- **Doc Engineer pre-merge gate** in `end-working.md` Step 7 — Doc Engineer audit is checked before PR creation
+
+### Fixed
+
+- Hook block messages for branch-gated rules now include actionable recovery command (`git checkout -b <type>/<name>`) instead of generic "not allowed"
+- Compound commands (`git checkout -b X && git commit`) no longer incorrectly blocked by branch-gated hooks
+- Dead link in CLAUDE-TEMPLATE.md: `~/.isparto/docs/` → GitHub repository URL (install.sh does not copy docs/ to ~/.isparto/)
+
+### Changed
+
+- `commands/end-working.md` session-log template: removed 3 internal metrics (Developers spawned, Codex reviews, Codex catches) — users see "what was done", not framework internals
+- CLAUDE.md workflow step 4 (Doc Engineer): strengthened to "must complete before push/merge, not deferred to /end-working" (both Solo and Agent Team)
+- CLAUDE.md Development Rules: plan.md update timing clarified to "in the same commit, not deferred to /end-working"
+- `docs/workflow.md` Tier 2a "Pure visual" clarified: type changes (`LocalizedStringKey` vs `String`), locale API parameters, and string routing logic are Tier 1, not "copy text"
+- `docs/workflow.md` Solo and Agent Team flows now include Branch guard step before reading plan.md
+
 ## [0.6.12] - 2026-04-03
 
 ### Added
