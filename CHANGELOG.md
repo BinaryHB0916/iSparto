@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **MCP server renamed** `codex-reviewer` → `codex-dev` — tool call name becomes `mcp__codex-dev__codex`. `install.sh --upgrade` auto-migrates user-level MCP registration; `/start-working` auto-migrates project-level hook matchers. Old name preserved in cleanup lists for backward compatibility.
+- **`.env` detection** in `pre-tool-check.sh` switched from `find` traversal to `git ls-files` index query — O(git index) instead of O(filesystem), skips `node_modules` and similar large directories.
+- **install.sh inline Python extracted** to `lib/patch-settings.py` (~150 lines → 2-line calls). Subcommands: `patch-user` (user-level hook registration) and `clean-project` (project-level Bash hook cleanup).
+- `settings.json` → `settings.example.json` — clarifies the repo root file is a reference template, not a project config.
+- `end-working.md` step 4: corrected "can run in parallel" to "triggered sequentially by Lead" (Doc Engineer and Process Observer have no data dependency but are not parallelized).
+- Doc Engineer audit checklist: added CLAUDE.md ↔ CLAUDE-TEMPLATE.md workflow section consistency check.
+
+### Added
+
+- `docs/independent-review.md` — placeholder for Independent Reviewer output target.
+- `design-decisions.md`: MCP rename resolved; `settings.json` rename rationale; `extract_json_field` JSON parsing limitation (known limitation).
+
 ## [0.6.14] - 2026-04-03
 
 ### Added
