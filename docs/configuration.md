@@ -30,12 +30,12 @@ Your `~/.claude/settings.json` is yours. iSparto never touches it. You may optio
 }
 ```
 
-The repo includes a `settings.json` as a reference template — it is NOT installed globally.
+The repo includes a `settings.example.json` as a reference template — it is NOT installed globally.
 
 **Note:** `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` is an experimental flag that still requires manual activation as of March 2026. Future Claude Code versions may make this the default behavior, at which point this environment variable can be removed.
 
 **Warning:** `effortLevel: "max"` may be silently downgraded by the `/model` UI (under discussion in Claude Code GitHub issues). Workarounds:
-- Write both settings.json + environment variable (already configured above)
+- Write both `.claude/settings.json` + environment variable (already configured above)
 - Triple-protect by launching with `claude --effort max` every time
 - Avoid using the `/model` command during sessions
 
@@ -154,7 +154,7 @@ Template files used during project initialization:
 | Branching strategy | Branch model for main / feat / fix / hotfix |
 | Authorization & escalation mechanism | Team Lead's decision boundaries |
 | Documentation sync rules | Documentation must follow when code changes |
-| settings.json | Reference template — project-level config is created by `/init-project` or `/migrate` |
+| settings.example.json | Reference template — project-level config is created by `/init-project` or `/migrate` |
 
 ### Must Be Modified Per Project
 

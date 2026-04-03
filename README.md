@@ -214,7 +214,7 @@ iSparto/
 ├── README.zh-CN.md            ← Chinese version / 中文版
 ├── CLAUDE.md                  ← Project instructions for Claude Code
 ├── CONTRIBUTING.md            ← Contribution guidelines
-├── settings.json              ← Reference template for project-level .claude/settings.json
+├── settings.example.json      ← Reference template for project-level .claude/settings.json
 ├── CLAUDE-TEMPLATE.md         ← Template for generating new project CLAUDE.md
 ├── LICENSE
 ├── .gitignore
