@@ -1,5 +1,34 @@
 # Session Log
 
+## 2026-04-03 Session (#3)
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | QA 验证层级修复 + Independent Reviewer 角色 |
+| Tasks completed | PR #120: QA acceptance script 三级验证标签 ([code]/[build]/[runtime])；PR #121: Independent Reviewer 角色（产品-技术对齐盲审） |
+| Key decisions | 1. 三级验证：用户可见功能必须含 [build]+[runtime] 步骤；2. IR 用 Teammate(tmux) 而非 Sub-agent 确保零上下文继承；3. IR Phase 0 强制触发，Wave 边界按需；4. CRITICAL 修复后必须重新触发 IR 验证；5. Phase 0 覆盖写 / Wave 边界追加（保留审计轨迹） |
+
+### Files Changed
+```
+CLAUDE-TEMPLATE.md             |  7 ++-
+CLAUDE.md                      | 10 +++--
+agents/independent-reviewer.md | 99 ++++++++++++++++++++++++++++++++++++++++++
+commands/init-project.md       |  7 ++-
+commands/plan.md               |  5 ++-
+docs/design-decisions.md       |  4 ++
+docs/plan.md                   | 19 ++++++++
+docs/roles.md                  | 41 ++++++++++++++++-
+docs/workflow.md               | 32 +++++++++++++-
+templates/plan-template.md     | 29 +++++++++----
+10 files changed, 233 insertions(+), 20 deletions(-)
+```
+
+### Notes
+- 两个需求来源：Meic 项目 dogfooding 发现的两个系统性问题（QA 只做代码分析不做运行验证 + 审查链路全部继承 Lead 假设）
+- PR #120 和 #121 各自独立完成完整工作流（实现 → 验证 → Doc Engineer → Process Observer → PR merge）
+- Doc Engineer 在 #121 发现 1 个 MINOR（workflow.md Phase 0/Wave 文件处理描述不一致），当场修复
+
 ## 2026-04-03 Session (#2)
 
 | Metric | Value |
