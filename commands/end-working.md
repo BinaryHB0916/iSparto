@@ -27,9 +27,6 @@ Your responsibility: Ensure all changes and decisions from this session are capt
      | Project | [project name from CLAUDE.md] |
      | Wave | [current Wave number and name] |
      | Tasks completed | [list of tasks marked done this session] |
-     | Developers spawned | [number of teammate developers launched] |
-     | Codex reviews | [number of times Codex was called for review/QA] |
-     | Codex catches | [brief summary of issues Codex found and fixed, or "None"] |
      | Key decisions | [any product/technical decisions confirmed by user this session] |
 
      ### Files Changed
@@ -45,7 +42,10 @@ Your responsibility: Ensure all changes and decisions from this session are capt
 4. Spawn the "Process Observer Audit" agent (Sonnet model) to audit this session:
    - Audit scope: review the session against CLAUDE.md behavioral guidelines — branching conventions, Codex review triggers, Doc Engineer execution, PR workflow, unauthorized operations, plan.md accuracy
    - Input: `git log` (commits in this session), `git diff --stat` (file changes), current branch name, plan.md (check unchecked items against actual codebase state)
-   - Output: deviation report (append to session briefing)
+   - Output: the agent returns a full compliance report (for Lead's internal reference) and a user-facing summary
+   - In the session briefing, only include the user-facing summary:
+     - If all checks PASS: do not mention the audit in the briefing (user should not notice)
+     - If any checks FAIL: list only the failed items with actionable recovery suggestions, not the full compliance table
    - If rule correction suggestions are identified, record them in the briefing for the next /start-working session to reference
    - If the audit identifies any "Framework-side" rule corrections:
      a. Generate a brief Markdown file: `docs/framework-feedback-MMDD.md`
