@@ -75,6 +75,7 @@ MODE SELECTION CHECKPOINT:
   - Declare: "Solo — reason: [why not Agent Team]"
     |
 Lead assembles implementation prompt → calls Developer (Codex) via MCP
+  (Implementation Protocol: see CLAUDE.md → Collaboration Mode section)
   - Developer implements the task
   - Developer writes unit tests for core logic
     |
@@ -112,6 +113,7 @@ Team Lead breaks down tasks: defines file ownership + prompt scope for each Team
     |
 Teammate(s) execute in parallel, each independently:
   - Assembles implementation prompt → calls Developer (Codex) via MCP
+    (Implementation Protocol: see CLAUDE.md → Collaboration Mode section)
   - Reviews Developer output
   - If issues: assembles fix prompt → calls Developer again → reviews
     |
