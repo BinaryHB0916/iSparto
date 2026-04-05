@@ -67,7 +67,7 @@ if ! $_use_local_source; then
     # Running via bootstrap.sh, or from ISPARTO_HOME (legacy git-clone) — download release
     if [ -z "$INSTALL_VERSION" ]; then
         # Auto-resolve latest version from GitHub Releases
-        INSTALL_VERSION=$(curl -fsSL "https://api.github.com/repos/$REPO/releases/latest" 2>/dev/null \
+        INSTALL_VERSION=$(curl -fsSL --connect-timeout 10 --max-time 30 "https://api.github.com/repos/$REPO/releases/latest" 2>/dev/null \
             | grep '"tag_name"' | sed 's/.*"v\([^"]*\)".*/\1/')
     fi
     if [ -z "$INSTALL_VERSION" ]; then
@@ -91,9 +91,9 @@ if ! $_use_local_source; then
         # For dry-run, we need an existing SCRIPT_DIR to preview files
         if [ -d "$ISPARTO_HOME" ] && { [ -f "$ISPARTO_HOME/VERSION" ] || [ -d "$ISPARTO_HOME/.git" ]; }; then
             # Use a temp extraction anyway so we can show accurate diffs
-            TMPDIR_RELEASE=$(mktemp -d)
+            TMPDIR_RELEASE=$(mktemp -d) || { printf "  ${RED}Error:${NC} Failed to create temp directory\n" >&2; exit 1; }
             trap 'rm -rf "$TMPDIR_RELEASE"' EXIT
-            if curl -fsSL "$TARBALL_URL" -o "$TMPDIR_RELEASE/release.tar.gz" 2>/dev/null; then
+            if curl -fsSL --connect-timeout 10 --max-time 60 "$TARBALL_URL" -o "$TMPDIR_RELEASE/release.tar.gz" 2>/dev/null; then
                 tar -xzf "$TMPDIR_RELEASE/release.tar.gz" -C "$TMPDIR_RELEASE" 2>/dev/null
                 SCRIPT_DIR="$TMPDIR_RELEASE/iSparto-${INSTALL_VERSION}"
             else
@@ -105,13 +105,16 @@ if ! $_use_local_source; then
             exit 0
         fi
     else
-        TMPDIR_RELEASE=$(mktemp -d)
+        TMPDIR_RELEASE=$(mktemp -d) || { printf "  ${RED}Error:${NC} Failed to create temp directory\n" >&2; exit 1; }
         trap 'rm -rf "$TMPDIR_RELEASE"' EXIT
-        curl -fsSL "$TARBALL_URL" -o "$TMPDIR_RELEASE/release.tar.gz" || {
+        curl -fsSL --connect-timeout 10 --max-time 60 "$TARBALL_URL" -o "$TMPDIR_RELEASE/release.tar.gz" || {
             printf "  ${RED}Error:${NC} Failed to download release $TAG\n" >&2
             exit 1
         }
-        tar -xzf "$TMPDIR_RELEASE/release.tar.gz" -C "$TMPDIR_RELEASE"
+        tar -xzf "$TMPDIR_RELEASE/release.tar.gz" -C "$TMPDIR_RELEASE" || {
+            printf "  ${RED}Error:${NC} Failed to extract release archive\n" >&2
+            exit 1
+        }
         SCRIPT_DIR="$TMPDIR_RELEASE/iSparto-${INSTALL_VERSION}"
         printf "  ${GREEN}✓${NC} Downloaded iSparto $INSTALL_VERSION\n"
     fi
@@ -262,7 +265,17 @@ else
     exit 1
 fi
 
-# 2. Claude Code
+# 2. Python3 (required for Process Observer hooks registration)
+if command -v python3 &> /dev/null; then
+    _python_label="Python $(python3 --version 2>&1 | sed 's/Python //')"
+else
+    _dep_ok=false
+    printf "  ${RED}✘${NC} python3 not found — required for Process Observer hooks\n"
+    echo "  Install Python 3: https://www.python.org/downloads/"
+    exit 1
+fi
+
+# 3. Claude Code (auto-install if missing)
 if command -v claude &> /dev/null; then
     : # already installed
 else
@@ -276,7 +289,7 @@ else
     fi
 fi
 
-# 3. Codex CLI
+# 4. Codex CLI (auto-install if missing)
 if command -v codex &> /dev/null; then
     : # already installed
 else
@@ -290,7 +303,7 @@ else
     fi
 fi
 
-# 4. Codex Login
+# 5. Codex Login
 if command -v codex &> /dev/null && codex login status &> /dev/null; then
     : # already logged in
 else
@@ -305,7 +318,7 @@ fi
 
 # Summary line when all deps already satisfied
 if $_dep_ok; then
-    printf "  ${GREEN}✓${NC} Dependencies OK (${_node_label}, Claude Code, Codex)\n"
+    printf "  ${GREEN}✓${NC} Dependencies OK (${_node_label}, ${_python_label}, Claude Code, Codex)\n"
 fi
 
 # ── 5. Copy config to $HOME/.claude/ ────────────────────────────
@@ -403,19 +416,14 @@ fi
 _user_settings="$HOME/.claude/settings.json"
 if ! $DRY_RUN; then
     mkdir -p "$HOME/.claude"
-    if ! command -v python3 &>/dev/null; then
-        printf "  ${RED}✘${NC} python3 not found — required for Process Observer hooks registration\n"
-        printf "    Install Python 3 and re-run the installer.\n"
-        exit 1
-    else
-        _hook_cmd="bash $ISPARTO_HOME/hooks/process-observer/scripts/pre-tool-check.sh"
-        _patch_result=$(python3 "$SCRIPT_DIR/lib/patch-settings.py" patch-user "$_user_settings" "$_hook_cmd" "Bash" 2>&1 || true)
-        if [ "$_patch_result" = "PATCHED" ]; then
-            printf "  ${GREEN}✓${NC} Process Observer Bash hook registered in user settings (~/.claude/settings.json)\n"
-        elif echo "$_patch_result" | grep -q "^ERROR:"; then
-            printf "  ${YELLOW}→${NC} Could not patch ~/.claude/settings.json: ${_patch_result#ERROR: }\n"
-            printf "    Add Process Observer hooks to ~/.claude/settings.json manually\n"
-        fi
+    # python3 already verified in Dependencies section
+    _hook_cmd="bash $ISPARTO_HOME/hooks/process-observer/scripts/pre-tool-check.sh"
+    _patch_result=$(python3 "$SCRIPT_DIR/lib/patch-settings.py" patch-user "$_user_settings" "$_hook_cmd" "Bash" 2>&1 || true)
+    if [ "$_patch_result" = "PATCHED" ]; then
+        printf "  ${GREEN}✓${NC} Process Observer Bash hook registered in user settings (~/.claude/settings.json)\n"
+    elif echo "$_patch_result" | grep -q "^ERROR:"; then
+        printf "  ${YELLOW}→${NC} Could not patch ~/.claude/settings.json: ${_patch_result#ERROR: }\n"
+        printf "    Add Process Observer hooks to ~/.claude/settings.json manually\n"
     fi
 
     # Clean up project-level Bash hook residue (Bash is now at user level;

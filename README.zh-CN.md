@@ -64,7 +64,7 @@ curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/bootstrap
 **安装指定版本：**
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/bootstrap.sh | bash -s -- --version=0.3.0
+curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/bootstrap.sh | bash -s -- --version=0.6.18
 ```
 
 **升级：** 重新运行拉取最新版本，查看更新内容：
@@ -80,6 +80,8 @@ curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/bootstrap
 ```bash
 ~/.isparto/install.sh --uninstall
 ```
+
+遇到问题？查看[问题排查](docs/troubleshooting.md)。
 
 <details>
 <summary>备选：手动 clone</summary>
