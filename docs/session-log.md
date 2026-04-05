@@ -1,5 +1,34 @@
 # Session Log
 
+## 2026-04-05 Session
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | v0.8 外部可用（进行中） |
+| Tasks completed | 多模型 Developer 策略（PR #131）、gh 账号自动对齐（PR #132）、release v0.6.16（PR #133） |
+| Key decisions | Developer 双档模型（5.3-codex + 5.4-mini）代替原提案三档（spark 因 ChatGPT Plus 限制不可用）；gh 账号对齐放 start-working + end-working 双点检测 |
+
+### Files Changed
+```
+ CHANGELOG.md              | 14 ++++++++++++++
+ CLAUDE-TEMPLATE.md        |  2 +-
+ CLAUDE.md                 |  2 +-
+ VERSION                   |  2 +-
+ commands/end-working.md   |  9 ++++++++-
+ commands/start-working.md | 14 +++++++++++---
+ docs/configuration.md     | 38 +++++++++++++++++++++++++++++---------
+ docs/design-decisions.md  |  3 +++
+ docs/plan.md              | 28 ++++++++++++++++++++++++++++
+ docs/workflow.md          |  2 ++
+ 10 files changed, 98 insertions(+), 16 deletions(-)
+```
+
+### Notes
+- MCP model 参数验证结果：gpt-5.4-mini 透传成功，gpt-5.3-codex-spark 被 ChatGPT Plus 认证拒绝（"not supported when using Codex with a ChatGPT account"）
+- Process Observer hook 拦截了 main 上的 tag push（无法区分 tag push 和 branch push），用 `gh release create --target main` 绕过
+- gh 账号问题在 PR #131 创建时首次触发，手动 `gh auth switch` 修复后立即作为第二个需求自动化
+
 ## 2026-04-03 Session (#3)
 
 | Metric | Value |
