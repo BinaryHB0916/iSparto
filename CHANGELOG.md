@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.17] - 2026-04-05
+
 ### Added
 
 - **`/release` slash command** — 4-step guided release process (version confirm → precondition check → execute script → post-release verify). Prevents Lead from improvising release steps. Follows the same principle as `/start-working` and `/end-working`: all ceremonial operations get step-by-step instructions.
