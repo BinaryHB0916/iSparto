@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **Installer hardening** — `install.sh` now validates Python3 availability upfront (moved from line 406 to Dependencies section), adds curl timeouts (`--connect-timeout 10 --max-time 60`), validates mktemp/tar operations, and syncs version parsing regex with `bootstrap.sh`.
+- **Bootstrap semver validation** — `bootstrap.sh` now validates parsed version format before proceeding, preventing silent failures on malformed GitHub API responses.
+- **Snapshot path traversal guard** — `lib/snapshot.sh` `resolve_path()` now rejects bare `..` in addition to `../`, `*/../*`, and `*/..` patterns, closing a directory escape edge case.
+- **Independent Reviewer trigger chain** — repaired broken IR invocation chain: `end-working.md` now includes Wave Boundary Review (Step 3) with IR spawn on Wave completion; `/plan` triggers IR unconditionally (removed "user-visible behavior changes" gate); `process-observer-audit.md` adds F1 compliance check for IR execution; trigger conditions synced across `CLAUDE.md`, `CLAUDE-TEMPLATE.md`, `workflow.md`, and `roles.md`.
+
+### Changed
+
+- **README version examples updated** — install command examples now reference v0.6.18 (was 0.3.0). Troubleshooting link added after uninstall section in both English and Chinese READMEs.
+
 ## [0.6.18] - 2026-04-05
 
 ### Changed
