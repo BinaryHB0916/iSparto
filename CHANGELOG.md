@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.19] - 2026-04-05
+
 ### Fixed
 
 - **Installer hardening** — `install.sh` now validates Python3 availability upfront (moved from line 406 to Dependencies section), adds curl timeouts (`--connect-timeout 10 --max-time 60`), validates mktemp/tar operations, and syncs version parsing regex with `bootstrap.sh`.
