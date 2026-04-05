@@ -778,3 +778,37 @@ PR #104 (fix/end-working-branch-guard): 3 files changed, +11, -5
 - 修复：Implementation Protocol 写入 CLAUDE.md，明确 `mcp__codex-reviewer__codex` 工具名和 7 步执行序列
 - 用户提出 3 个增量优化全部采纳：plan.md 触发点显式约束、Solo/Agent Team 双适用声明、Codex prompt 拦截消息引用模板
 - 累计统计（16 sessions）：~29 Developer spawned, ~21 Codex reviews, ~23 issues caught
+
+## 2026-04-05 Session (2)
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | 当前阶段（ad-hoc 质量修复 + IR 链修复） |
+| Tasks completed | 质量审计 Phase A（安装器加固、README 更新、快照安全修复）、IR 触发链修复、v0.6.19 发版 |
+| Key decisions | IR 触发无条件化（去掉 "user-visible behavior changes" 判断门）；CRITICAL 发现不阻塞 commit，阻塞下个 Wave 启动；Phase A/B 拆分（冷启动关键 vs 反馈驱动） |
+
+### Files Changed
+```
+ CLAUDE-TEMPLATE.md               |  6 +++---
+ CLAUDE.md                        |  6 +++---
+ CHANGELOG.md                     | 13 +++++++++++++
+ README.md                        |  4 +++-
+ README.zh-CN.md                  |  4 +++-
+ VERSION                          |  2 +-
+ agents/process-observer-audit.md |  2 ++
+ bootstrap.sh                     | 17 ++++++++++++-----
+ commands/end-working.md          | 23 ++++++++++++++++-------
+ commands/plan.md                 |  2 +-
+ docs/roles.md                    |  2 +-
+ docs/workflow.md                 |  4 ++--
+ install.sh                       | 56 +++++++++++++++++++++++++++++++-----------------------
+ lib/snapshot.sh                  |  6 +++++-
+ 14 files changed, 97 insertions(+), 50 deletions(-)
+```
+
+### Notes
+- 全项目质量审计（8 模块并行扫描），识别出安装器加固、快照安全、IR 触发链断裂等问题
+- Phase A（冷启动关键修复）通过 PR #142、#143 完成；Phase B（反馈驱动优化）留待 v0.8 后
+- IR 触发链修复（PR #144）：end-working.md 新增 Step 3 Wave Boundary Review + plan.md 无条件 IR spawn + Process Observer F1 检查 + 全文档同步
+- 发版 v0.6.19（PR #146），含 PRs #142-144 的所有修复
