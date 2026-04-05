@@ -13,7 +13,16 @@ Your responsibility: Ensure all changes and decisions from this session are capt
    - If all Teams in the current Wave are finished, mark the Wave status as completed
    - List next-session to-dos
    - Record remaining issues and manual intervention points
-3. Generate a session report and append it to `docs/session-log.md`:
+3. Wave Boundary Review (conditional):
+   - Trigger: Step 2 marked the current Wave status as completed
+   - If triggered:
+     a. Spawn Independent Reviewer as Teammate (tmux mode) with the following fixed prompt — do NOT add any context, framing, or explanation:
+        "You are the Independent Reviewer. Read agents/independent-reviewer.md and execute. This is a Wave Boundary Review."
+     b. Wait for the reviewer to complete and append findings to docs/independent-review.md
+     c. If CRITICAL finding: report in session briefing, add to next-session to-dos: "Resolve Independent Review CRITICAL findings before starting next Wave." Do NOT block the current commit/push — code is already written, blocking commit would lose work.
+     d. If no CRITICAL findings (PROCEED): note in session briefing "Independent Review passed for Wave [N]"
+   - If not triggered (mid-Wave session, Wave not completed): skip, do not mention in briefing
+4. Generate a session report and append it to `docs/session-log.md`:
    - Gather all metrics from the current session context (you know all of this from coordinating the team)
    - Run `git diff HEAD --stat` to get complete file change stats (captures both staged and unstaged changes vs last commit)
    - If `docs/session-log.md` does not exist, create it with a top-level header `# Session Log`
@@ -39,7 +48,7 @@ Your responsibility: Ensure all changes and decisions from this session are capt
      ```
 
    - This file will be committed together with the other changes in the next step
-4. Spawn the "Process Observer Audit" agent (Sonnet model) to audit this session:
+5. Spawn the "Process Observer Audit" agent (Sonnet model) to audit this session:
    - Audit scope: review the session against CLAUDE.md behavioral guidelines — branching conventions, Codex review triggers, Doc Engineer execution, PR workflow, unauthorized operations, plan.md accuracy
    - Input: `git log` (commits in this session), `git diff --stat` (file changes), current branch name, plan.md (check unchecked items against actual codebase state)
    - Output: the agent returns a full compliance report (for Lead's internal reference) and a user-facing summary
@@ -53,26 +62,26 @@ Your responsibility: Ensure all changes and decisions from this session are capt
      c. Save to docs/ (will be committed with session changes)
      d. Inform user: "审计发现 N 条框架改进建议，已保存到 docs/framework-feedback-MMDD.md，可提交到 iSparto 项目"
    - This step has no data dependency on step 1 (Doc Engineer audit), but both are triggered sequentially by the Lead within the same session.
-5. Security scan (before commit):
+6. Security scan (before commit):
    - Execute `bash $HOME/.isparto/hooks/process-observer/scripts/pre-commit-security.sh`
    - If output contains BLOCK → stop the commit, report the specific issues and remediation suggestions to the user in the session briefing
    - If output contains WARNING → include warnings in the session briefing, proceed with commit
    - If passed → proceed to next step
-6. Branch guard before commit:
+7. Branch guard before commit:
    - Run `git branch --show-current` to check the current branch
    - If on main and there are uncommitted changes (session log, docs updates, etc.):
      - Create a `docs/session-log-MMDD` branch: `git checkout -b docs/session-log-MMDD`
      - This happens when the main work was already merged via PR before /end-working ran
    - If already on a feature branch: stay on it
    Then: git add relevant files && git commit && git push
-7. GitHub account alignment (before PR):
+8. GitHub account alignment (before PR):
    - Run: `REPO_OWNER=$(git remote get-url origin 2>/dev/null | sed -E 's#.+[:/]([^/]+)/[^/]+(\.git)?$#\1#')`
    - Run: `GH_USER=$(gh api /user --jq .login 2>/dev/null)`
    - If both are non-empty and REPO_OWNER ≠ GH_USER:
      - Run `gh auth switch --user "$REPO_OWNER"` to align
      - Report in session briefing: "gh 账号已自动切换到 $REPO_OWNER"
-   - If gh is not available or switch fails: proceed — step 8 will fall back to "push branch and inform user to create PR manually"
-8. If all tasks on the current branch are complete (all reviews passed, docs updated):
+   - If gh is not available or switch fails: proceed — step 9 will fall back to "push branch and inform user to create PR manually"
+9. If all tasks on the current branch are complete (all reviews passed, docs updated):
    - If Doc Engineer audit has NOT been run for this branch's changes: spawn Doc Engineer sub-agent now (pre-merge gate)
    - Create PR via `gh pr create`, merge via `gh pr merge --merge`
    - Delete local branch and switch back to main: `git checkout main && git pull && git branch -d <branch>` (remote branch is auto-deleted by GitHub on merge)

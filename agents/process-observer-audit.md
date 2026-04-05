@@ -13,6 +13,7 @@ Audit scope:
 - PR workflow (merged via PR, not direct push)
 - Unauthorized operations (file ownership violations)
 - plan.md accuracy (unchecked items vs actual codebase state)
+- Independent Reviewer execution (if a Wave was completed this session, was Independent Reviewer spawned and report appended to docs/independent-review.md?)
 
 Output format (two sections — Lead uses User-facing Summary for the session briefing, keeps Full Report for internal reference):
 
@@ -33,6 +34,7 @@ No workflow deviations detected.
 | A1 | Branch is feat/fix/hotfix | PASS/FAIL | ... |
 | A2 | No direct commits to main | PASS/FAIL | ... |
 | ... | ... | ... | ... |
+| F1 | Independent Review at Wave boundary | PASS/FAIL/N/A | If Wave marked completed this session: was IR spawned? Was docs/independent-review.md updated? N/A if no Wave completed. |
 
 **Summary:** X passed, Y warnings, Z failures
 
