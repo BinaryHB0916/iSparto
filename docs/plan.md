@@ -111,9 +111,31 @@
 - [x] end-working.md：修正 "can run in parallel" 误导措辞
 - [x] design-decisions.md：标注 extract_json_field JSON 解析限制
 
+### 多模型 Developer 策略 — 已完成
+- [x] docs/configuration.md 模型映射表扩展（双档 Developer + Independent Reviewer + 选型理由列）
+- [x] docs/configuration.md 新增 "Developer 分档模型策略" section
+- [x] docs/workflow.md Tier section 追加模型选择备注
+- [x] docs/design-decisions.md 追加 2 条决策（双档模型 + 保持 5.3-codex）
+- [x] CLAUDE.md + CLAUDE-TEMPLATE.md Developer 角色描述更新
+- [x] MCP server 模型参数验证：gpt-5.4-mini ✅ / gpt-5.3-codex-spark ❌（ChatGPT Plus 不支持）
+- [x] docs/plan.md 新增 "技术生态追踪" 表格（6 项）
+
 ### 下一步
 - [ ] P1 仓库结构重组：内部文件（plan.md, product-spec.md, design-decisions.md, process-observer.md, security.md, session-log.md）移到 .project/ 目录，与用户文档物理隔离（约束：CLAUDE.md 不能移，Claude Code 从项目根读取）
 - [ ] 本地 hook 更新：用户需跑 `install.sh --upgrade` 才能用上新的复合命令检测和可操作拦截消息
+
+### 技术生态追踪（暂不执行）
+
+以下项目受外部生态演进驱动，iSparto 只追踪不行动，满足触发条件时再评估：
+
+| 追踪项 | 触发条件 | 影响评估 | 预估时间 |
+|--------|---------|---------|---------|
+| GPT-5.3-codex 退役 | OpenAI 官方宣布退役日期（参考 5.2 Thinking 2026-06-05 退役先例） | Developer 被动升级 5.4，需验证所有 prompt template 兼容性 + 重新评估 Tier-模型映射 | 2026 Q3-Q4 |
+| gpt-5.3-codex-spark 支持 | OpenAI 宣布 spark 在 ChatGPT Plus 上可用，或 API key 认证方式可绕过限制 | 引入第三档 Developer 模型（快速修复专用），从双档升级为三档 | 取决于 OpenAI |
+| codex-plugin-cc 集成 | v0.8 阶段，codex-plugin-cc 稳定且 MCP/Plugin 职责边界验证完毕 | MCP 核心实现路径 + Plugin 补充审查/委派 | v0.8 |
+| 跨 session 自动化 | v1.x 阶段，且 Codex Triggers + Claude Code /loop 均稳定 | 从 session 级框架扩展到 event-driven 自动化（GitHub issue → 自动修复 → 自动 PR） | v1.x |
+| Process Observer 覆盖 Plugin 调用 | Claude Code 的 hook 机制支持拦截 plugin slash command（目前不支持） | 统一 MCP 和 Plugin 通道的 hooks 覆盖，简化双通道架构 | 取决于 Claude Code 演进 |
+| 多 agent runtime 互操作标准 | MCP 跨 provider 标准成熟（当前各厂商各自为政） | 统一 Codex/Claude/Gemini 调用接口，简化框架层抽象 | 2026-2027 |
 
 ## 产品路线图
 

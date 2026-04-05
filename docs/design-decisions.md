@@ -67,3 +67,5 @@
 | Independent Reviewer 阅读顺序 | product-spec → tech-spec（强制） | 先读技术方案会被技术方案锚定，先读产品需求才能形成独立判断 |
 | Independent Reviewer spawn prompt | 固定一行话，不允许 Lead 加描��� | Lead 的任何描述都可能携带偏见，"只收自己声音"被 Lead 理解为"二值门控"后，Lead 的描述会把 reviewer 也带偏 |
 | Independent Reviewer 输出 | 直接写文件，不经 Lead 过滤 | Lead 可能淡化或重新解释 reviewer 的发现，直接写文件让用户看到原始判断 |
+| Developer 双档模型 | gpt-5.3-codex（实现）+ gpt-5.4-mini（QA/快速修复） | Benchmark 数据：5.3-codex Terminal-Bench 77.3% 领先 5.4 的 75.1%（纯编码专精）。5.4 优势（1M context、computer use）在 Developer 的结构化 prompt 场景下用不上。双档映射 Tier 分层，实现精确的质量-速度平衡。成本不变：ChatGPT Plus $20 包含全部模型。gpt-5.3-codex-spark 验证失败（ChatGPT Plus 认证不支持），用 gpt-5.4-mini 覆盖快速修复场景 |
+| Developer 保持 gpt-5.3-codex 而非升级 5.4 | 维持 gpt-5.3-codex 为 Developer 默认 | 5.4 是通用模型合并编码能力，但 iSparto Developer 角色的定义是"按结构化 prompt 实现代码"——纯编码场景 5.3-codex 仍然更强。Reddit 社区和 Cursor 内部评测均确认：5.3-codex 快速迭代实现循环更强。风险跟踪：如 5.3-codex 被退役（参考 5.2 Thinking 6 月 5 日退役），需被动升级 5.4 并验证 prompt template 兼容性 |
