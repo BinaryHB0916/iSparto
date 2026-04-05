@@ -126,6 +126,12 @@
 - [x] docs/design-decisions.md 追加 1 条决策
 - [x] 检测逻辑：git remote 提取 owner → gh api /user 比对 → 不匹配自动 switch
 
+### /release 命令 + 发版流程制度化 — 已完成
+- [x] commands/release.md — 新增发版 slash command（4 步逐步指令）
+- [x] scripts/release.sh — 移除本地 tag push，改用 gh release create --target main
+- [x] CLAUDE.md — 发版规则 + hotfix 后发版引导 + 自引用边界扩展（覆盖所有框架文件）
+- [x] docs/design-decisions.md — 3 条决策（/release command、release.sh tag 改造、自引用边界扩展）
+
 ### 下一步
 - [ ] P1 仓库结构重组：内部文件（plan.md, product-spec.md, design-decisions.md, process-observer.md, security.md, session-log.md）移到 .project/ 目录，与用户文档物理隔离（约束：CLAUDE.md 不能移，Claude Code 从项目根读取）
 - [ ] 本地 hook 更新：用户需跑 `install.sh --upgrade` 才能用上新的复合命令检测和可操作拦截消息
