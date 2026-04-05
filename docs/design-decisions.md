@@ -69,3 +69,4 @@
 | Independent Reviewer 输出 | 直接写文件，不经 Lead 过滤 | Lead 可能淡化或重新解释 reviewer 的发现，直接写文件让用户看到原始判断 |
 | Developer 双档模型 | gpt-5.3-codex（实现）+ gpt-5.4-mini（QA/快速修复） | Benchmark 数据：5.3-codex Terminal-Bench 77.3% 领先 5.4 的 75.1%（纯编码专精）。5.4 优势（1M context、computer use）在 Developer 的结构化 prompt 场景下用不上。双档映射 Tier 分层，实现精确的质量-速度平衡。成本不变：ChatGPT Plus $20 包含全部模型。gpt-5.3-codex-spark 验证失败（ChatGPT Plus 认证不支持），用 gpt-5.4-mini 覆盖快速修复场景 |
 | Developer 保持 gpt-5.3-codex 而非升级 5.4 | 维持 gpt-5.3-codex 为 Developer 默认 | 5.4 是通用模型合并编码能力，但 iSparto Developer 角色的定义是"按结构化 prompt 实现代码"——纯编码场景 5.3-codex 仍然更强。Reddit 社区和 Cursor 内部评测均确认：5.3-codex 快速迭代实现循环更强。风险跟踪：如 5.3-codex 被退役（参考 5.2 Thinking 6 月 5 日退役），需被动升级 5.4 并验证 prompt template 兼容性 |
+| gh 账号自动对齐 | /start-working + /end-working 双点检测 | 多 GitHub 账号用户的 `gh pr create` 频繁因活跃账号不匹配而失败。gh CLI 的活跃账号是全局状态，不跟目录走。方案：从 `git remote` 提取 repo owner → 和 `gh api /user` 比对 → 不匹配则自动 `gh auth switch`。对单账号用户是 no-op（零噪音）。不做 SSH/direnv 层面的自动配置——那是用户机器的环境管理，不属于框架职责 |

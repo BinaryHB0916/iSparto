@@ -65,7 +65,14 @@ Your responsibility: Ensure all changes and decisions from this session are capt
      - This happens when the main work was already merged via PR before /end-working ran
    - If already on a feature branch: stay on it
    Then: git add relevant files && git commit && git push
-7. If all tasks on the current branch are complete (all reviews passed, docs updated):
+7. GitHub account alignment (before PR):
+   - Run: `REPO_OWNER=$(git remote get-url origin 2>/dev/null | sed -E 's#.+[:/]([^/]+)/[^/]+(\.git)?$#\1#')`
+   - Run: `GH_USER=$(gh api /user --jq .login 2>/dev/null)`
+   - If both are non-empty and REPO_OWNER ≠ GH_USER:
+     - Run `gh auth switch --user "$REPO_OWNER"` to align
+     - Report in session briefing: "gh 账号已自动切换到 $REPO_OWNER"
+   - If gh is not available or switch fails: proceed — step 8 will fall back to "push branch and inform user to create PR manually"
+8. If all tasks on the current branch are complete (all reviews passed, docs updated):
    - If Doc Engineer audit has NOT been run for this branch's changes: spawn Doc Engineer sub-agent now (pre-merge gate)
    - Create PR via `gh pr create`, merge via `gh pr merge --merge`
    - Delete local branch and switch back to main: `git checkout main && git pull && git branch -d <branch>` (remote branch is auto-deleted by GitHub on merge)

@@ -120,6 +120,12 @@
 - [x] MCP server 模型参数验证：gpt-5.4-mini ✅ / gpt-5.3-codex-spark ❌（ChatGPT Plus 不支持）
 - [x] docs/plan.md 新增 "技术生态追踪" 表格（6 项）
 
+### gh 账号自动对齐 — 已完成
+- [x] commands/start-working.md 新增 Step 6（gh 账号对齐），原 6-8 顺推为 7-9
+- [x] commands/end-working.md 新增 Step 7（PR 创建前兜底），原 7 顺推为 8
+- [x] docs/design-decisions.md 追加 1 条决策
+- [x] 检测逻辑：git remote 提取 owner → gh api /user 比对 → 不匹配自动 switch
+
 ### 下一步
 - [ ] P1 仓库结构重组：内部文件（plan.md, product-spec.md, design-decisions.md, process-observer.md, security.md, session-log.md）移到 .project/ 目录，与用户文档物理隔离（约束：CLAUDE.md 不能移，Claude Code 从项目根读取）
 - [ ] 本地 hook 更新：用户需跑 `install.sh --upgrade` 才能用上新的复合命令检测和可操作拦截消息
