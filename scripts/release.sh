@@ -111,10 +111,14 @@ printf "  ${GREEN}✓${NC} PR created: $PR_URL\n"
 
 # ── 5. Merge PR ─────────────────────────────────────────────
 
-gh pr merge "$PR_URL" --merge --admin || {
-    printf "  ${RED}Error:${NC} PR merge failed. PR exists but was not merged.\n" >&2
-    printf "  Merge manually: gh pr merge %s --squash --delete-branch\n" "$RELEASE_BRANCH" >&2
-    exit 1
+gh pr merge "$PR_URL" --merge --admin 2>/dev/null || {
+    printf "  ${GREEN}↻${NC} Merge retry (base branch updated)...\n"
+    sleep 2
+    gh pr merge "$PR_URL" --merge --admin || {
+        printf "  ${RED}Error:${NC} PR merge failed after retry. PR exists but was not merged.\n" >&2
+        printf "  Merge manually: gh pr merge %s --merge --admin\n" "$PR_URL" >&2
+        exit 1
+    }
 }
 printf "  ${GREEN}✓${NC} PR merged to main\n"
 
