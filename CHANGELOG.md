@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.16] - 2026-04-05
+
+### Added
+
+- **Multi-model Developer strategy** — Developer role split into two tiers: `gpt-5.3-codex` (xhigh) for implementation, `gpt-5.4-mini` (high) for QA/quick fixes. Tier-to-model mapping documented in `docs/configuration.md` "Developer 分档模型策略" section. MCP model parameter validated: `gpt-5.4-mini` ✅, `gpt-5.3-codex-spark` ❌ (ChatGPT Plus auth limitation).
+- **Model mapping table expanded** — added "选型理由" (rationale) column and Independent Reviewer row to `docs/configuration.md`.
+- **Technology ecosystem tracking** — `docs/plan.md` new "技术生态追踪" table tracking 6 items: GPT-5.3-codex retirement, spark support, codex-plugin-cc integration, cross-session automation, Plugin hook coverage, multi-agent interop standards.
+- **GitHub account auto-alignment** — `/start-working` (Step 6) and `/end-working` (Step 7) now detect repo owner from `git remote` URL, compare with `gh` active account, and auto-switch if mismatched. No-op for single-account users; silent skip if `gh` is not installed.
+
+### Changed
+
+- `docs/workflow.md` Tier 1 section: added model selection note referencing the Developer tier strategy.
+- `CLAUDE.md` and `CLAUDE-TEMPLATE.md` Developer role descriptions updated to reflect two-tier model configuration.
+
 ## [0.6.15] - 2026-04-04
 
 ### Changed
