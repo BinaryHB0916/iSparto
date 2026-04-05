@@ -8,7 +8,7 @@
 #   2. Updates VERSION file
 #   3. Inserts release date into CHANGELOG.md ([Unreleased] → [x.y.z] - date)
 #   4. Commits on release branch, creates PR, merges to main
-#   5. Tags the merge commit, creates GitHub Release with install.sh + checksums.sha256 as assets
+#   5. Creates GitHub Release (with tag via GitHub API) + install.sh + checksums.sha256 as assets
 set -e
 
 RED='\033[0;31m'
@@ -118,13 +118,11 @@ gh pr merge "$PR_URL" --merge --admin || {
 }
 printf "  ${GREEN}✓${NC} PR merged to main\n"
 
-# ── 6. Tag merge commit ─────────────────────────────────────
+# ── 6. Switch back to main ───────────────────────────────────
 
 git checkout main
 git pull origin main
-git tag "v$NEW_VERSION"
-git push origin "v$NEW_VERSION"
-printf "  ${GREEN}✓${NC} Tagged v$NEW_VERSION on main\n"
+printf "  ${GREEN}✓${NC} Switched to main (up to date)\n"
 
 # ── 7. Clean up release branch ──────────────────────────────
 
@@ -147,7 +145,8 @@ gh release create "v$NEW_VERSION" \
     "$RELEASE_TMPDIR/install.sh" \
     "$RELEASE_TMPDIR/checksums.sha256" \
     --title "v$NEW_VERSION" \
-    --notes-file "$RELEASE_NOTES_FILE"
+    --notes-file "$RELEASE_NOTES_FILE" \
+    --target main
 
 printf "  ${GREEN}✓${NC} GitHub Release created\n"
 
