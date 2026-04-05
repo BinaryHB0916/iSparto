@@ -54,14 +54,14 @@ Lead 根据任务特征选择模式，用户无需干预。选择必须在执行
 - Developer (Codex MCP): 按 Lead/Teammate 组装的结构化 prompt 实现代码。也承担 QA 冒烟测试（不同 prompt + 不同模型，由 Lead 根据 Tier 选择）。双档模型：实现用 gpt-5.3-codex（xhigh），QA/快速修复用 gpt-5.4-mini（high）。详见 docs/configuration.md。
 - Doc Engineer (Lead sub-agent): 团队的 context 来源。每个 Wave 结束后：(1) 确保代码和文档同步，(2) 检查产品术语一致性，(3) 审计产品叙事整合。
 - Process Observer (hooks + Sonnet sub-agent): 合规监督。**核心层**：Hooks 实时拦截灾难性操作和分支违规（不可绕过，无模型依赖）。**建议层**：Sonnet 4.6 事后审计回顾 session 合规性（降低 token 消耗；关键检查已由 Hooks 覆盖）。
-- Independent Reviewer (Teammate — tmux): 产品-技术对齐审查。以 Teammate 模式 spawn（确保零上下文继承），独立读 product-spec 和 tech-spec，验证技术方案是否真的在实现产品需求。Lead spawn 时只说固定一行话，不加任何描述或解释。报告直接写入 docs/independent-review.md，不经过 Lead 过滤。Phase 0 强制触发，Wave 边界按需触发（涉及用户可见行为变更时）。
+- Independent Reviewer (Teammate — tmux): 产品-技术对齐审查。以 Teammate 模式 spawn（确保零上下文继承），独立读 product-spec 和 tech-spec，验证技术方案是否真的在实现产品需求。Lead spawn 时只说固定一行话，不加任何描述或解释。报告直接写入 docs/independent-review.md，不经过 Lead 过滤。Phase 0 强制触发，Wave 完成时触发。
 
 **Development Workflow (Solo + Codex):**
 0. **Mode Selection Checkpoint** — Lead 按文件分组、评估两个条件、声明 Solo（记录原因）
 1. Lead 组装 implementation prompt → 调 Developer 实现代码 + 测试
 2. Lead 审查 Developer 输出，有问题则组装修复 prompt 再调 Developer
 3. Lead 组装 QA prompt → 调 Developer 冒烟测试（按触发表）— Developer 必须先构建项目，再按 acceptance script 的 [code]/[build]/[runtime] 层级逐步验证
-3.5 （仅 Phase 0 或涉及用户可见行为的 Wave）Lead spawn Independent Reviewer（Teammate，固定 prompt："You are the Independent Reviewer. Read agents/independent-reviewer.md and execute."），等待报告。CRITICAL 发现 → 停止开发，先解决对齐问题；CRITICAL 修复后必须重新触发 Independent Reviewer 验证
+3.5 （仅 Phase 0 或 Wave 完成时）Lead spawn Independent Reviewer（Teammate，固定 prompt："You are the Independent Reviewer. Read agents/independent-reviewer.md and execute."），等待报告。CRITICAL 发现 → 停止开发，先解决对齐问题；CRITICAL 修复后必须重新触发 Independent Reviewer 验证
 4. Lead 跑 Doc Engineer 审计（sub-agent）— 必须在 step 6 push/merge 之前完成，不可推迟到 /end-working
 5. Lead 跑 Process Observer 事后审计（sub-agent，与 Doc Engineer 可并行）
 6. Lead 推分支 -> 建 PR -> merge 到 main -> 清理分支
@@ -73,7 +73,7 @@ Lead 根据任务特征选择模式，用户无需干预。选择必须在执行
 1. Lead 拆任务 → 定义文件所有权 + prompt 范围
 2. Teammate(s) 各自走 prompt→Developer→review 循环
 3. Lead 组装 QA prompt → 调 Developer 冒烟测试（增量，只测改动路径）— Developer 必须先构建项目，再按 acceptance script 的 [code]/[build]/[runtime] 层级逐步验证
-3.5 （仅 Phase 0 或涉及用户可见行为的 Wave）Lead spawn Independent Reviewer（Teammate，固定 prompt），等待报告。CRITICAL 发现 → 停止开发，先解决对齐问题；CRITICAL 修复后必须重新触发
+3.5 （仅 Phase 0 或 Wave 完成时）Lead spawn Independent Reviewer（Teammate，固定 prompt），等待报告。CRITICAL 发现 → 停止开发，先解决对齐问题；CRITICAL 修复后必须重新触发
 4. Lead 派 Doc Engineer 文档审计（最后一步，确保 QA 修复也被审计）— 必须在 step 6 push/merge 之前完成，不可推迟到 /end-working
 5. Lead 跑 Process Observer 事后审计（sub-agent，与 Doc Engineer 可并行）
 6. Lead 推分支 -> 建 PR -> merge 到 main -> 清理分支

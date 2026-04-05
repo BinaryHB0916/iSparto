@@ -98,7 +98,7 @@ Lead assembles QA prompt → calls Developer for smoke testing (using acceptance
   - Each eval step verified at its tagged level: [code] by analysis, [build] by checking artifacts, [runtime] by actually running the app
   - "Looks correct from code" is NOT valid evidence for [build] or [runtime] steps
     |
-(If Phase 0, or Wave involves user-visible behavior changes)
+(If Phase 0, or Wave completed)
 Independent Reviewer (Teammate — zero inherited context):
   - Spawned with fixed prompt: "You are the Independent Reviewer. Read agents/independent-reviewer.md and execute."
   - Verifies product-spec ↔ implementation alignment for this Wave's scope
@@ -149,7 +149,7 @@ Lead assembles QA prompt → calls Developer for smoke testing (using acceptance
   - Runs the app and verifies key user operation paths at runtime (not just code simulation)
   - Records and directly fixes issues found
     |
-(If Phase 0, or Wave involves user-visible behavior changes)
+(If Phase 0, or Wave completed)
 Independent Reviewer (Teammate — zero inherited context):
   - Spawned with fixed prompt: "You are the Independent Reviewer. Read agents/independent-reviewer.md and execute."
   - Verifies product-spec ↔ implementation alignment for this Wave's scope

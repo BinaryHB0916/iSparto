@@ -409,7 +409,7 @@ Key independence rules:
 
 Trigger conditions:
 - Phase 0: MANDATORY after tech-spec generation, before development starts
-- Wave boundary: when the Wave involves user-visible behavior changes
+- Wave boundary: when the Wave is completed
 - Ad hoc: when Lead makes significant technical simplification/substitution decisions
 
 CRITICAL recovery: after a CRITICAL finding is resolved (e.g., tech-spec modified), the Independent Reviewer must be re-triggered to verify alignment. Resolution is not confirmed by the Lead's claim — it requires independent re-verification.
