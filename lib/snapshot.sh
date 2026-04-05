@@ -44,7 +44,7 @@ resolve_path() {
     local rel_path="$2"
     # Block path traversal: reject paths containing ".." components
     case "$rel_path" in
-        ../*|*/../*|*/..) printf "${RED}Error:${NC} Path traversal rejected: $rel_path\n" >&2; exit 1 ;;
+        ..|../*|*/../*|*/..) printf "${RED}Error:${NC} Path traversal rejected: $rel_path\n" >&2; exit 1 ;;
     esac
     if [ "$project_dir" = "global" ]; then
         echo "$rel_path"
