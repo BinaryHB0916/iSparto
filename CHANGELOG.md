@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **`/release` slash command** — 4-step guided release process (version confirm → precondition check → execute script → post-release verify). Prevents Lead from improvising release steps. Follows the same principle as `/start-working` and `/end-working`: all ceremonial operations get step-by-step instructions.
+
+### Changed
+
+- **release.sh: removed local tag push** — replaced `git tag + git push origin <tag>` with `gh release create --target main`. Tag is now created via GitHub API, eliminating conflict with push-on-main hook.
+- **Self-reference boundary expanded** — CLAUDE.md now covers all framework directories (commands/, templates/, scripts/, hooks/, agents/, docs/) instead of only hooks/*.sh and rules/*.json. Lead can directly edit any framework file when working on the iSparto project itself.
+
 ## [0.6.16] - 2026-04-05
 
 ### Added
