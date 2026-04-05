@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **`/release` zero-confirmation mode** — removed all confirmation gates; version auto-increments from VERSION file (patch default, `/release minor` and `/release major` supported). User runs `/release` → fully automated → outputs release link.
+- **release.sh merge retry** — `gh pr merge` now retries once after 2s on failure, handling the race condition where main gets updated between PR creation and merge.
+
 ## [0.6.17] - 2026-04-05
 
 ### Added
