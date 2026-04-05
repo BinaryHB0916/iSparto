@@ -48,14 +48,34 @@ The repo includes a `settings.example.json` as a reference template — it is NO
 
 ### 角色-模型映射表
 
-| 角色 | 推荐模型 | 调用方式 | 认证 | reasoning |
-|------|---------|---------|------|-----------|
-| Lead | claude-opus-4-6 | 主会话 | Claude Max | max |
-| Teammate | claude-opus-4-6 | tmux session | Claude Max | max |
-| Developer | gpt-5.3-codex | MCP (codex tool) | ChatGPT Plus | xhigh |
-| Doc Engineer | claude-opus-4-6 | sub-agent（继承 Lead） | Claude Max | max |
-| Process Observer (Hooks) | — | PreToolUse hook（shell 脚本，无模型） | — | — |
-| Process Observer (Audit) | claude-sonnet-4-6 | sub-agent | Claude Max | — |
+| 角色 | 推荐模型 | 调用方式 | 认证 | reasoning | 选型理由 |
+|------|---------|---------|------|-----------|---------|
+| Lead | claude-opus-4-6 | 主会话 | Claude Max | max | SWE-bench 80.9%，上下文理解和任务拆解最强 |
+| Teammate | claude-opus-4-6 | tmux session | Claude Max | max | 继承 Lead 能力 |
+| Developer (实现) | gpt-5.3-codex | MCP (codex tool) | ChatGPT Plus | xhigh | Terminal-Bench 77.3% 领先 5.4，纯编码专精 |
+| Developer (QA/快速修复) | gpt-5.4-mini | MCP (codex tool, model 参数) | ChatGPT Plus | high | QA/快速修复结构简单，mini 够用且快 |
+| Independent Reviewer | claude-opus-4-6 | tmux (Teammate) | Claude Max | max | 跨模型盲审，零上下文继承 |
+| Doc Engineer | claude-opus-4-6 | sub-agent（继承 Lead） | Claude Max | max | 需要 Lead 的全局 context |
+| Process Observer (Hooks) | — | PreToolUse hook（shell 脚本，无模型） | — | — | 不可绕过的结构性保障 |
+| Process Observer (Audit) | claude-sonnet-4-6 | sub-agent | Claude Max | — | 建议层，降低 token 消耗 |
+
+### Developer 分档模型策略
+
+Developer 角色按任务类型自动选择模型。Lead/Teammate 在组装 MCP 调用时，根据触发条件表的 Tier 选择 `model` 参数：
+
+| 触发条件表 Tier | Developer 模型 | model 参数值 | 理由 |
+|----------------|---------------|-------------|------|
+| Tier 1（实现） | gpt-5.3-codex | 不指定（使用默认） | 实现需要最强编码能力 |
+| Tier 1（QA）/ Tier 2a（仅 QA） | gpt-5.4-mini | `gpt-5.4-mini` | QA prompt 结构简单，mini 够用且快 |
+| Tier 2b（Developer review） | gpt-5.4-mini | `gpt-5.4-mini` | 行为模板审查，快速返回 |
+| 快速修复（typo、格式化、单行改动） | gpt-5.4-mini | `gpt-5.4-mini` | 不值得等 xhigh 推理 |
+
+**调用示例**（Lead 组装 MCP 时）：
+
+- Tier 1 实现：`mcp__codex-dev__codex` — 不指定 model（使用默认 gpt-5.3-codex）
+- Tier 1 QA / 快速修复：`mcp__codex-dev__codex` — 指定 `model: "gpt-5.4-mini"`, `reasoningEffort: "high"`
+
+**注意**：gpt-5.3-codex-spark（1000+ tps 实时编码模型）因 ChatGPT Plus 认证限制暂不可用（错误："not supported when using Codex with a ChatGPT account"）。当前用 gpt-5.4-mini 覆盖 QA 和快速修复场景。如 spark 未来在 ChatGPT Plus 上可用，可作为第三档快速修复专用模型引入。
 
 ### 配置点说明
 
@@ -64,7 +84,7 @@ The repo includes a `settings.example.json` as a reference template — it is NO
 | 控制对象 | 影响角色 | 配置位置 | 备注 |
 |---------|---------|---------|------|
 | Claude Code 模型 | Lead, Teammate, Doc Engineer | `~/.claude/settings.json` → `"model"` 字段，或 CLI `--model` 参数 | Teammate / Doc Engineer 继承 Lead 的模型设置 |
-| Codex 模型 | Developer | 调用 `mcp__codex-dev__codex` 时的 `model` 参数 | 默认 gpt-5.3-codex，可选 o3、o4-mini 等 |
+| Codex 模型 | Developer | 调用 `mcp__codex-dev__codex` 时的 `model` 参数 | 实现默认 gpt-5.3-codex，QA/快速修复用 gpt-5.4-mini。详见 Developer 分档模型策略 |
 | Sub-agent 模型 | Process Observer Audit | sub-agent 定义文件中的 model 字段 | 默认 sonnet，可改回 opus |
 
 ### 首次配置

@@ -50,7 +50,7 @@ Lead 根据任务特征选择模式，用户无需干预。选择必须在执行
 **Roles:**
 - Team Lead (main session): 协调全流程、合代码。不直接写代码（见上方架构动机）——组装结构化 prompt 调 Developer (Codex) 实现，然后审查 Developer 输出。Solo 模式下自己走 prompt→Developer→review 循环；Team 模式下委派 Teammate 并行走同样循环。可以独立做常规决策，不确定的事情必须上报用户。并行不限于写代码——代码审查、文档审计、调研任务都应尽可能并行执行。任务完成后主动对照 plan.md 建议下一步。
 - Teammate (tmux, 仅 Agent Team 模式): 并行执行单元。在文件所有权范围内，遵循与 Lead 相同的 prompt→Developer→review 循环。不直接写代码（见上方架构动机）。每个 Teammate 独立调 Developer = 真正的并行 Codex 调用。
-- Developer (Codex MCP): 按 Lead/Teammate 组装的结构化 prompt 实现代码。也承担 QA 冒烟测试（不同 prompt，由 Lead 统一编排）。模型配置见 docs/configuration.md。
+- Developer (Codex MCP): 按 Lead/Teammate 组装的结构化 prompt 实现代码。也承担 QA 冒烟测试（不同 prompt + 不同模型，由 Lead 根据 Tier 选择）。双档模型：实现用 gpt-5.3-codex（xhigh），QA/快速修复用 gpt-5.4-mini（high）。详见 docs/configuration.md。
 - Doc Engineer (Lead sub-agent): 团队的 context 来源。每个 Wave 结束后：(1) 确保代码和文档同步，(2) 检查产品术语一致性，(3) 审计产品叙事整合。
 - Process Observer (hooks + Sonnet sub-agent): 合规监督。**核心层**：Hooks 实时拦截灾难性操作和分支违规（不可绕过，无模型依赖）。**建议层**：Sonnet 4.6 事后审计回顾 session 合规性（降低 token 消耗；关键检查已由 Hooks 覆盖）。
 - Independent Reviewer (Teammate — tmux): 产品-技术对齐审查。以 Teammate 模式 spawn（确保零上下文继承），独立读 product-spec 和 tech-spec，验证技术方案是否真的在实现产品需求。Lead spawn 时只说固定一行话，不加任何描述或解释。报告直接写入 docs/independent-review.md，不经过 Lead 过滤。Phase 0 强制触发，Wave 边界按需触发（涉及用户可见行为变更时）。

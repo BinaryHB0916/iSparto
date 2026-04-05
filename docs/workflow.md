@@ -195,6 +195,8 @@ All code changes trigger both implementation and QA unless they fall entirely wi
 | Permissions / security | Entitlements, Info.plist, credentials handling, encryption |
 | Infrastructure | CI/CD pipelines, deployment config, install/upgrade scripts |
 
+> **模型选择**：Tier 1 的实现步骤使用 Developer 默认模型（gpt-5.3-codex, xhigh），QA 步骤和 Tier 2 使用 gpt-5.4-mini（high）。详见 docs/configuration.md "Developer 分档模型策略"。
+
 ### Tier 2: Partial review
 
 #### Tier 2a: QA only (no implementation review needed)
