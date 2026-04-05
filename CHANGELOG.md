@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.6.18] - 2026-04-05
+
 ### Changed
 
 - **`/release` zero-confirmation mode** — removed all confirmation gates; version auto-increments from VERSION file (patch default, `/release minor` and `/release major` supported). User runs `/release` → fully automated → outputs release link.
