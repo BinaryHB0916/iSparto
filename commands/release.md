@@ -15,11 +15,17 @@ Read the VERSION file, compute the new version number.
 
 ## Execution
 
-1. Verify preconditions (all must pass — if any fails, report and stop):
+1. Verify preconditions (all must pass — if any fails, follow the recovery path):
    - Current branch must be `main` — if not, run `git checkout main && git pull`
-   - Working tree must be clean
-   - CHANGELOG.md must have an `[Unreleased]` section with content
-   - Tag `v<new-version>` must not already exist
+   - Working tree must be clean — if not, report dirty files and stop
+   - CHANGELOG.md must have an `[Unreleased]` section with content — if empty, execute the changelog prep flow:
+     a. `git checkout -b docs/changelog-MMDD`
+     b. Write changelog entries under `[Unreleased]` (review `git log` since last release tag for changes)
+     c. `git add CHANGELOG.md && git commit && git push`
+     d. Create PR via `gh pr create`, merge via `gh pr merge --merge`
+     e. `git checkout main && git pull && git branch -d docs/changelog-MMDD`
+     f. Re-run precondition checks from the top
+   - Tag `v<new-version>` must not already exist — if it does, report and stop
 
 2. Execute release script:
    - Run: `bash scripts/release.sh <new-version>`
