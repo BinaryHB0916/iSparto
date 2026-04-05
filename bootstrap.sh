@@ -25,20 +25,27 @@ done
 
 # ── Resolve latest version from GitHub Releases ──────────────
 if [ -z "$VERSION" ]; then
-    VERSION=$(curl -fsSL "https://api.github.com/repos/$REPO/releases/latest" 2>/dev/null \
-        | grep '"tag_name"' | sed 's/.*"v\([^"]*\)".*/\1/')
+    VERSION=$(curl -fsSL --connect-timeout 10 --max-time 30 "https://api.github.com/repos/$REPO/releases/latest" 2>/dev/null \
+        | grep '"tag_name"' | sed 's/.*"\(v\?\)\([0-9][^"]*\)".*/\2/')
     if [ -z "$VERSION" ]; then
         # Fallback: no releases yet, run install.sh directly from main branch
         printf "${YELLOW}No releases found. Installing from main branch (unverified).${NC}\n" >&2
         BOOTSTRAP_TMPDIR=$(mktemp -d)
         trap 'rm -rf "$BOOTSTRAP_TMPDIR"' EXIT
-        curl -fsSL "https://raw.githubusercontent.com/$REPO/main/install.sh" -o "$BOOTSTRAP_TMPDIR/install.sh" || {
+        curl -fsSL --connect-timeout 10 --max-time 60 "https://raw.githubusercontent.com/$REPO/main/install.sh" -o "$BOOTSTRAP_TMPDIR/install.sh" || {
             printf "${RED}Error:${NC} Failed to download install.sh from main branch.\n" >&2
             exit 1
         }
         bash "$BOOTSTRAP_TMPDIR/install.sh" "${PASSTHROUGH_ARGS[@]}"
         exit $?
     fi
+fi
+
+# Validate version format
+if ! echo "$VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+'; then
+    printf "${RED}Error:${NC} Invalid version format: '$VERSION'\n" >&2
+    echo "  Expected semver (e.g. 0.6.18). Check https://github.com/$REPO/releases" >&2
+    exit 1
 fi
 
 TAG="v${VERSION}"
@@ -48,13 +55,13 @@ BASE_URL="https://github.com/$REPO/releases/download/$TAG"
 BOOTSTRAP_TMPDIR=$(mktemp -d)
 trap 'rm -rf "$BOOTSTRAP_TMPDIR"' EXIT
 
-curl -fsSL "$BASE_URL/install.sh" -o "$BOOTSTRAP_TMPDIR/install.sh" || {
+curl -fsSL --connect-timeout 10 --max-time 60 "$BASE_URL/install.sh" -o "$BOOTSTRAP_TMPDIR/install.sh" || {
     printf "${RED}Error:${NC} Failed to download install.sh for $TAG\n" >&2
     echo "  Check that release $TAG exists: https://github.com/$REPO/releases/tag/$TAG" >&2
     exit 1
 }
 
-curl -fsSL "$BASE_URL/checksums.sha256" -o "$BOOTSTRAP_TMPDIR/checksums.sha256" || {
+curl -fsSL --connect-timeout 10 --max-time 30 "$BASE_URL/checksums.sha256" -o "$BOOTSTRAP_TMPDIR/checksums.sha256" || {
     printf "${RED}Error:${NC} Failed to download checksums for $TAG\n" >&2
     exit 1
 }

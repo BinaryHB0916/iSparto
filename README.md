@@ -64,7 +64,7 @@ curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/bootstrap
 **Install a specific version:**
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/bootstrap.sh | bash -s -- --version=0.3.0
+curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/bootstrap.sh | bash -s -- --version=0.6.18
 ```
 
 **Upgrade:** re-run to pull the latest version and see what's new:
@@ -80,6 +80,8 @@ curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/bootstrap
 ```bash
 ~/.isparto/install.sh --uninstall
 ```
+
+Having trouble? See [Troubleshooting](docs/troubleshooting.md).
 
 <details>
 <summary>Alternative: manual clone</summary>
