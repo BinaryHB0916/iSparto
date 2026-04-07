@@ -58,7 +58,7 @@ Applies to both **write** (code, docs, config) and **read** (code review, doc au
 - Teammate (tmux, Agent Team only): Parallel execution unit. Follows the same prompt→Developer→review loop as Lead, scoped to assigned file ownership. Does not write code directly (see rationale above). Each Teammate independently calls Developer = true parallel Codex invocations.
 - Developer (Codex MCP): Implements code per structured prompts from Lead/Teammate. Also handles QA smoke testing (different prompt + different model, selected by Lead based on Tier). Two-tier models: implementation uses gpt-5.3-codex (xhigh), QA/quick fixes use gpt-5.4-mini (high). See docs/configuration.md.
 - Doc Engineer (Lead sub-agent): The team's context source. After each Wave: (1) ensures code and docs stay in sync, (2) checks product terminology consistency, (3) audits product narrative integration.
-- Process Observer (hooks + Lead sub-agent): Compliance oversight. Hooks intercept catastrophic operations in real time (irreversible / shared state / data loss); post-session audit reviews execution against behavioral guidelines, outputs deviation report + rule correction suggestions.
+- Process Observer (hooks + Sonnet sub-agent): Compliance oversight. **Core layer:** Hooks intercept catastrophic operations and branch violations in real time (cannot be bypassed, no model dependency). **Advisory layer:** Sonnet 4.6 post-session audit reviews session compliance (reduces token consumption; critical checks are already covered by Hooks).
 - Independent Reviewer (Teammate — tmux): Product-technical alignment reviewer. Spawned as a Teammate (zero inherited context), independently reads product-spec then tech-spec to verify the technical approach actually implements what the product requires. Lead spawns with a fixed one-liner — no additional context or framing allowed. Report written directly to docs/independent-review.md, not filtered through Lead. Mandatory at Phase 0; triggered at Wave boundaries (when Wave completed).
 
 **Development Workflow (Solo + Codex):**
@@ -67,7 +67,7 @@ Applies to both **write** (code, docs, config) and **read** (code review, doc au
 2. Lead reviews Developer output; if issues, assembles fix prompt → calls Developer again
 3. Lead assembles QA prompt → calls Developer for smoke testing (per trigger table) — Developer MUST build the project first, then verify each acceptance step at its tagged level: [code]/[build]/[runtime]
 3.5 (Phase 0 only, or Wave completed) Lead spawns Independent Reviewer (Teammate, fixed prompt: "You are the Independent Reviewer. Read agents/independent-reviewer.md and execute."), waits for report. CRITICAL finding → stop development, resolve alignment first; after CRITICAL fix, must re-trigger Independent Reviewer to verify
-4. Lead runs Doc Engineer audit (as sub-agent)
+4. Lead runs Doc Engineer audit (as sub-agent) — must complete before step 6 push/merge, cannot be deferred to /end-working
 5. Lead runs Process Observer post-session audit (as sub-agent, can run in parallel with Doc Engineer)
 6. Lead pushes branch -> creates PR -> merges to main -> cleans up branch
 
@@ -79,7 +79,7 @@ Applies to both **write** (code, docs, config) and **read** (code review, doc au
 2. Teammate(s) each run prompt→Developer→review loop in parallel
 3. Lead assembles QA prompt → calls Developer for smoke testing (incremental, only changed paths) — Developer MUST build the project first, then verify each acceptance step at its tagged level: [code]/[build]/[runtime]
 3.5 (Phase 0 only, or Wave completed) Lead spawns Independent Reviewer (Teammate, fixed prompt), waits for report. CRITICAL finding → stop development, resolve alignment first; after CRITICAL fix, must re-trigger
-4. Lead spawns Doc Engineer for documentation audit (last step, ensures QA fixes are also audited)
+4. Lead spawns Doc Engineer for documentation audit (last step, ensures QA fixes are also audited) — must complete before step 6 push/merge, cannot be deferred to /end-working
 5. Lead runs Process Observer post-session audit (as sub-agent, can run in parallel with Doc Engineer)
 6. Lead pushes branch -> creates PR -> merges to main -> cleans up branch
 
