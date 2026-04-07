@@ -2,15 +2,15 @@
 
 > 🚨 **BLOCKING: Next Wave requires NEW SESSION**
 >
-> Wave just completed: Wave 3 (i18n cleanup — Tier 2 Englishization)
+> Wave just completed: Wave 4 (i18n cleanup — `scripts/language-check.sh` promoted to Doc Engineer audit blocking gate)
 >
-> Reason: Wave 3 modified `docs/*.md` (Tier 2 reference docs) which are loaded by Independent Reviewer at Wave Boundary Review and read by Lead during planning. The current session has the OLD (Chinese) version cached in conversation context, even though IR (zero-context Teammate) would read the new version from disk. Subsequent Lead decisions in this session would conflate stale and fresh information.
+> Reason: Wave 4 modified `commands/end-working.md` and `docs/roles.md` (Tier 1 system prompts) which are loaded by the Lead via `/end-working` and by Doc Engineer when invoked. The current session has the OLD versions cached in conversation context. Subsequent /end-working runs in this session would use the stale Doc Engineer checklist (without item 9) and the stale step-9 fallback (without the audit-fix-reaudit loop).
 >
-> Action required: Close this session immediately. Start a new session. `/start-working` in the new session will load the post-Wave-3 docs and proceed to Wave 4 (`scripts/language-check.sh` → blocking gate inside `/end-working`).
+> Action required: Close this session immediately. Start a new session. `/start-working` Step 0 will detect this marker and gate the session. The next session will load the post-Wave-4 versions and proceed to Wave 5 (TBD — see "下一步" / Deferred items for candidate Wave 5 scope).
 >
-> Do NOT proceed to Wave 4 in the current session.
+> Do NOT proceed to Wave 5 in the current session.
 >
-> (BLOCKING-marker auto-detection landed in Wave 2 — `/start-working` Step 0 will read this marker and gate the session.)
+> (Per the cross-session barrier protocol hardened in the master plan — already established in Waves 1/2/3.)
 
 ## 已完成
 
@@ -252,9 +252,43 @@ Verification (after Wave 3):
 
 Cross-session boundary required before Wave 4 (per Cross-Session Barrier Protocol — Wave 3 fully Englishized `docs/*.md` Tier 2 reference docs which are loaded by IR at Wave Boundary Review and by Lead during planning; the current session has stale CJK versions cached in conversation context). The Wave 3→4 BLOCKING marker at the top of this file will be auto-detected by `/start-working` Step 0 in the next session.
 
-Deferred items (NOT in Wave 3 scope, tracked for future Waves or hotfixes):
-- **CLAUDE-TEMPLATE.md ↔ CLAUDE.md sync sweep** — Doc Engineer Wave 3 audit found pre-existing divergences: TEMPLATE line 61 says "hooks + Lead sub-agent" while CLAUDE.md line 76 uses "hooks + Sonnet sub-agent" with the new Core/Advisory layer framing; TEMPLATE workflow steps 4–6 omit the "must complete before push/merge, cannot be deferred to /end-working" qualifier. Out of Wave 3 scope (Wave 3 did not touch CLAUDE-TEMPLATE.md). Track for an inter-Wave hotfix or Wave 4+ sweep.
-- **Wave 4 task — promote `language-check.sh` to a blocking gate inside `/end-working`** — the mechanical guardian is now achievable on the whole repo (0/0/0), so Wave 4's primary task is to wire it into `commands/end-working.md` as a Doc Engineer audit blocking gate. Originally planned for Wave 4 per the i18n master plan.
+### i18n Cleanup — Wave 4 (2026-04-07) — Complete
+
+Goal: Promote `scripts/language-check.sh` to a blocking sub-step inside the Doc Engineer audit checklist invoked from `/end-working`. Fulfills the Wave-1 forward-looking promise at CLAUDE.md > "Documentation Language Convention" final paragraph ("integrated into the Doc Engineer audit step of `/end-working` starting from Wave 4").
+
+Mode: Solo + Codex (3 framework files, small edits, self-referential boundary, no decomposable parallel work).
+
+- [x] `docs/roles.md` — added item 9 (Language convention check) to Doc Engineer audit checklist after item 8 (Security compliance check). Conditional on `scripts/language-check.sh` existence (graceful no-op for projects that have not adopted iSparto's language convention). Exit code semantics: 0 ✅ pass / 1 ❌ FAIL / 2 ⚠️ env warning. Output format table extended with a row for item 9 and a `--- Language Convention Violations (item 9) ---` sub-section template for raw violation lines (only emitted on FAIL). New Key Principle added for the audit-fix-reaudit loop (Lead-fixes-not-Doc-Engineer, fresh-sub-agent re-spawn, bounded at 3 iterations) and the 6-step blocked recovery path on loop-bound exceedance.
+- [x] `commands/end-working.md` — extended step 9 fallback gate with two new bullets: (a) audit-fix-reaudit loop on Doc Engineer FAIL (Lead reads failing items, edits files, re-spawns fresh Doc Engineer sub-agent, bounded at 3 iterations); (b) 6-step blocked recovery path when the loop bound is exceeded (stop loop, blocked report, plan.md entry, push WIP, report to user, exit /end-working without merging). No step renumbering.
+- [x] `docs/plan.md` — Wave 3→4 BLOCKING marker consumed and replaced with Wave 4→5 marker; Wave 4 completion entry appended (this entry); deferred item "Wave 4 task — promote `language-check.sh` to a blocking gate inside `/end-working`" already removed from the Wave 3 Deferred items list.
+- [x] Pre-edit baseline: ran `bash scripts/language-check.sh` at session start — reported `0 Tier 1 CJK / 0 Tier 2 CJK / 0 Principle 1` (exit 0). Wave 4 begins on a clean guardian.
+- [x] Post-edit guardian re-run: ran `bash scripts/language-check.sh` after all Wave 4 edits — still reports `0 Tier 1 CJK / 0 Tier 2 CJK / 0 Principle 1` (exit 0). Wave 4 edits are pure English and introduce no new violations.
+- [x] Self-test: ran `bash scripts/language-check.sh --self-test` — both Principle 1 fixtures PASS, exit 0. (Sanity check; hold from Hotfix #2.)
+- [x] Doc Engineer audit (fresh sub-agent, spawned from current session): **PASS on all 9 items**. Items 1–7 PASS or N/A; item 8 (Security compliance) PASS — pure markdown, no code changes; item 9 (Language convention) PASS — guardian exit 0, 0/0/0 violations, self-test green. The new item 9 was exercised against the Wave 4 file changes themselves (meta-test succeeded: the gate that Wave 4 introduces runs cleanly against the very Wave that introduces it). See meta-verification caveat below for why this is only a partial validation.
+- [x] Process Observer audit (Sonnet, fresh sub-agent): **11 PASS / 1 WARN / 0 FAIL / 2 N/A** against the 5-checklist 14-check standard. The sole WARN (F1 — Independent Review at Wave boundary) was an in-progress state captured mid-sequence: it resolved to PASS once the IR sub-agent completed and appended its report to `docs/independent-review.md`. The two N/A (D1/D2 — PR workflow) are correct pre-commit states, not deviations. Framework-side rule-correction suggestion recorded by the auditor: F1 check should gain an "IN-PROGRESS" intermediate status so mid-session audits do not conflate "pending (OK)" with "not yet done (at risk)". Noted for next `/start-working` as a framework improvement candidate.
+- [x] Independent Reviewer (Wave Boundary Review, Teammate tmux mode, fixed prompt) spawned; report appended to `docs/independent-review.md` as `## Wave 4 Review — 2026-04-07`. **Verdict: PROCEED** — 0 CRITICAL, 0 MAJOR, 2 MINOR non-blocking findings. MINOR #1: the initial Wave 4→5 BLOCKING marker preamble contained the CJK phrase `master-plan-固化` (added by Edit A of plan.md). Although `docs/plan.md` is in the guardian's Tier 2 exclusion list (so the gate would not flag it), it was still a net addition of CJK content to a file the convention wants to keep clean over time — fixed in the same Wave 4 commit by replacing with "per the cross-session barrier protocol hardened in the master plan". MINOR #2: Wave 4 completion entry was still pending at IR time — resolved by writing this entry before commit. Unjustified technical work: None; every line of the 3-file diff maps directly to a Wave 4 objective.
+
+Verification (after Wave 4):
+- Tier 1 violations: 0 (held from Wave 2)
+- Tier 2 violations: 0 (held from Wave 3 + MINOR #1 fixed in Wave 4)
+- Principle 1 violations: 0 (held from Hotfix #2)
+- Doc Engineer checklist now has 9 items (was 8); item 9 is mechanical (parallel to item 8 security scan)
+- The audit-fix-reaudit loop pattern and 6-step blocked recovery path are documented in `docs/roles.md` Doc Engineer Key Principles and `commands/end-working.md` step 9
+- Wave-1 forward-looking promise at CLAUDE.md > "Documentation Language Convention" is now fulfilled; the forward reference in CLAUDE.md L44 ("starting from Wave 4") remains accurate without edit
+
+**Meta-verification caveat (important — full validation deferred to Wave 5).** The current session's Doc Engineer audit spawned a fresh sub-agent that read the post-Wave-4 `docs/roles.md` from disk and ran the new item 9 against the current repo state. This confirms item 9 *runs and reports PASS* on a clean repo — the expected happy-path for Wave 4 itself, since the Wave 4 edits introduce no language violations. **However, this is only a partial validation**:
+
+- It does **NOT** exercise the audit-fix-reaudit loop, because the loop only triggers on a real FAIL — and the Wave 4 commit passed cleanly, so the loop was not naturally triggered.
+- It does **NOT** exercise the 6-step blocked recovery path, for the same reason.
+- Most importantly: the **Lead in the current session has the pre-Wave-4 Tier 1 system prompts cached in conversation context** (CLAUDE.md, `docs/roles.md`, `commands/end-working.md` — all loaded via the start-of-session system-reminder injection). Any fix-loop the Lead would orchestrate in the current session would use the stale mental model, even though the spawned sub-agents read fresh files.
+
+**Therefore, full validation of the Wave 4 wiring (including the audit-fix-reaudit loop and the 6-step blocked recovery path) is deferred to Wave 5's first natural Doc Engineer run** in a new session — that is the first invocation where the Lead's conversation context is loaded from the post-Wave-4 disk state, and the full pattern will be exercised end-to-end against whatever Wave 5 changes happen to introduce.
+
+Cross-session boundary required before Wave 5 (per the cross-session barrier protocol hardened in the master plan — Wave 4 modified `commands/end-working.md` and `docs/roles.md`, both Tier 1 system prompts loaded by Lead). The Wave 4→5 BLOCKING marker at the top of this file will be auto-detected by `/start-working` Step 0 in the next session.
+
+Deferred items (NOT in Wave 4 scope, tracked for future Waves or hotfixes):
+- **CLAUDE-TEMPLATE.md ↔ CLAUDE.md sync sweep** — Doc Engineer Wave 3 audit found pre-existing divergences: TEMPLATE line 61 says "hooks + Lead sub-agent" while CLAUDE.md line 76 uses "hooks + Sonnet sub-agent" with the new Core/Advisory layer framing; TEMPLATE workflow steps 4–6 omit the "must complete before push/merge, cannot be deferred to /end-working" qualifier. Out of Wave 3 and Wave 4 scope. Track for an inter-Wave hotfix or Wave 5+ sweep.
+- **Process Observer F1 check — add IN-PROGRESS intermediate status** — Process Observer Wave 4 audit surfaced that `agents/process-observer-audit.md` F1 check ("If Wave marked completed this session: was IR spawned? Was docs/independent-review.md updated?") is binary PASS/FAIL and has no intermediate state for mid-session audits where IR is correctly sequenced but not yet run. Framework-side rule correction. Track for next `/start-working` framework improvement sweep.
 
 ### 下一步
 - [ ] P1 仓库结构重组：内部文件（plan.md, product-spec.md, design-decisions.md, process-observer.md, security.md, session-log.md）移到 .project/ 目录，与用户文档物理隔离（约束：CLAUDE.md 不能移，Claude Code 从项目根读取）

@@ -1,5 +1,31 @@
 # Session Log
 
+## 2026-04-07 Session (#d) — i18n Cleanup Wave 4 (language-check.sh as Doc Engineer audit blocking gate)
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | i18n Cleanup — Wave 4 (language-check.sh promoted to Doc Engineer audit item 9 blocking gate) |
+| Tasks completed | Wave 4 complete (3 framework files): `docs/roles.md` (new item 9 + output table row + violation sub-section + Key Principle with audit-fix-reaudit loop + 6-step blocked recovery path), `commands/end-working.md` (step 9 extended with 2 new bullets for the loop and recovery), `docs/plan.md` (BLOCKING marker swap Wave 3→4 → Wave 4→5, Wave 4 completion entry deferred-write, deferred-items list updated). Pre-edit and post-edit guardian: 0 Tier 1 / 0 Tier 2 / 0 Principle 1 (both). Self-test: both Principle 1 fixtures PASS. Doc Engineer audit: PASS all 9 items (meta-test — item 9 validates itself against the Wave that introduces it). Process Observer audit: 11 PASS / 1 WARN (F1 in-progress, resolved by IR spawn) / 0 FAIL / 2 N/A. Independent Reviewer: PROCEED, 0 CRITICAL / 0 MAJOR / 2 MINOR (non-blocking; MINOR #1 `master-plan-固化` CJK phrase fixed in same commit, MINOR #2 deferred Wave 4 entry written before commit). |
+| Key decisions | (1) Wave-1 forward-looking promise fulfilled — CLAUDE.md L44 ("starting from Wave 4") is now accurate; no edit to CLAUDE.md needed, the forward reference naturally resolves post-Wave-4. (2) Audit-fix separation pattern formalized — on Doc Engineer FAIL, the Lead (NOT the Doc Engineer) performs the fix, then spawns a **fresh** Doc Engineer sub-agent for re-audit. Rationale: prevents the agent that found a problem from also being the agent that fixes it (avoids motivated reasoning and incomplete patches). Documented in both `docs/roles.md` Key Principles and `commands/end-working.md` step 9. Loop bounded at 3 iterations. (3) 6-step blocked recovery path on loop-bound exceedance — (a) stop loop; (b) blocked-audit report; (c) write blocked-audit entry to plan.md; (d) push WIP branch (`git push -u origin <current-branch>`); (e) report to user; (f) exit /end-working without merging. Lead does NOT improvise recovery — every step is prescribed. (4) Item 9 is conditional on `scripts/language-check.sh` existence — makes the checklist universally safe (iSparto-internal projects exercise the gate, user projects without the script silently skip). The script is intentionally NOT propagated to user projects via install.sh (would require also propagating iSparto's Tier 1/Tier 2 path structure, which doesn't generalize). (5) Meta-verification is partial only in the current session — Wave 4's own Doc Engineer audit exercises item 9 against the Wave 4 files themselves, but does NOT exercise the audit-fix-reaudit loop or the 6-step blocked recovery path (those only trigger on a real FAIL, which is not expected for Wave 4). Full validation deferred to Wave 5's first natural Doc Engineer run. Most importantly, the Lead in the current session has pre-Wave-4 Tier 1 system prompts cached in conversation context — any loop the Lead would orchestrate here would use the stale mental model. Cross-session boundary before Wave 5 is mandatory. (6) Wave 3 deferred-items list was Wave-4-cleaned: the "Wave 4 task" bullet removed (replaced by this Wave 4 completion entry). New deferred items for Wave 5: CLAUDE-TEMPLATE.md ↔ CLAUDE.md sync sweep (carryover from Wave 3), Process Observer F1 check IN-PROGRESS intermediate status (new, surfaced by Wave 4 PO audit). |
+
+### Files Changed
+```
+ commands/end-working.md    |   2 ++
+ docs/independent-review.md |  70 ++++++++++++++++++++++++++++++++++++++++++++++
+ docs/plan.md               |  50 ++++++++++++++++++++++++++++------
+ docs/roles.md              |  19 +++++++++++++
+ 4 files changed, 133 insertions(+), 8 deletions(-)
+```
+
+### Notes
+- Mode: Solo + Codex (framework self-referential boundary — 3 framework files, small edits ~5–25 lines each, no decomposable parallel sub-tasks; Lead edits directly via Edit tool, no Developer/Codex MCP needed for the edits themselves).
+- All plan edit positions specified as textual anchors (not line numbers) — earlier edits in the same file do not invalidate the anchor for later edits. User-mandated Fix 1 from plan approval.
+- `plan.md` Wave 4 completion entry was deferred-write (user-mandated Fix 4) — the entry was authored only after all gates (Doc Engineer, Process Observer, Independent Reviewer) completed and produced actual verdicts. No `[to be filled in]` placeholders.
+- The Doc Engineer audit spawn explicitly read the post-Wave-4 `docs/roles.md` from disk (fresh sub-agent, zero inherited context) so the new item 9 definition was loaded for the audit run. The Lead's own conversation context is pre-Wave-4 (cached at session start) — this is why meta-verification is only partial and full validation is deferred to Wave 5 (see plan.md Meta-verification caveat).
+- Framework improvement candidate surfaced by PO: F1 check in `agents/process-observer-audit.md` should gain an IN-PROGRESS intermediate status. Currently binary PASS/FAIL forces mid-session audits to report WARN when IR is correctly pending but not yet overdue. Noted in plan.md Wave 4 Deferred items for next session pickup.
+- Cross-session boundary required before Wave 5 — Wave 4 modified `commands/end-working.md` (used by Lead each session when /end-working runs) and `docs/roles.md` (used by Doc Engineer audit, loaded when Lead spawns the sub-agent). BLOCKING marker at top of plan.md (swapped from Wave 3→4 to Wave 4→5 in this Wave's Edit A) will be auto-detected by `/start-working` Step 0 in the next session.
+
 ## 2026-04-07 Session (#b) — Inter-Wave Hotfixes
 
 | Metric | Value |
