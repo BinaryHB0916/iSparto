@@ -10,6 +10,10 @@
 
 **iSparto turns Claude Code from a single AI into a development team** — Lead assembles prompts, Developer (Codex) implements, Teammates parallelize, Doc Engineer syncs documentation. You direct the team, not the agent.
 
+> **中文用户** can start from [docs/zh/quick-start.md](docs/zh/quick-start.md) — a Chinese quick-start covering install, first use, and the daily workflow.
+>
+> iSparto uses a deliberate bilingual strategy: user-facing entries (both READMEs + the Chinese quick-start + `CONTRIBUTING.md`) are maintained in parallel; framework instructions (`CLAUDE.md`, `commands/`, `agents/`, `templates/`) and reference documentation (`docs/`) are English-only as a single source of truth — for AI instruction-following stability and so non-Chinese-speaking contributors can review the framework. See [CLAUDE.md > Documentation Language Convention](CLAUDE.md#documentation-language-convention) for the full rationale.
+
 ### Who is this for
 
 Solo developers on macOS who want to multiply their output with Claude Code. Requires Claude Max and ChatGPT subscriptions.
