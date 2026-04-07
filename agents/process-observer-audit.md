@@ -34,9 +34,11 @@ Inform user (in user's language) that the session detected N workflow deviations
 | A1 | Branch is feat/fix/hotfix | PASS/FAIL | ... |
 | A2 | No direct commits to main | PASS/FAIL | ... |
 | ... | ... | ... | ... |
-| F1 | Independent Review at Wave boundary | PASS/FAIL/N/A | If Wave marked completed this session: was IR spawned? Was docs/independent-review.md updated? N/A if no Wave completed. |
+| F1 | Independent Review at Wave boundary | PASS/IN-PROGRESS/FAIL/N/A | If Wave marked completed this session: was IR spawned? Was docs/independent-review.md updated? IN-PROGRESS if IR is planned in plan.md execution sequence but not yet executed at audit time (mid-session audit captures pre-IR state — resolves to PASS once IR runs and appends to docs/independent-review.md). N/A if no Wave completed. |
 
-**Summary:** X passed, Y warnings, Z failures
+**Summary:** X passed, Y in-progress, Z warnings, W failures
+
+Note on F1 IN-PROGRESS: a PO audit triggered mid-sequence before the Wave Boundary Independent Reviewer has finished must report F1 as IN-PROGRESS, not WARN or FAIL. IN-PROGRESS is a correctness-preserving transitional state distinct from "not yet done (at risk)"; it resolves to PASS on the next audit pass once IR has appended its report to docs/independent-review.md. A re-audit after IR completion SHOULD flip IN-PROGRESS to PASS — if it does not, that is itself a FAIL signal.
 
 **Rule Corrections Suggested:**
 
