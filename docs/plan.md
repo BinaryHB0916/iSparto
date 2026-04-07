@@ -1,5 +1,17 @@
 # iSparto 开发计划
 
+> 🚨 **BLOCKING: Next Wave requires NEW SESSION**
+>
+> Wave just completed: Wave 1 (i18n cleanup — convention + guardian)
+>
+> Reason: Wave 1 modified CLAUDE.md (added the Documentation Language Convention section), which is loaded into the system-reminder at session start. The current session has the OLD version cached and cannot reload the new rules. Wave 2 must run with the updated rules in effect.
+>
+> Action required: Close this session immediately. Start a new session. `/start-working` in the new session will load the updated rules and proceed to Wave 2 (Tier 1 Englishization, 4-Dev Agent Team).
+>
+> Do NOT proceed to Wave 2 in the current session.
+>
+> (BLOCKING-marker detection in `/start-working` is wired in Wave 2 Dev B Sub-task B-bonus; until then this marker is advisory.)
+
 ## 已完成
 
 ### Wave 0: 核心框架
@@ -131,6 +143,20 @@
 - [x] scripts/release.sh — 移除本地 tag push，改用 gh release create --target main
 - [x] CLAUDE.md — 发版规则 + hotfix 后发版引导 + 自引用边界扩展（覆盖所有框架文件）
 - [x] docs/design-decisions.md — 3 条决策（/release command、release.sh tag 改造、自引用边界扩展）
+
+### i18n Cleanup — Wave 1 (2026-04-07) — Complete
+
+Goal: Establish the four-tier language convention and ship the guardian script. No Englishization of existing files in this Wave by design — Wave 2 handles Tier 1, Wave 3 handles Tier 2.
+
+- [x] `CLAUDE.md` — added "Documentation Language Convention" section (zero CJK literals in the section). Documents the four-tier architecture (Tier 1 System Prompt, Tier 2 Reference Docs, Tier 3 User-Facing Entry, Tier 4 Historical), the hard-coded user-facing strings rule (Principle 1), and the illustrative-example rule
+- [x] `scripts/language-check.sh` — created in warning mode (manual invocation only). Scans Tier 1 (CLAUDE.md, CLAUDE-TEMPLATE.md, commands/*.md, agents/*.md, templates/*.md, hooks/**/*.{sh,json}, bootstrap.sh, install.sh, isparto.sh, scripts/*.sh, lib/*.sh) and Tier 2 (docs/*.md). Tier 2 explicit exclusions: `docs/session-log.md`, `docs/plan.md`, `docs/framework-feedback-*.md`, `docs/zh/`. CJK regex covers basic CJK + punctuation + fullwidth + Extension A. Promoted to a blocking gate inside `/end-working` Doc Engineer audit in Wave 4
+- [x] `docs/plan.md` — added BLOCKING marker for the Wave 1 → Wave 2 cross-session boundary (per R1 mitigation; auto-detection wired in Wave 2 Dev B Sub-task B-bonus)
+
+Baseline (recorded by `bash scripts/language-check.sh` after Wave 1):
+- Tier 1 violations: 166 lines (target after Wave 2: 0)
+- Tier 2 violations: 391 lines (target after Wave 3: 0)
+
+Cross-session boundary required before Wave 2 (per Cross-Session Barrier Protocol — Wave 1 changed CLAUDE.md, the new section needs to ride the next session's system-reminder injection).
 
 ### 下一步
 - [ ] P1 仓库结构重组：内部文件（plan.md, product-spec.md, design-decisions.md, process-observer.md, security.md, session-log.md）移到 .project/ 目录，与用户文档物理隔离（约束：CLAUDE.md 不能移，Claude Code 从项目根读取）

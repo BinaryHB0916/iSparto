@@ -23,6 +23,26 @@ iSparto 是一个 AI Agent Team 工作流框架，把 Claude Code 单 Agent 变�
 - 发版必须用 `/release` 命令 — 不允许手动 `git tag`、`git push origin <tag>` 或在 main 上做任何操作。发版流程由 `scripts/release.sh` 全自动执行
 - 本项目是框架本身，所有框架文件（commands/、templates/、scripts/、hooks/、agents/、docs/）均属自引用边界，Lead 直接编辑，Process Observer 拦截时 approve 即可
 
+## Documentation Language Convention
+
+iSparto adopts a four-tier language architecture for all documentation and system prompts:
+
+- **Tier 1 — System Prompt Layer (English only):** CLAUDE.md, CLAUDE-TEMPLATE.md, commands/*.md, agents/*.md, templates/*.md, hooks/**/*.sh, hooks/**/*.json, bootstrap.sh, install.sh, isparto.sh, scripts/*.sh, lib/*.sh. These files are read by AI agents as instructions; English ensures instruction-following stability and enables review by non-Chinese-speaking contributors.
+- **Tier 2 — Reference Documentation (English only):** All files under docs/ except Tier 4 historical artifacts and the docs/zh/ directory. Single source of truth in English; no Chinese mirror to avoid synchronization burden.
+- **Tier 3 — User-Facing Entry (Bilingual or English with Chinese pointer):** README.md, README.zh-CN.md, docs/zh/quick-start.md, CONTRIBUTING.md. Maintained as parallel Chinese and English versions where applicable to serve both audiences at the entry point.
+- **Tier 4 — Historical Artifacts (frozen):** docs/session-log.md, docs/framework-feedback-*.md, historical sections in docs/plan.md, and historical entries in CHANGELOG.md. Not modified retroactively; new entries in plan.md and CHANGELOG.md use English.
+
+**Hard-coded user-facing strings rule:** Tier 1 files must not embed literal user-facing strings in any specific language. Describe the intent in English and let the Lead generate the actual string in the user's language at runtime.
+
+Example — describing the wrong pattern without embedding a target-language literal:
+
+- WRONG: embedding a literal non-English user-facing string in a Report/Inform/Output field of a command or agent definition
+- RIGHT: describing the intent, e.g., "Report to user (in user's language) that the gh account has been auto-switched to $REPO_OWNER"
+
+**Illustrative-example rule:** When documenting a wrong pattern, describe it; do not embed a literal string in the target language. A literal example would itself trigger the language-check.sh guardian.
+
+This convention is enforced by `scripts/language-check.sh`, integrated into the Doc Engineer audit step of `/end-working` starting from Wave 4. The guardian scans both Tier 1 (System Prompt) and Tier 2 (Reference Docs) for CJK characters and blocks the commit if violations are found.
+
 ## Collaboration Mode: Auto（Solo + Codex / Agent Team）
 
 Lead 根据任务特征选择模式，用户无需干预。选择必须在执行前显式完成（见 Mode Selection Checkpoint）。
