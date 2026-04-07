@@ -2,13 +2,13 @@
 
 > 🚨 **BLOCKING: Next Wave requires NEW SESSION**
 >
-> Wave just completed: Wave 2 (i18n cleanup — Tier 1 Englishization)
+> Wave just completed: Wave 3 (i18n cleanup — Tier 2 Englishization)
 >
-> Reason: Wave 2 fully Englishized CLAUDE.md (and CLAUDE-TEMPLATE.md, all commands/, agents/, templates/, hooks/). CLAUDE.md is loaded into the system-reminder at session start. The current session has the pre-Wave-2 version cached and cannot reload the post-Wave-2 rules. Wave 3 must run with the updated rules in effect.
+> Reason: Wave 3 modified `docs/*.md` (Tier 2 reference docs) which are loaded by Independent Reviewer at Wave Boundary Review and read by Lead during planning. The current session has the OLD (Chinese) version cached in conversation context, even though IR (zero-context Teammate) would read the new version from disk. Subsequent Lead decisions in this session would conflate stale and fresh information.
 >
-> Action required: Close this session immediately. Start a new session. `/start-working` in the new session will load the post-Wave-2 rules. Step 0 of `/start-working` (added in Wave 2 Sub-task B-bonus1) auto-detects this BLOCKING marker and asks the user to confirm a fresh session before proceeding to Wave 3 (Tier 2 Englishization — `docs/*.md` cleanup, ~391 violations).
+> Action required: Close this session immediately. Start a new session. `/start-working` in the new session will load the post-Wave-3 docs and proceed to Wave 4 (`scripts/language-check.sh` → blocking gate inside `/end-working`).
 >
-> Do NOT proceed to Wave 3 in the current session.
+> Do NOT proceed to Wave 4 in the current session.
 >
 > (BLOCKING-marker auto-detection landed in Wave 2 — `/start-working` Step 0 will read this marker and gate the session.)
 
@@ -226,6 +226,35 @@ Follow-up improvements (tracked, not blocking):
 - Add detection for unquoted literals (likely requires natural-language heuristics, lower mechanical confidence).
 - Tighten the bracket-exemption window if false negatives appear (currently full prefix, intentionally conservative).
 - Wire `bash scripts/language-check.sh` (without `--self-test`) into the `/end-working` Doc Engineer audit step in Wave 4 as a blocking gate, per the existing Wave 4 plan.
+
+### i18n Cleanup — Wave 3 (2026-04-07) — Complete
+
+Goal: Englishize all Tier 2 (Reference Documentation) `docs/*.md` files. Target: `bash scripts/language-check.sh` reports `0 Tier 1 CJK, 0 Tier 2 CJK, 0 Principle 1` (whole-repo guardian clean for the first time).
+
+Mode: Agent Team (4 parallel Devs A/B/C/D), per the approved plan at `~/.claude/plans/dreamy-strolling-duckling.md` (full execution plan + Round 1 patches 1–4 + optional rationale-chain rule + Round 2 fixes for settings.json scope, Phase 2 grep scope, and Dev D pre-spawn investigation of `independent-review.md`).
+
+- [x] **Lead — Step 1.5 — Lead-Resolution Option A — `language-check.sh` `independent-review.md` exclusion.** The single Tier 2 violation in `docs/independent-review.md` (line 33, row 8 of the Wave 2 IR alignment table) was a CJK quote of a Tier 4 frozen plan.md section title (`"CLAUDE-TEMPLATE 同步审计 — 已完成"`). Translating it in place would mutate immutable IR audit-trail content. Resolution: added `docs/independent-review.md` to `TIER2_EXCLUDED_FILES` in `scripts/language-check.sh` (alongside `session-log.md`, `plan.md`) with a 4-line justifying comment explaining the IR audit-trail-immutability principle. One-line script change + comment, bundled into Wave 3 PR. Self-test (`bash scripts/language-check.sh --self-test`) still passes. This single non-translation script edit was the only `scripts/*.sh` change in Wave 3 and is in scope as a structural prerequisite for the 0-violation mechanical gate.
+- [x] Dev A — `docs/process-observer.md` (~280 lines, 151 CJK violations). All 33 headings translated; 7 cascading dangerous-operation tables preserved with operation→rationale causal links intact; pre-defined heading renames applied (`## Real-time Interception (Hooks)` line 15 → anchor `#real-time-interception-hooks`; `## Post-Hoc Audit (Sub-agent)` line 165 → anchor `#post-hoc-audit-sub-agent`).
+- [x] Dev B — `docs/configuration.md` (290 lines, 67 CJK violations) and `docs/security.md` (103 lines, 64 CJK violations). Role-Model Mapping table preserved (6 cols × 8 roles); Sensitive File Classification table preserved (3 cols × 7 categories); inbound anchor links (`#agent-model-configuration`, `#multi-device-sync-optional`) remain English-stable; JSON / bash code blocks untouched per JSON/bash rules.
+- [x] Dev C — `docs/product-spec.md` (89 lines, 58 CJK violations) and `docs/design-decisions.md` (75 lines, 34 CJK violations). design-decisions.md row count preserved (71 data rows, identical to pre-edit); rationale chains preserved verbatim per Dev C SPECIAL RULE (3 spot-checked rows — row 50 self-verifying-startup, row 52 security-three-layer-defense, row 73 /release command — each retains causal connectors); milestone diagram in product-spec.md upgraded from CJK ASCII to mermaid `timeline` (Option A, dependency already present in roles.md). Bonus: Dev C also translated row 39 talk title `"AI Agent 的道与术"` → `"The Way and the Craft of AI Agents"` (semantic-preserving; `@onevcat` attribution unchanged); row 68 had a corrupt UTF-8 sequence `描��` (truncated `描述`), translated based on inferred meaning from surrounding context.
+- [x] Dev D — `docs/workflow.md` (311 lines, 9 CJK violations + 2 anchor link updates), `docs/roles.md` (418 lines, 5 CJK violations + line 337 carry-over cleanup), `docs/troubleshooting.md` (34 lines, 3 CJK violations). workflow.md lines 303 + 311 anchor links updated to point at the new English anchors in process-observer.md (cross-file coordination per Pre-Defined Anchor Renames table); roles.md:337 stale `(English)/(Chinese)` parentheticals removed (Wave 2 Doc Engineer MINOR carry-over); `docs/independent-review.md` ZERO edits per Lead-Resolution Option A (verified `git diff` empty).
+- [x] Phase 2 cross-check (Lead-orchestrated, sequential): 4a `language-check.sh` PASSED (0/0/0); 4b `roles.md:337` clean (0 hits); 4c cross-file anchor sweep PASSED (workflow.md → both English anchors, process-observer.md → both new English headings); 4d terminology consistency grep across Tier 1 (CLAUDE.md, CLAUDE-TEMPLATE.md, commands/, agents/) + Tier 2 (docs/) — 0 drift detected for Mode Selection Checkpoint, Independent Reviewer, Process Observer, Doc Engineer, Team Lead, Teammate, Real-time Interception, Post-Hoc Audit, self-referential boundary, Cross-Session Barrier Protocol, Wave Boundary Review.
+- [x] Independent Reviewer (Wave Boundary Review) spawned with fixed prompt; report appended to `docs/independent-review.md` as `## Wave 3 Review — 2026-04-07`. Verdict PROCEED, 0 CRITICAL, 0 MAJOR, 1 MINOR (the now-resolved forward reference from `scripts/language-check.sh` to this very plan.md section).
+- [x] Doc Engineer audit: PASS with 1 MINOR (pre-existing CLAUDE-TEMPLATE.md ↔ CLAUDE.md divergence on Process Observer "Core/Advisory layer" framing — out of Wave 3 scope, NOT a Wave 3 regression; tracked for a future template-resync sweep). Link integrity sample 5/5 passed (README → configuration anchors, README.zh-CN → security, workflow → roles → developer-codex anchor). Cross-file anchors verified PASS. Terminology PASS.
+- [x] Process Observer audit (Sonnet): 7 PASS / 1 WARN / 0 FAIL. F1 (Independent Review at Wave boundary) PASS verified — `docs/independent-review.md` line 62 confirms `## Wave 3 Review — 2026-04-07`. The single WARN (A6 plan.md accuracy at audit time) is the expected in-progress state — Step 7 of Wave 3 execution is this very plan.md update, so the entry could not exist at audit time; resolved by writing this entry in the same commit as the Wave 3 work.
+
+Verification (after Wave 3):
+- Tier 1 violations: 0 (held from Wave 2)
+- Tier 2 violations: 0 (target met — first time in project history `bash scripts/language-check.sh` reports `PASSED: Tier 1/Tier 2 are CJK-clean and Principle 1 is clean.`)
+- Principle 1 violations: 0 (held from Hotfix #2)
+- Files modified in Wave 3 PR: 11 (9 `docs/*.md` translation diffs + `scripts/language-check.sh` Lead-Resolution Option A 1-line exclusion + `docs/plan.md` BLOCKING-marker swap and this completion entry; `docs/independent-review.md` IR Wave 3 review append is included via the IR sub-agent run, total 11 file touches)
+- `.claude/settings.json` NOT in Wave 3 PR (pre-execution Case A confirmed; the matcher migration was already merged in PR #153)
+
+Cross-session boundary required before Wave 4 (per Cross-Session Barrier Protocol — Wave 3 fully Englishized `docs/*.md` Tier 2 reference docs which are loaded by IR at Wave Boundary Review and by Lead during planning; the current session has stale CJK versions cached in conversation context). The Wave 3→4 BLOCKING marker at the top of this file will be auto-detected by `/start-working` Step 0 in the next session.
+
+Deferred items (NOT in Wave 3 scope, tracked for future Waves or hotfixes):
+- **CLAUDE-TEMPLATE.md ↔ CLAUDE.md sync sweep** — Doc Engineer Wave 3 audit found pre-existing divergences: TEMPLATE line 61 says "hooks + Lead sub-agent" while CLAUDE.md line 76 uses "hooks + Sonnet sub-agent" with the new Core/Advisory layer framing; TEMPLATE workflow steps 4–6 omit the "must complete before push/merge, cannot be deferred to /end-working" qualifier. Out of Wave 3 scope (Wave 3 did not touch CLAUDE-TEMPLATE.md). Track for an inter-Wave hotfix or Wave 4+ sweep.
+- **Wave 4 task — promote `language-check.sh` to a blocking gate inside `/end-working`** — the mechanical guardian is now achievable on the whole repo (0/0/0), so Wave 4's primary task is to wire it into `commands/end-working.md` as a Doc Engineer audit blocking gate. Originally planned for Wave 4 per the i18n master plan.
 
 ### 下一步
 - [ ] P1 仓库结构重组：内部文件（plan.md, product-spec.md, design-decisions.md, process-observer.md, security.md, session-log.md）移到 .project/ 目录，与用户文档物理隔离（约束：CLAUDE.md 不能移，Claude Code 从项目根读取）

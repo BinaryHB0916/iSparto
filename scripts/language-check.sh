@@ -21,8 +21,11 @@
 # Tier 2 explicit exclusions (Tier 4 historical, frozen by design):
 #   docs/session-log.md
 #   docs/framework-feedback-*.md
-#   docs/plan.md           (mixed historical Chinese + new English; reviewed manually)
-#   docs/zh/               (dedicated Chinese-entry tree, not Tier 2)
+#   docs/plan.md              (mixed historical Chinese + new English; reviewed manually)
+#   docs/independent-review.md (IR audit trail — entries quote plan.md section titles
+#                               and other Tier 4 source material verbatim in their original
+#                               language per the IR audit-trail-immutability principle)
+#   docs/zh/                  (dedicated Chinese-entry tree, not Tier 2)
 #
 # Status:
 #   Wave 1 — warning mode, manual invocation only.
@@ -101,6 +104,11 @@ PRINCIPLE1_SANITY_NEGATIVE = (
 TIER2_EXCLUDED_FILES = {
     'docs/session-log.md',
     'docs/plan.md',
+    # IR audit trail: entries quote plan.md section titles and other Tier 4
+    # source material verbatim in their original language. Treating this file
+    # as a Tier-4-like exclusion preserves both the language guardian and the
+    # audit trail. See docs/plan.md Wave 3 Lead-Resolution Option A.
+    'docs/independent-review.md',
 }
 
 # Tier 2 exclusions — relative-path prefix matches (under docs/)
