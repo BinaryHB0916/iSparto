@@ -1,5 +1,33 @@
 # Session Log
 
+## 2026-04-07 Session (#b) — Inter-Wave Hotfixes
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | Inter-Wave (between i18n Cleanup Wave 2 and Wave 3) |
+| Tasks completed | Hotfix 1 (PR #153, `fix/mcp-rename-migration-guard`) + Hotfix 2 (PR #154, `feat/principle1-guardian-extension`) |
+| Key decisions | (1) Hotfix 1 — codex-reviewer → codex-dev migration in start-working.md Step 7 must check whether the renamed MCP server is actually registered before mutating the matcher; on a stale install (codex-dev not yet registered) the rename would silently disable hook interception, which is worse than the legacy state. Guard pattern reused from install.sh: `claude mcp list -s user 2>/dev/null \| grep -q codex-dev`. The auto-add branch is also short-circuited on stale installs to avoid re-introducing the same silent-disable bug. (2) Hotfix 2 — Principle 1 detector is a mechanical first-line guard, not an exhaustive parser. Catches the most obvious cases (output verb + quoted English literal, ≥12 chars, uppercase first), exempts `e.g.` markers and `[bracket]` placeholder spans. Test 4 fixture uses 5 hardcoded synthetic violation strings (no git archaeology); Test 1 sanity-checks that the CLAUDE.md illustrative example is NOT false-positively flagged. Detection scope limited to commands/*.md and agents/*.md. |
+
+### Files Changed
+```
+ CLAUDE.md                 |   2 +-
+ commands/start-working.md |   5 +-
+ docs/plan.md              |  49 +++++++++++++-
+ scripts/language-check.sh | 162 ++++++++++++++++++++++++++++++++++++++++++----
+ 4 files changed, 202 insertions(+), 16 deletions(-)
+```
+
+### Notes
+- Both hotfixes ran the full inline workflow: Codex review → Doc Engineer audit → Process Observer audit → push → PR → merge → branch cleanup. Each hotfix received APPROVE WITH MINOR from Codex; minors fixed in same branch before merge.
+- Hotfix 1 — Doc Engineer caught a `legacy` vs `old` matcher wording inconsistency on line 56; fixed in same edit. Codex MINOR was an ambiguous "skip remaining sub-steps of Step 7" phrase; tightened to explicitly name the auto-add branch and direct Lead to Step 8.
+- Hotfix 2 — Detector implementation by Codex (gpt-5.3-codex, xhigh). Verified against the current commands/+agents/ tree: 0 false positives. Edge cases verified: start-working.md:65 `Announce ... e.g., "Single-module fix..."` (e.g. exemption), security-audit.md:52 `[bracket]` (bracket exemption), standalone fixed-prompt lines in init-project.md/end-working.md/plan.md (no output verb on the line). Self-test exercises Test 1 (sanity negative — CLAUDE.md illustrative example must NOT be flagged) + Test 4 (5/5 fixture violations must be flagged); both PASS.
+- Hotfix 2 — Doc Engineer caught real doc-code drift: CLAUDE.md L44 still described language-check.sh as CJK-only after the Principle 1 extension. Fixed in same branch by extending L44 to mention the two orthogonal scans and the new `--self-test` command.
+- Hotfix 2 — Process Observer A6 WARN: acceptance commands were Lead-executed bash, not via Developer QA prompt as workflow step 3 prescribes. Tracked as framework-side feedback in plan.md Deferred items (proposing a carve-out for ≤5 deterministic CLI commands on trivial scripts).
+- Off-by-one correction: plan.md previously recorded the Tier 2 baseline as 391; actual count is 392 (corrected with explanatory note in the Hotfix 1 section).
+- Known limitations of the Principle 1 detector (documented in plan.md): unquoted literals not detected, verbs not in the list (say/state/explain/convey/…) missed, multi-line verb-then-quote not detected, bracket exemption is full-prefix (strictly more conservative than the 40-char tail used for `e.g.` markers).
+- Wave 3 (Tier 2 Englishization, 392 violations) deferred to a separate new session per cross-session boundary protocol.
+
 ## 2026-04-05 Session
 
 | Metric | Value |
