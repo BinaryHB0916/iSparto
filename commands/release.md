@@ -34,7 +34,7 @@ Read the VERSION file, compute the new version number.
 3. Post-release verification:
    - Confirm GitHub Release exists: `gh release view v<new-version>`
    - Confirm tag exists locally: `git fetch --tags && git tag -l v<new-version>`
-   - Output: "v<new-version> 已发布。GitHub Release: https://github.com/BinaryHB0916/iSparto/releases/tag/v<new-version>"
+   - Inform the user (in user's language) that v<new-version> has been published, and include the GitHub Release URL `https://github.com/BinaryHB0916/iSparto/releases/tag/v<new-version>`
 
 CRITICAL RULES:
 - NEVER run `git tag` or `git push origin <tag>` directly — the release script handles tagging via GitHub API

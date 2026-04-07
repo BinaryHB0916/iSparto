@@ -1,8 +1,8 @@
 # iSparto Security .gitignore Baseline
-# /init-project 和 /migrate 在生成 .gitignore 时必须包含以下条目。
-# 项目可以在此基础上根据技术栈追加条目，但不得删除基线条目。
+# /init-project and /migrate must include the entries below when generating .gitignore.
+# Projects may append additional entries based on their tech stack, but must not remove baseline entries.
 
-## ── 敏感凭证文件 ──
+## ── Sensitive Credential Files ──
 .env
 .env.*
 .env.local
@@ -24,20 +24,20 @@ id_ecdsa
 credentials.json
 service-account*.json
 
-## ── Claude Code 运行时 ──
+## ── Claude Code Runtime ──
 .claude/
 
-## ── iSparto 安全审计 ──
+## ── iSparto Security Audit ──
 .secureignore
 
-## ── 系统文件 ──
+## ── System Files ──
 .DS_Store
 Thumbs.db
 *.swp
 *.swo
 *~
 
-## ── 依赖目录（按技术栈选用） ──
+## ── Dependency Directories (select per tech stack) ──
 # Node.js
 # node_modules/
 
@@ -53,7 +53,7 @@ Thumbs.db
 # Rust
 # target/
 
-## ── 构建产物 ──
+## ── Build Artifacts ──
 *.map
 *.dSYM/
 proguard-mapping.txt
@@ -63,7 +63,7 @@ mapping.txt
 *.aab
 *.tgz
 
-## ── 构建输出目录（按技术栈选用） ──
+## ── Build Output Directories (select per tech stack) ──
 # Web
 # dist/
 # build/
@@ -76,27 +76,27 @@ mapping.txt
 # DerivedData/
 # *.xcuserdata/
 
-## ── 基础设施 ──
+## ── Infrastructure ──
 terraform.tfstate
 terraform.tfstate.backup
 *.tfvars
 .terraform/
 
-## ── 调试与运行时产物 ──
+## ── Debug & Runtime Artifacts ──
 *.hprof
 *.dmp
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-## ── IDE 敏感文件 ──
+## ── IDE Sensitive Files ──
 .idea/workspace.xml
 .idea/dataSources.xml
 .idea/dataSources.local.xml
 .vscode/settings.json
 .vscode/launch.json
 
-## ── 备份文件 ──
+## ── Backup Files ──
 *.bak
 *.backup
 *.sql

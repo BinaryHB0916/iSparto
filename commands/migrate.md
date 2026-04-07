@@ -4,7 +4,7 @@ IMPORTANT: Detect the user's language and respond in that same language (Chinese
 
 Your job: scan the current project, report what exists and what's missing, propose a migration plan, and execute after user confirmation. Never delete or overwrite existing content.
 
-**Dry-run mode:** If the user passes `--dry-run` (e.g., `/migrate --dry-run`), complete steps 1–2 (scan + propose plan) and then STOP. Do not ask for confirmation, do not execute anything. End with a clear statement: "This is a dry-run — no changes were made." This lets the user safely preview the migration plan before committing to it.
+**Dry-run mode:** If the user passes `--dry-run` (e.g., `/migrate --dry-run`), complete steps 1–2 (scan + propose plan) and then STOP. Do not ask for confirmation, do not execute anything. End by clearly informing the user (in user's language) that this was a dry-run and no changes were made. This lets the user safely preview the migration plan before committing to it.
 
 1. Scan the current project:
    - Read CLAUDE.md (does it exist? what sections does it have?)
@@ -20,7 +20,7 @@ Your job: scan the current project, report what exists and what's missing, propo
      - Existing spec-like docs: keep original files, optionally rename or create aliases — let the user choose
      - plan.md: if missing, generate a first version by analyzing current codebase state (what appears complete, what's in progress, what's TODO)
      - Missing spec templates: offer to create empty templates (design-spec.md, tech-spec.md) only if relevant to the project
-   - Clearly state: "No existing files will be deleted or overwritten"
+   - Clearly state (in user's language) that no existing files will be deleted or overwritten
 
 3. Wait for user confirmation before executing anything
 
@@ -34,8 +34,8 @@ Your job: scan the current project, report what exists and what's missing, propo
      ```bash
      bash ~/.isparto/lib/snapshot.sh create migrate "$(pwd)" CLAUDE.md .claude/settings.json docs/plan.md
      ```
-   - Report the snapshot ID to the user: "Snapshot created: <id>. You can restore to pre-migration state with `/restore <id>` at any time."
-   - If the snapshot script is not found at `~/.isparto/lib/snapshot.sh`, warn the user: "Snapshot script not found. Run `~/.isparto/install.sh --upgrade` to update iSparto." Then proceed without a snapshot — do not block on this.
+   - Report the snapshot ID to the user (in user's language), noting they can restore to the pre-migration state with `/restore <id>` at any time
+   - If the snapshot script is not found at `~/.isparto/lib/snapshot.sh`, warn the user (in user's language) that the snapshot script is missing and suggest running `~/.isparto/install.sh --upgrade` to update iSparto. Then proceed without a snapshot — do not block on this.
 
 5. Execute the confirmed migration plan:
    - Create or merge project-level .claude/settings.json with iSparto required settings:

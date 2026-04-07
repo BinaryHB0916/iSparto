@@ -1,6 +1,6 @@
 # [Project Name]
 
-本项目使用 iSparto 工作流框架（isparto.dev）管理 Agent Team 协作。框架文档见 https://github.com/BinaryHB0916/iSparto/tree/main/docs 。
+This project uses the iSparto workflow framework (isparto.dev) to manage Agent Team collaboration. Framework documentation is available at https://github.com/BinaryHB0916/iSparto/tree/main/docs .
 
 ## Project Overview
 <!-- One sentence: what it is, who it's for, current stage -->
@@ -85,24 +85,24 @@ Applies to both **write** (code, docs, config) and **read** (code review, doc au
 
 /end-working is fully autonomous (commit + push + briefing). When all branch tasks are complete, Lead auto-creates PR and merges; when mid-Wave, only pushes without merging.
 
-**Implementation Protocol（强制 — 适用于每一次代码变更）：**
+**Implementation Protocol (mandatory — applies to every code change):**
 
-Lead 和 Teammate 不得使用 Edit、Write、Bash 直接创建或修改代码文件。所有代码实现必须通过 `mcp__codex-dev__codex` MCP 工具调用 Developer (Codex)。这不是偏好，而是由 Process Observer hooks 强制执行的硬性约束。
+Lead and Teammate must NOT use Edit, Write, or Bash to directly create or modify code files. All code implementation must go through Developer (Codex) via the `mcp__codex-dev__codex` MCP tool. This is not a preference — it is a hard constraint enforced by Process Observer hooks.
 
-执行步骤（每个实现任务必须遵循）：
-1. 从 plan.md（或用户请求）读取任务范围
-2. 读取相关上下文：product-spec.md、tech-spec.md、实际源代码文件
-3. 按 docs/roles.md 的 Implementation prompt template 组装结构化 prompt — prompt 必须包含 `## ` 标题（hook 会验证）
-4. 调用 `mcp__codex-dev__codex`
-5. Review Developer 输出：正确性、bug、风格、文件范围
-6. 有问题 → 组装修复 prompt → 再次调用 `mcp__codex-dev__codex` → review
-7. 通过 review → 进入 QA（工作流步骤 3）
+Execution steps (every implementation task must follow):
+1. Read the task scope from plan.md (or the user's request)
+2. Read relevant context: product-spec.md, tech-spec.md, actual source code files
+3. Assemble a structured prompt per the Implementation prompt template in docs/roles.md — the prompt must contain a `## ` heading (the hook validates this)
+4. Call `mcp__codex-dev__codex`
+5. Review Developer output: correctness, bugs, style, file scope
+6. If issues → assemble a fix prompt → call `mcp__codex-dev__codex` again → review
+7. Once review passes → proceed to QA (workflow step 3)
 
-"代码文件" = 扩展名不在 workflow-rules.json allowed_extensions 中的文件。不确定时，用 Developer。
+"Code file" = any file whose extension is not in workflow-rules.json allowed_extensions. When uncertain, use Developer.
 
-此协议同时适用于 Solo 模式和 Agent Team 模式。Solo 模式下 Lead 自己执行全部步骤；Agent Team 模式下每个 Teammate 在各自文件范围内执行同样步骤。
+This protocol applies to both Solo mode and Agent Team mode. In Solo mode, Lead executes all the steps itself; in Agent Team mode, each Teammate executes the same steps within its own file scope.
 
-例外：见 Development Rules 中的自引用边界（iSparto 框架编辑自身框架文件）。
+Exception: see the self-referential boundary in Development Rules (iSparto framework editing its own framework files).
 
 **Branch Protocol (mandatory — applies to every session):**
 

@@ -20,10 +20,10 @@ Output format (two sections — Lead uses User-facing Summary for the session br
 ### User-facing Summary
 
 [If all checks PASS:]
-No workflow deviations detected.
+Inform user (in user's language) that no workflow deviations were detected.
 
 [If any checks FAIL:]
-⚠ 本次 session 发现 N 个流程偏差：
+Inform user (in user's language) that the session detected N workflow deviations, followed by the bulleted list below. Prefix the summary sentence with the ⚠ emoji.
 - [Failed check description]: [actionable recovery suggestion]
 - ...
 

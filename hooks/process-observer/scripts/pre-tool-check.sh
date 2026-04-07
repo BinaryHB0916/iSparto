@@ -133,12 +133,12 @@ case "$TOOL_NAME" in
                             fi
                             local action_desc
                             case "$rule_id" in
-                                commit-on-main) action_desc="提交" ;;
-                                merge-on-main)  action_desc="合并" ;;
-                                push-on-main)   action_desc="推送" ;;
-                                *)              action_desc="操作" ;;
+                                commit-on-main) action_desc="commit" ;;
+                                merge-on-main)  action_desc="merge" ;;
+                                push-on-main)   action_desc="push" ;;
+                                *)              action_desc="operate" ;;
                             esac
-                            printf '{"decision": "block", "reason": "[%s] 不可在 main 分支上%s。请先执行 `git checkout -b <type>/<name>` 创建分支（type = feat/fix/hotfix/docs/release），然后重试。工作区已有的改动会自动带到新分支。(current branch: %s)"}\n' \
+                            printf '{"decision": "block", "reason": "[%s] Cannot %s on main branch. Run `git checkout -b <type>/<name>` first to create a branch (type = feat/fix/hotfix/docs/release), then retry. Any existing working-tree changes will be carried over to the new branch. (current branch: %s)"}\n' \
                                 "$rule_id" "$action_desc" "$current_branch"
                             exit 2
                         fi
@@ -239,7 +239,7 @@ case "$TOOL_NAME" in
         else
             # No extension (e.g., Makefile, Dockerfile) — treat as code (fail-safe)
             TOOL_NAME_LOWER=$(echo "$TOOL_NAME" | tr '[:upper:]' '[:lower:]')
-            block "direct-code-${TOOL_NAME_LOWER}" "代码变更必须通过 Developer (Codex) 实现，不可直接编辑 ($FILE_PATH)。请使用 mcp__codex-dev__codex 工具调用 Developer，按 docs/roles.md 的 Implementation prompt template 组装结构化 prompt。"
+            block "direct-code-${TOOL_NAME_LOWER}" "Code changes must go through Developer (Codex) — direct editing of ($FILE_PATH) is not allowed. Use the mcp__codex-dev__codex tool to call Developer, and assemble a structured prompt per the Implementation prompt template in docs/roles.md."
         fi
 
         # Parse allowed_extensions from workflow-rules.json
@@ -302,7 +302,7 @@ case "$TOOL_NAME" in
                         MATCHED_REGEX=${PATTERN_INFO#*$'\t'}
 
                         if [ -n "$MATCHED_REGEX" ] && printf '%s' "$CONTENT_TO_SCAN" | grep -qE -e "$MATCHED_REGEX" 2>/dev/null; then
-                            block "security-secret-in-content" "检测到疑似 $MATCHED_NAME — 不允许将 secret 写入文件 ($FILE_PATH)。请使用环境变量或配置引用。"
+                            block "security-secret-in-content" "Possible $MATCHED_NAME detected — writing a secret into a file ($FILE_PATH) is not allowed. Use an environment variable or configuration reference instead."
                         fi
                     done <<< "$CRITICAL_PATTERN_IDS"
                 fi
@@ -313,7 +313,7 @@ case "$TOOL_NAME" in
 
         # Not in allowed list — block as code file
         TOOL_NAME_LOWER=$(echo "$TOOL_NAME" | tr '[:upper:]' '[:lower:]')
-        block "direct-code-${TOOL_NAME_LOWER}" "代码变更必须通过 Developer (Codex) 实现，不可直接编辑 ($FILE_PATH)。请使用 mcp__codex-dev__codex 工具调用 Developer，按 docs/roles.md 的 Implementation prompt template 组装结构化 prompt。"
+        block "direct-code-${TOOL_NAME_LOWER}" "Code changes must go through Developer (Codex) — direct editing of ($FILE_PATH) is not allowed. Use the mcp__codex-dev__codex tool to call Developer, and assemble a structured prompt per the Implementation prompt template in docs/roles.md."
         ;;
 
     mcp__codex-dev__codex)
@@ -334,7 +334,7 @@ case "$TOOL_NAME" in
             exit 0
         fi
 
-        block "codex-unstructured-prompt" "调用 Developer 必须使用结构化 prompt（需包含 ## 标题）。请按 docs/roles.md 的 Implementation prompt template 组装 prompt，确保包含 Product context、Technical context、Implementation task、File scope、Constraints、Expected output 等章节。"
+        block "codex-unstructured-prompt" "Calling Developer requires a structured prompt (must contain a ## heading). Assemble the prompt per the Implementation prompt template in docs/roles.md, ensuring it contains sections such as Product context, Technical context, Implementation task, File scope, Constraints, and Expected output."
         ;;
 
     *)

@@ -2,15 +2,15 @@
 
 > 🚨 **BLOCKING: Next Wave requires NEW SESSION**
 >
-> Wave just completed: Wave 1 (i18n cleanup — convention + guardian)
+> Wave just completed: Wave 2 (i18n cleanup — Tier 1 Englishization)
 >
-> Reason: Wave 1 modified CLAUDE.md (added the Documentation Language Convention section), which is loaded into the system-reminder at session start. The current session has the OLD version cached and cannot reload the new rules. Wave 2 must run with the updated rules in effect.
+> Reason: Wave 2 fully Englishized CLAUDE.md (and CLAUDE-TEMPLATE.md, all commands/, agents/, templates/, hooks/). CLAUDE.md is loaded into the system-reminder at session start. The current session has the pre-Wave-2 version cached and cannot reload the post-Wave-2 rules. Wave 3 must run with the updated rules in effect.
 >
-> Action required: Close this session immediately. Start a new session. `/start-working` in the new session will load the updated rules and proceed to Wave 2 (Tier 1 Englishization, 4-Dev Agent Team).
+> Action required: Close this session immediately. Start a new session. `/start-working` in the new session will load the post-Wave-2 rules. Step 0 of `/start-working` (added in Wave 2 Sub-task B-bonus1) auto-detects this BLOCKING marker and asks the user to confirm a fresh session before proceeding to Wave 3 (Tier 2 Englishization — `docs/*.md` cleanup, ~391 violations).
 >
-> Do NOT proceed to Wave 2 in the current session.
+> Do NOT proceed to Wave 3 in the current session.
 >
-> (BLOCKING-marker detection in `/start-working` is wired in Wave 2 Dev B Sub-task B-bonus; until then this marker is advisory.)
+> (BLOCKING-marker auto-detection landed in Wave 2 — `/start-working` Step 0 will read this marker and gate the session.)
 
 ## 已完成
 
@@ -157,6 +157,32 @@ Baseline (recorded by `bash scripts/language-check.sh` after Wave 1):
 - Tier 2 violations: 391 lines (target after Wave 3: 0)
 
 Cross-session boundary required before Wave 2 (per Cross-Session Barrier Protocol — Wave 1 changed CLAUDE.md, the new section needs to ride the next session's system-reminder injection).
+
+### i18n Cleanup — Wave 2 (2026-04-07) — Complete
+
+Goal: Englishize all Tier 1 (System Prompt Layer) files. Target: `bash scripts/language-check.sh | grep -c '^\[Tier 1\]'` returns `0`. Tier 2 violations remain (Wave 3 scope).
+
+Mode: Agent Team (4 parallel Devs A/B/C/D), per the approved plan at `~/.claude/plans/immutable-zooming-codd.md` (full execution plan + 5 user-mandated patches).
+
+- [x] Dev A — `CLAUDE.md` (~120 CJK lines) and `CLAUDE-TEMPLATE.md` (14 CJK lines) translated; Wave 1 "Documentation Language Convention" section preserved byte-identical
+- [x] Dev B — all 9 `commands/*.md` translated (env-nogo, restore, security-audit, migrate, init-project, release, plan, start-working, end-working). Sub-task B-bonus1: added new Step 0 "Session boundary check" to `commands/start-working.md` (BLOCKING marker auto-detection wires the cross-session boundary). `commands/end-working.md` Step 3 (Wave Boundary Review) verified for 4 equivalence properties (trigger, fixed-prompt spawn, CRITICAL → next-session path, PROCEED → briefing path)
+- [x] Dev C — `agents/process-observer-audit.md` (1 CJK line) translated using Principle 1 intent-description pattern; `templates/gitignore-security-baseline.md` (13 CJK lines) translated; `agents/independent-reviewer.md` and 4 spec templates verified clean (no edits)
+- [x] Dev D — `hooks/process-observer/scripts/pre-tool-check.sh` (9 CJK lines) and `hooks/process-observer/rules/workflow-rules.json` (3 CJK lines) translated; full hook smoke test executed (7 paths exercised: 3 case-block branches + direct-code-write + codex-unstructured-prompt + 2 allow paths) — all hooks still block correctly with English error messages, emoji and ANSI codes preserved in `pre-commit-security.sh`
+- [x] Lead post-IR Principle 1 fixes — IR caught 3 residual violations (1 MAJOR, 2 MINOR) the mechanical CJK guardian could not detect: `commands/env-nogo.md` lines 23-24, `commands/end-working.md` lines 22-23, `agents/process-observer-audit.md` line 23. All 3 converted to Principle 1 intent-description pattern.
+- [x] Independent Reviewer (Wave Boundary Review) spawned with fixed prompt; report appended to `docs/independent-review.md`. Verdict PROCEED, no CRITICAL findings.
+- [x] Doc Engineer audit: PASS, 0 CRITICAL / 0 MAJOR / 1 MINOR (`docs/roles.md` line 337 stale reference to CLAUDE.md "(Chinese)" — Wave 3 cleanup scope) / 4 INFO
+- [x] Process Observer audit (Sonnet): 8 PASS / 0 WARN / 0 FAIL. F1 (Independent Review at Wave boundary) PASS verified.
+
+Verification (after Wave 2):
+- Tier 1 violations: 0 (target met)
+- Tier 2 violations: 391 (Wave 3 scope, unchanged)
+
+Deferred items (NOT in Wave 2 scope, tracked separately):
+- `fix/mcp-rename-migration-guard` hotfix — `commands/start-working.md` Step 7 contains a buggy MCP server rename migration (`codex-reviewer` → `codex-dev`) that breaks hook interception on stale installs. Discovered during Wave 2 but Out of Scope (not translation work). Open as a separate hotfix PR, before or after Wave 3.
+- `commands/end-working.md` plan.md update timing rule clarification — Process Observer audit raised this as a framework feedback item (see `docs/framework-feedback-0407.md`).
+- IR-suggested Principle 1 enforcement — extend `scripts/language-check.sh` or add Doc Engineer checklist item to detect English-literal user-facing strings (Wave 4 or earlier).
+
+Cross-session boundary required before Wave 3 (per Cross-Session Barrier Protocol — Wave 2 fully Englishized CLAUDE.md, the new content must ride the next session's system-reminder injection).
 
 ### 下一步
 - [ ] P1 仓库结构重组：内部文件（plan.md, product-spec.md, design-decisions.md, process-observer.md, security.md, session-log.md）移到 .project/ 目录，与用户文档物理隔离（约束：CLAUDE.md 不能移，Claude Code 从项目根读取）

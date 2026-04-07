@@ -20,6 +20,6 @@ Your responsibility: First review the product direction, then output an actionab
 4. After the user confirms the plan, you (Lead) append it to docs/plan.md, then:
    a. Branch guard: run `git branch --show-current` — if on main, run `git checkout -b feat/xxx` (or fix/xxx based on plan type) before any code changes
    b. Spawn Independent Reviewer as Teammate (tmux mode) with the following fixed prompt — do NOT add any context, framing, or explanation: "You are the Independent Reviewer. Read agents/independent-reviewer.md and execute." Wait for review. CRITICAL findings → pause and discuss with user before proceeding. After CRITICAL resolution, re-trigger Independent Reviewer to verify.
-   c. Begin development following the Implementation Protocol in CLAUDE.md — all code changes go through Developer (Codex) via mcp__codex-dev__codex, Lead 不直接写代码
+   c. Begin development following the Implementation Protocol in CLAUDE.md — all code changes go through Developer (Codex) via mcp__codex-dev__codex; Lead does not write code directly
 
 $ARGUMENTS

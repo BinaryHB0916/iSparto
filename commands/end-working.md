@@ -19,8 +19,8 @@ Your responsibility: Ensure all changes and decisions from this session are capt
      a. Spawn Independent Reviewer as Teammate (tmux mode) with the following fixed prompt — do NOT add any context, framing, or explanation:
         "You are the Independent Reviewer. Read agents/independent-reviewer.md and execute. This is a Wave Boundary Review."
      b. Wait for the reviewer to complete and append findings to docs/independent-review.md
-     c. If CRITICAL finding: report in session briefing, add to next-session to-dos: "Resolve Independent Review CRITICAL findings before starting next Wave." Do NOT block the current commit/push — code is already written, blocking commit would lose work.
-     d. If no CRITICAL findings (PROCEED): note in session briefing "Independent Review passed for Wave [N]"
+     c. If CRITICAL finding: in the session briefing, inform user (in user's language) that the Independent Reviewer found CRITICAL issues; add a next-session to-do entry instructing that the CRITICAL findings must be resolved before starting the next Wave. Do NOT block the current commit/push — code is already written, blocking commit would lose work.
+     d. If no CRITICAL findings (PROCEED): in the session briefing, inform user (in user's language) that Independent Review passed for the current Wave.
    - If not triggered (mid-Wave session, Wave not completed): skip, do not mention in briefing
 4. Generate a session report and append it to `docs/session-log.md`:
    - Gather all metrics from the current session context (you know all of this from coordinating the team)
@@ -60,7 +60,7 @@ Your responsibility: Ensure all changes and decisions from this session are capt
      a. Generate a brief Markdown file: `docs/framework-feedback-MMDD.md`
      b. Include: rule ID, gap description, expected behavior, session context
      c. Save to docs/ (will be committed with session changes)
-     d. Inform user: "审计发现 N 条框架改进建议，已保存到 docs/framework-feedback-MMDD.md，可提交到 iSparto 项目"
+     d. Inform user (in user's language) that the audit found N framework improvement suggestions saved to docs/framework-feedback-MMDD.md, suggesting they can submit them to the iSparto project
    - This step has no data dependency on step 1 (Doc Engineer audit), but both are triggered sequentially by the Lead within the same session.
 6. Security scan (before commit):
    - Execute `bash $HOME/.isparto/hooks/process-observer/scripts/pre-commit-security.sh`
@@ -79,7 +79,7 @@ Your responsibility: Ensure all changes and decisions from this session are capt
    - Run: `GH_USER=$(gh api /user --jq .login 2>/dev/null)`
    - If both are non-empty and REPO_OWNER ≠ GH_USER:
      - Run `gh auth switch --user "$REPO_OWNER"` to align
-     - Report in session briefing: "gh 账号已自动切换到 $REPO_OWNER"
+     - Note in the session briefing (in user's language) that the gh account was auto-switched to $REPO_OWNER
    - If gh is not available or switch fails: proceed — step 9 will fall back to "push branch and inform user to create PR manually"
 9. If all tasks on the current branch are complete (all reviews passed, docs updated):
    - If Doc Engineer audit has NOT been run for this branch's changes: spawn Doc Engineer sub-agent now (pre-merge gate)

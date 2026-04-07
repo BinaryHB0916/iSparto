@@ -18,19 +18,19 @@
       "id": "direct-code-edit",
       "tool": "Edit",
       "severity": "critical",
-      "reason": "代码变更必须通过 Developer (Codex) 实现，不可直接编辑。请使用 mcp__codex-dev__codex 调用 Developer。"
+      "reason": "Code changes must go through Developer (Codex) — direct editing is not allowed. Use mcp__codex-dev__codex to call Developer."
     },
     {
       "id": "direct-code-write",
       "tool": "Write",
       "severity": "critical",
-      "reason": "代码文件必须通过 Developer (Codex) 创建，不可直接写入。请使用 mcp__codex-dev__codex 调用 Developer。"
+      "reason": "Code files must be created through Developer (Codex) — direct writing is not allowed. Use mcp__codex-dev__codex to call Developer."
     },
     {
       "id": "codex-unstructured-prompt",
       "tool": "mcp__codex-dev__codex",
       "severity": "high",
-      "reason": "调用 Developer 必须使用结构化 prompt（需包含 ## 标题）"
+      "reason": "Calling Developer requires a structured prompt (must contain a ## heading)"
     }
   ]
 }
