@@ -841,3 +841,45 @@ PR #104 (fix/end-working-branch-guard): 3 files changed, +11, -5
 - BLOCKING marker 已写入 docs/plan.md 顶部（advisory），自动检测在 Wave 2 Dev B Sub-task B-bonus 接好（届时 /start-working 读到 marker 会硬停等待用户确认是否新 session）
 - 执行时提醒（用户 confirm）：R3（IR 没触发的回归检查）写的是 PR #149，应为 PR #144（IR 断链修复 PR）；本 plan 文件批准时未改动，Wave 2 完成时 IR 若未自动 spawn 立即报告
 - Wave 1 PR：#150（已 merge，fast-forward 到 main）
+
+## 2026-04-07 Session #2
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | i18n Cleanup — Wave 2 (Tier 1 Englishization, 4-Dev Agent Team) |
+| Tasks completed | All Tier 1 files Englishized (CLAUDE.md, CLAUDE-TEMPLATE.md, 9 commands/, agents/process-observer-audit.md, templates/gitignore-security-baseline.md, hooks/process-observer/scripts/pre-tool-check.sh, hooks/process-observer/rules/workflow-rules.json) + Sub-task B-bonus1 (start-working.md Step 0 BLOCKING marker auto-detection) + 3 post-IR Principle 1 fixes (env-nogo.md, end-working.md, process-observer-audit.md) + Wave 2 → Wave 3 BLOCKING marker rewrite |
+| Key decisions | (1) Self-referential boundary applies — Devs use direct Edit instead of mcp__codex-dev__codex for translation work (Opus is the right model for natural-language translation; allowed_extensions covers .md/.sh/.json). (2) MCP rename bug (`codex-reviewer → codex-dev` migration in start-working.md Step 7) deferred to separate hotfix PR `fix/mcp-rename-migration-guard` — Out of Scope per "translation only" rule. (3) IR caught 3 residual Principle 1 violations (1 MAJOR + 2 MINOR) the mechanical CJK guardian could not detect — fixed in same Wave before merge. (4) Phase 2 Cross-Check pattern adopted — parallel sub-agents cannot see each other's outputs, so Lead-orchestrated grep-based scan replaces the original "Dev D second-checks Principle 1 if early" pattern. |
+
+### Files Changed
+```
+ CLAUDE-TEMPLATE.md                               |  28 +--
+ CLAUDE.md                                        | 242 +++++++++++------------
+ agents/process-observer-audit.md                 |   4 +-
+ commands/end-working.md                          |   8 +-
+ commands/env-nogo.md                             |   4 +-
+ commands/init-project.md                         |   4 +-
+ commands/migrate.md                              |   8 +-
+ commands/plan.md                                 |   2 +-
+ commands/release.md                              |   2 +-
+ commands/restore.md                              |   4 +-
+ commands/start-working.md                        |  25 ++-
+ docs/independent-review.md                       |  53 +++++
+ docs/plan.md                                     |  36 +++-
+ hooks/process-observer/rules/workflow-rules.json |   6 +-
+ hooks/process-observer/scripts/pre-tool-check.sh |  18 +-
+ templates/gitignore-security-baseline.md         |  26 +--
+ 16 files changed, 281 insertions(+), 189 deletions(-)
+```
+
+### Notes
+- Approved Wave 2 plan at `~/.claude/plans/immutable-zooming-codd.md` (this session). User mandated 5 patches mid-plan that fixed: Sub-task B-bonus2 stripped (MCP fix is logic, not translation), Step 3 verification is presence check not diff check, Process Observer must run AFTER IR (PR #144 F1 dependency), Cross-check is Lead-orchestrated Phase 2 not sibling sub-agents (parallel limitation), Hook smoke test reads input contract first (don't assume env vars vs stdin JSON).
+- Verification result: Tier 1 = 0 (target met), Tier 2 = 391 (Wave 3 scope, unchanged).
+- Workload concentration: 72% of Tier 1 violations (120 of 166 lines) were in CLAUDE.md alone. Dev A was the wall-clock bottleneck; Dev B/C/D had minimal text changes but real verification work (Dev D's hook smoke test exercised 7 paths to validate string changes did not break interception).
+- Hook smoke test methodology (Dev D): PATH-prepended stub `git` returning `branch --show-current = main` (rest delegated to /usr/bin/git) — exercised commit-on-main, merge-on-main, push-on-main, direct-code-write, codex-unstructured-prompt rules without modifying real git state. Test commands documented in Dev D's report for future re-use.
+- Independent Reviewer: PROCEED, no CRITICAL. Caught 3 residual Principle 1 violations the mechanical guardian missed (Suggestion 3 in framework-feedback-0407.md). All 3 fixed in same Wave.
+- Doc Engineer: PROCEED, 0 CRITICAL/0 MAJOR. 1 MINOR (`docs/roles.md` line 337 stale `(English)/(Chinese)` reference) deferred to Wave 3 since the file is in Tier 2 cleanup scope.
+- Process Observer: 8 PASS / 0 WARN / 0 FAIL. F1 (Independent Review at Wave boundary) verified PASS by reading docs/independent-review.md.
+- 3 framework-side rule corrections saved to `docs/framework-feedback-0407.md`: (1) plan.md update timing rule clarification, (2) F1 check spawn-source clarification, (3) Principle 1 guardian enforcement gap.
+- Cross-session boundary required before Wave 3 — Wave 2 fully Englishized CLAUDE.md, the new content must ride the next session's system-reminder injection. BLOCKING marker rewritten at top of plan.md. start-working.md Step 0 (added in this Wave) will auto-detect on next session and gate the boundary.
+- Deferred bug: `commands/start-working.md` Step 7 MCP server rename migration logic (`codex-reviewer → codex-dev`) breaks hook interception on stale installs (where the actual MCP is still under `codex-reviewer`). To be fixed in separate hotfix PR `fix/mcp-rename-migration-guard`. Documented at the top of the new BLOCKING marker section in plan.md and in the Wave 2 Deferred items list.

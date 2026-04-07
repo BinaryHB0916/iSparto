@@ -20,7 +20,7 @@ Your job: help the user identify the correct snapshot and safely restore it.
    - Present the planned changes clearly:
      - Files that will be restored to their previous content
      - Files that will be removed (they were created by the original operation)
-   - Ask the user to confirm: "Proceed with restore?"
+   - Ask the user (in user's language) to confirm whether to proceed with the restore
 
 4. Execute the restore:
    - Run `bash ~/.isparto/lib/snapshot.sh restore <snapshot_id>`
@@ -28,6 +28,6 @@ Your job: help the user identify the correct snapshot and safely restore it.
    - For install-type snapshots, remind the user that MCP deregistration and npm packages are not handled by restore — recommend `~/.isparto/install.sh --uninstall` for a full global uninstall
 
 5. If the snapshot script is not found at `~/.isparto/lib/snapshot.sh`:
-   - Tell the user: "Snapshot system not found. Please update iSparto: `~/.isparto/install.sh --upgrade`"
+   - Inform the user (in user's language) that the snapshot system is not found and suggest they update iSparto by running `~/.isparto/install.sh --upgrade`
 
 $ARGUMENTS

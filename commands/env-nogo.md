@@ -20,5 +20,5 @@ Project environment (if the current directory has a CLAUDE.md, you are inside a 
 11. docs/ structure: at least product-spec.md and plan.md exist
 
 Report format: List ALL items with their status (pass / auto-fixed / fail). For items that can be auto-fixed (e.g., missing npm packages), attempt the fix and report as "auto-fixed". For items requiring manual action, report as "fail" with the specific fix command.
-All pass → output "Environment ready. You may proceed."
-Any fail → output "There are no-go items. Please fix them first."
+All pass → inform user (in user's language) that the environment is ready and they may proceed.
+Any fail → inform user (in user's language) that no-go items were found and must be fixed first.

@@ -10,9 +10,9 @@ Your responsibility: Based on the product description provided by the user, gene
      ```bash
      bash ~/.isparto/lib/snapshot.sh create init-project "$(pwd)" CLAUDE.md .claude/settings.json docs/plan.md docs/product-spec.md docs/tech-spec.md docs/design-spec.md
      ```
-   - Report the snapshot ID to the user: "Snapshot created: <id>. You can restore to pre-init state with `/restore <id>` at any time."
+   - Report the snapshot ID to the user (in user's language), noting they can restore to the pre-init state with `/restore <id>` at any time
    - For a brand new project, most files will be recorded as "absent" — this is expected. The snapshot records what existed before so that `/restore` knows to remove files that were created.
-   - If the snapshot script is not found at `~/.isparto/lib/snapshot.sh`, warn the user: "Snapshot script not found. Run `~/.isparto/install.sh --upgrade` to update iSparto." Then proceed without a snapshot — do not block on this.
+   - If the snapshot script is not found at `~/.isparto/lib/snapshot.sh`, warn the user (in user's language) that the snapshot script is missing and suggest running `~/.isparto/install.sh --upgrade` to update iSparto. Then proceed without a snapshot — do not block on this.
 3. Generate the project's CLAUDE.md based on ~/.claude/CLAUDE-TEMPLATE.md, including collaboration mode, module boundaries, and branching strategy
 4. Generate docs/ following the template structure in ~/.claude/templates/:
    - product-spec.md (product spec)
