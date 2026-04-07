@@ -911,3 +911,43 @@ PR #104 (fix/end-working-branch-guard): 3 files changed, +11, -5
 - 3 framework-side rule corrections saved to `docs/framework-feedback-0407.md`: (1) plan.md update timing rule clarification, (2) F1 check spawn-source clarification, (3) Principle 1 guardian enforcement gap.
 - Cross-session boundary required before Wave 3 — Wave 2 fully Englishized CLAUDE.md, the new content must ride the next session's system-reminder injection. BLOCKING marker rewritten at top of plan.md. start-working.md Step 0 (added in this Wave) will auto-detect on next session and gate the boundary.
 - Deferred bug: `commands/start-working.md` Step 7 MCP server rename migration logic (`codex-reviewer → codex-dev`) breaks hook interception on stale installs (where the actual MCP is still under `codex-reviewer`). To be fixed in separate hotfix PR `fix/mcp-rename-migration-guard`. Documented at the top of the new BLOCKING marker section in plan.md and in the Wave 2 Deferred items list.
+
+## 2026-04-07 Session #3
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | i18n Cleanup — Wave 3 (Tier 2 Englishization, 4-Dev Agent Team) |
+| Tasks completed | All 9 `docs/*.md` Tier 2 files Englishized (process-observer, configuration, security, product-spec, design-decisions, workflow, roles, troubleshooting + zero-edit independent-review per Lead-Resolution Option A) + cross-file anchor coordination (workflow.md ↔ process-observer.md `#real-time-interception-hooks` and `#post-hoc-audit-sub-agent`) + carry-over Wave 2 MINOR cleanup (roles.md:337 stale `(English)/(Chinese)` reference) + Lead-Resolution Option A (added `docs/independent-review.md` to `scripts/language-check.sh` Tier 2 exclusion set) + Wave 3 → Wave 4 BLOCKING marker rewrite |
+| Key decisions | (1) Lead-Resolution Option A — `independent-review.md:33` is row 8 of Wave 2 IR alignment table quoting a Tier 4 plan.md section title verbatim; translating in place would mutate the immutable IR audit trail. Resolved by 1-line + comment script edit treating the file as Tier-4-like exclusion (matches existing pattern for session-log.md / plan.md / framework-feedback-*.md). (2) Pre-Defined Anchor Renames table locked the new English anchor names a priori, eliminating Dev A ↔ Dev D coordination overhead. (3) product-spec.md milestone diagram converted from CJK ASCII to mermaid timeline (Option A) — render-stable across width changes, dependency already in roles.md. (4) Phase 2 Step 4d terminology grep extended to scan Tier 1 (Wave 2 canonical) AND Tier 2 (Wave 3 new) jointly; Wave 2 forms always win on drift (zero drift found). (5) Wave 3 PR pure-translation discipline enforced — `.claude/settings.json` matcher migration (from /start-working Step 7 hot-repair) excluded from Wave 3 commit, queued as separate chore PR. |
+
+### Files Changed
+```
+ docs/configuration.md      | 144 +++++++++----------
+ docs/design-decisions.md   |  68 ++++-----
+ docs/independent-review.md |  59 ++++++++
+ docs/plan.md               |  37 ++++-
+ docs/process-observer.md   | 334 ++++++++++++++++++++++-----------------------
+ docs/product-spec.md       | 127 ++++++++---------
+ docs/roles.md              |  12 +-
+ docs/security.md           | 132 +++++++++---------
+ docs/troubleshooting.md    |   6 +-
+ docs/workflow.md           |  18 +--
+ scripts/language-check.sh  |  12 +-
+ 11 files changed, 524 insertions(+), 425 deletions(-)
+```
+
+### Notes
+- Approved Wave 3 plan at `~/.claude/plans/dreamy-strolling-duckling.md` (this session). 4+1 Round 1 patches and 3 Round 2 fixes applied during plan iteration before approval. Final plan: 838 lines, comprehensive Pre-Execution / Mode Selection / Implementation Protocol / 4 Dev Briefs / Lead-Resolution / Canonical Terminology / Pre-Defined Anchor Renames / Phase 2 / Post-Dev Gates / PR + Cross-Session Boundary / Out of Scope / Risks / End-to-End Verification / Appendix.
+- Verification result: Tier 1 = 0 (held from Wave 2), Tier 2 = 391 → 0 (target met for first time in project history), Principle 1 = 0. `bash scripts/language-check.sh` reports `0 / 0 / 0`.
+- Workload distribution: Dev A 151 violations / 1 file (process-observer.md, 7 cascading dangerous-op tables, 33 headings, hardest single file), Dev B 131 / 2 files (configuration + security), Dev C 92 / 2 files (product-spec + design-decisions, hardest semantic with 71-row decision table), Dev D 18 / 4 files (workflow + roles + troubleshooting + zero-edit independent-review). 4 Devs in true parallel; total wall-clock dominated by Dev A.
+- Bonus translations spotted by Devs (transparent reporting): row 39 talk title "AI Agent 的道与术" by Wang Wei @onevcat → "The Way and the Craft of AI Agents" (semantic-preserving, attribution preserved); row 68 corrupt UTF-8 `描��` → inferred `描述` → "description". No data loss.
+- Independent Reviewer: PROCEED, 0 CRITICAL, 0 MAJOR, 1 MINOR (forward reference in `scripts/language-check.sh` comment to a not-yet-written plan.md section). MINOR resolved in same commit by adding sub-bullet "Lead-Resolution Option A — language-check.sh independent-review.md exclusion" to plan.md Wave 3 entry.
+- Doc Engineer: PASS with 1 MINOR (pre-existing CLAUDE-TEMPLATE.md ↔ CLAUDE.md divergence, out of Wave 3 scope — not a Wave 3 regression).
+- Process Observer (Wave-level audit during Wave 3 execution): 7 PASS / 1 WARN (expected in-progress plan.md state) / 0 FAIL. F1 (IR at Wave boundary) PASS verified.
+- Process Observer (Session-level audit, this /end-working): 14 PASS / 0 WARN / 0 FAIL. No deviations.
+- Phase 2 Lead-orchestrated cross-check: 4a language-check 0/0/0, 4b roles.md:337 cleaned, 4c anchor sweep verified (workflow.md uses new English anchors, process-observer.md has new English headings, no CJK anchors remain), 4d terminology drift zero across Tier 1 + Tier 2 scope.
+- Cross-session boundary required before Wave 4 — Wave 3 fully Englishized `docs/*.md` Tier 2 files which are IR's semantic input AND Lead's planning context. BLOCKING marker rewritten at top of plan.md (auto-detected by /start-working Step 0 in next session).
+- Wave 3 PR: #156 (`feat/wave-3-tier2-english`, 11 files, 524 insertions, 425 deletions, merged via `gh pr merge --merge --delete-branch`).
+- Framework-side rule correction noted by PO (G4 detail): plan.md "下一步" / "技术生态追踪" sections (lines 259–274) remain in Chinese. CLAUDE.md Tier 4 exemption covers historical entries, but these are forward-looking planning items — the four-tier architecture is silent on language expectations for forward-looking sections of an otherwise-excluded file. Saved to `docs/framework-feedback-0407c.md` for next session's consideration.
+- Deferred items unchanged from previous session: `.claude/settings.json` hook matcher chore PR (independent of Wave 3), `commands/start-working.md` Step 7 auto-add branch guard (independent hotfix), `language-check.sh` `/end-working` blocking-gate promotion (Wave 4 main task).
