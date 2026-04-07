@@ -10,6 +10,10 @@
 
 **iSparto 把 Claude Code 从单个 AI 变成一支开发团队** — Lead 组装 prompt、Developer (Codex) 实现代码、Teammate 并行执行、Doc Engineer 同步文档。你指挥的不是一个 Agent，而是一支团队。
 
+> **中文用户第一次使用？** 先看 [docs/zh/quick-start.md](docs/zh/quick-start.md) — 安装、首次使用、日常工作流的中文速览。
+>
+> iSparto 采用双语策略：用户入口（README + 快速上手 + CONTRIBUTING）双语维护；框架指令（`CLAUDE.md`、`commands/`、`agents/`、`templates/`）和参考文档（`docs/`）单一英文来源——这是为了保证 AI Agent 指令跟随的稳定性，并让不懂中文的开源贡献者能参与审查。详情见 [CLAUDE.md > Documentation Language Convention](CLAUDE.md#documentation-language-convention)。
+
 ### 适合谁用
 
 想用 Claude Code 成倍提升产出的 macOS 独立开发者。需要 Claude Max 和 ChatGPT 订阅。
