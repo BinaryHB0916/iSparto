@@ -180,6 +180,7 @@ Verification (after Wave 2):
 Deferred items (NOT in Wave 2 scope, tracked separately):
 - `commands/end-working.md` plan.md update timing rule clarification — Process Observer audit raised this as a framework feedback item (see `docs/framework-feedback-0407.md`).
 - `commands/start-working.md` Step 7 auto-add branch guard — the rename branch is now guarded (see Inter-Wave Hotfix #1 below), but the parallel auto-add branch ("If any matcher is missing or its hook command is absent: auto-add them") can still write a `mcp__codex-dev__codex` matcher into a project's `.claude/settings.json` even when the user-level MCP registration is still under the legacy `codex-reviewer` name, re-introducing the same silent-disable failure mode. Codex review on Hotfix #1 flagged this as a follow-up. Out of scope for Hotfix #1 (the user explicitly scoped that hotfix to the rename branch); track for a future hotfix.
+- **QA-protocol carve-out for trivial CLI scripts** — Process Observer audit on Hotfix #2 (A6 WARN) flagged that CLAUDE.md > workflow step 3 ("Lead assembles QA prompt → calls Developer for smoke testing") technically requires wrapping even ≤5-command CLI acceptance tests in a Developer QA prompt. For scripts whose entire QA surface is a small set of bash commands with deterministic exit codes (e.g. `bash scripts/foo.sh --self-test`), running them directly as Lead provides equivalent or better signal than a Codex QA prompt. Proposal: add a carve-out to the workflow that allows Lead-executed CLI acceptance for ≤5 deterministic commands, provided results are documented in plan.md. Track for a CLAUDE.md/workflow.md edit in a future docs/ hotfix.
 
 Cross-session boundary required before Wave 3 (per Cross-Session Barrier Protocol — Wave 2 fully Englishized CLAUDE.md, the new content must ride the next session's system-reminder injection).
 
@@ -196,6 +197,35 @@ Goal: Prevent `commands/start-working.md` Step 7 from silently disabling Process
 Why Solo: single file, single behavioral-template change, no decomposable parallel sub-tasks. Why direct edit (not via Developer): self-referential boundary — `commands/*.md` is an iSparto framework file (Tier 1 system prompt), Lead edits directly per CLAUDE.md > Development Rules.
 
 Scope intentionally narrow: rename branch only. Auto-add branch follow-up is a separate, smaller hotfix tracked above.
+
+### Inter-Wave Hotfix #2 — feat/principle1-guardian-extension (2026-04-07) — Complete
+
+Branch: `feat/principle1-guardian-extension`. Mode: Solo (single-file Python/bash extension to a script, implementation delegated to Developer per the implementation protocol; Lead reviewed).
+
+Goal: Extend `scripts/language-check.sh` with a mechanical first-line guard for **Principle 1** (the "Hard-coded user-facing strings rule" from CLAUDE.md > "Documentation Language Convention"). Wave 2's Independent Reviewer caught 3 residual Principle 1 violations that the CJK-only guardian could not detect; this hotfix gives the guardian an orthogonal check so the most obvious violations are caught mechanically before reaching IR.
+
+- [x] `scripts/language-check.sh` — Developer-implemented Principle 1 detector. Detection scope: `commands/*.md` + `agents/*.md` only (the layer where Lead generates user-facing output at runtime). Detector logic: a line is flagged if (1) it contains a user-output verb from `{inform, tell, ask, instruct, warn, report, notify, announce, output, display, print, echo, note, show}`, AND (2) it contains a sentence-like quoted literal (capital-start, ≥12 chars), AND (3) the line does NOT contain the `(in user's language)` qualifier, AND (4) the literal is not exempted by an `e.g.` / `for example` / etc. illustrative-example marker in the 40 chars before the opening quote, AND (5) the literal is not inside a `[...]` placeholder.
+- [x] `--self-test` mode — added a CLI flag that runs synthetic fixtures without scanning real files. Test 1 (sanity negative): the CLAUDE.md line 40 illustrative example must NOT be flagged (it has both the qualifier and the `e.g.` exemption). Test 4: 5 hardcoded fixture violation strings (synthetic, not pulled from git history) must all be flagged. Both pass on the implemented detector. (Test numbers 1 and 4 are placeholders in a larger test taxonomy — Tests 2 and 3 are reserved for future phases of the guardian, not shipped with this hotfix.)
+- [x] Default-mode integration — Principle 1 scan added to `main()` alongside the existing CJK Tier 1 / Tier 2 scans. Output adds `[Principle 1] <relpath>:<lineno>: <snippet>` lines and breaks the summary into three categories: `N1 Tier 1 CJK, N2 Tier 2 CJK, N3 Principle 1`. Exit codes preserved: 0 clean / 1 violations / 2 environment error (now also covers the unknown-arg path).
+- [x] Top-of-file comment block updated to document the Principle 1 scope, the rationale, and the `--self-test` flag.
+- [x] Acceptance verified by the Lead:
+  - `bash scripts/language-check.sh --self-test` → both PASS lines, exit 0
+  - `bash scripts/language-check.sh` → reports `0 Tier 1 CJK, 392 Tier 2 CJK, 0 Principle 1`, exit 1 (the 392 is the unchanged Wave 3 backlog)
+  - `bash scripts/language-check.sh --bogus-arg` → exit 2
+  - Manual sanity check: the detector does NOT false-positive on the trickiest real-world lines in the current `commands/` + `agents/` (line 65 of `start-working.md`'s `Announce ... e.g., "Single-module fix..."`, the standalone fixed-prompt lines in `init-project.md` / `end-working.md` / `commands/plan.md`, the bracketed placeholder in `security-audit.md:52`, and `agents/independent-reviewer.md:9`).
+- [x] Codex review (gpt-5.3-codex, xhigh) — verdict APPROVE WITH MINOR. Findings (none blocking):
+  - **Spec drift (MINOR):** the bracket exemption counts `[`/`]` over the entire pre-quote prefix instead of only the 40-char tail. This is strictly more conservative (catches `[...]` placeholders even when far from the literal), accepted as-is.
+  - **False-positive corner case (MINOR):** a line like `Show the user how to do X — "All conflicts resolved."` (24-char literal) on a `show` line would trigger. No such line exists in the current repo; would be addressed by adding more specific verb-object disambiguation.
+  - **False-negative gaps (MINOR):** unquoted literals are invisible; verbs not in the list (`say`, `state`, `explain`, `convey`, `prompt`, `respond`) are missed; multi-line verb-then-quote patterns are missed. Documented as known detector limitations — this is a Wave 1 first-line guard, not a complete IR replacement.
+  - **Output format change (MINOR):** the summary line now reports three categories (was one). No downstream parsers exist (Wave 1 status, manual invocation), so accepted.
+
+Why Solo + Developer: single file, ~150 lines of Python/bash. Implementation delegated to `mcp__codex-dev__codex` (gpt-5.3-codex, xhigh) per the Implementation Protocol — `scripts/*.sh` is a real script, not a behavioral template, so Developer is the right authoring path despite the self-referential boundary allowing direct edits. Lead assembled the structured prompt, reviewed the implementation, ran the three acceptance commands, then ran a separate Codex review pass.
+
+Follow-up improvements (tracked, not blocking):
+- Extend the verb list to cover `say`, `state`, `explain`, `convey`, `prompt`, `respond`, `reply`.
+- Add detection for unquoted literals (likely requires natural-language heuristics, lower mechanical confidence).
+- Tighten the bracket-exemption window if false negatives appear (currently full prefix, intentionally conservative).
+- Wire `bash scripts/language-check.sh` (without `--self-test`) into the `/end-working` Doc Engineer audit step in Wave 4 as a blocking gate, per the existing Wave 4 plan.
 
 ### 下一步
 - [ ] P1 仓库结构重组：内部文件（plan.md, product-spec.md, design-decisions.md, process-observer.md, security.md, session-log.md）移到 .project/ 目录，与用户文档物理隔离（约束：CLAUDE.md 不能移，Claude Code 从项目根读取）
