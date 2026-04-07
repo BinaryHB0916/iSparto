@@ -977,3 +977,38 @@ PR #104 (fix/end-working-branch-guard): 3 files changed, +11, -5
 - Wave 3 PR: #156 (`feat/wave-3-tier2-english`, 11 files, 524 insertions, 425 deletions, merged via `gh pr merge --merge --delete-branch`).
 - Framework-side rule correction noted by PO (G4 detail): plan.md "下一步" / "技术生态追踪" sections (lines 259–274) remain in Chinese. CLAUDE.md Tier 4 exemption covers historical entries, but these are forward-looking planning items — the four-tier architecture is silent on language expectations for forward-looking sections of an otherwise-excluded file. Saved to `docs/framework-feedback-0407c.md` for next session's consideration.
 - Deferred items unchanged from previous session: `.claude/settings.json` hook matcher chore PR (independent of Wave 3), `commands/start-working.md` Step 7 auto-add branch guard (independent hotfix), `language-check.sh` `/end-working` blocking-gate promotion (Wave 4 main task).
+
+## 2026-04-08 Session — i18n Cleanup Wave 5 (finalization: Tier 3 onramp + carry-over polish + end-to-end audit)
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | Wave 5 — i18n Cleanup Finalization (closes the 5-Wave i18n cleanup project) |
+| Tasks completed | T1 plan.md placeholder + carry-over cleanup (74723f5); T2 CLAUDE-TEMPLATE.md ↔ CLAUDE.md sync sweep (9572dbe); T3 Process Observer F1 IN-PROGRESS state (67ce9f1); T4 docs/zh/quick-start.md NEW 117-line Chinese Tier 3 onramp (6212c16); T5 README.zh-CN.md Chinese pointer after hero (1538d24); T6 CONTRIBUTING.md Documentation Language Convention section (6b039f6); T9 CHANGELOG [Unreleased] Wave 1-5 entry (750dcac); T7-DE fix README.md parallel bilingual pointer (1fec975); T7 audits (Doc Engineer iter 2 PASS / Process Observer 12P-1IP-0W-0F / Independent Reviewer Wave Boundary PROCEED); T8 Human review checklist into 3 destinations byte-identical; T10 plan.md final evidence promotion (be92589); Wave 5 IR audit trail commit (7a05214). PR #159 merged to main via `gh pr merge --merge --delete-branch`. |
+| Key decisions | (1) Wave 5 scope lock after /start-working — framework-polish hotfixes #1/#2/#3 and repo restructure deferred outside Wave 5; only i18n-adjacent carry-overs (CLAUDE-TEMPLATE sync, PO F1 IN-PROGRESS) absorbed. (2) Solo + Lead direct edit mode reaffirmed (self-referential boundary, Wave 4 precedent, zero code changes, zero Codex calls). (3) No Wave 5→6 BLOCKING marker — two Tier 1 edits don't enter Lead's system-reminder cache (CLAUDE-TEMPLATE.md read only at /init-project time; agents/process-observer-audit.md read by fresh sub-agent spawn). (4) audit-fix-reaudit loop iteration 1 FAIL on Doc Engineer item 7 (README.md missing parallel English block to match T5 addition) → Lead fix 1fec975 → fresh re-spawn iteration 2 PASS. First natural Wave 4 mechanism real-world exercise. (5) Human review checklist delivered byte-identical to 3 destinations (plan.md Wave 5 entry / PR #159 description / conversation briefing) as per plan T8. |
+
+### Files Changed
+
+```
+CHANGELOG.md                     |  13 ++++
+ CLAUDE-TEMPLATE.md               |   6 +-
+ CONTRIBUTING.md                  |  29 +++++++
+ README.md                        |   4 +
+ README.zh-CN.md                  |   4 +
+ agents/process-observer-audit.md |   6 +-
+ docs/independent-review.md       | 163 +++++++++++++++++++++++++++++++++++++++
+ docs/plan.md                     |  97 +++++++++++++++++++----
+ docs/zh/quick-start.md           | 117 ++++++++++++++++++++++++++++
+ 9 files changed, 419 insertions(+), 20 deletions(-)
+```
+
+### Notes
+
+- **Session split across a context-compaction boundary.** This is the continuation half; the first half executed plan-approval + T1 + branch rename + T2-T6 + T7-DE (with audit-fix-reaudit loop) + T7-PO. Continuation half (this session) executed T7-IR (Wave Boundary), T7-render (link integrity), T8 (Human review checklist), T10 (plan.md promotion), T11 (PR create + merge).
+- **First natural Wave 4 mechanism exercise.** Wave 4 deferred partial validation of the audit-fix-reaudit loop + 6-step blocked recovery path to "Wave 5's first natural Doc Engineer run" (plan.md L267-273 from Wave 4 meta-verification caveat). Wave 5 delivered this: iteration 1 Doc Engineer FAIL on item 7 (README.md ↔ README.zh-CN.md sync rule — Wave 5 added the CONTRIBUTING sync rule and the Chinese pointer in the same Wave without adding the mirror English pointer, a self-defeating PR), Lead fixed via commit 1fec975, fresh iteration 2 Doc Engineer PASS. Loop closed within 2/3 bound. 6-step blocked-recovery path still not triggered (bound not exceeded) and remains permanently deferred per Wave 5 plan's "no manufactured failures" principle.
+- **First natural Wave 5 T3 state-machine validation.** Wave 5 introduced F1 IN-PROGRESS state in T3 (67ce9f1). The same Wave's T7-PO Process Observer audit was the first real-world test: PO reported `F1 = IN-PROGRESS` mid-sequence (Wave Boundary IR queued but not yet executed at audit time) instead of the old binary PASS/FAIL shoehorn. New Summary row format `"12 passed, 1 in-progress, 0 warnings, 0 failures"` rendered correctly. Wave 5 self-validated its own T3 change.
+- **Language guardian clean on post-merge main.** `bash scripts/language-check.sh` on main post-merge reports `PASSED: scripts/language-check.sh — Tier 1/Tier 2 are CJK-clean and Principle 1 is clean.` Five-Wave i18n cleanup project mechanically verified end-to-end against final disk state.
+- **Wave Boundary IR already ran during Wave 5 execution (T7-IR, not in this /end-working).** Verdict PROCEED, 0 CRITICAL, 0 MAJOR, 2 non-blocking MINOR. Report appended to `docs/independent-review.md` as `## Wave 5 Review — 2026-04-08`. Not re-triggered during /end-working since the Wave was already complete-and-merged before /end-working started.
+- **Human review checklist delivered to 3 destinations byte-identical.** Target audience: DaDalus (maintainer), who will review 6 i18n-high-risk files (CLAUDE.md, CLAUDE-TEMPLATE.md, docs/roles.md, docs/workflow.md, docs/design-decisions.md, docs/product-spec.md) for semantic nuance (wording-feel / behavioral implications / causal chains) that IR cannot catch mechanically. Checklist is non-blocking and lives in `docs/plan.md` Wave 5 entry "Human review checklist" sub-section for permanent record, plus PR #159 description for discoverability, plus this session briefing for in-conversation recall. Issue format `[i18n-followup] <file>: <section>` + body template documented.
+- **Five-Wave i18n cleanup project formally closed.** CHANGELOG `[Unreleased]` section now carries 4 Changed + 3 Added items spanning Wave 1 (convention + guardian + `docs/plan.md` marker) → Wave 2 (Tier 1 Englishization, 166 CJK → 0) → Wave 3 (Tier 2 Englishization, 392 CJK → 0) → Wave 4 (guardian wired into Doc Engineer audit item 9 as blocking gate) → Wave 5 (Tier 3 onramp + carry-over polish). Next: user decides when to run `/release` to cut v0.7.0.
+- **Deferred items explicitly outside Wave 5 (user-locked at /start-working):** (1) start-working Step 7 auto-add branch guard (Hotfix #1 carryover) → Wave 6 or independent hotfix PR. (2) end-working plan.md update timing rule clarification (framework-feedback-0407.md) → same. (3) QA-protocol carve-out for trivial CLI scripts (Hotfix #2 PO A6 WARN) → same. (4) Repo structure reorganization (internal docs → `.project/`) → Wave 6 independent project. (5) 2 IR non-blocking framework recommendations (link-integrity check for new Tier 3 files; CRITICAL-at-Wave-Boundary-IR handoff plan for T8-T10 resumption) → future framework polish.

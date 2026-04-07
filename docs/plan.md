@@ -295,7 +295,7 @@ Task list (T1-T10):
 - [x] T10 — This Wave 5 entry promoted from placeholder to final completion evidence
 
 Verification counts:
-- 8 commits on `feat/wave-5-i18n-finalization` branch
+- 10 commits on `feat/wave-5-i18n-finalization` branch (T1-T6 + T9 + Doc Engineer fix `1fec975` + IR audit trail `7a05214` + T10 `be92589`)
 - 9 [build] checks PASS (A1 language-check main scan, A2 language-check self-test, A3 install --dry-run, A4 quick-start exists, A5 README.zh-CN points to quick-start, A6 CONTRIBUTING contains section header, A7 CLAUDE-TEMPLATE three sync markers, A8 PO F1 IN-PROGRESS marker, A9 CHANGELOG Unreleased entry present)
 - 4 [runtime] checks PASS (R1 Doc Engineer 9/9 PASS at iteration 2; R2 Process Observer 12 passed / 1 in-progress / 0/0 — F1 IN-PROGRESS validates new T3 state machine; R3 IR Wave Boundary PROCEED 0 CRITICAL 0 MAJOR; R4 link integrity all 12 targets resolve)
 - 0 CJK / 0 Tier-1 / 0 Tier-2 / 0 Principle 1 violations from `scripts/language-check.sh`
