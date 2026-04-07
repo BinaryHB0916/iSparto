@@ -812,3 +812,32 @@ PR #104 (fix/end-working-branch-guard): 3 files changed, +11, -5
 - Phase A（冷启动关键修复）通过 PR #142、#143 完成；Phase B（反馈驱动优化）留待 v0.8 后
 - IR 触发链修复（PR #144）：end-working.md 新增 Step 3 Wave Boundary Review + plan.md 无条件 IR spawn + Process Observer F1 检查 + 全文档同步
 - 发版 v0.6.19（PR #146），含 PRs #142-144 的所有修复
+
+## 2026-04-07 Session (1)
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | i18n Cleanup — Wave 1（Convention + Guardian，scaffolding-only） |
+| Tasks completed | 五波 i18n 清理计划评审 + 8 项 patch 应用 + plan mode 批准 + Wave 1 全部产出（文档语言公约 + 守卫脚本 + plan.md 跨会话 BLOCKING marker） |
+| Key decisions | 不拆分 design-decisions.md（in-place 翻译，保留表格）；架构冲突（Addition 3 引用的 architecture.md）由 design-decisions.md 替代写入 Wave 5 人工 review checklist；Wave 4→5 跨会话边界从"建议"升级为强制（Wave 4 改了 end-working.md 必须新会话验证 gate）；引入 BLOCKING marker 机制（plan.md 顶部 marker + Wave 2 Dev B 在 start-working.md 加自动检测）作为跨会话边界的强制机制 |
+
+### Files Changed
+```
+ CLAUDE.md                 |  20 +++++
+ docs/plan.md              |  26 ++++++
+ scripts/language-check.sh | 193 ++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 239 insertions(+)
+```
+
+### Notes
+- 5 Wave 计划全文存于 `~/.claude/plans/distributed-twirling-harp.md`
+- 四层语言架构：Tier 1 系统 prompt 层（CLAUDE.md / commands / agents / templates / hooks / 全部 shell 脚本）、Tier 2 参考文档（docs/*.md 除历史）、Tier 3 用户入口（README + docs/zh/quick-start + CONTRIBUTING）、Tier 4 历史归档（session-log / framework-feedback / plan.md / CHANGELOG）
+- 关键设计原则：Tier 1 文件不得 hard-code 任何具体语言的用户面字符串（"hard-coded user-facing strings rule"），Lead 在运行时按用户语言生成；示例本身也不得 hard-code（"illustrative-example rule"，否则 guardian 会拦截示例自身）
+- Wave 1 baseline：scripts/language-check.sh 检测出 166 Tier 1 + 391 Tier 2 违规行（共 557 行），目标 Wave 2 → Tier 1 = 0，Wave 3 → Tier 2 = 0
+- Wave 1 是 scaffolding only：只引入新章节和守卫脚本，不翻译任何已有文件；CLAUDE-TEMPLATE.md 同步刻意延后到 Wave 2 Dev A
+- Doc Engineer 审计 PASS（9/9，1 N/A — CLAUDE-TEMPLATE.md 间隙是有意为之）；Process Observer 审计 PASS（11/11，3 N/A — Codex review/Implementation Protocol/IR 触发都是 N/A）
+- 跨会话强制：Wave 1 改了 CLAUDE.md 顶部，新规则只能通过下次 session start 时的 system-reminder 注入加载，本 session 必须关闭，Wave 2 在新 session 启动
+- BLOCKING marker 已写入 docs/plan.md 顶部（advisory），自动检测在 Wave 2 Dev B Sub-task B-bonus 接好（届时 /start-working 读到 marker 会硬停等待用户确认是否新 session）
+- 执行时提醒（用户 confirm）：R3（IR 没触发的回归检查）写的是 PR #149，应为 PR #144（IR 断链修复 PR）；本 plan 文件批准时未改动，Wave 2 完成时 IR 若未自动 spawn 立即报告
+- Wave 1 PR：#150（已 merge，fast-forward 到 main）
