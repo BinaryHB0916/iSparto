@@ -274,7 +274,7 @@ Verification (after Wave 4):
 
 Cross-session boundary required before Wave 5 (per the cross-session barrier protocol hardened in the master plan — Wave 4 modified `commands/end-working.md` and `docs/roles.md`, both Tier 1 system prompts loaded by Lead). The Wave 4→5 BLOCKING marker at the top of this file will be auto-detected by `/start-working` Step 0 in the next session.
 
-### i18n Cleanup — Wave 5 (2026-04-07) — In Progress
+### i18n Cleanup — Wave 5 (2026-04-07) — Completed
 
 Goal: i18n cleanup finalization Wave. Three outcomes: (1) end-to-end verification of Wave 1-4 products against post-Wave-4 disk state via all four audit channels (`scripts/language-check.sh` + Doc Engineer + Independent Reviewer + Process Observer); (2) Chinese user onboarding entry (absorbs Master plan Task 5.1-5.6 + Wave 4 leftover Chinese entry — `README.zh-CN.md` intro + new `docs/zh/quick-start.md` + `CONTRIBUTING.md` Documentation Language Convention section); (3) historical record + carry-over framework polish (CHANGELOG entry + Human review checklist for DaDalus + two framework items previously deferred: CLAUDE-TEMPLATE.md ↔ CLAUDE.md sync sweep from Wave 3, Process Observer F1 IN-PROGRESS state from Wave 4 PO self-audit).
 
@@ -283,18 +283,79 @@ Master plan reference: `~/.claude/plans/distributed-twirling-harp.md` (Task 5.1-
 Mode: Solo + Lead direct edit (self-referential boundary, Wave 4 precedent — 9 markdown files across 4 modules: READMEs / Project Docs / Slash Commands + Project Template / Process Observer; no Developer/Codex calls; no architecture pre-review; no code review — zero code changes).
 
 Task list (T1-T10):
-- [ ] T1 — `docs/plan.md` Wave 5 entry placeholder + removed acknowledged Wave 4→5 BLOCKING marker + removed Wave 4 deferred items #1 (CLAUDE-TEMPLATE.md sync sweep) and #2 (PO F1 IN-PROGRESS state) as both are absorbed into Wave 5 scope
-- [ ] T2 — `CLAUDE-TEMPLATE.md` sync sweep: (a) L61 Process Observer description aligned with CLAUDE.md L76 "hooks + Sonnet sub-agent" + Core/Advisory layer framing; (b) workflow steps 4-6 adds "must complete before push/merge, cannot be deferred to /end-working" qualifier; (c) consistency spot-check on Module Boundaries / Plan Mode triggers / role descriptions
-- [ ] T3 — `agents/process-observer-audit.md` F1 row state expansion from PASS/FAIL/N/A to PASS/IN-PROGRESS/FAIL/N/A + IN-PROGRESS determination rule ("IR planned in plan.md sequence but not yet executed at audit time") + Summary row format adjusted accordingly
-- [ ] T4 — `docs/zh/quick-start.md` NEW (Tier 3 Chinese quick-start ~80-120 lines: install → /init-project / /migrate → /start-working / /end-working → troubleshooting pointer; footer explains reference docs are English-only by design, links to CLAUDE.md > Documentation Language Convention)
-- [ ] T5 — `README.zh-CN.md` top intro pointer to `docs/zh/quick-start.md` + Tier 3 bilingual strategy note (inserted before line 11, preserving all existing content)
-- [ ] T6 — `CONTRIBUTING.md` new `## Documentation Language Convention` section inserted after "Things to Be Careful About" (four-tier summary + link to CLAUDE.md + language-check.sh PR blocking gate reminder)
-- [ ] T7 — Final acceptance verification: 9 [build] commands (A1-A9: language-check.sh main/self-test, install dry-run, file/grep existence checks) + 4 [runtime] commands (R1 Doc Engineer sub-agent, R2 Process Observer sub-agent, R3 Independent Reviewer Teammate Wave Boundary Review, R4 Chinese doc manual render check)
-- [ ] T8 — Human review pass checklist written into three destinations byte-identically (conversation briefing + PR description + this Wave 5 entry's Human review checklist sub-section)
-- [ ] T9 — `CHANGELOG.md` `[Unreleased]` section entry (4 Changed + 3 Added items spanning Wave 1-5 i18n cleanup per master plan Task 5.5 template)
-- [ ] T10 — This Wave 5 entry promoted from placeholder to final completion evidence (task checkboxes filled + verification counts + audit verdicts + Human review checklist sub-section appended)
+- [x] T1 — `docs/plan.md` Wave 5 entry placeholder + removed acknowledged Wave 4→5 BLOCKING marker + removed Wave 4 deferred items #1 (CLAUDE-TEMPLATE.md sync sweep) and #2 (PO F1 IN-PROGRESS state) as both are absorbed into Wave 5 scope (commit `74723f5`)
+- [x] T2 — `CLAUDE-TEMPLATE.md` sync sweep: (a) L61 Process Observer description aligned with CLAUDE.md L76 "hooks + Sonnet sub-agent" + Core/Advisory layer framing; (b) workflow steps 4-6 adds "must complete before push/merge, cannot be deferred to /end-working" qualifier; (c) consistency spot-check on Module Boundaries / Plan Mode triggers / role descriptions found 0 additional divergences (commit `9572dbe`)
+- [x] T3 — `agents/process-observer-audit.md` F1 row state expansion from PASS/FAIL/N/A to PASS/IN-PROGRESS/FAIL/N/A + IN-PROGRESS determination rule ("IR planned in plan.md sequence but not yet executed at audit time") + Summary row format adjusted accordingly (commit `67ce9f1`)
+- [x] T4 — `docs/zh/quick-start.md` NEW (Tier 3 Chinese quick-start, 117 lines: install → /init-project / /migrate → /start-working / /end-working → troubleshooting pointer; footer explains reference docs are English-only by design, links to CLAUDE.md > Documentation Language Convention) (commit `6212c16`)
+- [x] T5 — `README.zh-CN.md` top intro pointer to `docs/zh/quick-start.md` + Tier 3 bilingual strategy note (inserted AFTER hero sentence per plan-approval IR MINOR #2 placement guidance, preserving all existing content); parallel English block also added to `README.md` (commit `1538d24` + Doc Engineer fix `1fec975`)
+- [x] T6 — `CONTRIBUTING.md` new `## Documentation Language Convention` section inserted after "Things to Be Careful About" (four-tier summary + link to CLAUDE.md + language-check.sh PR blocking gate reminder) (commit `6b039f6`)
+- [x] T7 — Final acceptance verification: 9 [build] commands (A1-A9: language-check.sh main/self-test, install dry-run, file/grep existence checks) all exit 0 + 4 [runtime] commands (R1 Doc Engineer sub-agent — iteration 1 FAIL on item 7 README sync → fix `1fec975` → iteration 2 PASS; R2 Process Observer sub-agent — 12 passed / 1 in-progress / 0 warnings / 0 failures with F1 IN-PROGRESS validating new state machine; R3 Independent Reviewer Teammate Wave Boundary Review — verdict PROCEED 0 CRITICAL 0 MAJOR 2 non-blocking MINOR; R4 Chinese doc manual render — 12 link targets all resolve, CLAUDE.md anchor verified at line 26)
+- [x] T8 — Human review pass checklist written into three destinations byte-identically (conversation briefing + PR description + this Wave 5 entry's Human review checklist sub-section below)
+- [x] T9 — `CHANGELOG.md` `[Unreleased]` section entry (4 Changed + 3 Added items spanning Wave 1-5 i18n cleanup per master plan Task 5.5 template) (commit `750dcac`)
+- [x] T10 — This Wave 5 entry promoted from placeholder to final completion evidence
 
-Execution status: Placeholder entry written by T1. Tasks T2-T10 pending. Final evidence will replace this placeholder in T10.
+Verification counts:
+- 8 commits on `feat/wave-5-i18n-finalization` branch
+- 9 [build] checks PASS (A1 language-check main scan, A2 language-check self-test, A3 install --dry-run, A4 quick-start exists, A5 README.zh-CN points to quick-start, A6 CONTRIBUTING contains section header, A7 CLAUDE-TEMPLATE three sync markers, A8 PO F1 IN-PROGRESS marker, A9 CHANGELOG Unreleased entry present)
+- 4 [runtime] checks PASS (R1 Doc Engineer 9/9 PASS at iteration 2; R2 Process Observer 12 passed / 1 in-progress / 0/0 — F1 IN-PROGRESS validates new T3 state machine; R3 IR Wave Boundary PROCEED 0 CRITICAL 0 MAJOR; R4 link integrity all 12 targets resolve)
+- 0 CJK / 0 Tier-1 / 0 Tier-2 / 0 Principle 1 violations from `scripts/language-check.sh`
+- Audit-fix-reaudit loop closed at iteration 2/3 (item 7 FAIL → 1fec975 → PASS)
+
+Wave 5 → Wave 6 BLOCKING marker: NOT required. Wave 5 modified two Tier 1 files (`CLAUDE-TEMPLATE.md`, `agents/process-observer-audit.md`); neither is loaded into Lead's main session system-reminder cache (CLAUDE-TEMPLATE.md is read only at /init-project time; agents/process-observer-audit.md is read by spawned PO sub-agent in fresh context). All other Wave 5 changes are Tier 3 (READMEs / CONTRIBUTING / quick-start) or Tier 4 (plan.md / CHANGELOG.md), neither cached. Next session may begin without cross-session barrier.
+
+#### Human review checklist
+
+> ## Wave 1-5 i18n Cleanup — Human Review Checklist
+>
+> Wave 1-4 把 iSparto 的 Tier 1（系统提示）和 Tier 2（参考文档）从中文翻成英文。机械守卫（`scripts/language-check.sh`）已经验证 0 CJK + 0 Principle 1 violations，Independent Reviewer 在 Wave 2/3 也跑过 verdict PROCEED。但**翻译过程涉及解释而非直译的部分需要你人工 review** — IR 检查的是机械可验证的属性（行为规则没丢、recovery path 完整、Principle 1 没违反），而以下检查是 IR 做不到的语义 nuance。
+>
+> **本 checklist 不阻塞 Wave 5 PR merge。** 请按你自己的节奏 review，发现问题用下面的 GitHub issue 格式开 follow-up。
+>
+> ### Files to review
+>
+> | # | 文件 | 原始 CJK 行数 | 高风险 sections（涉及解释翻译） |
+> |---|------|---------------|--------------------------------|
+> | 1 | `CLAUDE.md` | ~120 → 0 | (a) **User Preference Interface — Three-level response model** — Level 1/2/3 的边界是行为契约的核心（哪些 user 偏好可以无条件接受、哪些只能在 workflow 边界内适应、哪些只记录不执行），翻译时容易把 Level 边界翻"软"。重点验证 territory principle wording 和 "Conflict protocol" 段落。<br/>(b) **Implementation Protocol — "Code file" 定义** — 涉及 workflow-rules.json 和 allowed_extensions 的交互，翻译时是否仍然把 .md 文件正确归类为"非代码文件"（决定 Lead 直编是否合规）。<br/>(c) **Documentation Language Convention** — Wave 1 新增段落，不是翻译；但 "Hard-coded user-facing strings rule" 和 "Illustrative-example rule" 的 wording 决定 Principle 1 守卫的覆盖范围，验证 wording 是否传达"描述 intent 而非嵌入 literal" 的意图 |
+> | 2 | `CLAUDE-TEMPLATE.md` | ~14 → 0 | (a) **Process Observer 描述** — Wave 5 T2 sync sweep 把 L61 从 "hooks + Lead sub-agent" 改成 CLAUDE.md L76 同款 "hooks + Sonnet sub-agent" + Core/Advisory layer。验证生成的 project CLAUDE.md 仍能正确指挥 Process Observer 行为。<br/>(b) **Workflow steps 4-6 限定语** — Wave 5 T2 同样补了 "must complete before push/merge, cannot be deferred to /end-working" 限定语。验证语义是否传达"Doc Engineer 不能延迟到 /end-working" 这个硬约束。<br/>(c) **Module Boundaries 占位段落** — TEMPLATE 里这是空表，新项目 /init-project 时 Lead 会填，但占位文本的措辞影响 Lead 怎么填 |
+> | 3 | `docs/roles.md` | ~5 → 0 | (a) **Independent Reviewer 角色定义** — "zero inherited context" / "fixed one-liner — no additional context or framing allowed" / "Report written directly to docs/independent-review.md, not filtered through Lead" 这三句是 IR 设计的核心，翻译时容易把"零继承"翻成软性建议而不是硬约束。<br/>(b) **Doc Engineer audit checklist 9 项** — Wave 4 加的 item 9 (Language convention check) 必须保留 "条件 on `scripts/language-check.sh` existence" 的语义（让用户项目 graceful skip）。<br/>(c) **Audit-fix-reaudit Key Principles** — "Lead-fixes-not-Doc-Engineer" + "fresh-sub-agent re-spawn" + "bounded at 3 iterations" + "6-step blocked recovery path" — 这是 Wave 4 引入的循环模式，每个限定词都是设计选择 |
+> | 4 | `docs/workflow.md` | ~9 → 0（+ 2 anchor link 更新） | (a) **Mode Selection Checkpoint 描述** — Solo / Agent Team 切换条件，"5 files with large logic changes → Agent Team; 5 files with 1-line edits → Solo" 的判定阈值翻译时容易把示例值当成硬规则。<br/>(b) **Developer trigger 条件表** — Tier 表里 "implementation + QA" / "QA only" / "Developer review only" / "skip both" 的 4 种组合，验证决策逻辑是否清晰。<br/>(c) **Cross-doc anchor links** — L303 / L311 在 Wave 3 改成指向 process-observer.md 的英文 anchors（`#real-time-interception-hooks` / `#post-hoc-audit-sub-agent`），验证链接 resolve 正确 |
+> | 5 | `docs/design-decisions.md` | ~34 → 0 | **⚠️ 最高优先级 review 文件**（per Wave 3 Dev C SPECIAL RULE: "preserve the full reasoning chain"）<br/>(a) **Rows 43-60（recent core decisions）** — Process Observer three-tier、hooks registration、three-tier security audit、Stateless Session 等 — 这些 Rationale 单元格的 "because X therefore Y" 因果链不能被翻"扁"。验证因果连接词（because / since / to avoid / otherwise）在每行 Rationale 里是否仍然存在。<br/>(b) **Row 39 talk title** — `"AI Agent 的道与术"` 翻成 `"The Way and the Craft of AI Agents"`（Wave 3 Dev C bonus 翻译，semantic-preserving 版本）。验证你是否同意这个翻译；@onevcat 署名未变。<br/>(c) **Row 68** — 原文有 corrupt UTF-8 序列 `描��`（截断的 `描述`），Wave 3 Dev C 基于上下文推断翻译，需要你确认推断是否符合原意 |
+> | 6 | `docs/product-spec.md` | ~58 → 0 | (a) **v0.x / v1.x / v2.x 三阶段产品演进** — 每个阶段的 "交付标准" 是产品 vision 的核心承诺，翻译时容易把承诺翻软。验证 v0.x "一个没见过 iSparto 的 Claude Code 用户，看 README 就能装好" 这种硬标准。<br/>(b) **Milestone 图** — Wave 3 Dev C 把 CJK ASCII 图升级成 mermaid `timeline` block。验证升级后的 timeline 节点和原 ASCII 图语义一致（mermaid 渲染依赖 GitHub markdown 支持）。<br/>(c) **商业化路径含义** — 任何提到 commercialization / pro tier / paid features 的 wording 都涉及产品定位，翻译时容易把模糊表达翻精确（或反过来），影响外部读者对 iSparto 走向的理解 |
+>
+> ### GitHub issue 反馈格式
+>
+> 发现翻译问题时，请用以下格式开 issue：
+>
+> **Title 模板：**
+> ```
+> [i18n-followup] <文件路径>: <section 名>
+> ```
+>
+> **Title 示例：**
+> ```
+> [i18n-followup] docs/roles.md: Independent Reviewer trigger conditions
+> [i18n-followup] CLAUDE.md: User Preference Interface Level 2 wording
+> [i18n-followup] docs/design-decisions.md: row 47 Process Observer rationale chain
+> ```
+>
+> **Body 模板：**
+> ```markdown
+> ## Original Chinese (if you remember it)
+> [原中文，可留空]
+>
+> ## Current English
+> [当前英文版本，引用 markdown block]
+>
+> ## Suggested correction
+> [你的修正建议]
+>
+> ## Why this matters
+> [选一项: semantic loss / behavioral implication / wording feel / factual error]
+> [简短说明为什么这个修正必要]
+> ```
+>
+> **Maintainer 处理流程：**
+> Maintainer 收到 issue 后，在 `fix/i18n-correction-MMDD` 分支处理。多个 issue 可以合并到同一分支批量修。每个 fix commit 的 message 引用对应 issue 编号。
 
 ### 下一步
 - [ ] P1 仓库结构重组：内部文件（plan.md, product-spec.md, design-decisions.md, process-observer.md, security.md, session-log.md）移到 .project/ 目录，与用户文档物理隔离（约束：CLAUDE.md 不能移，Claude Code 从项目根读取）
