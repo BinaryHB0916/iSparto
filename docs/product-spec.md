@@ -1,86 +1,89 @@
-# iSparto 产品规格
+# iSparto Product Specification
 
-## 产品定位
-iSparto 是一个 AI Agent Team 工作流框架，把 Claude Code 单 Agent 变成一支有明确分工的开发团队。
+## Product Positioning
+iSparto is an AI Agent Team workflow framework that turns Claude Code from a single agent into a development team with clearly defined roles.
 
-**一句话愿景：** 让每个人都有一支自己的技术团队——像 CEO 一样说需求、看进度、收交付，不碰代码不碰终端。
+**One-line vision:** Give everyone their own technical team — talk like a CEO, state requirements, watch progress, receive deliverables, and never touch code or terminals.
 
-**当前阶段：** 开源核心工作流已发布，以开发者工具形态服务独立开发者，dogfooding 验证中。
+**Current stage:** The open-source core workflow has been released and is serving independent developers as a developer tool while undergoing dogfooding validation.
 
-## 产品演进
+## Product Evolution
 
-iSparto 的演进分三个阶段，每个阶段服务不同用户角色：
+iSparto evolves through three stages, each serving a different user role:
 
+```mermaid
+timeline
+    title iSparto Product Evolution
+    v0.x : Developer Tool
+         : User = Developer, manually triggers workflows
+    v1.x : Autonomous Dev Team
+         : User = Tech Lead, hands off tasks while the team runs the full workflow
+    v2.x : CEO Console
+         : User = Boss, states requirements and reviews results without touching the process
 ```
-v0.x  开发者工具      用户 = 开发者，手动触发流程
-  ↓
-v1.x  自治开发团队    用户 = 技术负责人，给任务，团队自己跑完全流程
-  ↓
-v2.x  CEO 工作台      用户 = 老板，说需求看结果，不碰过程
-```
 
-### v0.x — 开发者工具（当前）
-把 Claude Code 的能力从单 agent 扩展为结构化团队。用户仍然是开发者，理解 git/分支/review 流程，通过 slash commands 触发工作流。核心价值：**一个人拥有一支团队的产出能力**。
+### v0.x — Developer Tool (current)
+Extends Claude Code from a single agent into a structured team. Users are still developers who understand git/branches/review and trigger workflows via slash commands. Core value: **one person commands the output capacity of an entire team**.
 
-### v1.x — 自治开发团队
-用户不再需要手动驱动每个流程节点。说"做这个功能"，团队自己跑完 plan → code → review → test → merge。用户角色从"开发者"变成"技术负责人"，关注方向和验收，不关注过程。核心价值：**全流程自治，用户只管输入需求和验收结果**。
+### v1.x — Autonomous Dev Team
+Users no longer need to manually drive every workflow node. Saying "build this feature" lets the team complete the full plan → code → review → test → merge loop on its own. The user role shifts from "developer" to "tech lead" — focused on direction and acceptance, not on the process. Core value: **end-to-end autonomy where the user only supplies requirements and validates results**.
 
-### v2.x — CEO 工作台
-用户用自然语言描述业务需求，团队自己翻译成技术任务、执行、汇报进度、交付可运行的 demo。用户不需要任何技术背景。核心价值：**自然语言驱动的技术团队接口**。
+### v2.x — CEO Console
+Users describe business requirements in natural language; the team translates them into technical tasks, executes, reports progress, and delivers a runnable demo. No technical background required. Core value: **a natural-language interface to a technical team**.
 
-## 目标用户
+## Target Users
 
-| 阶段 | 用户画像 | 核心场景 |
-|------|---------|---------|
-| v0.x | 独立开发者（indie hacker），熟悉 Claude Code + Git | 用 slash commands 驱动团队并行开发 |
-| v1.x | 技术负责人 / 全栈创业者 | 给任务看结果，不用盯过程 |
-| v2.x | 非技术创业者 / CEO / 产品经理 | 用自然语言管理一支 AI 开发团队 |
+| Stage | User Profile | Core Scenario |
+|-------|--------------|---------------|
+| v0.x | Independent developers (indie hackers) familiar with Claude Code + Git | Drive parallel team development via slash commands |
+| v1.x | Tech leads / full-stack founders | Hand off tasks and review results without supervising the process |
+| v2.x | Non-technical founders / CEOs / product managers | Manage an AI development team in natural language |
 
-## 核心功能
+## Core Features
 
-- **Agent Team 角色分工**: Team Lead 组装 prompt 协调、Developer (Codex) 实现代码、Teammate 并行执行、Doc Engineer 文档同步
-- **Wave 并行开发**: 一个 Wave 内多个 Developer 并行，tmux 分屏可视
-- **8 个 Slash Commands**: /init-project, /migrate, /start-working, /end-working, /plan, /env-nogo, /restore, /security-audit
-- **跨会话状态恢复**: plan.md 驱动，/start-working 自动恢复上下文
-- **跨模型质量门**: Lead 审查 Developer (Codex) 输出，覆盖不同模型的盲区
-- **文档自动同步**: Doc Engineer 每个 Wave 审计代码和文档一致性
-- **快照/恢复**: 每次操作前自动拍快照，/restore 一键回滚
-- **Session log**: docs/session-log.md 记录每次会话的开发指标
-- **Process Observer 合规监督**: 三层安全防御——L1 Write/Edit 实时内容扫描（拦截 critical secret）、L2 pre-commit 全量 secret/PII 扫描、L3 /security-audit 里程碑全量审计（含 git 历史和依赖检查）。事后审计对照行为准则检查 session 全流程合规性（14 项 checklist）。Observer 不参与开发决策，只监督；偏差报告输出到 session briefing，不自动修改文件；修正建议反馈到规则中形成自我改进闭环
-- **版本追踪与更新日志**: --upgrade 支持版本升级
-- **一键安装**: curl 一行命令搞定，支持 --dry-run 预览、--upgrade 升级、--uninstall 卸载
+- **Agent Team role separation**: Team Lead assembles prompts and coordinates, Developer (Codex) implements code, Teammates run in parallel, Doc Engineer keeps documentation in sync
+- **Wave-based parallel development**: multiple Developers run in parallel within a single Wave, with tmux split panes for visualization
+- **8 slash commands**: /init-project, /migrate, /start-working, /end-working, /plan, /env-nogo, /restore, /security-audit
+- **Cross-session state recovery**: driven by plan.md, with /start-working automatically restoring context
+- **Cross-model quality gate**: Lead reviews Developer (Codex) output, covering each model's blind spots
+- **Automatic documentation sync**: Doc Engineer audits code/documentation consistency every Wave
+- **Snapshot/restore**: an automatic snapshot is taken before every operation, and /restore performs one-click rollback
+- **Session log**: docs/session-log.md records development metrics for every session
+- **Process Observer compliance oversight**: a three-layer security defense — L1 real-time content scanning on Write/Edit (intercepts critical secrets), L2 full secret/PII scan on pre-commit, L3 milestone-level full audit via /security-audit (covering git history and dependency checks). The post-hoc audit checks the full session for compliance against the code of conduct (a 14-item checklist). The Observer does not participate in development decisions, only oversees them; deviation reports are emitted to the session briefing rather than auto-modifying files; remediation suggestions feed back into the rules to form a self-improvement loop
+- **Version tracking and changelog**: --upgrade supports version upgrades
+- **One-line install**: a single curl command, with --dry-run preview, --upgrade upgrade, and --uninstall uninstall
 
-## 技术约束
-- 纯配置项目：Shell 脚本 + Markdown 模板 + MCP Server 注册
-- 依赖 Claude Code Agent Team 模式（需 Claude Max $100/月）
-- 依赖 Codex CLI（需 ChatGPT $20/月）
-- 依赖 iTerm2 的 tmux 集成（macOS only）
+## Technical Constraints
+- Pure configuration project: shell scripts + Markdown templates + MCP server registration
+- Depends on Claude Code Agent Team mode (requires Claude Max at $100/month)
+- Depends on the Codex CLI (requires ChatGPT at $20/month)
+- Depends on iTerm2's tmux integration (macOS only)
 
-## 竞品差异
-其他 AI 编程工具（Cursor, Windsurf, Copilot, Claude Code 单会话）都是用户和单个 Agent 反复沟通。iSparto 把单个 Agent 变成一支有分工的团队，用户只对接 Lead，Lead 协调整个团队。
+## Competitive Differentiation
+Other AI coding tools (Cursor, Windsurf, Copilot, single-session Claude Code) all have the user iterating with a single agent. iSparto turns that single agent into a team with clear role separation; the user only talks to the Lead, and the Lead coordinates the entire team.
 
-## 三层能力模型
+## Three-Layer Capability Model
 
-实现产品演进需要逐层构建三个能力：
+Realizing the product evolution requires building three capabilities layer by layer:
 
-### 第一层：流程自治（v0.x → v1.x 的桥梁）
-团队能自己跑完 plan → code → review → test → merge 全流程，不需要用户在中间审批。
+### Layer 1: Workflow autonomy (the bridge from v0.x to v1.x)
+The team can complete the full plan → code → review → test → merge workflow on its own without requiring user approval at intermediate steps.
 
-- v0.x 已实现：Solo + Codex 模式、auto PR merge、end-working 全自动、plan.md 驱动的跨 session 续接、Agent Team 并行读写
-- 缺口：多任务并行管理（同时推进多个独立任务）、失败自动重试与回滚
+- Already delivered in v0.x: Solo + Codex mode, auto PR merge, fully automated end-working, plan.md-driven cross-session continuation, parallel Agent Team read/write
+- Gaps: multi-task parallel management (advancing several independent tasks simultaneously), automatic failure retry and rollback
 
-### 第二层：状态可见性（v1.x 的核心）
-用户不写代码，但需要知道团队在干嘛、进展如何、有没有卡住。
+### Layer 2: State visibility (the core of v1.x)
+Users do not write code, but they need to know what the team is doing, how far it has progressed, and whether it is stuck.
 
-- 进度摘要 — 每个任务的状态、完成度、阻塞项，用人话汇报
-- Demo 预览 — 自动部署 preview 环境 + 截图 + 一句话说明变化
-- 风险预警 — 主动上报复杂度超预期、依赖问题、技术风险
-- Agent dashboard — 任务看板，可视化团队工作状态
-- Cost & token analytics — 用量统计，帮用户理解投入产出
+- Progress summary — status, completion, and blockers per task, reported in plain language
+- Demo preview — automatic preview-environment deployment + screenshots + a one-line description of the change
+- Risk early warning — proactively reports complexity overruns, dependency issues, and technical risks
+- Agent dashboard — a task board that visualizes team work status
+- Cost & token analytics — usage statistics that help users understand return on investment
 
-### 第三层：需求理解（v2.x 的核心）
-用户说业务语言，团队自己翻译成技术任务。
+### Layer 3: Requirement understanding (the core of v2.x)
+Users speak in business terms and the team translates them into technical tasks.
 
-- 需求拆解 — 业务需求 → 技术 task → 优先级排序
-- 方案决策 — 团队提出技术方案，用户只确认方向
-- 交付验收 — 可运行 demo + 变更说明，用户体验后给反馈
+- Requirement decomposition — business requirement → technical task → priority ordering
+- Solution decision — the team proposes technical approaches and the user only confirms direction
+- Delivery acceptance — runnable demo + change notes; the user gives feedback after trying it out

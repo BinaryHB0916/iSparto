@@ -43,80 +43,80 @@ The repo includes a `settings.example.json` as a reference template — it is NO
 
 ## Agent Model Configuration
 
-角色与模型解耦。角色定义（docs/roles.md）只描述职责，不引用任何模型名。
-调换模型只改配置，角色定义文件不需要动。
+Roles and models are decoupled. Role definitions (docs/roles.md) describe responsibilities only and never reference any model name.
+Swapping models is purely a configuration change — role definition files do not need to be touched.
 
-### 角色-模型映射表
+### Role-Model Mapping Table
 
-| 角色 | 推荐模型 | 调用方式 | 认证 | reasoning | 选型理由 |
-|------|---------|---------|------|-----------|---------|
-| Lead | claude-opus-4-6 | 主会话 | Claude Max | max | SWE-bench 80.9%，上下文理解和任务拆解最强 |
-| Teammate | claude-opus-4-6 | tmux session | Claude Max | max | 继承 Lead 能力 |
-| Developer (实现) | gpt-5.3-codex | MCP (codex tool) | ChatGPT Plus | xhigh | Terminal-Bench 77.3% 领先 5.4，纯编码专精 |
-| Developer (QA/快速修复) | gpt-5.4-mini | MCP (codex tool, model 参数) | ChatGPT Plus | high | QA/快速修复结构简单，mini 够用且快 |
-| Independent Reviewer | claude-opus-4-6 | tmux (Teammate) | Claude Max | max | 跨模型盲审，零上下文继承 |
-| Doc Engineer | claude-opus-4-6 | sub-agent（继承 Lead） | Claude Max | max | 需要 Lead 的全局 context |
-| Process Observer (Hooks) | — | PreToolUse hook（shell 脚本，无模型） | — | — | 不可绕过的结构性保障 |
-| Process Observer (Audit) | claude-sonnet-4-6 | sub-agent | Claude Max | — | 建议层，降低 token 消耗 |
+| Role | Recommended Model | Invocation | Auth | reasoning | Rationale |
+|------|-------------------|------------|------|-----------|-----------|
+| Lead | claude-opus-4-6 | Main session | Claude Max | max | SWE-bench 80.9%, strongest at context understanding and task decomposition |
+| Teammate | claude-opus-4-6 | tmux session | Claude Max | max | Inherits Lead's capabilities |
+| Developer (implementation) | gpt-5.3-codex | MCP (codex tool) | ChatGPT Plus | xhigh | Terminal-Bench 77.3%, leads 5.4 by a wide margin, pure-coding specialist |
+| Developer (QA / quick fix) | gpt-5.4-mini | MCP (codex tool, model param) | ChatGPT Plus | high | QA / quick fixes have simple structure; mini is sufficient and fast |
+| Independent Reviewer | claude-opus-4-6 | tmux (Teammate) | Claude Max | max | Cross-model blind review, zero context inheritance |
+| Doc Engineer | claude-opus-4-6 | sub-agent (inherits Lead) | Claude Max | max | Requires Lead's global context |
+| Process Observer (Hooks) | — | PreToolUse hook (shell script, no model) | — | — | Unbypassable structural safeguard |
+| Process Observer (Audit) | claude-sonnet-4-6 | sub-agent | Claude Max | — | Advisory layer, reduces token consumption |
 
-### Developer 分档模型策略
+### Developer Tiered Model Strategy
 
-Developer 角色按任务类型自动选择模型。Lead/Teammate 在组装 MCP 调用时，根据触发条件表的 Tier 选择 `model` 参数：
+The Developer role automatically selects a model based on task type. When assembling an MCP call, Lead/Teammate select the `model` parameter according to the Tier in the trigger condition table:
 
-| 触发条件表 Tier | Developer 模型 | model 参数值 | 理由 |
-|----------------|---------------|-------------|------|
-| Tier 1（实现） | gpt-5.3-codex | 不指定（使用默认） | 实现需要最强编码能力 |
-| Tier 1（QA）/ Tier 2a（仅 QA） | gpt-5.4-mini | `gpt-5.4-mini` | QA prompt 结构简单，mini 够用且快 |
-| Tier 2b（Developer review） | gpt-5.4-mini | `gpt-5.4-mini` | 行为模板审查，快速返回 |
-| 快速修复（typo、格式化、单行改动） | gpt-5.4-mini | `gpt-5.4-mini` | 不值得等 xhigh 推理 |
+| Trigger Table Tier | Developer Model | model Param Value | Rationale |
+|--------------------|-----------------|-------------------|-----------|
+| Tier 1 (implementation) | gpt-5.3-codex | unspecified (use default) | Implementation needs the strongest coding capability |
+| Tier 1 (QA) / Tier 2a (QA only) | gpt-5.4-mini | `gpt-5.4-mini` | QA prompts have simple structure; mini is sufficient and fast |
+| Tier 2b (Developer review) | gpt-5.4-mini | `gpt-5.4-mini` | Behavior template review, quick turnaround |
+| Quick fix (typo, formatting, single-line change) | gpt-5.4-mini | `gpt-5.4-mini` | Not worth waiting for xhigh reasoning |
 
-**调用示例**（Lead 组装 MCP 时）：
+**Invocation example** (when Lead assembles MCP):
 
-- Tier 1 实现：`mcp__codex-dev__codex` — 不指定 model（使用默认 gpt-5.3-codex）
-- Tier 1 QA / 快速修复：`mcp__codex-dev__codex` — 指定 `model: "gpt-5.4-mini"`, `reasoningEffort: "high"`
+- Tier 1 implementation: `mcp__codex-dev__codex` — do not specify model (use default gpt-5.3-codex)
+- Tier 1 QA / quick fix: `mcp__codex-dev__codex` — specify `model: "gpt-5.4-mini"`, `reasoningEffort: "high"`
 
-**注意**：gpt-5.3-codex-spark（1000+ tps 实时编码模型）因 ChatGPT Plus 认证限制暂不可用（错误："not supported when using Codex with a ChatGPT account"）。当前用 gpt-5.4-mini 覆盖 QA 和快速修复场景。如 spark 未来在 ChatGPT Plus 上可用，可作为第三档快速修复专用模型引入。
+**Note:** gpt-5.3-codex-spark (a 1000+ tps real-time coding model) is currently unavailable due to ChatGPT Plus authentication restrictions (error: "not supported when using Codex with a ChatGPT account"). gpt-5.4-mini currently covers both QA and quick-fix scenarios. If spark becomes available on ChatGPT Plus in the future, it can be introduced as a third-tier model dedicated to quick fixes.
 
-### 配置点说明
+### Configuration Points
 
-不同角色的模型由不同机制控制：
+Models for different roles are controlled by different mechanisms:
 
-| 控制对象 | 影响角色 | 配置位置 | 备注 |
-|---------|---------|---------|------|
-| Claude Code 模型 | Lead, Teammate, Doc Engineer | `~/.claude/settings.json` → `"model"` 字段，或 CLI `--model` 参数 | Teammate / Doc Engineer 继承 Lead 的模型设置 |
-| Codex 模型 | Developer | 调用 `mcp__codex-dev__codex` 时的 `model` 参数 | 实现默认 gpt-5.3-codex，QA/快速修复用 gpt-5.4-mini。详见 Developer 分档模型策略 |
-| Sub-agent 模型 | Process Observer Audit | sub-agent 定义文件中的 model 字段 | 默认 sonnet，可改回 opus |
+| Control Object | Affected Roles | Configuration Location | Notes |
+|----------------|----------------|------------------------|-------|
+| Claude Code model | Lead, Teammate, Doc Engineer | `~/.claude/settings.json` → `"model"` field, or CLI `--model` flag | Teammate / Doc Engineer inherit Lead's model setting |
+| Codex model | Developer | `model` parameter when calling `mcp__codex-dev__codex` | Defaults to gpt-5.3-codex for implementation; gpt-5.4-mini for QA / quick fix. See Developer Tiered Model Strategy |
+| Sub-agent model | Process Observer Audit | model field in the sub-agent definition file | Defaults to sonnet; can be reverted to opus |
 
-### 首次配置
+### First-Time Setup
 
-`/init-project` 和 `/migrate` 会创建项目级 `.claude/settings.json`（Agent Team 模式所需的最低配置）。模型设置需要用户自行配置：
+`/init-project` and `/migrate` create the project-level `.claude/settings.json` (the minimum configuration required for Agent Team mode). Model settings must be configured by the user:
 
-**1. 设置 Lead 模型（影响 Lead + Teammate + Doc Engineer）：**
+**1. Set the Lead model (affects Lead + Teammate + Doc Engineer):**
 
-在 `~/.claude/settings.json`（全局）中添加：
+Add to `~/.claude/settings.json` (global):
 ```json
 {
   "model": "opus",
   "effortLevel": "max"
 }
 ```
-或每次启动时指定：`claude --model opus --effort max`
+Or specify on every launch: `claude --model opus --effort max`
 
-**2. Developer 模型无需额外配置：**
+**2. The Developer model needs no extra configuration:**
 
-Developer (Codex) 的模型在 MCP 调用时通过 `model` 参数指定。Lead 组装 prompt 调用 Codex 时，默认使用 `gpt-5.3-codex`。如需更换，在调用时指定 `model` 参数即可。
+The Developer (Codex) model is specified through the `model` parameter on each MCP call. When Lead assembles a prompt and calls Codex, the default is `gpt-5.3-codex`. To swap, simply specify the `model` parameter on the call.
 
-### 中途换模型
+### Switching Models Mid-Session
 
-| 场景 | 操作 |
-|------|------|
-| 换 Lead 模型（如 opus → sonnet） | 修改 `~/.claude/settings.json` 的 `"model"` 字段，重启 session 生效 |
-| 换 Developer 模型（如 codex-5.3 → o3） | 下次调用 Codex 时指定 `model` 参数（无需重启） |
-| 会话内临时切换 Lead 模型 | 使用 `/model` 命令（注意：可能降级 effortLevel，见上方 Warning） |
-| 换 Teammate 模型 | 同 Lead——Teammate 继承 Claude Code 模型设置 |
-| 换 Process Observer Audit 模型 | 修改 `~/.claude/agents/process-observer-audit.md` 的 model 字段 |
+| Scenario | Action |
+|----------|--------|
+| Switch the Lead model (e.g., opus → sonnet) | Modify the `"model"` field in `~/.claude/settings.json`; restart the session to take effect |
+| Switch the Developer model (e.g., codex-5.3 → o3) | Specify the `model` parameter on the next Codex call (no restart needed) |
+| Temporarily switch the Lead model in-session | Use the `/model` command (note: may downgrade effortLevel — see the Warning above) |
+| Switch the Teammate model | Same as Lead — Teammate inherits the Claude Code model setting |
+| Switch the Process Observer Audit model | Modify the model field in `~/.claude/agents/process-observer-audit.md` |
 
-**注意：** Doc Engineer 作为 Lead 的 sub-agent，始终继承 Lead 的模型，无法单独配置。Process Observer Audit 通过独立的 sub-agent 定义文件（`~/.claude/agents/process-observer-audit.md`）配置模型，默认使用 Sonnet。
+**Note:** As a sub-agent of Lead, Doc Engineer always inherits Lead's model and cannot be configured independently. Process Observer Audit is configured through its own sub-agent definition file (`~/.claude/agents/process-observer-audit.md`) and defaults to Sonnet.
 
 ---
 
@@ -200,42 +200,42 @@ Template files used during project initialization:
 
 ## Hooks Configuration (Process Observer)
 
-Process Observer 的实时拦截功能通过 Claude Code PreToolUse hook 实现，覆盖 Bash、Edit、Write 和 Codex MCP 四种工具。
+Process Observer's real-time interception is implemented through Claude Code PreToolUse hooks, covering four tools: Bash, Edit, Write, and Codex MCP.
 
-### Hook 注册位置
+### Hook Registration Locations
 
-Hooks 分两层注册：
+Hooks are registered at two layers:
 
-- **用户级** `~/.claude/settings.json`：`Bash` matcher（通用安全规则——git 危险操作、敏感文件、破坏性删除）。`install.sh --upgrade` 管理，一次全局生效。
-- **项目级** `.claude/settings.json`：`Edit`、`Write`、`mcp__codex-dev__codex` matcher（iSparto 工作流规则——代码直写拦截、Codex prompt 规范）。`/init-project` 和 `/migrate` 注册，`/start-working` 自动校验补全。
+- **User-level** `~/.claude/settings.json`: `Bash` matcher (general safety rules — dangerous git operations, sensitive files, destructive deletions). Managed by `install.sh --upgrade`, takes effect globally with one install.
+- **Project-level** `.claude/settings.json`: `Edit`, `Write`, and `mcp__codex-dev__codex` matchers (iSparto workflow rules — direct-code-write interception, Codex prompt convention). Registered by `/init-project` and `/migrate`; `/start-working` auto-verifies and backfills.
 
-这样非 iSparto 项目只有通用 Bash 安全规则，不会被工作流规则拦截。
+This way, non-iSparto projects only carry the general Bash safety rules and are not intercepted by workflow rules.
 
-### Hook 机制
+### Hook Mechanism
 
-Claude Code 支持在工具调用前触发 hook 脚本。Process Observer 注册四个 PreToolUse hook matcher，在工具执行前检查是否违反操作规则或工作流规范。
+Claude Code supports triggering hook scripts before tool invocations. Process Observer registers four PreToolUse hook matchers that check, before each tool runs, whether it violates operational rules or workflow conventions.
 
-### 拦截范围
+### Interception Scope
 
-| 类别 | 监控工具 | 拦截条件 | 拦截原因 |
-|------|---------|---------|---------|
-| Git 不可逆 | Bash | `git push --force`, `git reset --hard`, `git clean -f` | 覆盖历史/丢弃修改/删除文件 |
-| 敏感信息泄露 | Bash | `git add .env`, `git add *.key` | 敏感文件可能被推送到公开仓库 |
-| 跳过安全检查 | Bash | `--no-verify`, `--no-gpg-sign` | 绕过 pre-commit hook 或签名 |
-| 破坏性文件操作 | Bash | `rm -rf /`, `rm -rf ~` | 灾难性删除 |
-| 直接在 main 开发 | Bash | main 分支上 `git commit` / `git merge` / `git push` | main 锁定，必须通过分支开发 |
-| 代码直写拦截 | Edit, Write | 目标文件为代码文件（按扩展名判定） | 代码变更必须通过 Developer (Codex) 实现 |
-| Codex 调用规范 | mcp__codex-dev__codex | prompt 缺少 `## ` 结构化标题 | 必须使用结构化 prompt 描述任务 |
+| Category | Monitored Tool | Trigger Condition | Reason for Interception |
+|----------|----------------|-------------------|-------------------------|
+| Irreversible git | Bash | `git push --force`, `git reset --hard`, `git clean -f` | Overwrites history / discards changes / deletes files |
+| Sensitive info leak | Bash | `git add .env`, `git add *.key` | Sensitive files may be pushed to a public repo |
+| Skipping safety checks | Bash | `--no-verify`, `--no-gpg-sign` | Bypasses pre-commit hook or signing |
+| Destructive file ops | Bash | `rm -rf /`, `rm -rf ~` | Catastrophic deletion |
+| Working directly on main | Bash | `git commit` / `git merge` / `git push` while on main | main is locked; work must happen on branches |
+| Direct-code-write interception | Edit, Write | Target file is a code file (judged by extension) | Code changes must go through Developer (Codex) |
+| Codex call convention | mcp__codex-dev__codex | prompt missing `## ` structured heading | Tasks must be described with a structured prompt |
 
-### 拦截行为
+### Interception Behavior
 
-匹配规则时，hook 返回非零退出码阻止执行，并输出 JSON 格式的拦截原因。
+When a rule matches, the hook returns a non-zero exit code to block execution and emits the interception reason in JSON format.
 
-### 自定义
+### Customization
 
-- **Bash 规则**：编辑 `~/.isparto/hooks/process-observer/rules/dangerous-operations.json`
-- **Edit/Write 扩展名列表**：编辑 `~/.isparto/hooks/process-observer/rules/workflow-rules.json` 中的 `code_extensions` 和 `allowed_extensions` 数组
-- 完整规则和判断原则详见 [docs/process-observer.md](process-observer.md)
+- **Bash rules**: edit `~/.isparto/hooks/process-observer/rules/dangerous-operations.json`
+- **Edit/Write extension list**: edit the `code_extensions` and `allowed_extensions` arrays in `~/.isparto/hooks/process-observer/rules/workflow-rules.json`
+- Full rules and judgment principles: see [docs/process-observer.md](process-observer.md)
 
 ---
 

@@ -1,159 +1,159 @@
 # Process Observer
 
-## 概述
+## Overview
 
-Process Observer 是 iSparto 团队的合规监督角色。它由两部分组成，优先级不同：
+Process Observer is the compliance oversight role of the iSparto team. It consists of two parts with different priorities:
 
-- **实时拦截（Hooks）— 核心层**：通过 Claude Code PreToolUse hook 监管所有工具调用（Bash / Edit / Write / Codex MCP），拦截违规操作。这是不可绕过的硬性保障。
-- **内容安全扫描（Hooks 扩展）— 核心层**：在 Edit/Write 工具写入内容时，实时扫描 critical 级别的 secret patterns（API key、private key 等）。这是 PreToolUse hook 的扩展，与操作拦截共享同一脚本。
-- **事后审计（Sub-agent）— 建议层**：/end-working 时回顾 session 执行过程，输出合规报告和改进建议。此层依赖 Lead 主动 spawn，不保证每次执行。关键合规检查已由 Hooks 层覆盖，sub-agent 的价值是发现流程改进机会，而非作为合规的唯一防线。
+- **Real-time Interception (Hooks) — Core layer**: Monitors all tool calls (Bash / Edit / Write / Codex MCP) via Claude Code PreToolUse hook and intercepts non-compliant operations. This is an unbypassable hard guarantee.
+- **Content Security Scan (Hooks extension) — Core layer**: When the Edit/Write tools write content, scans for critical-level secret patterns in real time (API keys, private keys, etc.). This is an extension of the PreToolUse hook and shares the same script as operation interception.
+- **Post-Hoc Audit (Sub-agent) — Advisory layer**: At /end-working time, reviews the session execution process and outputs a compliance report and improvement suggestions. This layer depends on the Lead actively spawning it and is not guaranteed to run every time. Critical compliance checks are already covered by the Hooks layer; the value of the sub-agent is to discover process improvement opportunities, not to serve as the sole line of defense for compliance.
 
-Process Observer 不参与开发决策，只监督流程合规性。它与 Doc Engineer 同级，都是 Team Lead 的 sub-agent。
+Process Observer does not participate in development decisions; it only monitors process compliance. It is on the same level as Doc Engineer; both are sub-agents of the Team Lead.
 
 ---
 
-## 实时拦截（Hooks）
+## Real-time Interception (Hooks)
 
-### 运行机制
+### Mechanism
 
-通过 Claude Code 的 PreToolUse hook 实现。hook 是一个 shell 脚本，在每次工具调用前被触发，检查命令是否匹配高危操作清单。如果匹配，阻止执行并输出原因。
+Implemented via Claude Code's PreToolUse hook. The hook is a shell script that is triggered before every tool call and checks whether the command matches the dangerous-operations list. If it matches, execution is blocked and a reason is printed.
 
-Hooks 分两层注册：用户级 `~/.claude/settings.json` 放 Bash 安全规则（`install.sh` 管理），项目级 `.claude/settings.json` 放 Edit/Write/Codex 工作流规则（`/init-project` 注册，`/start-working` 校验）。
+Hooks are registered at two levels: user-level `~/.claude/settings.json` holds Bash safety rules (managed by `install.sh`); project-level `.claude/settings.json` holds Edit/Write/Codex workflow rules (registered by `/init-project`, validated by `/start-working`).
 
-### 触发条件
+### Trigger Conditions
 
-工具调用匹配以下任一规则时触发拦截：
-- **Bash**：命令匹配 dangerous-operations.json 高危操作清单
-- **Edit/Write**：目标文件为代码文件（按扩展名判定）
-- **Codex MCP**：prompt 缺少结构化标题（## 格式）
+Interception is triggered when a tool call matches any of the following rules:
+- **Bash**: command matches the dangerous-operations.json dangerous-operation list
+- **Edit/Write**: target file is a code file (determined by extension)
+- **Codex MCP**: prompt lacks a structured heading (`## ` format)
 
-### 判断原则
+### Judgment Principles
 
-一个操作是否"高危"，基于三个判断维度：
+Whether an operation is "high-risk" is judged on three dimensions:
 
-| 维度 | 说明 | 示例 |
-|------|------|------|
-| 不可逆 | 操作无法撤回，或撤回代价极高 | `git push --force`、`rm -rf` |
-| 影响共享状态 | 操作改变其他人（或其他 session）依赖的状态 | 直接 push 到 main、修改全局配置 |
-| 数据丢失 | 操作可能导致代码、文档或用户数据丢失 | `git reset --hard`、`git clean -f` |
+| Dimension | Description | Example |
+|-----------|-------------|---------|
+| Irreversible | Operation cannot be undone, or undoing it is prohibitively costly | `git push --force`, `rm -rf` |
+| Affects shared state | Operation changes state that other people (or other sessions) depend on | Pushing directly to main, modifying global configuration |
+| Data loss | Operation may cause loss of code, documentation, or user data | `git reset --hard`, `git clean -f` |
 
-满足任一维度即视为高危。
+Meeting any one dimension qualifies as high-risk.
 
-### 高危操作分类
+### Dangerous Operation Categories
 
-#### 1. Git 不可逆操作
+#### 1. Irreversible Git Operations
 
-| 操作 | 拦截原因 |
-|------|---------|
-| `git push --force` / `git push -f`（到 main/master） | 覆盖远程保护分支历史，其他协作者的工作可能丢失 |
-| `git reset --hard` | 丢弃所有未提交的本地修改 |
-| `git clean -fd` / `git clean -f` | 删除未跟踪的文件，不可恢复 |
-| `git checkout -- .` | 丢弃所有未暂存的修改 |
-| `git branch -D main` / `git branch -d main`（保护分支） | 删除 main/master 分支 |
+| Operation | Reason for Interception |
+|-----------|------------------------|
+| `git push --force` / `git push -f` (to main/master) | Overwrites remote protected-branch history; other collaborators' work may be lost |
+| `git reset --hard` | Discards all uncommitted local changes |
+| `git clean -fd` / `git clean -f` | Deletes untracked files, unrecoverable |
+| `git checkout -- .` | Discards all unstaged changes |
+| `git branch -D main` / `git branch -d main` (protected branch) | Deletes the main/master branch |
 
-#### 2. 敏感信息泄露
+#### 2. Sensitive Information Leakage
 
-> **已迁移：** 敏感文件检测（`git add .env`、`git add *.pem` 等）已从 dangerous-operations.json 移除，由三层安全系统（security-patterns.json）统一负责——L1 实时内容扫描、L2 pre-commit staged 文件扫描、L3 全量审计。新系统扫描实际文件内容而非命令字符串，精度更高且无误报。详见 [docs/security.md](security.md)。
+> **Migrated:** Sensitive file detection (`git add .env`, `git add *.pem`, etc.) has been removed from dangerous-operations.json and is now handled uniformly by the three-layer security system (security-patterns.json) — L1 real-time content scan, L2 pre-commit staged-file scan, L3 full audit. The new system scans actual file content rather than command strings, providing higher precision with no false positives. See [docs/security.md](security.md) for details.
 
-#### 3. 跳过安全检查
+#### 3. Skipping Safety Checks
 
-| 操作 | 拦截原因 |
-|------|---------|
-| `--no-verify` 标志 | 跳过 pre-commit / pre-push hook |
-| `--no-gpg-sign` 标志 | 跳过 GPG 签名 |
+| Operation | Reason for Interception |
+|-----------|------------------------|
+| `--no-verify` flag | Skips pre-commit / pre-push hook |
+| `--no-gpg-sign` flag | Skips GPG signing |
 
-#### 4. 破坏性文件操作
+#### 4. Destructive File Operations
 
-| 操作 | 拦截原因 |
-|------|---------|
-| `rm -rf /` 或 `rm -rf ~` | 灾难性删除（匹配根目录和 home 目录） |
-| 删除项目根目录下的关键文件（CLAUDE.md、.git/） | 项目结构被破坏 |
+| Operation | Reason for Interception |
+|-----------|------------------------|
+| `rm -rf /` or `rm -rf ~` | Catastrophic deletion (matches root directory and home directory) |
+| Deleting key files in the project root (CLAUDE.md, .git/) | Destroys project structure |
 
-#### 5. iSparto 特有保护
+#### 5. iSparto-Specific Protections
 
-| 操作 | 拦截原因 |
-|------|---------|
-| 删除 `~/.isparto/backup` 目录 | 移除卸载/回滚能力 |
-| 删除 `~/.isparto/snapshots` 目录 | 移除所有配置还原点 |
-| 删除 `~/.isparto` 目录 | 移除全部 iSparto 数据 |
-| 删除 `~/.claude` 目录 | 移除全部 Claude Code 配置 |
+| Operation | Reason for Interception |
+|-----------|------------------------|
+| Deleting the `~/.isparto/backup` directory | Removes uninstall/rollback capability |
+| Deleting the `~/.isparto/snapshots` directory | Removes all configuration restore points |
+| Deleting the `~/.isparto` directory | Removes all iSparto data |
+| Deleting the `~/.claude` directory | Removes all Claude Code configuration |
 
-#### 6. 直接在 main 开发
+#### 6. Developing Directly on main
 
-| 操作 | 拦截原因 |
-|------|---------|
-| 当前分支为 main 时执行 `git commit` | main 锁定，所有开发必须在 feat/fix/hotfix 分支 |
-| `git push origin main`（非 PR merge） | 绕过 PR 流程直接推送 |
+| Operation | Reason for Interception |
+|-----------|------------------------|
+| Running `git commit` while on the main branch | main is locked; all development must happen on feat/fix/hotfix branches |
+| `git push origin main` (non-PR merge) | Bypasses the PR flow with a direct push |
 
-#### 7. 工作流合规（Edit / Write / Codex 拦截）
+#### 7. Workflow Compliance (Edit / Write / Codex Interception)
 
-##### 代码直写拦截（Edit / Write）
+##### Direct Code Write Interception (Edit / Write)
 
-| 操作 | 拦截原因 |
-|------|---------|
-| Edit/Write 目标为代码文件（.sh, .py, .swift, .js, .ts 等） | 代码变更必须通过 Developer (Codex) 实现，不可直接编辑 |
-| Edit/Write 目标为无扩展名文件（Makefile 等） | 默认视为代码文件（fail-safe） |
+| Operation | Reason for Interception |
+|-----------|------------------------|
+| Edit/Write target is a code file (.sh, .py, .swift, .js, .ts, etc.) | Code changes must be implemented through Developer (Codex); direct editing is not allowed |
+| Edit/Write target has no extension (Makefile, etc.) | Treated as a code file by default (fail-safe) |
 
-**判定逻辑：**
-- 提取 Edit/Write 工具的 `file_path` 参数
-- 根据文件扩展名判定：allowed_extensions 放行，其他拦截
-- 代码文件扩展名（拦截）：.sh, .py, .swift, .js, .ts, .jsx, .tsx, .go, .rs, .java, .kt, .c, .cpp, .h, .m, .mm, .rb 等
-- 允许的扩展名（放行）：.md, .json, .yaml, .yml, .toml, .txt, .svg, .png, .css, .html 等
-- 未识别的扩展名默认按代码文件处理（fail-safe）
+**Decision logic:**
+- Extract the `file_path` parameter from the Edit/Write tool
+- Decide based on file extension: allowed_extensions are passed through; others are intercepted
+- Code-file extensions (intercepted): .sh, .py, .swift, .js, .ts, .jsx, .tsx, .go, .rs, .java, .kt, .c, .cpp, .h, .m, .mm, .rb, etc.
+- Allowed extensions (passed through): .md, .json, .yaml, .yml, .toml, .txt, .svg, .png, .css, .html, etc.
+- Unrecognized extensions default to being treated as code files (fail-safe)
 
-**谁会被拦：**
+**Who gets intercepted:**
 
-Hooks 运行在所有带 project settings 的 Claude Code session 中：
-- **Lead**（主 session）→ 被拦
-- **Teammate**（tmux session，共享 project settings）→ 被拦
-- **Doc Engineer**（Lead 的 sub-agent，共享 session）→ 被拦
-- **Developer (Codex MCP)**（独立进程，不走 hooks）→ **不被拦**
+Hooks run in every Claude Code session that has project settings:
+- **Lead** (main session) → intercepted
+- **Teammate** (tmux session, shares project settings) → intercepted
+- **Doc Engineer** (Lead's sub-agent, shares the session) → intercepted
+- **Developer (Codex MCP)** (independent process, does not go through hooks) → **not intercepted**
 
-这是设计意图：只有 Developer (Codex) 应该写代码，其他角色都通过 Developer 间接操作。
+This is the intended design: only Developer (Codex) should write code; all other roles operate indirectly through Developer.
 
-##### Codex 调用规范（mcp__codex-dev__codex）
+##### Codex Invocation Convention (mcp__codex-dev__codex)
 
-| 操作 | 拦截原因 |
-|------|---------|
-| 调用 Developer 时 prompt 不含 `## ` 结构化标题 | 必须使用结构化 prompt 描述任务 |
+| Operation | Reason for Interception |
+|-----------|------------------------|
+| Calling Developer with a prompt that lacks a `## ` structured heading | A structured prompt must be used to describe the task |
 
-**自定义扩展名列表：**
+**Custom extension list:**
 
-扩展名列表定义在 `hooks/process-observer/rules/workflow-rules.json` 中，可根据项目需要调整 `code_extensions` 和 `allowed_extensions` 数组。
+The extension list is defined in `hooks/process-observer/rules/workflow-rules.json` and the `code_extensions` and `allowed_extensions` arrays can be adjusted to suit project needs.
 
-#### 8. 内容安全扫描（Write / Edit 实时拦截）
+#### 8. Content Security Scan (Write / Edit Real-time Interception)
 
-| 操作 | 拦截原因 |
-|------|---------|
-| Write/Edit 写入的内容包含 AWS Access Key (AKIA...) | 硬编码 secret 泄露风险 |
-| Write/Edit 写入的内容包含 Anthropic API Key (sk-ant-...) | 硬编码 secret 泄露风险 |
-| Write/Edit 写入的内容包含 Private Key Header (-----BEGIN...PRIVATE KEY-----) | 私钥文件内容泄露 |
-| Write/Edit 写入的内容包含 Stripe Key (sk_test_/sk_live_...) | 支付凭证泄露风险 |
-| Write/Edit 写入的内容包含 GitHub Token (ghp_/gho_...) | 仓库访问凭证泄露 |
+| Operation | Reason for Interception |
+|-----------|------------------------|
+| Write/Edit content contains an AWS Access Key (AKIA...) | Risk of leaking a hard-coded secret |
+| Write/Edit content contains an Anthropic API Key (sk-ant-...) | Risk of leaking a hard-coded secret |
+| Write/Edit content contains a Private Key Header (-----BEGIN...PRIVATE KEY-----) | Leak of private-key file contents |
+| Write/Edit content contains a Stripe Key (sk_test_/sk_live_...) | Risk of leaking payment credentials |
+| Write/Edit content contains a GitHub Token (ghp_/gho_...) | Leak of repository access credentials |
 
-**判定逻辑：**
-- 在 Edit/Write 扩展名检查通过后、放行之前，提取写入内容
-- Write 工具：扫描 `content` 字段
-- Edit 工具：扫描 `new_string` 字段
-- 仅检查 `realtime_critical` 子集（5 个 critical 级别 pattern），不做全量扫描——hook 在热路径上，性能优先
-- 完整扫描由 pre-commit-security.sh（commit 前）和 /security-audit（里程碑）覆盖
-- Pattern 定义：`hooks/process-observer/rules/security-patterns.json` 的 `realtime_critical` 字段
+**Decision logic:**
+- After the Edit/Write extension check passes, but before passing through, extract the content being written
+- Write tool: scan the `content` field
+- Edit tool: scan the `new_string` field
+- Only the `realtime_critical` subset is checked (5 critical-level patterns); no full scan is performed — the hook is on the hot path and performance comes first
+- A complete scan is covered by pre-commit-security.sh (before commit) and /security-audit (milestone)
+- Pattern definitions: the `realtime_critical` field of `hooks/process-observer/rules/security-patterns.json`
 
-**与 Layer 2/3 的关系：**
+**Relationship with Layers 2/3:**
 
-| 层 | 时机 | 范围 | 性能要求 |
-|----|------|------|---------|
-| PreToolUse content scan | 每次 Write/Edit | critical patterns only | 高（热路径） |
-| pre-commit-security.sh | 每次 commit | 全部 patterns | 中 |
-| /security-audit | 手动触发 | 全量 + 历史 + 依赖 | 低 |
+| Layer | Timing | Scope | Performance Requirement |
+|-------|--------|-------|------------------------|
+| PreToolUse content scan | Every Write/Edit | critical patterns only | High (hot path) |
+| pre-commit-security.sh | Every commit | All patterns | Medium |
+| /security-audit | Manually triggered | Full + history + dependencies | Low |
 
-### 拦截行为
+### Interception Behavior
 
-当检测到高危操作时：
-1. **阻止执行**：返回非零退出码，Claude Code 不执行该命令
-2. **输出原因**：在 stderr 输出拦截原因和建议替代方案
+When a dangerous operation is detected:
+1. **Block execution**: Return a non-zero exit code; Claude Code does not execute the command
+2. **Print the reason**: Print the interception reason and suggested alternative on stderr
 
-示例输出：
+Example output:
 ```
 [Process Observer] BLOCKED: git push --force
 Reason: Force push overwrites remote history and may destroy collaborators' work.
@@ -162,71 +162,71 @@ Suggestion: Use `git push` (without --force) or `git push --force-with-lease` fo
 
 ---
 
-## 事后审计（Sub-agent）
+## Post-Hoc Audit (Sub-agent)
 
-### 运行机制
+### Mechanism
 
-由 Team Lead 在 /end-working 流程中作为 sub-agent 派生，与 Doc Engineer 同级。审计当前 session 的执行过程，检查是否有违反工作流规范的行为。
+Spawned by the Team Lead as a sub-agent during the /end-working flow, on the same level as Doc Engineer. It audits the execution of the current session and checks for behavior that violates workflow rules.
 
-事后审计使用 Sonnet 4.6 模型（通过 `~/.claude/agents/process-observer-audit.md` 定义），而非 Lead 的 Opus 模型。这是有意的降级——审计工作是结构化的 checklist 比对，Sonnet 足以胜任，且关键合规检查已前移到 Hooks 层。
+The post-hoc audit uses the Sonnet 4.6 model (defined via `~/.claude/agents/process-observer-audit.md`) rather than the Lead's Opus model. This is a deliberate downgrade — auditing is a structured checklist comparison, Sonnet is more than capable, and critical compliance checks have already been moved to the Hooks layer.
 
-### 触发时机
+### Trigger Timing
 
-/end-working 流程中，在 Doc Engineer 文档审计之后、推分支/建 PR 之前执行。
+In the /end-working flow, executed after the Doc Engineer documentation audit and before pushing the branch / opening the PR.
 
-### 审计 Checklist
+### Audit Checklist
 
-#### Checklist A：分支规范
+#### Checklist A: Branch Rules
 
-| # | 检查项 | 判定标准 | 偏差级别 |
-|---|--------|---------|---------|
-| A1 | 当前分支是否为 feat/、fix/、hotfix/、docs/ 或 release/ | 分支名前缀匹配 | P1 |
-| A2 | 是否有直接 commit 到 main 的记录 | git log 对比 session 开始时的 main HEAD | P1 |
-| A3 | 分支命名是否遵循约定 | feat/xxx、fix/xxx、hotfix/xxx、docs/xxx、release/vX.Y.Z 格式 | P2 |
+| # | Check | Criterion | Deviation Level |
+|---|-------|-----------|----------------|
+| A1 | Whether the current branch is feat/, fix/, hotfix/, docs/, or release/ | Branch name prefix matches | P1 |
+| A2 | Whether there are any direct commits to main | git log compared with the main HEAD at session start | P1 |
+| A3 | Whether the branch name follows the convention | feat/xxx, fix/xxx, hotfix/xxx, docs/xxx, release/vX.Y.Z format | P2 |
 
-#### Checklist B：Codex Review 合规
+#### Checklist B: Codex Review Compliance
 
-| # | 检查项 | 判定标准 | 偏差级别 |
-|---|--------|---------|---------|
-| B1 | 代码改动是否触发 Codex code review | 默认应触发；仅 Tier 2（纯视觉、非安全配置值）和 Tier 3（纯文档/纯格式化）可跳过 code review。对照 workflow.md 触发条件表判断 | P1 |
-| B2 | QA smoke testing 是否触发 | 默认应触发；仅纯文档/纯格式化改动可跳过。对照 workflow.md 触发条件表判断 | P1 |
-| B3 | Codex 发现的问题是否被处理 | Codex review 输出的 catches 是否有对应的 fix commit | P1 |
-| B4 | Wave 级兜底 review 是否执行 | 每个 Wave 至少包含一次批量 Codex review，不论单次改动如何分类 | P1 |
+| # | Check | Criterion | Deviation Level |
+|---|-------|-----------|----------------|
+| B1 | Whether code changes triggered Codex code review | Should trigger by default; only Tier 2 (purely visual, non-security config values) and Tier 3 (pure documentation / pure formatting) may skip code review. Decide against the trigger-condition table in workflow.md | P1 |
+| B2 | Whether QA smoke testing was triggered | Should trigger by default; only pure documentation / pure formatting changes may be skipped. Decide against the trigger-condition table in workflow.md | P1 |
+| B3 | Whether issues found by Codex were resolved | Whether the catches output by Codex review have corresponding fix commits | P1 |
+| B4 | Whether the Wave-level fallback review was executed | Every Wave must include at least one batch Codex review, regardless of how individual changes are classified | P1 |
 
-#### Checklist C：Doc Engineer 合规
+#### Checklist C: Doc Engineer Compliance
 
-| # | 检查项 | 判定标准 | 偏差级别 |
-|---|--------|---------|---------|
-| C1 | Doc Engineer 是否运行 | session 中有 Doc Engineer 派生记录 | P1 |
-| C2 | 代码改动是否有对应文档更新 | diff 中 .md 文件变更与代码变更的对应关系 | P2 |
-| C3 | plan.md 是否更新 | plan.md 在 session 中有 diff 记录 | P1 |
-| C4 | plan.md 未完成项与实际状态一致 | 对照 plan.md 中标 `[ ]` 的条目，检查对应文件/功能是否已存在于代码库中。已实现但未标完成的条目视为偏差 | P1 |
+| # | Check | Criterion | Deviation Level |
+|---|-------|-----------|----------------|
+| C1 | Whether Doc Engineer ran | A Doc Engineer spawn record exists in the session | P1 |
+| C2 | Whether code changes have corresponding documentation updates | Correspondence between .md file changes and code changes in the diff | P2 |
+| C3 | Whether plan.md was updated | plan.md has a diff record in the session | P1 |
+| C4 | Whether plan.md unchecked items match the actual state | For items marked `[ ]` in plan.md, check whether the corresponding files/features already exist in the codebase. Items that are implemented but not marked complete count as deviations | P1 |
 
-#### Checklist D：PR 流程合规
+#### Checklist D: PR Flow Compliance
 
-| # | 检查项 | 判定标准 | 偏差级别 |
-|---|--------|---------|---------|
-| D1 | 是否通过 PR 合入 main | gh pr list 记录，main 的新 commit 来自 PR merge | P1 |
-| D2 | 合入后是否清理了分支 | 远程分支列表中不存在已合入的 feat/fix/hotfix 分支 | P3 |
+| # | Check | Criterion | Deviation Level |
+|---|-------|-----------|----------------|
+| D1 | Whether merged into main via PR | gh pr list record; new commits on main come from a PR merge | P1 |
+| D2 | Whether the branch was cleaned up after merging | The merged feat/fix/hotfix branch does not appear in the remote branch list | P3 |
 
-#### Checklist E：越权操作
+#### Checklist E: Out-of-Scope Operations
 
-| # | 检查项 | 判定标准 | 偏差级别 |
-|---|--------|---------|---------|
-| E1 | Developer 是否修改了所有权外的文件 | git log --name-only 文件列表 vs Team Lead 分配的文件所有权 | P1 |
-| E2 | 不确定的产品决策是否上报了用户 | 对话上下文中是否有向用户确认的记录 | P2 |
+| # | Check | Criterion | Deviation Level |
+|---|-------|-----------|----------------|
+| E1 | Whether Developer modified files outside its ownership | git log --name-only file list vs the file ownership assigned by Team Lead | P1 |
+| E2 | Whether uncertain product decisions were escalated to the user | Whether the conversation context contains a record of confirming with the user | P2 |
 
-### 偏差级别说明
+### Deviation Level Definitions
 
-| 级别 | 含义 | 处理方式 |
-|------|------|---------|
-| P1 | 严重偏差，违反核心工作流规范 | 必须在报告中标红，建议立即修正 |
-| P2 | 一般偏差，不影响交付质量但需改进 | 在报告中标记为 WARNING，建议下次改进 |
-| P3 | 轻微偏差，最佳实践建议 | 在报告中标记为 INFO，供参考 |
+| Level | Meaning | Handling |
+|-------|---------|----------|
+| P1 | Severe deviation, violates core workflow rules | Must be flagged red in the report; immediate correction is recommended |
+| P2 | General deviation, does not affect delivery quality but needs improvement | Marked as WARNING in the report; improvement recommended next time |
+| P3 | Minor deviation, best-practice suggestion | Marked as INFO in the report, for reference |
 
 ---
 
-## 偏差报告模板
+## Deviation Report Template
 
 ```markdown
 ### Compliance Audit
@@ -257,23 +257,23 @@ Suggestion: Use `git push` (without --force) or `git push --force-with-lease` fo
 
 ---
 
-## 反馈闭环
+## Feedback Loop
 
-审计发现偏差后，不直接修改文件，而是通过报告和建议驱动改进：
+After the audit finds a deviation, no files are modified directly; improvement is driven through reports and suggestions:
 
-### 1. 根因分析
-分析偏差原因，区分：
-- **流程疏忽**：知道规则但忘了执行（如忘记触发 Codex review）
-- **规则不明确**：规则本身有歧义或边界不清晰
-- **工具限制**：当前工具/环境不支持自动执行
+### 1. Root-Cause Analysis
+Analyze the cause of the deviation, distinguishing among:
+- **Process slip**: knew the rule but forgot to apply it (e.g. forgot to trigger Codex review)
+- **Unclear rule**: the rule itself is ambiguous or its boundaries are unclear
+- **Tool limitation**: the current tooling/environment does not support automatic execution
 
-### 2. 修正建议
-输出具体的修正建议，包括：
-- 对于流程疏忽：建议在哪个步骤增加检查点
-- 对于规则不明确：建议修改 CLAUDE.md 或 docs/ 中的具体措辞
-- 对于工具限制：记录为已知限制，等待工具升级
+### 2. Correction Suggestions
+Produce concrete correction suggestions, including:
+- For process slips: suggest where to add a checkpoint
+- For unclear rules: suggest specific wording changes to CLAUDE.md or files under docs/
+- For tool limitations: record as a known limitation and wait for the tooling to be upgraded
 
-### 3. 执行方式
-- 审计报告和修正建议输出到 /end-working 的 session briefing 中
-- **不自动修改任何文件**——修正建议仅作为建议输出
-- 下次 /start-working 时，Lead 在 briefing 中提醒用户上次审计的偏差和建议，由用户决定是否采纳
+### 3. Execution Method
+- The audit report and correction suggestions are output to the /end-working session briefing
+- **No files are modified automatically** — correction suggestions are output as suggestions only
+- At the next /start-working, Lead reminds the user of the previous audit's deviations and suggestions in the briefing; the user decides whether to adopt them

@@ -195,7 +195,7 @@ All code changes trigger both implementation and QA unless they fall entirely wi
 | Permissions / security | Entitlements, Info.plist, credentials handling, encryption |
 | Infrastructure | CI/CD pipelines, deployment config, install/upgrade scripts |
 
-> **模型选择**：Tier 1 的实现步骤使用 Developer 默认模型（gpt-5.3-codex, xhigh），QA 步骤和 Tier 2 使用 gpt-5.4-mini（high）。详见 docs/configuration.md "Developer 分档模型策略"。
+> **Model selection:** Tier 1 implementation steps use the Developer default model (gpt-5.3-codex, xhigh); QA steps and Tier 2 use gpt-5.4-mini (high). See docs/configuration.md "Developer tiered model strategy" for details.
 
 ### Tier 2: Partial review
 
@@ -294,18 +294,18 @@ Developer intervenes in three scenarios:
 
 ## Process Observer Integration
 
-Process Observer 在两个层面集成到工作流中：
+Process Observer is integrated into the workflow at two layers:
 
-### Hooks 配置（实时拦截）
+### Hooks configuration (real-time interception)
 
-通过 Claude Code PreToolUse hook 实现。hook 脚本在每次工具调用前被触发，检查命令是否匹配高危操作清单（git push --force、直接 commit 到 main、敏感文件泄露等）。匹配时阻止执行并输出原因。
+Implemented via the Claude Code PreToolUse hook. The hook script is triggered before every tool invocation, checking whether the command matches the dangerous-operations list (git push --force, direct commit to main, sensitive file leaks, etc.). On a match, execution is blocked and the reason is output.
 
-hook 的配置和高危操作清单详见 [docs/process-observer.md -> 实时拦截](process-observer.md#实时拦截hooks)。
+Hook configuration and the dangerous-operations list are documented in [docs/process-observer.md -> Real-time Interception](process-observer.md#real-time-interception-hooks).
 
-### 事后审计触发
+### Post-hoc audit trigger
 
-在 /end-working 流程中，**Doc Engineer 文档审计之后、推分支/建 PR 之前**，Team Lead 派生 Process Observer sub-agent 执行合规审计。审计对照 5 个 Checklist（共 14 个检查项）输出偏差报告。
+During the /end-working flow, **after the Doc Engineer documentation audit and before pushing the branch / creating the PR**, the Team Lead spawns a Process Observer sub-agent to run a compliance audit. The audit produces a deviation report against 5 checklists (14 checks total).
 
-审计报告输出到 session briefing 中，不自动修改文件。下次 /start-working 时 Lead 在 briefing 中提醒用户上次审计偏差。
+The audit report is written to the session briefing and does not modify files automatically. On the next /start-working, the Lead reminds the user about the previous session's deviations in the briefing.
 
-完整审计 Checklist 和偏差报告模板详见 [docs/process-observer.md -> 事后审计](process-observer.md#事后审计sub-agent)。
+The full audit checklists and deviation report template are documented in [docs/process-observer.md -> Post-Hoc Audit](process-observer.md#post-hoc-audit-sub-agent).

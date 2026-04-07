@@ -334,7 +334,7 @@ Audit checklist:
 5. CLAUDE.md update
    - Do module boundaries need adjustment (new directories, file ownership changes)
    - Does the project structure diagram need updating
-   - If workflow sections (Collaboration Mode, Implementation Protocol, User Preference Interface) were changed: is CLAUDE-TEMPLATE.md (English) in sync with CLAUDE.md (Chinese)? These two files share ~90 lines of structurally identical content in different languages
+   - If workflow sections (Collaboration Mode, Implementation Protocol, User Preference Interface) were changed: is CLAUDE-TEMPLATE.md in sync with CLAUDE.md? These two files share ~90 lines of structurally identical content
 
 6. Product terminology consistency
    - Are command counts, feature names, and role names consistent across all docs
@@ -383,14 +383,14 @@ Key principles:
 
 ## Process Observer (Team Lead's sub-agent)
 
-Process Observer 是团队的合规监督角色，确保开发流程遵循 CLAUDE.md 和工作流规范。它由两部分组成，优先级不同：
+Process Observer is the team's compliance oversight role, ensuring the development workflow follows CLAUDE.md and the workflow specification. It consists of two parts at different priorities:
 
-- **实时拦截（Hooks）— 核心层**：通过 Claude Code PreToolUse hook 在命令执行前拦截灾难性操作和分支违规（git push --force、直接 commit/merge/push 在 main、泄露敏感文件等）。不可绕过的硬性保障，无模型依赖。
-- **事后审计（Audit sub-agent）— 建议层**：使用 Sonnet 4.6 模型（非 Opus），降低 token 消耗。/end-working 流程中，在 Doc Engineer 之后运行，对照 5 个 Checklist（共 14 个检查项）输出偏差报告。质量由 Hooks 核心层兜底——关键合规检查已在 Hooks 层覆盖，audit 的价值是发现流程改进机会。
+- **Real-time Interception (Hooks) — Core layer:** Uses the Claude Code PreToolUse hook to intercept catastrophic operations and branch violations before command execution (git push --force, direct commit/merge/push on main, leaking sensitive files, etc.). A hard guarantee that cannot be bypassed and has no model dependency.
+- **Post-hoc audit (Audit sub-agent) — Advisory layer:** Uses the Sonnet 4.6 model (not Opus) to reduce token consumption. During the /end-working flow, runs after the Doc Engineer and produces a deviation report against 5 checklists (14 checks total). Quality is backstopped by the Hooks core layer — critical compliance checks are already covered at the Hooks layer, and the value of the audit is to surface process improvement opportunities.
 
-Process Observer 不参与开发决策，只监督流程合规性。审计报告输出到 session briefing，不自动修改文件。
+Process Observer does not participate in development decisions; it only oversees process compliance. Audit reports are written to the session briefing and do not modify files automatically.
 
-> 完整定义和审计 Checklist 详见 [docs/process-observer.md](process-observer.md)。
+> See [docs/process-observer.md](process-observer.md) for the full definition and audit checklists.
 
 ---
 

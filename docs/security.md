@@ -1,88 +1,88 @@
-# iSparto 安全审计系统
+# iSparto Security Audit System
 
-## 三层防御
+## Three-Layer Defense
 
-### Layer 1: Real-time Write Gate（PreToolUse hook 扩展）
+### Layer 1: Real-time Write Gate (PreToolUse hook extension)
 
-每次 Write/Edit 工具写入内容时实时触发。
+Triggered in real time whenever the Write/Edit tool writes content.
 
-检查内容：
-- 5 个 critical 级别 secret patterns（AWS Key、Anthropic Key、Private Key、Stripe Key、GitHub Token）
-- 命中 → 阻止写入，提示使用环境变量或配置引用
+Checks:
+- 5 critical-level secret patterns (AWS Key, Anthropic Key, Private Key, Stripe Key, GitHub Token)
+- On match → block the write and prompt the user to use an environment variable or config reference
 
-配置：
-- 规则定义：`security-patterns.json` 的 `realtime_critical` 字段
-- 执行脚本：`pre-tool-check.sh`（现有脚本的扩展）
+Configuration:
+- Rule definition: the `realtime_critical` field in `security-patterns.json`
+- Execution script: `pre-tool-check.sh` (an extension of the existing script)
 
-特点：
-- 在 secret 写入文件之前就拦截（比 pre-commit 更早一步）
-- 仅检查 critical 子集，确保 hook 性能不受影响
+Characteristics:
+- Intercepts before the secret reaches the file (one step earlier than pre-commit)
+- Only the critical subset is checked, keeping hook performance unaffected
 
 ### Layer 2: Pre-commit Gate
 
-每次 `/end-working` 执行 commit 前自动触发。
+Triggered automatically before each `/end-working` commit.
 
-检查内容：
-- 全量 Secret 扫描：所有 secrets 和 pii patterns（命中 critical/high → 阻断 commit）
-- 敏感文件检测：.env、.pem、.key 等文件是否被 staged（命中 → 阻断）
-- PII 检测：手机号、身份证号、银行卡号（命中 → 警告，不阻断）
+Checks:
+- Full secret scan: all secrets and pii patterns (critical/high match → block commit)
+- Sensitive file detection: whether files such as .env, .pem, .key are staged (match → block)
+- PII detection: phone numbers, ID numbers, bank card numbers (match → warn, do not block)
 
-配置：
-- 规则定义：`~/.isparto/hooks/process-observer/rules/security-patterns.json`
-- 扫描脚本：`~/.isparto/hooks/process-observer/scripts/pre-commit-security.sh`
-- 白名单：项目根目录 `.secureignore`
+Configuration:
+- Rule definition: `~/.isparto/hooks/process-observer/rules/security-patterns.json`
+- Scan script: `~/.isparto/hooks/process-observer/scripts/pre-commit-security.sh`
+- Allowlist: `.secureignore` in the project root
 
 ### Layer 3: Milestone Audit
 
-通过 `/security-audit` 命令在 Phase 完成或发布前手动触发。
+Triggered manually via the `/security-audit` command at Phase completion or before release.
 
-覆盖范围：
-- 全量文件扫描（不仅 staged）
-- .gitignore 完整性对照基线
-- Git 历史中的泄露痕迹（使用 `git log -G` 正则扫描）
-- 依赖安全漏洞
+Coverage:
+- Full file scan (not just staged)
+- .gitignore completeness against the baseline
+- Leak traces in git history (regex scan via `git log -G`)
+- Dependency security vulnerabilities
 
-### 敏感文件分类
+### Sensitive File Classification
 
-security-patterns.json 的 sensitive_files 按以下分类组织：
+The `sensitive_files` section of security-patterns.json is organized into the following categories:
 
-| 分类 | 典型文件 | 风险 |
-|------|---------|------|
-| 凭证文件 | .env, *.key, *.pem, *.p12 | 直接暴露密钥 |
-| 构建产物 | *.map, *.dSYM, proguard-mapping.txt | 暴露完整源码（source map 事件） |
-| 基础设施状态 | terraform.tfstate, *.tfvars | 含明文密码和连接字符串 |
-| 调试产物 | core dump, *.hprof, hs_err_pid*.log | 含内存中的敏感数据 |
-| IDE 配置 | .idea/dataSources.xml, .idea/tasks.xml | 含数据库密码、服务器凭证 |
-| 发布产物 | *.tgz, *.whl, *.ipa, *.apk | 不应进入源码仓库 |
-| 备份文件 | *.bak, *.old, *.orig | 可含旧版凭证或敏感数据 |
+| Category | Typical Files | Risk |
+|----------|---------------|------|
+| Credential files | .env, *.key, *.pem, *.p12 | Directly exposes keys |
+| Build artifacts | *.map, *.dSYM, proguard-mapping.txt | Exposes full source code (source map incident) |
+| Infrastructure state | terraform.tfstate, *.tfvars | Contains plaintext passwords and connection strings |
+| Debug artifacts | core dump, *.hprof, hs_err_pid*.log | Contains sensitive data from memory |
+| IDE configuration | .idea/dataSources.xml, .idea/tasks.xml | Contains database passwords and server credentials |
+| Release artifacts | *.tgz, *.whl, *.ipa, *.apk | Should not enter the source repository |
+| Backup files | *.bak, *.old, *.orig | May contain old credentials or sensitive data |
 
-### Wave-level Review（嵌入现有流程）
+### Wave-level Review (embedded in the existing workflow)
 
-每个 Wave 的 Codex 代码审查和 Doc Engineer 文档审计中自动包含安全检查：
+Security checks are automatically included in each Wave's Codex code review and Doc Engineer documentation audit:
 
-Codex 审查覆盖：
-- 硬编码凭证
-- 调试日志泄露敏感数据
-- 可疑依赖
+Codex review covers:
+- Hardcoded credentials
+- Debug logs leaking sensitive data
+- Suspicious dependencies
 
-Doc Engineer 审计覆盖：
-- 代码中的凭证
-- .gitignore 完整性
-- 文档中的真实凭证/个人信息
-- 第三方依赖可信度
+Doc Engineer audit covers:
+- Credentials in code
+- .gitignore completeness
+- Real credentials / personal information in documentation
+- Trustworthiness of third-party dependencies
 
-## 与 dangerous-operations.json 的关系
+## Relationship with dangerous-operations.json
 
-两套规则互补，不重叠：
+The two rule sets are complementary and do not overlap:
 
-| 规则集 | 拦截层 | 拦截目标 |
-|-------|--------|---------|
-| dangerous-operations.json | Bash 命令 | 阻止**执行** `git add .env`、`cat .env` 等命令 |
-| security-patterns.json | 文件内容 | 阻止**写入/提交**含 secret 的代码内容 |
+| Rule Set | Interception Layer | Interception Target |
+|----------|--------------------|---------------------|
+| dangerous-operations.json | Bash commands | Blocks **execution** of commands such as `git add .env`, `cat .env` |
+| security-patterns.json | File contents | Blocks **writing/committing** code content that contains secrets |
 
-## 误报处理
+## False-Positive Handling
 
-在项目根目录创建 `.secureignore`，每行格式：
+Create a `.secureignore` file in the project root, one entry per line, in the following format:
 
 ```
 # file_path:pattern_id:reason
@@ -91,13 +91,13 @@ test/fixtures/mock-credentials.json:test fixtures with fake data
 src/constants.ts:email-hardcoded:support email is intentionally hardcoded
 ```
 
-Pre-commit scanner 在扫描前读取此文件，跳过匹配的 file:pattern 组合。
+Before scanning, the pre-commit scanner reads this file and skips the matching file:pattern combinations.
 
-## 泄露应急流程
+## Leak Incident Response
 
-如果发现已泄露的凭证：
-1. **立即 rotate**（更换）所有泄露的密钥/token
-2. 用 `git filter-repo` 或 `BFG Repo-Cleaner` 从 git 历史中清除
-3. Force push 到远程仓库
-4. 通知所有协作者重新 clone
-5. 记录到 docs/plan.md 的技术决策记录中
+If a leaked credential is discovered:
+1. **Rotate immediately** — replace all leaked keys/tokens
+2. Purge from git history using `git filter-repo` or `BFG Repo-Cleaner`
+3. Force push to the remote repository
+4. Notify all collaborators to re-clone
+5. Record in the technical decision log of docs/plan.md
