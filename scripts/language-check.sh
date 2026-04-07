@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 # language-check.sh — iSparto Documentation Language Convention guardian
 #
-# Scans Tier 1 (System Prompt Layer) and Tier 2 (Reference Documentation)
-# files for CJK characters that would violate the four-tier language
-# architecture documented in CLAUDE.md > "Documentation Language Convention".
+# Scans:
+#   1) Tier 1 (System Prompt Layer) files for CJK characters
+#   2) Tier 2 (Reference Documentation) files for CJK characters
+#   3) Principle 1 hard-coded user-facing literal violations in commands/*.md
+#      and agents/*.md (missing "(in user's language)" intent qualifier)
+# to enforce CLAUDE.md > "Documentation Language Convention".
 #
 # Tier 1 (AI agent system prompts, English only):
 #   CLAUDE.md, CLAUDE-TEMPLATE.md
@@ -24,6 +27,10 @@
 # Status:
 #   Wave 1 — warning mode, manual invocation only.
 #   Wave 4 — promoted to a blocking gate inside /end-working Doc Engineer audit.
+#   Principle 1 detector — mechanical first-line guard for command/agent layer.
+#
+# Self-test:
+#   --self-test  Run synthetic Principle 1 fixture checks only.
 #
 # Exit codes:
 #   0 — clean
@@ -51,7 +58,7 @@ fi
 
 # Use python3 over stdin (single-quoted heredoc) to avoid shell expansion of
 # the CJK escape ranges and to sidestep set -e / heredoc interaction issues.
-python3 - <<'PYEOF'
+python3 - "$@" <<'PYEOF'
 import re
 import sys
 from pathlib import Path
@@ -60,6 +67,35 @@ REPO = Path.cwd()
 
 # CJK regex: punctuation + basic CJK + fullwidth + Extension A
 CJK = re.compile(r'[\u3000-\u303f\u4e00-\u9fff\uff00-\uffef\u3400-\u4dbf]')
+
+# Principle 1 patterns
+PRINCIPLE1_QUALIFIER = re.compile(r"\(in (?:the )?user's language\)", re.IGNORECASE)
+PRINCIPLE1_OUTPUT_VERB = re.compile(
+    r'\b(?:inform|tell|ask|instruct|warn|report|notify|announce|output|display|'
+    r'print|echo|note|show)\b',
+    re.IGNORECASE,
+)
+PRINCIPLE1_QUOTED_LITERAL = re.compile(r'["\u201c]([A-Z][^"\u201d]{11,})["\u201d]')
+PRINCIPLE1_EXAMPLE_MARKERS = (
+    'e.g.',
+    'eg.',
+    'for example',
+    'for instance',
+    'such as',
+)
+
+PRINCIPLE1_FIXTURES = [
+    '1. Inform user "Environment is ready, you may proceed."',
+    '2. Tell the user: "No-go items found and must be fixed first."',
+    '3. Report to user "Migration complete. Run install.sh --upgrade to apply."',
+    '4. Display the message "Welcome to the iSparto framework."',
+    '5. Notify the user "Hooks have been installed and verified successfully."',
+]
+
+PRINCIPLE1_SANITY_NEGATIVE = (
+    '- RIGHT: describing the intent, e.g., "Report to user (in user\'s language) '
+    'that the gh account has been auto-switched to $REPO_OWNER"'
+)
 
 # Tier 2 exclusions — exact relative paths
 TIER2_EXCLUDED_FILES = {
@@ -141,6 +177,28 @@ def collect_tier2():
     return files
 
 
+def collect_principle1_files():
+    """Principle 1 scope — commands/*.md and agents/*.md only."""
+    files = []
+
+    cmd_dir = REPO / 'commands'
+    if cmd_dir.is_dir():
+        files.extend(sorted(cmd_dir.glob('*.md')))
+
+    agt_dir = REPO / 'agents'
+    if agt_dir.is_dir():
+        files.extend(sorted(agt_dir.glob('*.md')))
+
+    return files
+
+
+def format_snippet(line):
+    snippet = line.strip()
+    if len(snippet) > 100:
+        snippet = snippet[:97] + '...'
+    return snippet
+
+
 def scan(files, tier_tag):
     violations = []
     for f in files:
@@ -151,36 +209,118 @@ def scan(files, tier_tag):
             continue
         for lineno, line in enumerate(text.splitlines(), 1):
             if CJK.search(line):
-                snippet = line.strip()
-                if len(snippet) > 100:
-                    snippet = snippet[:97] + '...'
+                snippet = format_snippet(line)
                 rel = f.relative_to(REPO).as_posix()
                 violations.append(f'[{tier_tag}] {rel}:{lineno}: {snippet}')
     return violations
 
 
+def line_has_principle1_violation(line):
+    if PRINCIPLE1_QUALIFIER.search(line):
+        return False
+    if not PRINCIPLE1_OUTPUT_VERB.search(line):
+        return False
+
+    for match in PRINCIPLE1_QUOTED_LITERAL.finditer(line):
+        open_quote_index = match.start()
+        before = line[:open_quote_index]
+        before_tail = before[-40:].lower()
+
+        if any(marker in before_tail for marker in PRINCIPLE1_EXAMPLE_MARKERS):
+            continue
+        if before.count('[') > before.count(']'):
+            continue
+        return True
+    return False
+
+
+def scan_principle1(files):
+    violations = []
+    for f in files:
+        try:
+            text = f.read_text(encoding='utf-8', errors='replace')
+        except OSError as e:
+            print(f'WARN: cannot read {f}: {e}', file=sys.stderr)
+            continue
+        for lineno, line in enumerate(text.splitlines(), 1):
+            if line_has_principle1_violation(line):
+                rel = f.relative_to(REPO).as_posix()
+                violations.append(
+                    f'[Principle 1] {rel}:{lineno}: {format_snippet(line)}'
+                )
+    return violations
+
+
+def run_self_test():
+    failures = []
+
+    if line_has_principle1_violation(PRINCIPLE1_SANITY_NEGATIVE):
+        failures.append(
+            'FAIL: Test 1 — CLAUDE.md illustrative example was incorrectly flagged'
+        )
+    else:
+        print(
+            "PASS: Test 1 — CLAUDE.md illustrative example (correctly not flagged)"
+        )
+
+    missed = [line for line in PRINCIPLE1_FIXTURES
+              if not line_has_principle1_violation(line)]
+    if missed:
+        failures.append(
+            f'FAIL: Test 4 — Principle 1 fixture misses ({len(missed)}/'
+            f'{len(PRINCIPLE1_FIXTURES)} not flagged)'
+        )
+        for line in missed:
+            failures.append(f'  MISSED: {line}')
+    else:
+        print('PASS: Test 4 — Principle 1 fixture (5/5 flagged)')
+
+    if failures:
+        for msg in failures:
+            print(msg, file=sys.stderr)
+        return 1
+    return 0
+
+
 def main():
+    for arg in sys.argv[1:]:
+        if arg != '--self-test':
+            print(f'ERROR: unknown argument: {arg}', file=sys.stderr)
+            sys.exit(2)
+
+    if '--self-test' in sys.argv[1:]:
+        sys.exit(run_self_test())
+
     tier1_files = collect_tier1()
     tier2_files = collect_tier2()
+    principle1_files = collect_principle1_files()
 
     tier1_violations = scan(tier1_files, 'Tier 1')
     tier2_violations = scan(tier2_files, 'Tier 2')
+    principle1_violations = scan_principle1(principle1_files)
 
-    total = len(tier1_violations) + len(tier2_violations)
+    total = (
+        len(tier1_violations) +
+        len(tier2_violations) +
+        len(principle1_violations)
+    )
     if total == 0:
         print('\033[0;32mPASSED\033[0m: scripts/language-check.sh — '
-              'Tier 1 and Tier 2 are CJK-clean.')
+              'Tier 1/Tier 2 are CJK-clean and Principle 1 is clean.')
         sys.exit(0)
 
     for v in tier1_violations:
         print(v)
     for v in tier2_violations:
         print(v)
+    for v in principle1_violations:
+        print(v)
 
     print()
     print(f'\033[0;31mFAILED\033[0m: scripts/language-check.sh found {total} '
-          f'violation(s) ({len(tier1_violations)} Tier 1, '
-          f'{len(tier2_violations)} Tier 2).')
+          f'violation(s) ({len(tier1_violations)} Tier 1 CJK, '
+          f'{len(tier2_violations)} Tier 2 CJK, '
+          f'{len(principle1_violations)} Principle 1).')
     print('See CLAUDE.md "Documentation Language Convention" for the '
           'four-tier architecture and remediation rules.')
     sys.exit(1)

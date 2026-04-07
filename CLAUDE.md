@@ -41,7 +41,7 @@ Example — describing the wrong pattern without embedding a target-language lit
 
 **Illustrative-example rule:** When documenting a wrong pattern, describe it; do not embed a literal string in the target language. A literal example would itself trigger the language-check.sh guardian.
 
-This convention is enforced by `scripts/language-check.sh`, integrated into the Doc Engineer audit step of `/end-working` starting from Wave 4. The guardian scans both Tier 1 (System Prompt) and Tier 2 (Reference Docs) for CJK characters and blocks the commit if violations are found.
+This convention is enforced by `scripts/language-check.sh`, integrated into the Doc Engineer audit step of `/end-working` starting from Wave 4. The guardian runs two orthogonal scans: (1) Tier 1 (System Prompt Layer) and Tier 2 (Reference Documentation) are scanned for CJK characters; (2) `commands/*.md` and `agents/*.md` are additionally scanned for Principle 1 violations (literal user-facing English strings missing the `(in user's language)` qualifier — the most obvious cases are caught mechanically by a verb/quoted-literal heuristic, with `e.g.` and `[...]` placeholder exemptions). Run `bash scripts/language-check.sh --self-test` to exercise the Principle 1 detector against built-in fixtures. The guardian blocks the commit if any violation is found.
 
 ## Collaboration Mode: Auto (Solo + Codex / Agent Team)
 
