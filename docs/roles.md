@@ -355,6 +355,14 @@ Audit checklist:
    - Are newly added third-party dependencies from trusted sources?
    - Result: ✅ Security check passed / ⚠️ Security issue: [specific description]
 
+9. Language convention check
+   - If `scripts/language-check.sh` exists in the project: run `bash scripts/language-check.sh`
+   - This is a hard mechanical gate against CLAUDE.md > "Documentation Language Convention" (the four-tier architecture, Principle 1 for hardcoded user-facing strings, and the illustrative-example rule)
+   - On exit code 0: ✅ pass
+   - On exit code 1: ❌ FAIL — copy the per-line `[Tier 1]` / `[Tier 2]` / `[Principle 1]` violations and the summary line into the audit report; this is a hard FAIL, the report blocks Lead from proceeding to push/PR
+   - On exit code 2: ⚠️ environment error (Python 3 missing, repo root unresolved) — surface in the report as a warning, do not block (degraded mode)
+   - If the script does not exist (e.g., the project has not adopted iSparto's language convention): skip silently, do not include in the report
+
 Output format (the following is the report template from Doc Engineer to the Team Lead, not a section of this document):
 
 === Documentation Audit Report ===
@@ -366,6 +374,7 @@ Output format (the following is the report template from Doc Engineer to the Tea
 | tech-spec.md | [specific content] | [Updated] |
 | plan.md | [specific content] | [Updated] |
 | ... | ... | ... |
+| Language convention | [pass / fail with violation count] | [Updated / FAIL: see violation list below] |
 
 --- No Updates Needed ---
 [List documents checked but not requiring changes, with reasons]
@@ -373,10 +382,20 @@ Output format (the following is the report template from Doc Engineer to the Tea
 --- Auto-Updated ---
 [List documents that were directly updated, with change details]
 
+--- Language Convention Violations (item 9) ---
+[paste raw `bash scripts/language-check.sh` output here, only when item 9 FAILs; omit this section entirely on PASS]
+
 Key principles:
 - Directly update all documents that need changes — do not wait for manual confirmation
 - Mark changes involving product decisions with "Warning: product decision change" in the report, so the user can focus on them during post-review
 - Report coverage honestly — do not skip any checklist items
+- If any audit item FAILs (including item 8 mechanical security scan or item 9 mechanical language check): the Doc Engineer reports FAIL with the specific failing items in its output, then **stops** — does NOT attempt to fix the violations itself. The Lead — not the Doc Engineer — performs the fix, then **spawns a fresh Doc Engineer sub-agent** (zero inherited context) for a full re-audit. This audit-fix separation prevents the agent that found a problem from also being the agent that fixes it (avoids motivated reasoning and incomplete patches). Bound the loop at 3 iterations. If the third re-audit still FAILs, execute the **6-step blocked recovery path** (do NOT leave recovery to Lead's discretion):
+  1. **Stop the loop** — do not attempt a 4th audit.
+  2. **Generate a blocked-audit report** — capture the final FAIL state (which items failed, the violation list, what fixes were attempted across the 3 iterations).
+  3. **Write a blocked-audit entry to `docs/plan.md`** — append a dated entry under a "Blocked audits" section (create the section if it doesn't exist) describing what was blocked and why; this is a Tier 4 historical artifact.
+  4. **Push the WIP branch** — `git push -u origin <current-branch>` to preserve all in-progress work; do NOT merge, do NOT delete the branch.
+  5. **Report to the user** (in user's language) that Doc Engineer audit hit the loop bound, the 6-step recovery path was executed, the WIP branch is pushed, the blocked-audit report is in `docs/plan.md`, and manual intervention is required to resolve the FAIL.
+  6. **Exit `/end-working` without creating or merging a PR.** The session ends in a blocked state; the user resumes in a new session after manual fix.
 ```
 
 ---
