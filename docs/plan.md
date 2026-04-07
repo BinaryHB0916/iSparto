@@ -175,14 +175,27 @@ Mode: Agent Team (4 parallel Devs A/B/C/D), per the approved plan at `~/.claude/
 
 Verification (after Wave 2):
 - Tier 1 violations: 0 (target met)
-- Tier 2 violations: 391 (Wave 3 scope, unchanged)
+- Tier 2 violations: 392 (Wave 3 scope, unchanged) — note: an earlier draft of this plan recorded the Tier 2 baseline as 391; the actual count from `bash scripts/language-check.sh` against the post-Wave-2 main is 392. Updated here for accuracy.
 
 Deferred items (NOT in Wave 2 scope, tracked separately):
-- `fix/mcp-rename-migration-guard` hotfix — `commands/start-working.md` Step 7 contains a buggy MCP server rename migration (`codex-reviewer` → `codex-dev`) that breaks hook interception on stale installs. Discovered during Wave 2 but Out of Scope (not translation work). Open as a separate hotfix PR, before or after Wave 3.
 - `commands/end-working.md` plan.md update timing rule clarification — Process Observer audit raised this as a framework feedback item (see `docs/framework-feedback-0407.md`).
-- IR-suggested Principle 1 enforcement — extend `scripts/language-check.sh` or add Doc Engineer checklist item to detect English-literal user-facing strings (Wave 4 or earlier).
+- `commands/start-working.md` Step 7 auto-add branch guard — the rename branch is now guarded (see Inter-Wave Hotfix #1 below), but the parallel auto-add branch ("If any matcher is missing or its hook command is absent: auto-add them") can still write a `mcp__codex-dev__codex` matcher into a project's `.claude/settings.json` even when the user-level MCP registration is still under the legacy `codex-reviewer` name, re-introducing the same silent-disable failure mode. Codex review on Hotfix #1 flagged this as a follow-up. Out of scope for Hotfix #1 (the user explicitly scoped that hotfix to the rename branch); track for a future hotfix.
 
 Cross-session boundary required before Wave 3 (per Cross-Session Barrier Protocol — Wave 2 fully Englishized CLAUDE.md, the new content must ride the next session's system-reminder injection).
+
+### Inter-Wave Hotfix #1 — fix/mcp-rename-migration-guard (2026-04-07) — Complete
+
+Branch: `fix/mcp-rename-migration-guard`. Mode: Solo (single-file edit to a behavioral template, self-referential boundary).
+
+Goal: Prevent `commands/start-working.md` Step 7 from silently disabling Process Observer hook interception on stale installs by gating the legacy-matcher rename behind a presence check for the new MCP server.
+
+- [x] `commands/start-working.md` Step 7 — added a "Migration guard (mandatory before renaming)" sub-bullet that runs `claude mcp list -s user 2>/dev/null | grep -q codex-dev` before the rename. Pass branch performs the rename and informs the user (intent-described per Principle 1, with `(in user's language)` qualifier). Fail branch (stale install — `codex-dev` MCP server is not registered) leaves the legacy matcher in place, informs the user that the migration was skipped to preserve interception, instructs them to run `~/.isparto/install.sh --upgrade` and re-run `/start-working`, then explicitly skips the next bullet (the auto-add branch) to avoid re-introducing the same silent-disable bug, and proceeds directly to Step 8.
+- [x] Codex review (gpt-5.3-codex, xhigh) — verdict APPROVE WITH MINOR. Two MINOR findings: (1) "skip remaining sub-steps of Step 7" was ambiguous → tightened to explicitly name the auto-add branch and direct the Lead to Step 8; (2) auto-add branch follow-up guard → tracked in Deferred items above, not blocking this hotfix.
+- [x] Tier 1 language check (`bash scripts/language-check.sh`) — Tier 1 still 0, Tier 2 still 392, no regression introduced by the diff.
+
+Why Solo: single file, single behavioral-template change, no decomposable parallel sub-tasks. Why direct edit (not via Developer): self-referential boundary — `commands/*.md` is an iSparto framework file (Tier 1 system prompt), Lead edits directly per CLAUDE.md > Development Rules.
+
+Scope intentionally narrow: rename branch only. Auto-add branch follow-up is a separate, smaller hotfix tracked above.
 
 ### 下一步
 - [ ] P1 仓库结构重组：内部文件（plan.md, product-spec.md, design-decisions.md, process-observer.md, security.md, session-log.md）移到 .project/ 目录，与用户文档物理隔离（约束：CLAUDE.md 不能移，Claude Code 从项目根读取）
