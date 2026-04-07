@@ -73,6 +73,35 @@ Some files have a wide blast radius. Extra care is needed when changing:
 
 ---
 
+## Documentation Language Convention
+
+iSparto maintains a four-tier language architecture — contributors must understand which tier a file belongs to before editing:
+
+| Tier | What | Language | Examples |
+|---|---|---|---|
+| Tier 1 | System Prompt Layer (AI instructions) | English only | `CLAUDE.md`, `CLAUDE-TEMPLATE.md`, `commands/*.md`, `agents/*.md`, `templates/*.md`, `hooks/**`, `scripts/*.sh`, `lib/*.sh`, `install.sh`, `bootstrap.sh` |
+| Tier 2 | Reference Documentation | English only | All `docs/*.md` files (except Tier 4 historical artifacts and the `docs/zh/` directory) |
+| Tier 3 | User-Facing Entry | Bilingual | `README.md`, `README.zh-CN.md`, `docs/zh/quick-start.md`, `CONTRIBUTING.md` |
+| Tier 4 | Historical Artifacts | Frozen (not retroactively edited) | `docs/session-log.md`, `docs/framework-feedback-*.md`, historical entries in `docs/plan.md` and `CHANGELOG.md` |
+
+**Key rules:**
+
+- **Tier 1 must not embed literal user-facing strings in any specific language.** Describe the intent in English and let the Lead generate the actual string in the user's language at runtime. See CLAUDE.md > Documentation Language Convention for the exact "wrong vs right" pattern.
+- **No Chinese mirror of `docs/`.** Single source of truth in English. The only Chinese file under `docs/` is `docs/zh/quick-start.md`; do not add more Chinese mirrors, and do not translate existing `docs/*.md` files into Chinese.
+- **`README.md` ↔ `README.zh-CN.md` must stay in sync.** Any content change to one requires a parallel change to the other (already listed in the blast-radius table above).
+- **New entries in `docs/plan.md` and `CHANGELOG.md` are written in English**, even though historical entries from before the Wave 1 convention may contain CJK.
+
+**Mechanical guardian (`scripts/language-check.sh`):** PRs are blocked if the language guardian finds CJK characters in Tier 1 or Tier 2 files, or Principle 1 violations in `commands/*.md` / `agents/*.md`. The guardian runs inside the Doc Engineer audit step of `/end-working` starting from Wave 4, which means any branch that introduces a violation cannot merge until it is fixed. Before opening a PR, run the guardian locally:
+
+```bash
+bash scripts/language-check.sh            # main scan (exit 0 = clean)
+bash scripts/language-check.sh --self-test  # verify Principle 1 detector is working
+```
+
+Full authoritative definition: [CLAUDE.md > Documentation Language Convention](CLAUDE.md#documentation-language-convention).
+
+---
+
 ## Style Guide
 
 ### Shell scripts
