@@ -21,7 +21,7 @@ iSparto is an AI Agent Team workflow framework that turns single-agent Claude Co
 - Changes to command templates (commands/*.md) must be verified not to break existing users' /migrate and /init-project flows
 - After completing all reviews, automatically create PR and merge to main — no manual user review needed
 - Releases must use the `/release` command — manual `git tag`, `git push origin <tag>`, or any operation on main is not allowed. The release flow is fully automated by `scripts/release.sh`
-- This project is the framework itself; all framework files (commands/, templates/, scripts/, hooks/, agents/, docs/) fall within the self-referential boundary — Lead edits directly, and Process Observer interceptions can be approved
+- This project is the framework itself; all Tier 1 System Prompt Layer files (as defined in Documentation Language Convention) fall within the self-referential boundary — Lead edits directly, and Process Observer interceptions can be approved. This includes both subdirectory files (`commands/`, `templates/`, `scripts/`, `hooks/`, `agents/`, `docs/`, `lib/`) and root-level files (`CLAUDE.md`, `CLAUDE-TEMPLATE.md`, `bootstrap.sh`, `install.sh`, `isparto.sh`). Tier 2/3/4 documentation (other `docs/*.md`, `README*.md`, `CONTRIBUTING.md`, `CHANGELOG.md`, `VERSION`) is also in scope for direct Lead edits under the same framework self-referential principle.
 
 ## Documentation Language Convention
 
