@@ -1,5 +1,29 @@
 # Session Log
 
+## 2026-04-08 Session (#e) — Hotfix: replace stale `claude mcp list -s user` with `claude mcp get`
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | Ad-hoc hotfix (no Wave — bug surfaced during /start-working Step 7 hook verification on the local install) |
+| Tasks completed | (1) upgraded local `~/.isparto` from 0.7.1 to 0.7.2 via `~/.isparto/install.sh --upgrade`; (2) PR #172 (`fix/mcp-list-scope-removed`) — replaced 5 occurrences of `claude mcp list -s user 2>/dev/null \| grep -q <name>` with `claude mcp get <name> >/dev/null 2>&1` across `install.sh` (3 sites in section 6 — DRY_RUN registered branch, DRY_RUN migrate branch, real-run migrate branch) and `commands/start-working.md` (2 sites — Step 7 rename guard L57, Step 7 auto-add guard L61). Added a 10-line maintenance comment block above install.sh section 6 explaining the CLI removal background and naming the replacement so future maintainers can grep `claude mcp get`. Process Observer audit: 9 PASS / 0 WARN / 0 FAIL / 2 N/A. Doc Engineer SKIPPED per CLAUDE.md ad-hoc fix exception (no Wave entry, no code↔doc sync risk — install.sh + commands/start-working.md are Tier 1 self-edits and the change is a like-for-like CLI swap). Independent Reviewer N/A (not Wave boundary). |
+| Key decisions | (1) Root cause: Claude Code silently removed the `-s` scope flag from `mcp list` around v1.0.58 when the command was reworked to do live health probing; the flag is still accepted by `mcp add` and `mcp remove`. The legacy guard pattern would print an unknown-option error to stderr (muted by `2>/dev/null`) and the subsequent `grep -q` would always return non-zero, causing the migration guard to fail-closed forever. Sources: Claude Code CHANGELOG v1.0.58 entry, GitHub Issue anthropics/claude-code#8288 confirming the flag was already gone by Sep 2025. (2) Replacement chosen: `claude mcp get <name>` because (a) it has clean exit-code semantics — 0 if registered, 1 if missing — no grep parsing needed; (b) it is scope-agnostic, which matches the actual intent (we only care whether the matcher will resolve, not which scope holds the server); (c) it survives the same kind of CLI rework because the lookup path is fundamental, not a list-and-filter convenience. (3) `mcp add -s user` and `mcp remove -s user` were intentionally left unchanged — the `-s` flag still works on those subcommands, and changing them was out of scope. (4) Self-referential Lead-direct edit was used (no Developer/Codex MCP) — this is the same pattern as the recent Wave 4 framework-self-edit sessions, justified by the iSparto framework self-referential boundary in CLAUDE.md Development Rules. The edits were small (2 framework files, ~21 lines combined) and the carve-out for trivial CLI acceptance applied — no Developer QA prompt assembled. (5) The maintenance comment block in install.sh was rewritten once during this session: the initial draft contained the literal phrase `claude mcp list -s user | grep -q` which is exactly the symbol we are deprecating, so a future grep for the old pattern would have a false positive on this very comment. Rewritten as "the legacy `mcp list` + scope-filter + grep pattern" — semantically equivalent, no literal substring match. |
+
+### Files Changed
+```
+ commands/start-working.md |  4 ++--
+ install.sh                | 17 ++++++++++++++---
+ 2 files changed, 16 insertions(+), 5 deletions(-)
+```
+
+### Notes
+- Mode: Solo + Lead direct edit (framework self-referential boundary). 2 Tier 1 framework files, small in-place CLI swap, no decomposable parallel sub-tasks, no Developer/Codex round-trip — direct Edit tool was the right shape.
+- Bug discovery: surfaced during /start-working Step 7 hook verification on the local iSparto install (the migration guards in start-working.md and the equivalent guards in install.sh both run `claude mcp list -s user`, and the CLI rework had silently broken all of them). Local upgrade to 0.7.2 alone did NOT fix the issue because 0.7.2 was already published with the broken pattern — the fix had to land in source, then will ship in the next release.
+- Acceptance: trivial-CLI carve-out applied. The acceptance verification was 2 deterministic exit-code commands (`claude mcp get codex-dev` returning 0 against the live install, plus a `grep -rn "claude mcp list -s user" install.sh commands/` returning 0 hits to confirm no leftover sites). Both passed. No Developer QA prompt assembled per the carve-out's ≤5 deterministic exit-code commands rule.
+- Doc Engineer skip rationale: this fix did NOT close any plan.md Wave entry, and the changes are Tier 1 self-referential framework edits with no documentation surface to drift against (install.sh is referenced descriptively in docs but the changed lines are internal implementation, and commands/start-working.md is itself the documentation — there is no separate doc to sync). Recorded in this session log as the audit-skip evidence.
+- Future-proofing: the maintenance comment block above `install.sh` section 6 explicitly names `claude mcp get` as the replacement and instructs future maintainers to grep for `claude mcp get` if it ever breaks in a future Claude Code release. This is the only durable artifact protecting against the same class of CLI-removal regression.
+- Format/brevity feedback memories were saved this session (`feedback_response_brevity.md`, `feedback_format_prose.md`) — these capture user preferences about prose-style vs stacked-markdown responses and decision-focused vs comprehensive briefings. They are user-preference memories, not workflow rules, and live in the user's auto-memory store rather than CLAUDE.md.
+
 ## 2026-04-07 Session (#d) — i18n Cleanup Wave 4 (language-check.sh as Doc Engineer audit blocking gate)
 
 | Metric | Value |
