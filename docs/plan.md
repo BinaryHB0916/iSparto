@@ -166,9 +166,7 @@ Verification (after Wave 2):
 - Tier 2 violations: 392 (Wave 3 scope, unchanged) — note: an earlier draft of this plan recorded the Tier 2 baseline as 391; the actual count from `bash scripts/language-check.sh` against the post-Wave-2 main is 392. Updated here for accuracy.
 
 Deferred items (NOT in Wave 2 scope, tracked separately):
-- `commands/end-working.md` plan.md update timing rule clarification — Process Observer audit raised this as a framework feedback item (see `docs/framework-feedback-0407.md`).
-- `commands/start-working.md` Step 7 auto-add branch guard — the rename branch is now guarded (see Inter-Wave Hotfix #1 below), but the parallel auto-add branch ("If any matcher is missing or its hook command is absent: auto-add them") can still write a `mcp__codex-dev__codex` matcher into a project's `.claude/settings.json` even when the user-level MCP registration is still under the legacy `codex-reviewer` name, re-introducing the same silent-disable failure mode. Codex review on Hotfix #1 flagged this as a follow-up. Out of scope for Hotfix #1 (the user explicitly scoped that hotfix to the rename branch); track for a future hotfix.
-- **QA-protocol carve-out for trivial CLI scripts** — Process Observer audit on Hotfix #2 (A6 WARN) flagged that CLAUDE.md > workflow step 3 ("Lead assembles QA prompt → calls Developer for smoke testing") technically requires wrapping even ≤5-command CLI acceptance tests in a Developer QA prompt. For scripts whose entire QA surface is a small set of bash commands with deterministic exit codes (e.g. `bash scripts/foo.sh --self-test`), running them directly as Lead provides equivalent or better signal than a Codex QA prompt. Proposal: add a carve-out to the workflow that allows Lead-executed CLI acceptance for ≤5 deterministic commands, provided results are documented in plan.md. Track for a CLAUDE.md/workflow.md edit in a future docs/ hotfix.
+- (All three items previously tracked here — `end-working.md` plan.md timing rule clarification, `start-working.md` Step 7 auto-add branch guard, and QA-protocol carve-out for trivial CLI scripts — were resolved in the Post-Wave 5 Follow-up Hotfixes entry at the bottom of this file on 2026-04-08.)
 
 Cross-session boundary required before Wave 3 (per Cross-Session Barrier Protocol — Wave 2 fully Englishized CLAUDE.md, the new content must ride the next session's system-reminder injection).
 
@@ -356,6 +354,37 @@ Wave 5 → Wave 6 BLOCKING marker: NOT required. Wave 5 modified two Tier 1 file
 >
 > **Maintainer 处理流程：**
 > Maintainer 收到 issue 后，在 `fix/i18n-correction-MMDD` 分支处理。多个 issue 可以合并到同一分支批量修。每个 fix commit 的 message 引用对应 issue 编号。
+
+### Post-Wave 5 Follow-up Hotfixes (2026-04-08) — Complete
+
+Branch: `feat/post-wave5-followups`. Mode: Solo + Lead direct edit (self-referential boundary — all target files are Tier 1 behavioral templates or Tier 2 reference docs; Wave 5 precedent applies — 5 files, no code changes, no Developer/Codex calls).
+
+Goal: Close three parked framework-side items carried over from Wave 2/3 that were explicitly scoped out of Wave 5 at /start-working user-lock. All three were non-blocking framework polish, tracked in the Wave 2 Deferred items list (now removed) and in `docs/framework-feedback-0407.md`. None of them are Wave 5 regressions.
+
+- [x] **Hotfix #1 — `commands/start-working.md` Step 7 auto-add branch guard.** Wrapped the auto-add sub-branch with the same `claude mcp list -s user 2>/dev/null | grep -q codex-dev` migration guard as the rename branch (Wave 2 Hotfix #1 precedent). Pass branch: auto-adds matchers and informs user. Fail branch: skips auto-add entirely (no partial mid-state), informs user that the local install is stale, instructs them to run `~/.isparto/install.sh --upgrade` and re-run `/start-working`, then proceeds directly to Step 8. Closes Wave 2 Hotfix #1 Codex review MINOR follow-up.
+- [x] **Hotfix #2 — `CLAUDE.md` + `CLAUDE-TEMPLATE.md` plan.md timing rule rewording.** Reworded the "Update docs/plan.md immediately after completing tasks" rule (L22 in both files) to make the Wave-completion exception explicit. New wording: "Update docs/plan.md immediately after completing each task in the same commit as the task work. Exception: Wave-completion entries and cross-session BLOCKING markers are written by `/end-working` as part of the commit it generates, because that is the step that knows the Wave is fully complete." Source: `docs/framework-feedback-0407.md` Suggestion 1, verbatim.
+- [x] **Hotfix #3 — `CLAUDE.md` (L83 + L95) + `docs/workflow.md` (Solo + Agent Team QA paragraphs) Lead-direct QA carve-out.** Appended a carve-out to workflow step 3 in both Solo and Agent Team workflows (CLAUDE.md) and mirrored the rule as a sub-bullet in the two QA paragraphs in `docs/workflow.md`. Rule: when the plan.md acceptance script is ≤5 deterministic bash commands whose verdict is determined solely by exit code (e.g., `bash scripts/language-check.sh --self-test`), Lead may execute them directly and record each command + exit code in plan.md as acceptance evidence, skipping the Developer QA wrapper. Explicitly scoped: no build step, no runtime app verification, no output-parsing, not applicable to anything tagged [build]/[runtime]. Closes Wave 3 Hotfix #2 Process Observer A6 WARN.
+
+**Acceptance script (5 Lead-direct bash commands — dogfoods Hotfix #3 carve-out):**
+
+| # | Command | Expected | Actual |
+|---|---------|----------|--------|
+| A1 | `bash scripts/language-check.sh` | exit 0, "Tier 1/Tier 2 are CJK-clean and Principle 1 is clean" | exit 0 ✅ PASSED |
+| A2 | `bash scripts/language-check.sh --self-test` | exit 0, Test 1 + Test 4 PASS | exit 0 ✅ both PASS |
+| A3 | `grep -c 'claude mcp list -s user 2>/dev/null \| grep -q codex-dev' commands/start-working.md` | ≥2 | 2 ✅ (rename guard + new auto-add guard) |
+| A4 | `grep -l 'Wave-completion entries and cross-session BLOCKING markers' CLAUDE.md CLAUDE-TEMPLATE.md` | both files listed | both ✅ synced |
+| A5 | `grep -l '≤5 deterministic bash commands' CLAUDE.md docs/workflow.md` | both files listed | both ✅ |
+
+All 5 commands exit 0. No build step, no runtime, no output-parsing — eligible under the new carve-out.
+
+**Files modified:**
+- `commands/start-working.md` (Hotfix #1 — Step 7 auto-add guard)
+- `CLAUDE.md` (Hotfix #2 L22 rewording + Hotfix #3 L83/L95 carve-out)
+- `CLAUDE-TEMPLATE.md` (Hotfix #2 L22 sync)
+- `docs/workflow.md` (Hotfix #3 Solo + Agent Team QA paragraphs)
+- `docs/plan.md` (Wave 2 Deferred items cleared + this entry)
+
+**Why no Independent Reviewer:** Not a Wave boundary — this is a post-Wave-5 parked-items cleanup. Precedent: Wave 2 Inter-Wave Hotfix #1 and Hotfix #2 also did not trigger IR. Doc Engineer and Process Observer audits are sufficient for this scope.
 
 ### 下一步
 - [ ] P1 仓库结构重组：内部文件（plan.md, product-spec.md, design-decisions.md, process-observer.md, security.md, session-log.md）移到 .project/ 目录，与用户文档物理隔离（约束：CLAUDE.md 不能移，Claude Code 从项目根读取）

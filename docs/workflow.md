@@ -97,6 +97,7 @@ Lead assembles QA prompt → calls Developer for smoke testing (using acceptance
   - Executes acceptance script action/eval steps as the minimum test coverage
   - Each eval step verified at its tagged level: [code] by analysis, [build] by checking artifacts, [runtime] by actually running the app
   - "Looks correct from code" is NOT valid evidence for [build] or [runtime] steps
+  - **Carve-out (trivial CLI acceptance):** When the plan.md acceptance script consists of ≤5 deterministic bash commands whose verdict is determined solely by exit code (e.g., `bash scripts/language-check.sh --self-test`), Lead may execute them directly and record each command + exit code in plan.md as acceptance evidence, skipping the Developer QA wrapper. Requires: no build step, no runtime app verification, no output-parsing. Does NOT apply to multi-step scripts, scripts needing log interpretation, or any step tagged [build]/[runtime].
     |
 (If Phase 0, or Wave completed)
 Independent Reviewer (Teammate — zero inherited context):
@@ -148,6 +149,7 @@ Lead assembles QA prompt → calls Developer for smoke testing (using acceptance
   - Skips areas tested in previous Waves that are not affected by current changes
   - Runs the app and verifies key user operation paths at runtime (not just code simulation)
   - Records and directly fixes issues found
+  - **Carve-out (trivial CLI acceptance):** When the plan.md acceptance script consists of ≤5 deterministic bash commands whose verdict is determined solely by exit code (e.g., `bash scripts/language-check.sh --self-test`), Lead may execute them directly and record each command + exit code in plan.md as acceptance evidence, skipping the Developer QA wrapper. Requires: no build step, no runtime app verification, no output-parsing. Does NOT apply to multi-step scripts, scripts needing log interpretation, or any step tagged [build]/[runtime].
     |
 (If Phase 0, or Wave completed)
 Independent Reviewer (Teammate — zero inherited context):
