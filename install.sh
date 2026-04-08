@@ -379,18 +379,29 @@ if [ -n "$OLD_VERSION" ] && ! $DRY_RUN; then
 fi
 
 # ── 6. Register Codex MCP Server (global) ───────────────────
+#
+# Note: existence checks below use `claude mcp get <name>` (exit 0 if present,
+# 1 if missing) instead of the legacy `mcp list` + scope-filter + grep pattern.
+# Claude Code silently removed the scope flag from `mcp list` around v1.0.58
+# when the command was reworked to do live health probing; the legacy pattern
+# would error with an unknown-option message and, with stderr muted, fall
+# through to "not found" forever. `mcp get` is scope-agnostic, which matches
+# our actual need (we only care whether the matcher will resolve, not which
+# scope holds the server). `mcp add` and `mcp remove` still accept the scope
+# flag and are unchanged. If `mcp get` itself ever breaks in a future Claude
+# Code release, grep this repo for "claude mcp get" to find all sites.
 
 if $DRY_RUN; then
-    if claude mcp list -s user 2>/dev/null | grep -q codex-dev; then
+    if claude mcp get codex-dev >/dev/null 2>&1; then
         printf "  ${GREEN}✓${NC} Codex MCP Server OK\n"
-    elif claude mcp list -s user 2>/dev/null | grep -q codex-reviewer; then
+    elif claude mcp get codex-reviewer >/dev/null 2>&1; then
         printf "  ${BLUE}[dry-run]${NC} Would migrate MCP: codex-reviewer → codex-dev\n"
     else
         printf "  ${BLUE}[dry-run]${NC} Would register Codex MCP Server globally\n"
     fi
 else
     # Migrate old name if present
-    if claude mcp list -s user 2>/dev/null | grep -q codex-reviewer; then
+    if claude mcp get codex-reviewer >/dev/null 2>&1; then
         claude mcp remove codex-reviewer -s user 2>/dev/null
     fi
     if claude mcp add codex-dev -s user -- npx -y codex-mcp-server 2>/dev/null; then
