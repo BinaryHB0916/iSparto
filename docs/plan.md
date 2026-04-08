@@ -386,6 +386,41 @@ All 5 commands exit 0. No build step, no runtime, no output-parsing — eligible
 
 **Why no Independent Reviewer:** Not a Wave boundary — this is a post-Wave-5 parked-items cleanup. Precedent: Wave 2 Inter-Wave Hotfix #1 and Hotfix #2 also did not trigger IR. Doc Engineer and Process Observer audits are sufficient for this scope.
 
+### Framework Polish Round 2 (2026-04-08) — Complete
+
+Branch: `feat/framework-polish-round-2`. Mode: Solo + Lead direct edit (self-referential boundary — all target files are Tier 1 behavioral templates or Tier 2 reference docs; Post-Wave 5 Follow-up Hotfixes precedent applies — 7 files, no code changes, no Developer/Codex calls).
+
+Goal: Close ALL remaining framework-side items from the 6 `docs/framework-feedback-*.md` files, accumulated across Waves 2-5 and Session (#b). User explicitly requested a single bundled clean-up rather than another round of incremental hotfixes. 11 items collapsed into 5 logical commits.
+
+- [x] **Commit 1 — `CLAUDE.md` self-referential boundary covers Tier 1 root-level files.** Source: framework-feedback-0408-b Rule 1. Previous L24 wording enumerated only subdirectories; root-level Tier 1 files (CLAUDE.md, CLAUDE-TEMPLATE.md, bootstrap.sh, install.sh, isparto.sh) fell outside the literal reading. Reworded to anchor on the Tier 1 definition from Documentation Language Convention and enumerate both subdirectory and root-level files explicitly. Also extended scope to cover Tier 2/3/4 framework docs (other docs/*.md, READMEs, CONTRIBUTING.md, CHANGELOG.md, VERSION). (commit `8733a97`)
+- [x] **Commit 2 — Emergency hotfix + ad-hoc fix Doc Engineer exceptions.** Sources: framework-feedback-0408-b Rules 2+3, framework-feedback-0405b row 1. Added two narrow exception paths to CLAUDE.md Solo + Agent Team workflow step 4: (a) ad-hoc fix skip (no Wave, no code↔doc sync risk); (b) emergency hotfix substitute (hotfix/ branches, ≤3 Tier 1 shell + CHANGELOG files, explicit emergency window — substitute with lang-check clean run + manual inline review + session-log exception entry). Mirrored in CLAUDE-TEMPLATE.md. Added Doc Engineer reference + both exception paths to `docs/workflow.md` Hotfix Workflow section (previously omitted DE entirely). (commit `ccf04a4`)
+- [x] **Commit 3 — plan.md update cadence + verification-count accuracy.** Sources: framework-feedback-0408 Rules 1+2, framework-feedback-0405b row 2. Rule 1 (verification-count accuracy): Wave 4/5 entries under-counted commits because Lead estimated at draft time; now codified to compute mechanically via `git log --oneline --no-merges <wave-base>..HEAD | wc -l`. Rule 2 (Option A — relax to match practice): L22 update rule relaxed to permit both per-task and per-Wave cadences, since Waves 3/4/5 all shipped bulk pattern without issue. 0405b row 2: fix session not tied to any plan.md entry requires no plan.md update. All three merged into two CLAUDE.md bullets + mirrored in CLAUDE-TEMPLATE.md + added to `templates/plan-template.md` header blockquote. (commit `8f3ae74`)
+- [x] **Commit 4 — plan.md is wholly Tier 4 — forward-looking sections exempt.** Source: framework-feedback-0407c Suggestion 1, Option A. Wave 3 PO G4 check noted plan.md's Next-Steps roadmap and Tech Ecosystem Tracking table sat in a language-tier gray zone — the file is on the language-check Tier 2 exclusion list but CLAUDE.md Tier 4 only covered "historical sections in docs/plan.md". Option A resolution: plan.md wholly Tier 4, both historical and forward-looking content exempt from English-only rule, matching the guardian's actual behavior. Option B (split treatment + per-section guardian) rejected as higher complexity for zero benefit. (commit `b35b9ac`)
+- [x] **Commit 5 — F1 spawn-source + PR body Mode Selection + audit source distinction.** Sources: framework-feedback-0407 Suggestion 2, framework-feedback-0405 F1+F2. (a) F1 row in `agents/process-observer-audit.md` now explicitly states that both Lead-initiated mid-session IR spawn and `/end-working` Step 3 auto-spawn satisfy F1 equally, with the same acceptance criteria. (b) Added `## Mode Selection` field to the PR body template in `commands/end-working.md` step 9 so future PR-metadata audits can verify B1 (Mode Selection Checkpoint) without replaying the session. (c) Extended the PR body template to require explicit `sub-agent run ✅ / Lead self-assessed ✅` marking for Doc Engineer and Process Observer, plus an Independent Reviewer verdict line. Self-assessed must always cite the exception reason per CLAUDE.md workflow step 4. (commit `c9bba79`)
+
+**Acceptance verification (3 Lead-direct bash commands — under the trivial-CLI carve-out from CLAUDE.md Solo workflow step 3):**
+
+| # | Command | Expected | Actual |
+|---|---------|----------|--------|
+| A1 | `bash scripts/language-check.sh` | exit 0, "Tier 1/Tier 2 are CJK-clean and Principle 1 is clean" | exit 0 ✅ (verified after every commit — 5 invocations) |
+| A2 | `bash scripts/language-check.sh --self-test` | exit 0, Test 1 + Test 4 PASS | exit 0 ✅ both fixtures PASS |
+| A3 | `git log --oneline --no-merges main..HEAD \| wc -l` | 6 commits (5 rule corrections + this plan.md entry commit) | 6 ✅ computed mechanically per Commit 3 rule |
+
+All 3 commands exit 0. No build step, no runtime, no output-parsing — eligible under the CLAUDE.md Solo workflow step 3 trivial-CLI carve-out.
+
+**Files modified:**
+- `CLAUDE.md` (commits 1, 2, 3, 4 — self-referential boundary, workflow step 4 exceptions, plan.md rules, Tier 4 freeze)
+- `CLAUDE-TEMPLATE.md` (commits 2, 3 — mirror workflow step 4 exceptions and plan.md cadence/accuracy rules)
+- `docs/workflow.md` (commit 2 — Hotfix Workflow Doc Engineer references + substitute/skip paths)
+- `templates/plan-template.md` (commit 3 — Wave Parallel Development Plan header blockquote)
+- `agents/process-observer-audit.md` (commit 5 — F1 spawn-source clarification)
+- `commands/end-working.md` (commit 5 — PR body template with Mode Selection + audit source distinction)
+- `docs/plan.md` (this entry)
+
+**Why no Independent Reviewer:** Not a Wave boundary — this is a standalone framework polish round collapsing 11 framework-feedback items from 6 accumulated feedback files. Precedent: Post-Wave 5 Follow-up Hotfixes (2026-04-08), Wave 2 Inter-Wave Hotfix #1 + #2 — none triggered IR. Doc Engineer and Process Observer audits are sufficient for this scope.
+
+**Framework-feedback file disposition:** All 6 `docs/framework-feedback-*.md` files remain on disk as Tier 4 historical artifacts (frozen per Documentation Language Convention). Their contents are now reflected in the corresponding Tier 1/2 rule sources. No feedback file is deleted — they serve as the audit trail. Previously-closed items (0407 Suggestion 1 Wave-completion exception, 0407 Suggestion 3 Principle 1 guardian) were resolved in prior Hotfixes; the remaining 11 items are closed by this round.
+
 ### 下一步
 - [ ] P1 仓库结构重组：内部文件（plan.md, product-spec.md, design-decisions.md, process-observer.md, security.md, session-log.md）移到 .project/ 目录，与用户文档物理隔离（约束：CLAUDE.md 不能移，Claude Code 从项目根读取）
 - [ ] 本地 hook 更新：用户需跑 `install.sh --upgrade` 才能用上新的复合命令检测和可操作拦截消息
