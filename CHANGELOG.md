@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **macOS upgrade path broken in v0.7.0** — `bootstrap.sh` and `install.sh` version parser used `sed 's/.*"\(v\?\)\([0-9][^"]*\)".*/\2/'`, where `\?` is a GNU sed extension unsupported by macOS BSD sed. On macOS the pattern silently failed to match, returning the raw JSON line as the version string and tripping the semver validator with `Invalid version format: '  "tag_name": "v0.7.0",'`. Every `~/.isparto/install.sh --upgrade` invocation on macOS hit this. Replaced with BSD-compatible `sed -E 's/.*"v?([0-9][^"]*)".*/\1/'` in both files.
+
 ## [0.7.0] - 2026-04-08
 
 ### Changed

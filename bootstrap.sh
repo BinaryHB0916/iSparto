@@ -26,7 +26,7 @@ done
 # ── Resolve latest version from GitHub Releases ──────────────
 if [ -z "$VERSION" ]; then
     VERSION=$(curl -fsSL --connect-timeout 10 --max-time 30 "https://api.github.com/repos/$REPO/releases/latest" 2>/dev/null \
-        | grep '"tag_name"' | sed 's/.*"\(v\?\)\([0-9][^"]*\)".*/\2/')
+        | grep '"tag_name"' | sed -E 's/.*"v?([0-9][^"]*)".*/\1/')
     if [ -z "$VERSION" ]; then
         # Fallback: no releases yet, run install.sh directly from main branch
         printf "${YELLOW}No releases found. Installing from main branch (unverified).${NC}\n" >&2
