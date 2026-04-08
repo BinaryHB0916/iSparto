@@ -276,6 +276,9 @@ Note: Auto PR merge only happens when all tasks on the current branch are comple
 - Branch hotfix/xxx from main
 - The mode selection table applies: simple single-file hotfixes use Solo + Codex; complex hotfixes use Agent Team
 - The trigger condition table auto-adapts: Tier 2 changes (pure visual, non-security config tweaks) need QA only; Tier 3 changes (pure doc/formatting) skip both; all other code fixes trigger code review + QA per default
+- **Doc Engineer audit still applies** to hotfix/ branches (Solo + Agent Team workflow step 4 requirement). Two narrow substitute/skip paths:
+  - **Emergency hotfix substitute path:** when the hotfix/ branch contains ≤3 changed files limited to Tier 1 shell scripts (`*.sh`) and/or `CHANGELOG.md`, AND the session is an explicit emergency release window (e.g., a broken release actively blocking users), Lead may substitute Doc Engineer with (a) `bash scripts/language-check.sh` clean run, (b) manual inline review of each changed file, (c) an explicit session-log entry naming the exception. Any hotfix that does not meet all three conditions must run the standard Doc Engineer audit.
+  - **Ad-hoc fix skip path:** if the fix session does not complete any Wave AND the changes have no code↔documentation sync risk (bug fix not corresponding to any plan.md entry), Doc Engineer may be skipped entirely; record the skip in the session briefing.
 - After fixing, merge back to main via PR; if there are in-progress feat/ branches, sync the hotfix changes
 
 ---
