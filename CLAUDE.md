@@ -15,7 +15,7 @@ iSparto is an AI Agent Team workflow framework that turns single-agent Claude Co
 - Any code/command change must synchronously update the corresponding documentation (README, docs/, command header comments)
 - Product direction changes must be written into documentation, not just discussed in conversation
 - Ask me first about uncertain product questions; do not decide on your own
-- Update docs/plan.md immediately after completing a task (in the same commit, not deferred to /end-working)
+- Update docs/plan.md immediately after completing each task in the same commit as the task work. Exception: Wave-completion entries and cross-session BLOCKING markers are written by `/end-working` as part of the commit it generates, because that is the step that knows the Wave is fully complete.
 - Do not develop directly on main; feat/ for new features, fix/ for bug fixes, hotfix/ for urgent fixes, docs/ for pure documentation commits, release/ for releases
 - install.sh changes must remain backward compatible (existing users must still be able to uninstall)
 - Changes to command templates (commands/*.md) must be verified not to break existing users' /migrate and /init-project flows
@@ -80,7 +80,7 @@ Applies to both **write** (code, docs, config) and **read** (code review, docume
 0. **Mode Selection Checkpoint** — Lead groups by file ownership, evaluates the two conditions, declares Solo (records reason)
 1. Lead assembles implementation prompt → calls Developer to implement code + tests
 2. Lead reviews Developer output; if issues, assembles a fix prompt and calls Developer again
-3. Lead assembles QA prompt → calls Developer for smoke testing (per trigger table) — Developer MUST build the project first, then verify each acceptance step at its tagged level: [code]/[build]/[runtime]
+3. Lead assembles QA prompt → calls Developer for smoke testing (per trigger table) — Developer MUST build the project first, then verify each acceptance step at its tagged level: [code]/[build]/[runtime]. **Carve-out (trivial CLI acceptance):** When the entire acceptance script in plan.md is ≤5 deterministic bash commands whose verdict is determined solely by exit code (e.g., `bash scripts/language-check.sh --self-test`), Lead MAY execute the commands directly and record each command + exit code as acceptance evidence in plan.md, instead of wrapping them in a Developer QA prompt. Requires: no build step, no runtime app verification, no output-parsing. Does NOT apply to multi-step scripts, scripts requiring log interpretation, or anything tagged [build]/[runtime].
 3.5 (Phase 0 only, or Wave completed) Lead spawns Independent Reviewer (Teammate, fixed prompt: "You are the Independent Reviewer. Read agents/independent-reviewer.md and execute."), waits for report. CRITICAL finding → stop development, resolve alignment first; after CRITICAL fix, must re-trigger Independent Reviewer to verify
 4. Lead runs Doc Engineer audit (as sub-agent) — must complete before step 6 push/merge, cannot be deferred to /end-working
 5. Lead runs Process Observer post-session audit (as sub-agent, can run in parallel with Doc Engineer)
@@ -92,7 +92,7 @@ Applies to both **write** (code, docs, config) and **read** (code review, docume
 0. **Mode Selection Checkpoint** — Lead groups by file ownership, evaluates the two conditions, declares Agent Team + defines Teammate count
 1. Lead breaks down tasks → defines file ownership + prompt scope
 2. Teammate(s) each run the prompt→Developer→review loop
-3. Lead assembles QA prompt → calls Developer for smoke testing (incremental, only changed paths) — Developer MUST build the project first, then verify each acceptance step at its tagged level: [code]/[build]/[runtime]
+3. Lead assembles QA prompt → calls Developer for smoke testing (incremental, only changed paths) — Developer MUST build the project first, then verify each acceptance step at its tagged level: [code]/[build]/[runtime]. **Carve-out (trivial CLI acceptance):** When the entire acceptance script in plan.md is ≤5 deterministic bash commands whose verdict is determined solely by exit code (e.g., `bash scripts/language-check.sh --self-test`), Lead MAY execute the commands directly and record each command + exit code as acceptance evidence in plan.md, instead of wrapping them in a Developer QA prompt. Requires: no build step, no runtime app verification, no output-parsing. Does NOT apply to multi-step scripts, scripts requiring log interpretation, or anything tagged [build]/[runtime].
 3.5 (Phase 0 only, or Wave completed) Lead spawns Independent Reviewer (Teammate, fixed prompt), waits for report. CRITICAL finding → stop development, resolve alignment first; after CRITICAL fix, must re-trigger
 4. Lead dispatches Doc Engineer for documentation audit (last step, ensures QA fixes are also audited) — must complete before step 6 push/merge, cannot be deferred to /end-working
 5. Lead runs Process Observer post-session audit (as sub-agent, can run in parallel with Doc Engineer)
