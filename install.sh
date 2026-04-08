@@ -68,7 +68,7 @@ if ! $_use_local_source; then
     if [ -z "$INSTALL_VERSION" ]; then
         # Auto-resolve latest version from GitHub Releases
         INSTALL_VERSION=$(curl -fsSL --connect-timeout 10 --max-time 30 "https://api.github.com/repos/$REPO/releases/latest" 2>/dev/null \
-            | grep '"tag_name"' | sed 's/.*"\(v\?\)\([0-9][^"]*\)".*/\2/')
+            | grep '"tag_name"' | sed -E 's/.*"v?([0-9][^"]*)".*/\1/')
     fi
     if [ -z "$INSTALL_VERSION" ]; then
         echo "Error: Could not determine version. Use bootstrap.sh to install:" >&2
