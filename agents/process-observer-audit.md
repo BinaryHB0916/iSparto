@@ -34,7 +34,7 @@ Inform user (in user's language) that the session detected N workflow deviations
 | A1 | Branch is feat/fix/hotfix | PASS/FAIL | ... |
 | A2 | No direct commits to main | PASS/FAIL | ... |
 | ... | ... | ... | ... |
-| F1 | Independent Review at Wave boundary | PASS/IN-PROGRESS/FAIL/N/A | If Wave marked completed this session: was IR spawned? Was docs/independent-review.md updated? IN-PROGRESS if IR is planned in plan.md execution sequence but not yet executed at audit time (mid-session audit captures pre-IR state — resolves to PASS once IR runs and appends to docs/independent-review.md). N/A if no Wave completed. |
+| F1 | Independent Review at Wave boundary | PASS/IN-PROGRESS/FAIL/N/A | If Wave marked completed this session: was IR spawned? Was docs/independent-review.md updated? Both spawn paths satisfy F1 equally — (a) Lead-initiated mid-session spawn (after task work completes, before `/end-working` is invoked), or (b) `/end-working` Step 3 auto-spawn at Wave boundary. Acceptance criteria for either path: fixed one-liner prompt was used AND report was appended to `docs/independent-review.md`. IN-PROGRESS if IR is planned in plan.md execution sequence but not yet executed at audit time (mid-session audit captures pre-IR state — resolves to PASS once IR runs and appends to `docs/independent-review.md`). N/A if no Wave completed. |
 
 **Summary:** X passed, Y in-progress, Z warnings, W failures
 

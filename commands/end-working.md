@@ -85,7 +85,24 @@ Your responsibility: Ensure all changes and decisions from this session are capt
    - If Doc Engineer audit has NOT been run for this branch's changes: spawn Doc Engineer sub-agent now (pre-merge gate)
    - If the Doc Engineer audit reports FAIL on any item (including item 9 language convention check or item 8 security compliance check): Lead reads the failing items from the report, edits the affected files directly (per the self-referential boundary for framework files, or via Developer for non-framework code), then **spawns a fresh Doc Engineer sub-agent** (zero inherited context) for a full re-audit. Loop bounded at 3 iterations. Do not proceed to `gh pr create` while the audit is in FAIL state.
    - If the third re-audit still FAILs (loop bound exceeded), execute the **6-step blocked recovery path** defined in `docs/roles.md` Doc Engineer Key Principles: (1) stop the loop; (2) generate a blocked-audit report capturing the final FAIL state; (3) write a blocked-audit entry to `docs/plan.md` under a "Blocked audits" section; (4) `git push -u origin <current-branch>` to preserve WIP; (5) report to the user (in user's language) that Doc Engineer audit hit the loop bound, the WIP branch is pushed, and manual intervention is required; (6) exit `/end-working` without creating or merging a PR. Do not leave recovery to Lead's improvisation.
-   - Create PR via `gh pr create`, merge via `gh pr merge --merge`
+   - Create PR via `gh pr create`, merge via `gh pr merge --merge`. Use the following PR body template (pass via HEREDOC to preserve formatting) — the `Mode Selection` and audit-source lines make the workflow-compliance artifacts visible in PR metadata so later audits can verify B1 (Mode Selection Checkpoint) and C3/F1 (audit execution source) without replaying the session:
+     ```markdown
+     ## Summary
+     <1-3 bullets summarizing the change>
+
+     ## Mode Selection
+     [Solo + Codex / Agent Team] — <reason from the Mode Selection Checkpoint at workflow step 0; if Agent Team, list Teammate count and file ownership groups>
+
+     ## Test plan
+     - [ ] <acceptance step 1 from plan.md>
+     - [ ] <acceptance step 2 from plan.md>
+
+     ## Workflow audits
+     - Doc Engineer audit: [sub-agent run ✅ / Lead self-assessed ✅ / skipped — reason] (see docs/workflow.md Hotfix Workflow for skip/substitute paths)
+     - Process Observer audit: [sub-agent run ✅ / Lead self-assessed ✅]
+     - Independent Reviewer: [Wave boundary PROCEED ✅ / not triggered — reason]
+     ```
+     The distinction between `sub-agent run ✅` and `Lead self-assessed ✅` for Doc Engineer and Process Observer matters: the sub-agent path is the default and provides the strongest audit guarantee (fresh context, zero inherited bias); the Lead-self-assessed path is reserved for the narrow exception cases defined in CLAUDE.md Solo/Agent Team workflow step 4 (ad-hoc fix / emergency hotfix) and must always cite the exception reason.
    - Delete local branch and switch back to main: `git checkout main && git pull && git branch -d <branch>` (remote branch is auto-deleted by GitHub on merge)
    - If `gh` CLI is NOT available: push the branch and inform the user to create and merge the PR manually on GitHub
    - If tasks are NOT complete (mid-Wave), just push — PR will be created when the branch is done
