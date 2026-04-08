@@ -188,6 +188,7 @@ The agent team treats the user's memory as **read-only input** used to adapt com
 ## Documentation Index
 - Product spec -> docs/product-spec.md
 - Development plan -> docs/plan.md
+- Product roadmap -> docs/roadmap.md (v1.x / v2.x long-range vision; plan.md handles current v0.x phase)
 - Framework concepts -> docs/concepts.md
 - Role definitions -> docs/roles.md
 - Workflow -> docs/workflow.md

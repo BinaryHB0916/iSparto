@@ -421,10 +421,6 @@ All 3 commands exit 0. No build step, no runtime, no output-parsing — eligible
 
 **Framework-feedback file disposition:** All 6 `docs/framework-feedback-*.md` files remain on disk as Tier 4 historical artifacts (frozen per Documentation Language Convention). Their contents are now reflected in the corresponding Tier 1/2 rule sources. No feedback file is deleted — they serve as the audit trail. Previously-closed items (0407 Suggestion 1 Wave-completion exception, 0407 Suggestion 3 Principle 1 guardian) were resolved in prior Hotfixes; the remaining 11 items are closed by this round.
 
-### 下一步
-- [ ] P1 仓库结构重组：内部文件（plan.md, product-spec.md, design-decisions.md, process-observer.md, security.md, session-log.md）移到 .project/ 目录，与用户文档物理隔离（约束：CLAUDE.md 不能移，Claude Code 从项目根读取）
-- [ ] 本地 hook 更新：用户需跑 `install.sh --upgrade` 才能用上新的复合命令检测和可操作拦截消息
-
 ### 技术生态追踪（暂不执行）
 
 以下项目受外部生态演进驱动，iSparto 只追踪不行动，满足触发条件时再评估：
@@ -447,6 +443,8 @@ v0.x  开发者工具      用户 = 开发者，手动触发流程
 v1.x  自治开发团队    用户 = 技术负责人，给任务，团队自己跑
 v2.x  CEO 工作台      用户 = 老板，说需求看结果，不碰过程
 ```
+
+> **v1.x / v2.x planning lives elsewhere:** The v1.x autonomous-team vision and v2.x CEO-workstation vision are tracked in [`docs/roadmap.md`](roadmap.md), not in this file. `plan.md` stays focused on the current v0.x phase, active Waves, and near-term delivery gates. See `docs/roadmap.md` for long-range product capabilities.
 
 ---
 
@@ -513,35 +511,3 @@ v2.x  CEO 工作台      用户 = 老板，说需求看结果，不碰过程
 | 2026-03-30 | 框架全局 | 自动化 refactoring PR | 依赖 CI/CD 基础设施；solo founder 项目通常没有 | 来源：OpenAI Harness Engineering |
 | 2026-03-30 | 框架全局 | Benchmark/Eval 集成 | 当前阶段不需要量化评估 harness 质量 | 来源：awesome list |
 | 2026-04-01 | 框架全局 | Claude Code 10 项改进（commands frontmatter、路径作用域规则、hook if 过滤、统一 Tool(specifier) 语法、git worktree 隔离、prompt/agent hook 类型、plugin 打包、协调原语、deferred tool discovery、subagent 持久化 memory） | 独立开发者小项目不需要这些；当前 hook + tmux + CLAUDE.md 够用，没有实际痛点驱动 | 来源：anthropics/claude-code 仓库深度研究。条件：dogfooding 中遇到真实痛点时重新评估单项 |
-
----
-
-### v1.x — 自治开发团队
-
-**交付标准：用户给一个任务描述，团队自己跑完全流程并交付可验收的结果，用户不需要中途干预。**
-
-**核心能力：流程自治 + 状态可见性**
-
-- [ ] 跨 session 任务续接 — 换 session 后团队自动恢复上下文，无需用户手动对齐
-- [ ] 多任务并行管理 — 同时推进多个独立任务，Lead 自动调度优先级
-- [ ] 进度摘要 — 每个任务的状态、完成度、阻塞项，用人话汇报
-- [ ] Demo 预览 — 自动部署 preview 环境 + 截图 + 一句话说明变化
-- [ ] 风险预警 — 主动上报复杂度超预期、依赖问题、技术风险
-- [ ] 失败自动重试与回滚 — 构建/测试失败时自动诊断、重试或回滚
-- [x] 自定义角色-模型绑定 — v0.6.0 实现了声明式配置表（docs/configuration.md#agent-model-configuration），角色定义与模型名解耦。运行时自动切换留给 v1.x
-- [ ] Agent dashboard — 任务看板，可视化团队工作状态
-- [ ] Cost & token analytics — 用量统计，帮用户理解投入产出
-
----
-
-### v2.x — CEO 工作台
-
-**交付标准：一个非技术用户，用自然语言描述需求，能拿到可运行的 demo + 进度报告，全程不碰代码不碰终端。**
-
-**核心能力：需求理解 + 自然语言交互**
-
-- [ ] 需求拆解 — 业务语言 → 技术 task → 优先级排序，用户只确认方向
-- [ ] 方案决策 — 团队提出技术方案选项，用户选择，不需要理解技术细节
-- [ ] 交付验收 — 可运行 demo + 变更说明，用户体验后给反馈
-- [ ] 自然语言项目管理 — "这周能上线吗？""昨天那个功能做得怎么样？"
-- [ ] 多项目管理 — 同时管理多个项目的多支 AI 团队
