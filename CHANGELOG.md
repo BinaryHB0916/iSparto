@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **`claude mcp list -s user` compatibility bug in install.sh + start-working.md hook migration guards** — `install.sh` section 6 (3 sites: DRY_RUN registered branch, DRY_RUN migrate branch, real-run migrate branch) and `commands/start-working.md` Step 7 (2 sites: rename guard, auto-add guard) were running `claude mcp list -s user 2>/dev/null | grep -q <name>`, which silently fails because Claude Code removed the `-s` scope flag from `mcp list` around v1.0.58 when the command was reworked to do live health probing. With stderr muted, the migration guards were fail-closed forever — the codex-reviewer → codex-dev MCP server migration appeared to skip on installs where the rename should have triggered, and the hook matcher auto-add branch in start-working Step 7 was silently short-circuited. Replaced all 5 sites with `claude mcp get <name> >/dev/null 2>&1` (clean 0/1 exit-code semantics, scope-agnostic — matches the actual intent since we only care whether the matcher will resolve). Added a 10-line maintenance comment block above install.sh section 6 naming `claude mcp get` as the replacement and instructing future maintainers to grep for `claude mcp get` if the lookup path itself ever breaks in a future Claude Code release. `mcp add -s user` and `mcp remove -s user` continue to accept the scope flag and are unchanged.
+
+### Changed
+
+- **`docs/roadmap.md` split out from `docs/plan.md`** — long-range v1.x/v2.x vision content moved out of `docs/plan.md` into a new `docs/roadmap.md`. `docs/plan.md` now focuses on the current v0.x phase (active Waves + deferred items) so Lead's per-session read stays tight; `docs/roadmap.md` holds the long-range commercialization and platform roadmap that is referenced but not touched session-to-session. `CLAUDE.md` Documentation Index updated with a pointer to the new file. Pure reorganization — no content loss.
+
 ## [0.7.2] - 2026-04-08
 
 ### Changed
