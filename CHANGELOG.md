@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-04-08
+
 ### Changed
 
 - **Documentation language convention established (Wave 1)** — Four-tier language architecture adopted across the framework. Tier 1 (System Prompt Layer: `CLAUDE.md`, `CLAUDE-TEMPLATE.md`, `commands/*.md`, `agents/*.md`, `templates/*.md`, `hooks/**`, `scripts/*.sh`, `lib/*.sh`, `install.sh`, `bootstrap.sh`) is English-only for AI instruction-following stability and open-source contributor parity. Tier 2 (Reference Documentation: `docs/*.md` except historical artifacts and the `docs/zh/` directory) is English-only as single source of truth. Tier 3 (User-Facing Entry: `README.md`, `README.zh-CN.md`, `docs/zh/quick-start.md`, `CONTRIBUTING.md`) is bilingual at the entry point. Tier 4 (Historical Artifacts: `docs/session-log.md`, `docs/framework-feedback-*.md`, historical entries in `docs/plan.md` and `CHANGELOG.md`) is frozen. Hard-coded user-facing strings rule (Principle 1): Tier 1 must not embed literal user-facing strings in any specific language — describe the intent in English and let the Lead generate the actual string at runtime.
