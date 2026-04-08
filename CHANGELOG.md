@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.2] - 2026-04-08
+
 ### Changed
 
 - **Self-referential boundary clarified for Tier 1 root-level files** — `CLAUDE.md` self-referential boundary now explicitly covers both subdirectory Tier 1 files (`commands/`, `templates/`, `scripts/`, `hooks/`, `agents/`, `docs/`, `lib/`) and root-level Tier 1 files (`CLAUDE.md`, `CLAUDE-TEMPLATE.md`, `bootstrap.sh`, `install.sh`, `isparto.sh`). Tier 2/3/4 documentation (other `docs/*.md`, `README*.md`, `CONTRIBUTING.md`, `CHANGELOG.md`, `VERSION`) is also in scope for direct Lead edits under the same framework self-referential principle. Closes ambiguity that caused Lead to over-delegate root-level framework edits to Codex.
