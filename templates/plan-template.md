@@ -20,6 +20,10 @@
 
 > Waves run in parallel for speed; Waves run sequentially for quality. Users accept deliverables at Wave boundaries.
 > The core of Wave splitting is decoupling: tasks within the same Wave must not have file overlaps, data dependencies, or runtime dependencies. If decoupling is not possible, move the task to the next Wave.
+>
+> **plan.md update cadence:** update plan.md either per-task (same commit as task work) or per-Wave (single close-out commit that lists all task completions with their commit hashes). The per-Wave approach is acceptable when the Wave runs as a single atomic work session on a dedicated branch.
+>
+> **Verification-count accuracy:** when the Wave close-out entry records a commit count, compute it mechanically at write time via `git log --oneline --no-merges <wave-base>..HEAD | wc -l` — do not estimate. `<wave-base>` is the commit where the Wave branch diverged from main.
 
 ### Wave Overview
 

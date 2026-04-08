@@ -19,7 +19,8 @@ This project uses the iSparto workflow framework (isparto.dev) to manage Agent T
 - Any code change must include corresponding documentation updates
 - Product decision changes must be written into docs, not just discussed in conversation
 - Ask me first about uncertain product questions; do not decide on your own
-- Update docs/plan.md immediately after completing each task in the same commit as the task work. Exception: Wave-completion entries and cross-session BLOCKING markers are written by `/end-working` as part of the commit it generates, because that is the step that knows the Wave is fully complete.
+- **plan.md update cadence:** update `docs/plan.md` either per-task (in the same commit as the task work) OR per-Wave (in a close-out commit that lists all task completions with commit hashes — acceptable when the Wave runs as a single atomic work session on a dedicated branch). Wave-completion entries and cross-session BLOCKING markers are written by `/end-working` as part of the commit it generates. If a fix session does not correspond to any plan.md entry (e.g., a bug fix not tied to any Wave), no plan.md update is required.
+- **plan.md verification-count accuracy:** when a Wave completion entry records a commit count, compute it mechanically via `git log --oneline --no-merges <wave-base>..HEAD | wc -l` at the time the entry is written — not by estimation.
 - Do not develop directly on main branch; use feat/ branches for new features, fix/ branches for bug fixes, hotfix/ branches for urgent production fixes
 - Core business logic must have unit tests
 - Sensitive data (API keys, tokens, passwords, personal information) must NOT be hardcoded in source code — use environment variables or config file references
