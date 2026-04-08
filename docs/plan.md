@@ -511,3 +511,7 @@ v2.x  CEO 工作台      用户 = 老板，说需求看结果，不碰过程
 | 2026-03-30 | 框架全局 | 自动化 refactoring PR | 依赖 CI/CD 基础设施；solo founder 项目通常没有 | 来源：OpenAI Harness Engineering |
 | 2026-03-30 | 框架全局 | Benchmark/Eval 集成 | 当前阶段不需要量化评估 harness 质量 | 来源：awesome list |
 | 2026-04-01 | 框架全局 | Claude Code 10 项改进（commands frontmatter、路径作用域规则、hook if 过滤、统一 Tool(specifier) 语法、git worktree 隔离、prompt/agent hook 类型、plugin 打包、协调原语、deferred tool discovery、subagent 持久化 memory） | 独立开发者小项目不需要这些；当前 hook + tmux + CLAUDE.md 够用，没有实际痛点驱动 | 来源：anthropics/claude-code 仓库深度研究。条件：dogfooding 中遇到真实痛点时重新评估单项 |
+| 2026-04-08 | 仓库结构 | P1 移动内部文件到 `.project/` 目录,与用户文档物理隔离 | 内部洁癖不是用户痛点；v0.8 外部用户验证门槛优先级更高,内部路径搬迁属于 churn。来源：Session #2 (2026-04-03) 仓库结构评估,当时挂在 plan.md 下一步,未推进 | 如果外部用户实际反馈 docs/ 布局困惑再重启 |
+| 2026-04-08 | Onboarding 提醒 | plan.md 挂"本地 hook 更新提醒"长期项,督促用户运行 `install.sh --upgrade` | 僵尸提醒（来自 2026-04-03,经过 10 个版本已失效）；时效性提醒不属于 plan.md,应该进 CHANGELOG + /start-working hook 自修复 | 未来需要用户重装 hook 时用 CHANGELOG + /start-working 提示替代 |
+| 2026-04-08 | 发布工具 | `scripts/macos-compat-check.sh` — 机械检查 shell 脚本里 BSD 不兼容的 sed 正则（来源：Session #b v0.7.0 BSD-sed 事故） | 单次事件的防御,缺乏模式证据；shellcheck 已免费提供很多 BSD/GNU 差异检查 | 如果再出一次同类 bug 就做；或者把 shellcheck 接进 language-check.sh pipeline |
+| 2026-04-08 | 模板美观 | Framework Polish Round 2 的 Doc Engineer PASS WITH MINOR 两条模板对称性建议 | DE 自己说 non-blocking、safe to push；用户明确要求"一次搞完,不要 scope creep" | 只在具体用户反馈因为不对称造成困惑时重启；纯美学抛光永久 deferred |
