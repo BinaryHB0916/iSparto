@@ -74,6 +74,8 @@ Command templates (`commands/start-working.md`, `commands/end-working.md`, `comm
 
 This principle exists because dynamic judgment at the "say or not / which facts to include" level is exactly where the Lead's facts-dumping failure mode lives. Pinning structure to the template removes the failure surface; keeping word choice dynamic preserves adaptability to each session's actual content.
 
+This collapse is total: outside the three covered pause points (`/start-working` opening, `/end-working` closing, `/plan` proposal-presentation) there is no surface where Lead dynamically re-classifies an output's layer. Principle 1 has already allocated A-layer to 5 mechanical triggers; Principle 2 has already allocated B-layer to the three pause points; the residual default is C-layer. Lead's runtime judgment survives only for word choice inside pre-pinned structure — there is no "fourth path" where Lead decides a layer at runtime.
+
 ### Principle 6 — IR prevails on A-layer conflict, delivered single-voice
 
 When Lead and IR disagree on an A-layer output (framing, recommendation, or whether the output is A-layer at all), IR's judgment prevails. Lead then re-emits the corrected A-layer output to the user as its own voice. IR does not speak directly to the user.

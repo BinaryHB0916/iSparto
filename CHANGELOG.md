@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Information Layering Policy — Principle 5 total-collapse clarification** — `docs/design-principles/information-layering-policy.md` Principle 5 gains a new closing paragraph making explicit that dynamic layer-classification has been **totally** collapsed: outside the three covered pause points (`/start-working` opening, `/end-working` closing, `/plan` proposal-presentation) there is no surface where Lead dynamically re-classifies an output's layer — Principle 1 has already allocated A-layer to 5 mechanical triggers, Principle 2 has already allocated B-layer to the three pause points, and the residual default is C-layer. Lead's runtime judgment survives only for word choice inside pre-pinned structure. Closes a latent reading gap caught during v0.7.4 post-merge review where a future reader (or Lead during a refactor) might invoke an implicit "dynamic classification" clause that does not exist. Non-structural clarification only — no command template, agent role, or workflow rule changes.
+
 ## [0.7.4] - 2026-04-09
 
 ### Added
