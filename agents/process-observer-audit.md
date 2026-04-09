@@ -33,6 +33,7 @@ Inform user (in user's language) that the session detected N workflow deviations
 |---|-------|--------|--------|
 | A1 | Branch is feat/fix/hotfix | PASS/FAIL | ... |
 | A2 | No direct commits to main | PASS/FAIL | ... |
+| A3 | branch guard precedes first modifying tool call | PASS/WARN | The branch guard MUST precede the first Edit/Write/Bash modifying tool call of the session. If the session's first modifying tool call occurred on `main` before switching to a feat/fix/hotfix/docs/release branch, mark WARN (not FAIL — the resulting work still merged cleanly, but the ordering broke the Branch Protocol). Detection: inspect `git reflog` + session Edit/Write timestamps vs the `git checkout -b` timestamp. Closes PR 178's process deviation. |
 | ... | ... | ... | ... |
 | F1 | Independent Review at Wave boundary | PASS/IN-PROGRESS/FAIL/N/A | If Wave marked completed this session: was IR spawned? Was docs/independent-review.md updated? Both spawn paths satisfy F1 equally — (a) Lead-initiated mid-session spawn (after task work completes, before `/end-working` is invoked), or (b) `/end-working` Step 3 auto-spawn at Wave boundary. Acceptance criteria for either path: fixed one-liner prompt was used AND report was appended to `docs/independent-review.md`. IN-PROGRESS if IR is planned in plan.md execution sequence but not yet executed at audit time (mid-session audit captures pre-IR state — resolves to PASS once IR runs and appends to `docs/independent-review.md`). N/A if no Wave completed. |
 

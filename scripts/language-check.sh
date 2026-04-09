@@ -109,6 +109,11 @@ TIER2_EXCLUDED_FILES = {
     # as a Tier-4-like exclusion preserves both the language guardian and the
     # audit trail. See docs/plan.md Wave 3 Lead-Resolution Option A.
     'docs/independent-review.md',
+    # Dogfood log: Tier 4 historical artifact recording subjective session
+    # experience. Each cycle entry is written in the user's working language
+    # (Chinese for the current maintainer) and is never modified retroactively.
+    # See docs/plan.md v0.7.5 T7 and CLAUDE.md Documentation Language Convention.
+    'docs/dogfood-log.md',
 }
 
 # Tier 2 exclusions — relative-path prefix matches (under docs/)

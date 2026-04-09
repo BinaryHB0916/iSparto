@@ -202,3 +202,6 @@ The agent team treats the user's memory as **read-only input** used to adapt com
 - Security audit system -> docs/security.md
 - Information Layering Policy -> docs/design-principles/information-layering-policy.md
 - Conversation style guide -> docs/design-principles/conversation-style.md
+- Case studies -> docs/case-studies.md
+- Repository structure -> docs/repo-structure.md
+- Dogfood log -> docs/dogfood-log.md
