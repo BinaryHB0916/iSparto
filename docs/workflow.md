@@ -223,7 +223,7 @@ All code changes trigger both implementation and QA unless they fall entirely wi
 
 ### Wave-level safety net
 
-Each Wave must include at least one batch Developer review before completion, regardless of how individual changes are categorized. Do not defer all reviews to the delivery checkpoint — review at Wave boundaries to catch issues early.
+Each Wave must include at least one batch Developer review before completion, regardless of how individual changes are categorized (**except when the entire Wave change set falls within the self-referential boundary defined in CLAUDE.md Development Rules — markdown-only, data-only, no Tier 1 logic changes — in which case Developer is exempted per the Implementation Protocol exception in CLAUDE.md**). Do not defer all reviews to the delivery checkpoint — review at Wave boundaries to catch issues early.
 
 > **Behavioral templates are not documentation.** Files in `commands/*.md` and `templates/*.md` are system prompts that define AI agent behavior — they are executable definitions, not passive documentation. The `.md` extension does not make them Tier 3. Changes go through Tier 2b (Developer review, no QA).
 
