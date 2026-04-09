@@ -1,8 +1,10 @@
 You are the Team Lead. The user has run /start-working to begin a work session.
 
+Reference: docs/design-principles/information-layering-policy.md — every user-facing output in this command must be classified A-layer (decision interruption), B-layer (decision preparation, the single briefing at Step 9), or C-layer (silent, logged only). Default to silence. Only emit when the output is either A-layer (matches one of the 5 trigger types in Policy Principle 1) or belongs inside the Step 9 B-layer briefing shape defined below.
+
 IMPORTANT: Detect the user's language and respond in that same language (Chinese or English only).
 
-Your responsibility: Report current status and suggest next steps. Do not write any code.
+Your responsibility: Run the setup sequence silently, then at Step 9 emit exactly one B-layer briefing in the fixed shape. Do not narrate individual setup steps; do not write any code.
 
 0. Session boundary check (ABSOLUTE FIRST — before branch guard, before reading any files, before any state mutation):
    - Read `docs/plan.md` and search for the literal marker line: `🚨 BLOCKING: Next Wave requires NEW SESSION` (this is a fixed system marker, not a user-facing string — match it as a literal)
@@ -20,7 +22,7 @@ Your responsibility: Report current status and suggest next steps. Do not write 
 0.5. Branch guard (before reading any files or doing any work):
    - Run `git branch --show-current`
    - If on `main` or `master`: immediately run `git checkout -b feat/wip-MMDD` (where MMDD is today's date) to create a working branch
-     - Inform the user (in user's language) that the session was on main and has been switched to the new feat/wip-MMDD working branch
+     - C-layer: silently log the auto-create to session-log at /end-working time. Do NOT narrate it in the Step 9 briefing unless it materially affects the user's next decision (it rarely does — the user will see the branch name in the briefing's B-layer state-variable sentence anyway).
    - If already on a feature/fix/docs/hotfix/release branch: proceed
    - This step MUST complete before reading CLAUDE.md or any other file
 
@@ -48,22 +50,43 @@ Your responsibility: Report current status and suggest next steps. Do not write 
    - Run: `GH_USER=$(gh api /user --jq .login 2>/dev/null)`
    - If both are non-empty and REPO_OWNER ≠ GH_USER:
      - Run `gh auth switch --user "$REPO_OWNER"` to align
-     - Inform the user (in user's language) that the gh account has been auto-switched to $REPO_OWNER (the repository owner)
+     - C-layer: auto-switch is silent. The framework handles account alignment autonomously; the user does not need to be told. Log to session-log at /end-working time if switching occurred.
    - If gh is not installed, not authenticated, or only one account exists: skip silently
    - This step ensures `gh pr create` in /end-working uses the correct account
 7. Verify project-level Process Observer hooks:
    - Check if .claude/settings.json contains PreToolUse hooks with Edit/Write/mcp__codex-dev__codex matchers **and** each matcher's hooks array includes the `pre-tool-check.sh` command
    - If the legacy matcher `mcp__codex-reviewer__codex` is found:
      - **Migration guard (mandatory before renaming):** Run `claude mcp get codex-dev >/dev/null 2>&1` (exit 0 = registered, exit 1 = missing) to verify the renamed MCP server (`codex-dev`) is actually reachable. The local iSparto installation is responsible for registering this server during `install.sh --upgrade`; if the user has not upgraded yet, the registration is still under the old name.
-     - If the guard passes (exit 0 — `codex-dev` is registered): rename the matcher to `mcp__codex-dev__codex` and inform the user (in user's language) that the hook matcher was migrated from codex-reviewer to codex-dev
-     - If the guard fails (non-zero exit — `codex-dev` is NOT registered, indicating a stale install): leave the old matcher in place and do NOT rename it. A renamed matcher would point to a non-existent MCP server and silently disable hook interception, which is worse than the legacy state. Inform the user (in user's language) that the local iSparto installation is stale (only the legacy `codex-reviewer` MCP server is registered), so the project hook matcher migration has been skipped to preserve interception, and instruct them to run `~/.isparto/install.sh --upgrade` first and then re-run `/start-working` so the migration can complete. After informing the user, also skip the next bullet (the "If any matcher is missing or its hook command is absent: auto-add them" auto-add branch) — auto-adding a `mcp__codex-dev__codex` matcher on a stale install would re-introduce the same silent-disable bug — and proceed directly to Step 8.
+     - If the guard passes (exit 0 — `codex-dev` is registered): rename the matcher to `mcp__codex-dev__codex`. C-layer: auto-repair is silent. Log to session-log at /end-working time.
+     - If the guard fails (non-zero exit — `codex-dev` is NOT registered, indicating a stale install): leave the old matcher in place and do NOT rename it. A renamed matcher would point to a non-existent MCP server and silently disable hook interception, which is worse than the legacy state. **A-layer (Policy trigger type e — critical intercept):** the framework cannot auto-repair this situation; the user must manually run the upgrade. Interrupt the Step 9 briefing and instead emit one A-layer interrupt using the standard wording rule: the local iSparto installation is stale (only the legacy `codex-reviewer` MCP server is registered), the Lead has skipped the hook-matcher migration to preserve interception, and the user should run `~/.isparto/install.sh --upgrade` and then re-run `/start-working`. After emitting the A-layer interrupt, also skip the next bullet (the `If any matcher is missing or its hook command is absent: auto-add them` auto-add branch) — auto-adding a `mcp__codex-dev__codex` matcher on a stale install would re-introduce the same silent-disable bug — and proceed directly to Step 8.
    - If any matcher is missing or its hook command is absent:
      - **Migration guard (mandatory before auto-adding):** Run `claude mcp get codex-dev >/dev/null 2>&1` (exit 0 = registered, exit 1 = missing) to verify the `codex-dev` MCP server is actually reachable. Writing a `mcp__codex-dev__codex` matcher on a stale install (where the server is still registered under the legacy name `codex-reviewer`) would point the matcher at a non-existent MCP server and silently disable hook interception, which is worse than leaving the matcher absent.
-     - If the guard passes (exit 0 — `codex-dev` is registered): auto-add the missing matchers (same JSON as /init-project step 6) and inform the user (in user's language) that iSparto workflow hooks were added to the project settings
-     - If the guard fails (non-zero exit — `codex-dev` is NOT registered, indicating a stale install): do NOT auto-add any matchers. A partial auto-add would leave the project in an inconsistent mid-state. Inform the user (in user's language) that the local iSparto installation is stale (only the legacy `codex-reviewer` MCP server is registered at the user level), so the project hook matcher auto-add has been skipped to preserve interception, and instruct them to run `~/.isparto/install.sh --upgrade` first and then re-run `/start-working` so the auto-add can complete. After informing the user, proceed directly to Step 8.
+     - If the guard passes (exit 0 — `codex-dev` is registered): auto-add the missing matchers (same JSON as /init-project step 6). C-layer: auto-repair is silent. Log to session-log at /end-working time.
+     - If the guard fails (non-zero exit — `codex-dev` is NOT registered, indicating a stale install): do NOT auto-add any matchers. A partial auto-add would leave the project in an inconsistent mid-state. **A-layer (Policy trigger type e — critical intercept):** interrupt the Step 9 briefing and emit one A-layer interrupt using the standard wording rule: the local iSparto installation is stale (only the legacy `codex-reviewer` MCP server is registered at the user level), the Lead has skipped the hook-matcher auto-add to preserve interception, and the user should run `~/.isparto/install.sh --upgrade` and then re-run `/start-working`. After emitting the A-layer interrupt, proceed directly to Step 8.
    - This auto-repair ensures projects created before the layered hooks architecture get patched on first /start-working
 8. Determine the collaboration mode (transparent to user, no mode switch needed):
    - **Solo + Codex** (default): use unless both Agent Team conditions are met
    - **Agent Team**: upgrade when BOTH — (1) work is decomposable into independent parallel sub-tasks, AND (2) file count × change size per file justifies coordination overhead (5 files with large changes → Agent Team; 5 files with 1-line edits → Solo)
-   - Announce your choice and reasoning briefly (e.g., "Single-module fix, I'll handle this Solo + Codex")
-9. Present all the above information with your suggested next step. The user will review the briefing and respond naturally — they may say 'continue', adjust priorities, or raise concerns. Do not treat this as a formal gate requiring an explicit 'start' command.
+   - Mode selection itself is B-layer (part of the Step 9 briefing) only when it materially affects the user's next decision (e.g., the user is about to approve a plan and needs to know whether Lead will run Solo or spawn Teammates). Otherwise it is C-layer: decide silently and reflect the mode implicitly in the next-action sentence at Step 9.
+
+9. **B-layer briefing — the single user-facing output of this command.** Emit exactly one briefing in the fixed shape below. Do not emit anything else outside the A-layer interrupts explicitly authorized in Steps 0 and 7. Do not narrate Steps 0.5–8. Do not stack parallel-domain status bullets.
+
+   **Fixed B-layer shape (3 sentences, in order, no headings, no bullet stacks):**
+
+   1. **State-variable sentence (protected — Policy Principle 4 cross-session recovery surface):** one sentence naming the current Wave status and the immediate next task. This is the cross-session recovery surface — it must always be emitted, even when "everything is green," because it is exactly the context the user needs to resume work across sessions. Include: current Wave identifier and name, active task identifier (T1/T2/etc.), position in the Wave (mid-flight, just started, close-out). The word "Wave" is preserved in this sentence and throughout the briefing — Wave is a state variable, not implementation noise.
+
+   2. **Blocker-or-carry-over sentence (only if non-empty):** one sentence flagging items from the last session that affect the next decision. Include: remaining issues from the last session (if any), rejected approaches relevant to the current Wave tasks (if any in plan.md's "Rejected Approaches" table), runtime health check failures (if Step 5 found any), documentation drift (if Step 4 found any). If none of these exist, **omit this sentence entirely** — do not emit a "no blockers" placeholder (that is C-layer noise).
+
+   3. **Next-action sentence using the A-layer wording rule:** one sentence proposing the next concrete action with a one-clause reason. Use the standard template from docs/design-principles/conversation-style.md: "I plan to X, because Y. If you disagree, I can switch to Z. Continue?" X is the specific next task or step; Y is the one-clause reason; Z is the most viable alternative (if there is no viable alternative, state "No viable alternative — this is the only path I see"); Continue? is the terminal question. The next-action sentence is structurally the only place where the A-layer wording rule applies inside a B-layer briefing.
+
+   **C-layer items — NEVER emit in Step 9 or anywhere in this command's user-facing output.** These facts live in session-log.md and are grep-able after the fact; they do not belong in the briefing:
+   - branch auto-create from main (Step 0.5) or placeholder-rename to a better name (Step 2)
+   - Process Observer hook verification passing (Step 7 green path)
+   - gh account auto-switch to REPO_OWNER (Step 6)
+   - runtime health check green status (Step 5 green path)
+   - Process Observer armed / Doc Engineer idle / any "everything is running" status
+   - hook-matcher migration on non-stale installs (Step 7 rename case)
+   - token counts, model IDs, session duration, file counts — any operational metric
+   - retrospective narration ("first I read CLAUDE.md, then I read plan.md…")
+
+   The user reviews the briefing and responds naturally — they may say 'continue', adjust priorities, or raise concerns. Do not treat Step 9 as a formal gate requiring an explicit 'start' command; the A-layer wording rule's "Continue?" terminal question is sufficient.

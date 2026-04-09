@@ -1,8 +1,10 @@
 You are the Team Lead. The user has run /end-working to wrap up the work session.
 
+Reference: docs/design-principles/information-layering-policy.md — every user-facing output in this command must be classified A-layer (decision interruption), B-layer (the single closing briefing defined in the final step), or C-layer (silent, logged to session-log.md and commit history). Default to silence. The closing briefing follows the fixed 3-5 sentence shape defined at the bottom of this file; intermediate steps (audits, commits, PR creation) do not emit individual status lines to the user.
+
 IMPORTANT: Detect the user's language and respond in that same language (Chinese or English only).
 
-Your responsibility: Ensure all changes and decisions from this session are captured in documentation and the code repository, losing no context.
+Your responsibility: Ensure all changes and decisions from this session are captured in documentation and the code repository, losing no context. Run the full close-out sequence silently, then emit exactly one B-layer closing briefing plus any A-layer interrupts that Step 3/Step 5/Step 6/Step 9 authorize.
 
 1. Review all changes and decisions from this session:
    - Are code changes consistent with docs/ documentation? If not, you (Lead) update the docs directly, or spawn a Doc Engineer to update them
@@ -19,8 +21,8 @@ Your responsibility: Ensure all changes and decisions from this session are capt
      a. Spawn Independent Reviewer as Teammate (tmux mode) with the following fixed prompt — do NOT add any context, framing, or explanation:
         "You are the Independent Reviewer. Read agents/independent-reviewer.md and execute. This is a Wave Boundary Review."
      b. Wait for the reviewer to complete and append findings to docs/independent-review.md
-     c. If CRITICAL finding: in the session briefing, inform user (in user's language) that the Independent Reviewer found CRITICAL issues; add a next-session to-do entry instructing that the CRITICAL findings must be resolved before starting the next Wave. Do NOT block the current commit/push — code is already written, blocking commit would lose work.
-     d. If no CRITICAL findings (PROCEED): in the session briefing, inform user (in user's language) that Independent Review passed for the current Wave.
+     c. If CRITICAL finding: **A-layer (Policy trigger type e — critical intercept).** Emit one A-layer interrupt using the standard wording rule: the Wave Boundary Review found CRITICAL issues, the Lead is NOT blocking the commit/push (code is already written and blocking would lose work), and the next session must resolve the CRITICAL findings before starting the next Wave. Add a next-session to-do entry naming the CRITICAL findings. The A-layer interrupt is emitted BEFORE the final B-layer closing briefing; the closing briefing then references the CRITICAL as the "what Codex caught" slot.
+     d. If no CRITICAL findings (PROCEED): **C-layer.** Do not emit a passing-Independent-Review announcement — a passing review is the expected state and does not change any user decision. The Wave-completion fact still surfaces in the B-layer closing briefing's what-shipped-today sentence; the IR pass is implicit in the framework having reached the close-out.
    - If not triggered (mid-Wave session, Wave not completed): skip, do not mention in briefing
 4. Generate a session report and append it to `docs/session-log.md`:
    - Gather all metrics from the current session context (you know all of this from coordinating the team)
@@ -52,21 +54,21 @@ Your responsibility: Ensure all changes and decisions from this session are capt
    - Audit scope: review the session against CLAUDE.md behavioral guidelines — branching conventions, Codex review triggers, Doc Engineer execution, PR workflow, unauthorized operations, plan.md accuracy
    - Input: `git log` (commits in this session), `git diff --stat` (file changes), current branch name, plan.md (check unchecked items against actual codebase state)
    - Output: the agent returns a full compliance report (for Lead's internal reference) and a user-facing summary
-   - In the session briefing, only include the user-facing summary:
-     - If all checks PASS: do not mention the audit in the briefing (user should not notice)
-     - If any checks FAIL: list only the failed items with actionable recovery suggestions, not the full compliance table
-   - If rule correction suggestions are identified, record them in the briefing for the next /start-working session to reference
+   - Briefing integration:
+     - If all checks PASS: **C-layer.** Do not mention the audit. A passing audit is the expected state.
+     - If any checks FAIL: include only the failed items with one-line recovery suggestions inside the B-layer closing briefing's "what Codex/audits caught" slot. Do not dump the full compliance table.
+   - If rule correction suggestions are identified, record them in the briefing for the next /start-working session to reference (they become next-session carry-over, not this-session narration)
    - If the audit identifies any "Framework-side" rule corrections:
      a. Generate a brief Markdown file: `docs/framework-feedback-MMDD.md`
      b. Include: rule ID, gap description, expected behavior, session context
      c. Save to docs/ (will be committed with session changes)
-     d. Inform user (in user's language) that the audit found N framework improvement suggestions saved to docs/framework-feedback-MMDD.md, suggesting they can submit them to the iSparto project
+     d. **B-layer (closing briefing integration).** The briefing's "what Codex/audits caught" slot references the framework-feedback file by name (one clause, e.g., "Process Observer flagged N framework rule gaps → saved to docs/framework-feedback-MMDD.md"); do NOT emit a separate status line or suggest they submit it — the file path is sufficient for the user to act on.
    - This step has no data dependency on step 1 (Doc Engineer audit), but both are triggered sequentially by the Lead within the same session.
 6. Security scan (before commit):
    - Execute `bash $HOME/.isparto/hooks/process-observer/scripts/pre-commit-security.sh`
-   - If output contains BLOCK → stop the commit, report the specific issues and remediation suggestions to the user in the session briefing
-   - If output contains WARNING → include warnings in the session briefing, proceed with commit
-   - If passed → proceed to next step
+   - If output contains BLOCK → **A-layer (Policy trigger type e — critical intercept).** Stop the commit. Emit one A-layer interrupt using the standard wording rule: name the specific blocking issue, state that the Lead is NOT committing, propose the concrete remediation (e.g., add pattern to .secureignore, or rewrite the offending line). Wait for user response before resuming.
+   - If output contains WARNING → **B-layer.** Include the warning list inside the closing briefing's "what Codex/audits caught" slot (one line per warning, not a table). Proceed with commit.
+   - If passed → **C-layer.** Proceed to next step. Do not announce "security scan passed."
 7. Branch guard before commit:
    - Run `git branch --show-current` to check the current branch
    - If on main and there are uncommitted changes (session log, docs updates, etc.):
@@ -79,8 +81,8 @@ Your responsibility: Ensure all changes and decisions from this session are capt
    - Run: `GH_USER=$(gh api /user --jq .login 2>/dev/null)`
    - If both are non-empty and REPO_OWNER ≠ GH_USER:
      - Run `gh auth switch --user "$REPO_OWNER"` to align
-     - Note in the session briefing (in user's language) that the gh account was auto-switched to $REPO_OWNER
-   - If gh is not available or switch fails: proceed — step 9 will fall back to "push branch and inform user to create PR manually"
+     - C-layer: auto-switch is silent. Log to the session-log entry being written in Step 4 (add a line under Notes if the switch occurred).
+   - If gh is not available or switch fails: proceed — step 9 will fall back to "push branch and inform user to create PR manually" (that fallback IS an A-layer interrupt because the user must take manual action to merge the PR)
 9. If all tasks on the current branch are complete (all reviews passed, docs updated):
    - If Doc Engineer audit has NOT been run for this branch's changes: spawn Doc Engineer sub-agent now (pre-merge gate)
    - If the Doc Engineer audit reports FAIL on any item (including item 9 language convention check or item 8 security compliance check): Lead reads the failing items from the report, edits the affected files directly (per the self-referential boundary for framework files, or via Developer for non-framework code), then **spawns a fresh Doc Engineer sub-agent** (zero inherited context) for a full re-audit. Loop bounded at 3 iterations. Do not proceed to `gh pr create` while the audit is in FAIL state.
@@ -107,4 +109,24 @@ Your responsibility: Ensure all changes and decisions from this session are capt
    - If `gh` CLI is NOT available: push the branch and inform the user to create and merge the PR manually on GitHub
    - If tasks are NOT complete (mid-Wave), just push — PR will be created when the branch is done
 
-After completing all steps, output a brief session summary to the user (what changed, issues caught, next steps suggested). This is a briefing, not a confirmation gate — proceed without waiting for user approval.
+**B-layer closing briefing — the single structured briefing of this command.** After Steps 1–9 complete, emit exactly one closing briefing in the fixed shape below. Do not prepend `Session complete` or append `Ready for next session` or any other ceremonial wrapper. Do not replay the day's events in narrative form.
+
+**Fixed B-layer shape (3-5 sentences total, in order, no headings, no bullet stacks):**
+
+1. **What shipped today** — one sentence naming the concrete outcome, referencing Wave completion if applicable (e.g., "Wave 7 / v0.7.4 Information Layering Policy is complete — T1–T5 merged to main via PR #NNN"). If mid-Wave, name the tasks that closed (e.g., "T1 and T2 of Wave 7 are done; T3 is next"). This is the cross-session recovery surface for the next /start-working — it must always be emitted.
+
+2. **What Codex/audits caught** — one sentence OR one short bullet cluster (max 3 bullets) listing only non-empty findings: Codex P0/P1 findings, Doc Engineer audit failures (if any), Process Observer rule gaps (if any, reference the `docs/framework-feedback-MMDD.md` file path), security-scan warnings (if any). If ALL of these are empty, **omit this sentence entirely** — do not emit a "no findings" placeholder. Empty = C-layer.
+
+3. **What's next** — one sentence proposing the next concrete action using the A-layer wording rule only when there IS a next decision the user needs to make; otherwise a plain pointer ("next: T3 at the next /start-working" or "Wave is complete, awaiting your direction"). If a Wave Boundary Review CRITICAL was raised in Step 3, this sentence names the CRITICAL as the blocker to the next Wave.
+
+**Optional fourth sentence** — only when a manual-action follow-up exists (gh unavailable → manual PR creation; Doc Engineer loop-bound hit → manual intervention; stale install → run `~/.isparto/install.sh --upgrade`). This sentence is A-layer in wording (concrete action, one reason) but sits inside the B-layer briefing because the user needs it to continue outside the session.
+
+**C-layer items — NEVER emit in the closing briefing.** These live in the session-log.md entry written in Step 4, the commit message, and the PR body template from Step 9:
+- "Session complete" / "Ready for next session" / any ceremonial wrapper
+- "Doc Engineer audit passed" / "Process Observer audit passed" / "Security scan passed" (passing audits are C-layer; only failures surface)
+- "gh account switched to X" (auto-switch is silent; logged in Step 8)
+- Token counts, model IDs, file counts, line counts, session duration — any operational metric
+- Replay of the day's events ("first we did X, then we reviewed Y, then…")
+- The word "briefly" — a 3-5 sentence briefing does not need to announce itself as brief
+
+This is a briefing, not a confirmation gate — proceed without waiting for user approval. The briefing's `Continue?` question (if the next-action sentence uses the A-layer wording rule) expects a natural user response, not a formal acknowledgement.
