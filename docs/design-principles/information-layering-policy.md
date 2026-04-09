@@ -54,6 +54,8 @@ B-layer output is permitted only at three points in a session: the `/start-worki
 
 If the Lead needs to communicate mid-session, it must either escalate the item to A-layer (if it genuinely blocks a user decision) or log it to C-layer (if it does not).
 
+The three pause points are themselves **static and pre-defined**, not chosen by Lead at runtime. They are fixed at command-template load time by `commands/start-working.md`, `commands/end-working.md`, and `commands/plan.md`; Lead does not scan the session mid-flow asking "is now a good pause point?" — pause-point identity is a property of *which command is currently running*, not of Lead's judgment. This makes Principle 2's entry into B-layer symmetric with Principle 1's entry into A-layer: A-layer entry is bound statically by the 5 mechanical triggers enumerated in Principle 1, B-layer entry is bound statically by the 3 pause points enumerated here, and C-layer is the residual default. There is no fourth path where Lead dynamically decides that some arbitrary mid-session moment counts as a "B-layer opportunity" — by construction such a moment must be either escalated to A (via a Principle 1 trigger) or sunk to C. Principle 5 later restates this closure from the opposite direction (no dynamic layer re-classification is possible once the template structure is pinned); the overlap is deliberate because the Policy is a meta-document that should be readable by jumping into any single principle.
+
 ### Principle 3 — IR only reviews A-layer judgments
 
 The Independent Reviewer's role in runtime output review is narrow by design: **IR is invoked only when Lead has classified an output as A-layer**. B-layer and C-layer classifications are Lead-autonomous and carry no IR gate.

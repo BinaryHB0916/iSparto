@@ -8,87 +8,83 @@
 
 ---
 
-**iSparto 把 Claude Code 从单个 AI 变成一支开发团队** — Lead 组装 prompt、Developer (Codex) 实现代码、Teammate 并行执行、Doc Engineer 同步文档。你指挥的不是一个 Agent，而是一支团队。
+**iSparto 把 Claude Code 变成一支会克制的 AI 开发团队。** Lead 组装 prompt,Developer(Codex)写代码,Teammate 并行执行,Doc Engineer 同步文档。你指挥团队,团队不把自己做事的过程倒回给你。
 
-> **中文用户第一次使用？** 先看 [docs/zh/quick-start.md](docs/zh/quick-start.md) — 安装、首次使用、日常工作流的中文速览。
+> **中文用户第一次使用?** 先看 [docs/zh/quick-start.md](docs/zh/quick-start.md) — 安装、首次使用、日常工作流的中文速览。
 >
-> iSparto 采用双语策略：用户入口（README + 快速上手 + CONTRIBUTING）双语维护；框架指令（`CLAUDE.md`、`commands/`、`agents/`、`templates/`）和参考文档（`docs/`）单一英文来源——这是为了保证 AI Agent 指令跟随的稳定性，并让不懂中文的开源贡献者能参与审查。详情见 [CLAUDE.md > Documentation Language Convention](CLAUDE.md#documentation-language-convention)。
+> iSparto 采用双语策略:用户入口(双语 README + 中文 quick-start + CONTRIBUTING)平行维护;框架指令和参考文档单一英文来源,保证 AI 指令跟随的稳定性,同时让不懂中文的开源贡献者能参与审查。详情见 [CLAUDE.md > Documentation Language Convention](CLAUDE.md#documentation-language-convention)。
+
+### 核心差异 — 克制,不是「更多 Agent」
+
+现有的 AI 编程工具(Cursor、Windsurf、Copilot、单会话的 Claude Code)都是**你和一个 Agent 反复沟通**。Agent 读了你的 CLAUDE.md、看了你的代码、查了你的分支状态,把这一整套脑内画面组织好之后,倾向于在动手之前先把它全部说给你听。于是你的时间花在**给它的信息分类**,而不是做决定。
+
+iSparto 的核心动作是**停止倾倒**。团队有角色——Lead、Teammate、Developer、Doc Engineer——但卖点不是「Agent 更多了」,而是 Lead 知道**在这一刻你真正需要听见的那一句话是什么**,其余的东西写到你需要时可以 grep 的文件里去。你拿到的是决策,不是一份卷宗。
+
+|  | 单 Agent 工具 | iSparto |
+|--|---|---|
+| 你看到什么 | Agent 刚读到的所有事实,用散文复述一遍 | 你现在必须知道的那一句,其余留在 `docs/` 里 |
+| 什么时候打断你 | 只要 Agent「有话想说」 | 只在真正需要决策的时刻 |
+| 跨会话状态 | 会丢,每次都得重新解释上下文 | `/start-working` 从 `docs/plan.md` 自动恢复 |
+| 文档同步 | 手动 | 每个 Wave 自动审计 |
 
 ### 适合谁用
 
 想用 Claude Code 成倍提升产出的 macOS 独立开发者。需要 Claude Max 和 ChatGPT 订阅。
 
-> **平台：仅支持 macOS。** Agent Team 模式依赖 iTerm2 内置的 tmux 集成。Solo + Codex 模式在其他平台上可能可用，但未经测试。
+> **平台:仅支持 macOS。** 并行执行模式依赖 iTerm2 内置的 tmux 集成。单会话模式在其他平台上可能可用,但未经测试。
 
 | 项目 | 要求 | 说明 |
-|------|------|------|
-| Claude Max 订阅 | $100/月 | Claude Code + Auto 模式（Solo + Codex / Agent Team） |
-| ChatGPT 订阅 | $20/月 | Codex CLI（代码审查 + QA） |
+|---|---|---|
+| Claude Max 订阅 | $100/月 | 运行 Claude Code 以及 Lead / Teammate / Doc Engineer 角色 |
+| ChatGPT 订阅 | $20/月 | 运行 Developer 角色所用的 Codex CLI |
 | Node.js | 18+ | 运行 Claude Code、Codex CLI 和 MCP Server |
 | Git | 任意版本 | 版本控制 |
-| 终端 | iTerm2（macOS） | Agent Team tmux 模式依赖 iTerm2 内置的 tmux 集成，无需单独安装 tmux |
+| 终端 | iTerm2(macOS) | 并行执行模式用 iTerm2 内置 tmux,无需单独安装 |
 
-**总成本：$120/月**，两个顶级模型（Claude Opus + Codex），无额外 API 费用。
-
-### 和现有工具的区别
-
-现有的 AI 编程工具（Cursor、Windsurf、Copilot、Claude Code 单会话）都是**你和一个 Agent 反复沟通**——Agent 没有团队，没有分工，所有事情都靠你和它一来一回地推进。
-
-iSparto 把单个 Agent 变成**一支有分工的团队**：Lead 组装结构化 prompt、Developer (Codex) 实现代码、Teammate 并行执行、Doc Engineer 同步文档。你不再逐句指挥 Agent，而是确认方向和验收结果。
-
-| | 单 Agent 工具 | iSparto |
-|--|--------------|---------|
-| 协作模式 | 你和一个 Agent 反复沟通 | Lead 自动选择：小任务 Solo + Codex，并行任务 Agent Team |
-| AI 的组织 | 单个 Agent，无分工 | 团队化（Lead + Teammate + Developer + Doc Engineer） |
-| 并行能力 | 无，单线程对话 | Solo 模式（默认）处理小任务；Agent Team 模式 Wave 内并行执行 |
-| 代码审查 | 自己审自己（同源） | Lead 审查 Developer (Codex) 输出（跨模型质量门） |
-| 跨会话状态 | 丢失，每次重新解释上下文 | plan.md 驱动，`/start-working` 自动恢复 |
-| 文档同步 | 手动维护 | Doc Engineer 每个 Wave 自动审计 |
-
-**简单说：其他工具是你指挥一个 Agent，iSparto 是你指挥一支团队。**
+**总成本:$120/月**,两个顶级模型,无额外 API 费用。
 
 ---
 
 ## 安装
 
-**前置条件：** 需要 [Claude Max](https://claude.ai)（$100/月）+ [ChatGPT Plus](https://chatgpt.com)（$20/月）订阅。iSparto 以 Claude Code 为运行时，以 Codex CLI 作为 Developer 角色。
+**前置条件:** [Claude Max](https://claude.ai)($100/月)+ [ChatGPT Plus](https://chatgpt.com)($20/月)。iSparto 以 Claude Code 为运行时,以 Codex CLI 作为 Developer 角色。
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/bootstrap.sh | bash
 ```
 
-一行搞定：从 GitHub Releases 下载经过校验的安装器、检查/安装 Claude Code 和 Codex CLI、登录 Codex、复制命令和模板到 `~/.claude/`、注册全局 MCP Server。不会修改你现有的 `~/.claude/settings.json`。安装前会自动对原始文件拍快照，随时可以回滚到安装前的状态。
+一行搞定:从 GitHub Releases 下载经过校验的安装器、检查/安装 Claude Code 和 Codex CLI、登录 Codex、复制命令和模板到 `~/.claude/`、注册全局 MCP Server。不会修改你现有的 `~/.claude/settings.json`。安装前会自动对原始文件拍快照,随时可以回滚。
 
-**安装前先预览：** 加 `--dry-run` 可以看到会发生什么，但不执行任何变更：
+**安装前先预览:**
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/bootstrap.sh | bash -s -- --dry-run
 ```
 
-**安装指定版本：**
+**安装指定版本:**
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/bootstrap.sh | bash -s -- --version=0.6.18
 ```
 
-**升级：** 重新运行拉取最新版本，查看更新内容：
+**升级:**
 
 ```bash
 ~/.isparto/install.sh --upgrade
 ```
 
-> 升级只更新框架组件（命令模板、文档模板、快照引擎）。你的项目文件（CLAUDE.md、docs/、代码、配置）不会被修改。
+> 升级只更新框架组件(命令模板、文档模板、快照引擎)。你的项目文件(CLAUDE.md、docs/、代码、配置)不会被修改。
 
-**卸载：** 从备份快照还原所有被修改的文件（离线可用）：
+**卸载:** 从备份快照还原所有被修改的文件(离线可用):
 
 ```bash
 ~/.isparto/install.sh --uninstall
 ```
 
-遇到问题？查看[问题排查](docs/troubleshooting.md)。
+遇到问题?查看[问题排查](docs/troubleshooting.md)。
 
 <details>
-<summary>备选：手动 clone</summary>
+<summary>备选:手动 clone</summary>
 
 ```bash
 git clone https://github.com/BinaryHB0916/iSparto.git
@@ -105,35 +101,34 @@ cd iSparto && ./install.sh              # 或: ./install.sh --dry-run
 ```bash
 mkdir my-app && cd my-app
 claude --effort max
-/env-nogo                        # 可选，确认环境就绪
-/init-project 我要做一个xxx       # 生成 CLAUDE.md + docs/，Codex 架构审视
+/env-nogo                              # 可选,环境检查
+/init-project 我要做一个xxx            # 生成 CLAUDE.md + docs/ + 架构预审
 ```
 
-创建文件前会自动拍快照。如果出现任何问题，运行 `/restore` 即可回滚。
+创建文件前会自动拍快照。如果出现问题,运行 `/restore` 即可回滚。
 
 ### 迁移已有项目
 
 ```bash
 cd existing-project/
 claude --effort max
-/migrate --dry-run               # 预览迁移方案，不执行任何变更（首次建议先用这个）
-/migrate                         # 扫描项目，出迁移方案，保留所有现有内容
+/migrate --dry-run    # 预览迁移方案,不执行(首次建议先用这个)
+/migrate              # 扫描项目,出迁移方案,保留所有现有内容
 ```
 
-迁移前会自动对现有文件拍快照。随时运行 `/restore` 可回滚到迁移前的状态。
+迁移前会自动拍快照。随时运行 `/restore` 可回滚。
 
 ### 每天的工作循环
 
 ```
 /start-working
-    → Lead 读取 plan.md，告诉你当前状态和待办
-    → 你确认"开始"
+    → Lead 读 plan.md,告诉你当前状态和待办
+    → 你确认「开始」
         ↓
-Lead 团队自己跑（你不用盯着）
-    → 拆任务 → Developer 写代码 → Codex 审查 → Developer 回看
-    → Codex QA → Doc Engineer 文档审计 → Lead 合代码
+团队自己跑,你不用盯着
+    → 拆任务 → 写代码 → 跨角色审查 → 文档审计
         ↓
-偶尔 Lead 来找你（上报决策 / 确认 commit）
+只在真正需要决策的时刻 Lead 才回来找你
         ↓
 /end-working
     → 同步文档 → 更新 plan.md → commit → push
@@ -143,8 +138,8 @@ Lead 团队自己跑（你不用盯着）
 
 ```
 /plan 我想加一个xxx功能
-    → Lead 先审视产品方向，输出方案
-    → 你确认方案后，Lead 把方案写入 plan.md 再开始
+    → Lead 先审视产品方向,出一个方案
+    → 你确认方案后,Lead 把方案写入 plan.md 再开始
 ```
 
 ---
@@ -155,122 +150,51 @@ Lead 团队自己跑（你不用盯着）
   <img src="assets/role-architecture-zh.svg" alt="角色架构" width="100%"/>
 </p>
 
-- Lead / Teammate / Doc Engineer：Claude 主会话（见[模型配置](docs/configuration.md#agent-model-configuration)）
-- Developer：Codex 通过 MCP（见[模型配置](docs/configuration.md#agent-model-configuration)）
-- Process Observer：三层安全防御 — Write/Edit 实时内容扫描（Layer 1）、commit 前 secret/PII 扫描（Layer 2）、里程碑全量审计 `/security-audit`（Layer 3）。详见 [docs/security.md](docs/security.md)。
+- Lead / Teammate / Doc Engineer:Claude 主会话(见[模型配置](docs/configuration.md#agent-model-configuration))
+- Developer:Codex 通过 MCP(见[模型配置](docs/configuration.md#agent-model-configuration))
+- 实时合规监督:三层安全防御 — Write/Edit 实时内容扫描、commit 前 secret/PII 扫描、里程碑全量审计 `/security-audit`。详见 [docs/security.md](docs/security.md)。
 
 ---
 
-## 实测案例
+## 案例集
 
-**自举案例：iSparto 用自己的工作流开发自己的功能**
+iSparto 自举开发——框架用自己的工作流开发自己。端到端的案例集合有单独的文件:见 [docs/case-studies.md](docs/case-studies.md),从 Session Log 自举案例开始——用工作流给自己搭出了「session 指标自动采集」功能。
 
-iSparto 的 "Session Log 自动采集" 功能（`/end-working` 自动生成 session report，`/start-working` 自动读取历史）完全由 iSparto 自己的 Agent Team 工作流开发完成。以下是实际执行流程。
+## Dogfood Log
 
-**执行流程：**
+每个 Wave 跑完后的主观感受记录在 [docs/dogfood-log.md](docs/dogfood-log.md)——框架是否真的「更安静」、什么时候被打扰、打扰得值不值,都写在那里。它和本页上的克制叙事是「pitch + 证据」的关系。
 
-1. `/start-working` — Lead 读取 plan.md，报告 Wave 5 状态，确定 session log 为下一个任务
-2. Lead 建 `feat/session-log` 分支
-3. Lead 拆任务 + 定义文件所有权：
-   - Developer A：`commands/end-working.md`（加 session report 生成）
-   - Developer B：`commands/start-working.md`（加 session log 读取）
-4. 2 个 Developer 并行开发 — 同时完成各自任务
-5. Codex Review — 发现 2 个 P2 问题：
-   - `git diff --stat` 漏掉已暂存/新文件 → 改为 `git diff HEAD --stat`
-   - diff 输出放 Markdown table 会破坏渲染 → 移到 code block
-6. Lead 修复 Codex 发现的问题
-7. Doc Engineer 更新 workflow.md 和 plan.md
-8. 合并到 main（`--no-ff` merge commit）
+## 仓库结构
 
-**关键数据：**
-
-| 指标 | 数值 |
-|------|------|
-| 并行 Developer 数 | 2 |
-| Codex Review 轮次 | 1 次，捕获 2 个 P2 问题并修复 |
-| 文件变更 | 4 个文件，+45 行，-11 行 |
-| 完整周期 | 拆任务 → 并行开发 → Codex 审查 → 修复 → 文档审计 → 合并 |
-
+完整的仓库目录树和每个文件的注释在 [docs/repo-structure.md](docs/repo-structure.md)。README 不再内嵌目录树,避免每次结构调整都把 README 搅动一次。
 
 ---
 
 ## 启动清单
 
-**一次性安装（`./install.sh` 自动完成）：**
+**一次性安装(`./install.sh` 自动完成):**
 
 - [ ] Claude Max + ChatGPT 订阅已开通
-- [ ] 终端使用 iTerm2（macOS，Agent Team 分屏依赖）
-- [ ] `./install.sh` 已执行（Claude Code、Codex CLI、配置文件、MCP）
-- [ ] 多设备同步已配置（如有多台电脑，见 [configuration.md](docs/configuration.md#multi-device-sync-optional)）
+- [ ] 终端使用 iTerm2(macOS,并行分屏依赖)
+- [ ] `./install.sh` 已执行(Claude Code、Codex CLI、配置文件、MCP)
+- [ ] 多设备同步已配置(如有多台电脑,见 [configuration.md](docs/configuration.md#multi-device-sync-optional))
 
-**每个新项目（`/init-project` 自动完成）：**
+**每个新项目(`/init-project` 自动完成):**
 
 - [ ] `claude --effort max` 启动
-- [ ] `/env-nogo` 检查通过（可选）
+- [ ] `/env-nogo` 检查通过(可选)
 - [ ] `/init-project` 已生成 CLAUDE.md + docs/
-- [ ] 项目级 `.claude/settings.json` 配置平台相关插件（如 iOS 加 swift-lsp，可选）
-
----
-
-## 仓库结构与文档索引
-
-```
-iSparto/
-├── README.md                  ← English version / 英文版
-├── README.zh-CN.md            ← 你正在读的这份文档
-├── CLAUDE.md                  ← Claude Code 项目指令
-├── CONTRIBUTING.md            ← 贡献指南
-├── settings.example.json      ← 项目级 .claude/settings.json 的参考模板
-├── CLAUDE-TEMPLATE.md         ← 新项目 CLAUDE.md 生成模板
-├── LICENSE
-├── .gitignore
-├── VERSION                    ← 当前版本号 (semver)
-├── CHANGELOG.md               ← 更新日志
-├── bootstrap.sh               ← 薄引导入口（版本解析 + checksum 校验）
-├── install.sh                 ← 主安装器（随版本发布）
-├── isparto.sh                 ← 本地 stub（升级/卸载/版本）
-├── scripts/
-│   └── release.sh             ← 自动化发版脚本（bump version → changelog → tag → gh release）
-├── lib/
-│   └── snapshot.sh            ← 快照/恢复引擎（出厂设置回滚）
-├── commands/
-│   ├── start-working.md       ← 开工命令
-│   ├── end-working.md         ← 收工命令
-│   ├── plan.md                ← 出方案命令
-│   ├── init-project.md        ← 初始化项目命令
-│   ├── env-nogo.md            ← 环境就绪检查
-│   ├── migrate.md             ← 迁移已有项目到 iSparto
-│   ├── restore.md             ← 恢复项目到之前的快照
-│   └── security-audit.md     ← 里程碑级全量安全审计
-├── templates/
-│   ├── product-spec-template.md
-│   ├── tech-spec-template.md
-│   ├── design-spec-template.md
-│   ├── plan-template.md
-│   └── gitignore-security-baseline.md  ← 安全 .gitignore 基线
-└── docs/
-    ├── product-spec.md        ← 产品规格（iSparto 自身的，用于自举）
-    ├── plan.md                ← 按 Wave 组织的开发计划
-    ├── session-log.md         ← 自动生成的会话指标（由 /end-working 创建）
-    ├── concepts.md            ← 核心概念（解耦、Wave、文件所有权）⭐ 建议先读
-    ├── security.md            ← 安全审计系统（三层防御）
-    ├── user-guide.md          ← 用户交互手册（8 命令 + 2 通知）⭐ 建议先读
-    ├── roles.md               ← 角色定义 + Codex prompt 模板
-    ├── workflow.md            ← 完整开发流程 + 分支策略 + Codex 集成
-    ├── configuration.md       ← 全局配置 + 适配指南 + 多设备同步
-    ├── troubleshooting.md     ← 常见问题排查
-    └── design-decisions.md    ← 设计决策记录
-```
+- [ ] 项目级 `.claude/settings.json` 配置平台相关插件(可选)
 
 ---
 
 ## 名字的由来
 
-希腊神话里，英雄 Cadmus 杀了一条龙，把龙牙种进泥土。一支全副武装的战士从地里破土而出——他们被称为 **Spartoi**（Σπαρτοί），意为"播种而生的人"。
+希腊神话里,英雄 Cadmus 杀了一条龙,把龙牙种进泥土。一支全副武装的战士从地里破土而出——他们被称为 **Spartoi**(Σπαρτοί),意为「播种而生的人」。
 
-这和 iSparto 的工作流是同一个故事：你把产品需求"种"进 `/init-project`，一整支 Agent Team 自动组建——Lead 拆任务、Developer 写代码、Codex 审查修复、Doc Engineer 同步文档——从一颗种子长出一支完整的开发团队。
+这和 iSparto 的工作流是同一个故事:你把产品需求「种」进 `/init-project`,一整支团队自动组建——Lead 拆任务、Developer 写代码、同一个 Wave 内完成审查与修复、Doc Engineer 同步文档——从一颗种子长出一支完整的团队。
 
-**i** 从 Spartoi 末尾移到了最前面。小写的 i = I = 我，一个人。
+**i** 从 Spartoi 末尾移到了最前面。小写的 i = I = 我,一个人。
 
 **iSparto = I + Sparto = 一人成军。**
 
