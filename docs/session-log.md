@@ -1,5 +1,37 @@
 # Session Log
 
+## 2026-04-09 Session (#e) — Framework-feedback polish sweep (PR #187 + PR #188)
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | Ad-hoc — no Wave active (post-v0.7.5 polish sweep) |
+| Tasks completed | 7 framework-feedback gaps closed across 2 PRs: 0409-d F1 (Branch Protocol remote cleanup), 0409-d F2 (Automated release exception for Doc Engineer skip), 0409 R1 (Branch Protocol Edit/Write invocation violation wording + recovery path), 0409 R2 + 0409-c F2 (A3 detection two-regime split in process-observer-audit.md), 0409-b F1 (pre-`gh pr create` alignment guard in workflow step 6), 0409-c F1 (docs/workflow.md Wave-level safety-net self-referential carve-out). Plus verified-already-resolved: 0407 S3 (Principle 1 heuristic in language-check.sh self-test Test 4), 0407c S1 (plan.md Tier 4 Option A clarification already in CLAUDE.md). |
+| Key decisions | User principle recorded to memory: do NOT defer framework-internal polish items to "next session" — fix in-session when doable, since the iSparto framework IS the product we ship externally, and polish debt accumulates into customer-facing risk before the v0.8 external launch. |
+
+### Files Changed
+```
+ CLAUDE-TEMPLATE.md               | 10 +++++-----
+ CLAUDE.md                        | 10 +++++-----
+ agents/process-observer-audit.md |  2 +-
+ docs/workflow.md                 |  2 +-
+ 4 files changed, 12 insertions(+), 12 deletions(-)
+```
+
+### Notes
+
+- This session is Session #e on 2026-04-09 — a post-v0.7.5-release ad-hoc polish round. The earlier Session #d in the same calendar day closed the v0.7.5 Wave bookkeeping and executed `/release 0.7.5`; this session #e then swept up every unresolved framework-feedback gap surfaced by the 0409 series PO audits (0409.md, 0409-b.md, 0409-c.md, 0409-d.md) in one pass.
+- Trigger: after the Session #d close-out the user asked whether there were any remaining in-framework items. Initial answer described the 0409-d F1/F2 items as optional next-session polish. User pushed back with the anti-deferral principle ("不要跟我说下一次下一次了 / 我们在往外发布的时候，就是我们内部全部改好了 对吧"). Lead acknowledged, saved the principle to memory, and immediately ran a mechanical resolution sweep via Explore agent across all 10 `docs/framework-feedback-*.md` files to identify the true outstanding set.
+- Explore agent reported 7 unresolved/partial items. Lead re-verified 2 of them (0407 S3, 0407c S1) as already-resolved — the current CLAUDE.md and language-check.sh already carry the fixes, so the Explore agent's classification was a false positive. True remaining set: 5 unique doc-only fixes (0409 R2 and 0409-c F2 collapse to one A3 detection edit).
+- PR #187 (31a2d6c) closed 0409-d F1/F2 — 2 files, 8+/8- insertions/deletions. Branch `docs/framework-feedback-0409-d-fix`, squash-merged.
+- PR #188 (e56d4c7) closed 0409 R1, 0409 R2/0409-c F2, 0409-b F1, 0409-c F1 — 4 files, 8+/8- insertions/deletions. Branch `docs/framework-feedback-polish-0409`, squash-merged.
+- Mode for both PRs: Solo + Lead direct edit under self-referential boundary (all edits are Tier 1 framework behavioral templates or Tier 2 reference docs). No Developer/Codex round-trip. No Wave completed → Ad-hoc fix exception applies for Doc Engineer; Process Observer self-assessed per exception wording; Independent Reviewer not triggered (no Wave boundary).
+- Language-check.sh passed both `--self-test` and full repo scan after each PR. Both PRs merged cleanly; main fast-forwarded twice without conflict (31a2d6c, then e56d4c7).
+- The 4 edited files after the sweep now carry: (1) CLAUDE.md + CLAUDE-TEMPLATE.md Branch Protocol explicitly naming Edit/Write tool invocations as violations and documenting the `git checkout -b` carry-over recovery; (2) CLAUDE.md + CLAUDE-TEMPLATE.md Development Workflow step 4 carrying the Automated release exception alongside Ad-hoc fix and Emergency hotfix; (3) CLAUDE.md + CLAUDE-TEMPLATE.md Development Workflow step 6 carrying both the Pre-PR alignment guard (gh api /user vs REPO_OWNER) and the Remote cleanup note (gh pr merge --delete-branch or delete from feature branch); (4) `agents/process-observer-audit.md` A3 detection guidance split into committed-work and uncommitted-work regimes; (5) `docs/workflow.md` Wave-level safety-net sentence carrying the self-referential boundary carve-out matching CLAUDE.md Implementation Protocol.
+- gh account auto-switched to BinaryHB0916 during PR #188 creation (drift to dadalus0916 between the end of Session #d and this sweep). The new Pre-PR alignment guard amendment landed in this very PR is exactly what the incident justified — the guard documents the class of failure it itself would have prevented if it had already been in force.
+- Every remaining framework-feedback file (0405, 0405b, 0407, 0407c, 0408, 0408-b, 0409, 0409-b, 0409-c, 0409-d) is now fully resolved or verified-already-resolved. Before the v0.8 external user cold-start validation, the internal framework state is clean — no outstanding rule gaps remain in the framework-feedback backlog.
+- Next-session direction (to carry into the next /start-working): external user cold-start validation is the only remaining forward item for v0.8, and the next Wave theme is still unassigned awaiting user direction.
+
 ## 2026-04-09 Session (#d) — v0.7.5 Wave close-out bookkeeping + v0.7.5 release
 
 | Metric | Value |
