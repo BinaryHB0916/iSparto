@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.4] - 2026-04-09
+
 ### Added
 
 - **Information Layering Policy (v0.7.4)** — New design-principle layer governing how the Lead classifies user-facing output at runtime. Every output must be classified into one of three layers before emission: **A-layer** (decision interruption that blocks the user, restricted to 5 mechanically-identifiable trigger types in Policy Principle 1), **B-layer** (decision preparation at natural pause points — the opening briefing of `/start-working`, the closing briefing of `/end-working`, the proposal step of `/plan`), or **C-layer** (silent archive, logged to `docs/session-log.md` and commit history, never emitted to the user). The Policy is enforced structurally via fixed B-layer briefing shapes in the three command templates, not via Lead runtime self-discipline. New files: `docs/design-principles/information-layering-policy.md` (7 principles including "IR only reviews A-layer", "cross-session recovery surface is protected B-layer", "IR prevails on A-layer conflict delivered single-voice") and `docs/design-principles/conversation-style.md` (A-layer wording rule "I plan to X, because Y. If you disagree, I can switch to Z. Continue?" with 3 before-after samples for `/start-working`, `/plan`, `/end-working`). `docs/concepts.md` gains a new first-class concept section "Runtime Output Layering (A/B/C)" alongside Wave / Solo + Codex / Agent Team. `docs/design-decisions.md` gains a new row recording "IR prevails on A-layer conflict" as a workflow decision with date 2026-04-09.
