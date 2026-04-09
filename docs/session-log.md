@@ -1,5 +1,42 @@
 # Session Log
 
+## 2026-04-09 Session — Wave v0.7.4 Information Layering Policy + release v0.7.4
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | v0.7.4 Information Layering Policy (Wave 7) — ✅ Completed and released |
+| Tasks completed | (1) T1 `docs/design-principles/information-layering-policy.md` NEW — 7 principles including "every output classified before emission" (Principle 1 enumerates 5 mechanical A-layer trigger types), "B-layer only at natural pause points" (Principle 2), "IR only reviews A-layer" (Principle 3), "cross-session recovery surface is protected B-layer" (Principle 4 — Wave preserved as state variable), "word choice is Lead's dynamic judgment; structure is not" (Principle 5 — command templates pin B-layer briefing structure), "IR prevails on A-layer conflict, delivered single-voice" (Principle 6), "escalate-or-sink, never a fourth layer" (Principle 7). (2) T2 `docs/design-principles/conversation-style.md` NEW — A-layer wording rule template `I plan to X, because Y. If you disagree, I can switch to Z. Continue?` plus 3 before-after samples for `/start-working` + `/plan` + `/end-working`. (3) T3 command-template structural rewrite — `commands/start-working.md` Step 9 rewritten to fixed 3-sentence B-layer briefing shape (state-variable sentence, optional blocker sentence, next-action sentence using A-layer wording rule); `commands/end-working.md` closing briefing rewritten to fixed 3-5 sentence shape (what shipped + what Codex/audits caught + what's next) with `Session complete` / `Ready for next session` / passing-audit announcements explicitly banned; `commands/plan.md` Step 3 rewritten to forbid menu-delegation — proposals recommend one path and name one alternative. All three command templates gained a top-of-file `Reference: docs/design-principles/information-layering-policy.md` line. (4) T4 `agents/independent-reviewer.md` extended with A-layer Peer Review (Mode 3) — invocation fixed-prompt, read-only tool permissions with deep-IR gate (Policy trigger type d — authorized script execution via A-layer interrupt through Lead), four judgment axes (classification / framing / correctness / single-voice integrity), IR-prevails conflict resolution, single-voice delivery rule. (5) T5 `CLAUDE.md` + `CLAUDE-TEMPLATE.md` sync — Documentation Index gained Policy + conversation-style pointers, User Preference Interface gained Runtime output layering sub-paragraph; `docs/concepts.md` gained new "Runtime Output Layering (A/B/C)" section + Quick Reference row; `docs/design-decisions.md` gained new row "Information Layering Policy — IR prevails on A-layer conflict, delivered single-voice (2026-04-09)"; `CHANGELOG.md` `[Unreleased]` gained Added/Changed entries. VERSION NOT touched (handled by /release). (6) v0.7.4 shipped via `/release` — `scripts/release.sh 0.7.4` auto-created `release/v0.7.4` branch, bumped VERSION 0.7.3→0.7.4, date-stamped CHANGELOG `[0.7.4] - 2026-04-09`, opened PR #179, squash-merged, created tag `v0.7.4`, published GitHub Release with `checksums.sha256` asset. |
+| Key decisions | (1) User explicitly resolved 3 IR plan-phase findings pre-execution: MAJOR #4 — Wave is a **state variable**, not implementation noise (preserved in briefings); MINOR #3 — cross-session recovery surface carved out as protected B-layer; MINOR #5 — IR corrections delivered single-voice through Lead (IR never speaks to user directly). (2) Mode: **Solo + Lead direct edit** — 13 files all markdown (Tier 1 behavioral templates + Tier 2 reference docs + Tier 4 historical artifacts), Framework Polish precedent applies, no Developer/Codex calls. (3) Trivial-CLI acceptance carve-out used: 5 deterministic bash commands exit-code determinate (`language-check.sh`, `--self-test`, file-presence, reference-line grep, v0.7.4 grep), no build/runtime/log-parsing. (4) Post-merge polish candidate recorded in plan.md — Principle 5 should be appended with a sentence making explicit that dynamic layer-classification has been **totally** collapsed (not only within command-template surfaces but across the whole Policy, since Principle 1 + Principle 2 + C-layer default already allocate everything). User caught this latent reading gap after v0.7.4 merged; deferred to v0.7.5 or next polish round as non-blocking. |
+
+### Files Changed
+```
+ CHANGELOG.md                                       |  12 ++
+ CLAUDE-TEMPLATE.md                                 |   6 +
+ CLAUDE.md                                          |   4 +
+ VERSION                                            |   2 +-
+ agents/independent-reviewer.md                     | 120 +++++++++++++++++-
+ commands/end-working.md                            |  50 +++++---
+ commands/plan.md                                   |  32 +++--
+ commands/start-working.md                          |  41 ++++--
+ docs/concepts.md                                   |  11 ++
+ docs/design-decisions.md                           |   1 +
+ docs/design-principles/conversation-style.md       | 138 +++++++++++++++++++++
+ docs/design-principles/information-layering-policy.md | 119 ++++++++++++++++++
+ docs/independent-review.md                         | 109 ++++++++++++++++
+ docs/plan.md                                       |  65 ++++++++++
+ 14 files changed, 672 insertions(+), 38 deletions(-)
+```
+
+### Notes
+- PRs merged this session: #177 (feat v0.7.4 Information Layering Policy, 13 files +667/-37), #178 (docs v0.7.5 polish candidate note, plan.md +2), #179 (release v0.7.4, VERSION + CHANGELOG date stamp). All squash-merged.
+- Audits (Wave v0.7.4): Doc Engineer 9/9 APPROVE (sub-agent run), Process Observer 6/6 PASS 0 deviations (sub-agent run), Wave Boundary IR PROCEED with zero new findings — executed at T10 close-out time, not re-triggered in this /end-working since the Wave was marked completed earlier in the same session.
+- Language-check surface: A1 `scripts/language-check.sh` initially surfaced 6 Principle 1 violations during acceptance. Fixes: 4 quoted-literal cases rewritten to backticks (the Principle 1 regex only matches `"` and curly quotes, not backticks, so backticks are the documented escape hatch), 2 "do-not-say" cases rephrased to remove the verb+quoted-literal pattern (e.g., `Do not announce "X"` → `Do not emit an X announcement`). Re-run clean.
+- **Branch-guard self-assessed deviation:** After PR #177 merged to main, I started editing `docs/plan.md` (to record the v0.7.5 polish candidate note) while still on main, then noticed the branch-guard violation and ran `git checkout -b docs/v074-polish-note` to carry the uncommitted change over before committing. No commit landed on main — the deviation was "edit started on main" not "commit landed on main" — but the ordering (edit first, then create branch) inverts the CLAUDE.md branch protocol which says branch guard is the first action. PR #178 body already carries the self-assessed caveat under `## Workflow audits`. Next time: always `git checkout -b ...` before the first Edit tool call, even for a single-line note.
+- T6 dogfood observation is post-merge non-blocking per v0.7.4 plan entry — starts naturally at the next `/start-working` session, no explicit trigger required. The felt-experience metric is qualitative (quieter / still noisy / missed an important signal).
+- v0.7.5 polish candidate (Principle 5 total-collapse sentence) recorded in plan.md v0.7.4 Wave entry under "Post-merge polish candidate". Will surface naturally in the next `/plan` or framework polish round.
+- Context continuity: this session resumed mid-execution after context compaction. The pre-compaction half covered T1-T5 execution, 6 Principle 1 language-check fixes, Doc Engineer + Process Observer + Wave Boundary IR audits. The post-compaction half covered T10 close-out (commit, push, PR #177, merge), the v0.7.5 polish-candidate discussion and PR #178, and the v0.7.4 release via PR #179.
+
 ## 2026-04-08 Session (#f) — Release v0.7.3 (ships the #e hotfix into the install.sh upgrade channel)
 
 | Metric | Value |
