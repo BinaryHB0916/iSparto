@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.5] - 2026-04-09
+
 ### Added
 
 - **v0.7.5 README restraint-narrative Wave** — Both READMEs (`README.md`, `README.zh-CN.md`) rewritten from feature-list framing to restraint-as-core-differentiation framing under a ≤ 220-line soft budget (each landed at 205 lines). Internal jargon (`Solo + Codex`, `Agent Team`, `Process Observer`) removed from the user-facing surface; reader-perspective language replaces it. The Chinese README anchors the new pitch on the word 「克制」. Three new files carry content extracted from the README so it can stay focused: `docs/case-studies.md` (Tier 2 English, end-to-end dogfooding case collection seeded with the Wave 5 Session Log self-bootstrapping run), `docs/repo-structure.md` (Tier 2 English, the annotated repository tree previously embedded in the README, now authoritative for structural changes), and `docs/dogfood-log.md` (Tier 4 Chinese, subjective per-cycle session-experience log seeded with cycle #1 covering the v0.7.4 → v0.7.5 transition). README sections 8/9/10 point at these files instead of inlining the content. The four-tier language guardian (`scripts/language-check.sh`) gains `docs/dogfood-log.md` to its `TIER2_EXCLUDED_FILES` list as a Tier 4 historical artifact.
