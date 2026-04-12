@@ -22,11 +22,11 @@
 
   <!-- Side matrix rain — left 2 columns -->
   <g font-family="monospace" font-size="14" fill="rgba(180,255,180,0.3)">
-    <text x="18" y="22">θ</text><text x="18" y="56">Λ</text><text x="18" y="90">σ</text><text x="18" y="124">Π</text><text x="18" y="158">ω</text><text x="18" y="192">α</text><text x="18" y="226">Ξ</text><text x="18" y="260">ρ</text><text x="18" y="294">δ</text><text x="18" y="328">Ω</text><text x="18" y="362">μ</text><text x="18" y="396">Λ</text><text x="18" y="430">η</text><text x="18" y="464">Φ</text><text x="18" y="498">β</text><text x="18" y="532">γ</text><text x="18" y="566">ζ</text><text x="18" y="600">Ψ</text><text x="18" y="634">κ</text>
-    <text x="48" y="38">ψ</text><text x="48" y="72">Β</text><text x="48" y="106">ν</text><text x="48" y="140">φ</text><text x="48" y="174">Γ</text><text x="48" y="208">ε</text><text x="48" y="242">τ</text><text x="48" y="276">Η</text><text x="48" y="310">ι</text><text x="48" y="344">χ</text><text x="48" y="378">Α</text><text x="48" y="412">λ</text><text x="48" y="446">Θ</text><text x="48" y="480">ξ</text><text x="48" y="514">Κ</text><text x="48" y="548">υ</text><text x="48" y="582">Σ</text><text x="48" y="616">π</text>
+    <text x="18" y="22">θ</text><text x="18" y="56">Λ</text><text x="18" y="90">σ</text><text x="18" y="124">Π</text><text x="18" y="158">ω</text><text x="18" y="192">α</text><text x="18" y="226">Ξ</text><text x="18" y="260">ρ</text><text x="18" y="294">δ</text><text x="18" y="328">Ω</text><text x="18" y="362">μ</text><text x="18" y="396">Λ</text><text x="18" y="430">η</text><text x="18" y="464">Φ</text><text x="18" y="498">β</text><text x="18" y="532">γ</text><text x="18" y="566">ζ</text><text x="18" y="600">Ψ</text><text x="18" y="634">κ</text><text x="18" y="668">Δ</text>
+    <text x="48" y="38">ψ</text><text x="48" y="72">Β</text><text x="48" y="106">ν</text><text x="48" y="140">φ</text><text x="48" y="174">Γ</text><text x="48" y="208">ε</text><text x="48" y="242">τ</text><text x="48" y="276">Η</text><text x="48" y="310">ι</text><text x="48" y="344">χ</text><text x="48" y="378">Α</text><text x="48" y="412">λ</text><text x="48" y="446">Θ</text><text x="48" y="480">ξ</text><text x="48" y="514">Κ</text><text x="48" y="548">υ</text><text x="48" y="582">Σ</text><text x="48" y="616">π</text><text x="48" y="650">Ω</text><text x="48" y="684">φ</text>
   </g>
   <g font-family="monospace" font-size="14" fill="rgba(180,255,180,0.85)">
-    <text x="18" y="634">κ</text><text x="48" y="616">π</text>
+    <text x="18" y="668">Δ</text><text x="48" y="684">φ</text>
   </g>
   <g font-family="monospace" font-size="14" fill="rgba(212,175,55,0.5)">
     <text x="18" y="260">ρ</text><text x="48" y="446">Θ</text>
@@ -34,11 +34,11 @@
 
   <!-- Side matrix rain — right 2 columns (mirrored) -->
   <g font-family="monospace" font-size="14" fill="rgba(180,255,180,0.3)">
-    <text x="1052" y="30">Σ</text><text x="1052" y="64">π</text><text x="1052" y="98">α</text><text x="1052" y="132">ρ</text><text x="1052" y="166">τ</text><text x="1052" y="200">ο</text><text x="1052" y="234">ί</text><text x="1052" y="268">Δ</text><text x="1052" y="302">Ω</text><text x="1052" y="336">θ</text><text x="1052" y="370">Λ</text><text x="1052" y="404">φ</text><text x="1052" y="438">Γ</text><text x="1052" y="472">ψ</text><text x="1052" y="506">β</text><text x="1052" y="540">η</text><text x="1052" y="574">κ</text><text x="1052" y="608">ζ</text>
-    <text x="1082" y="14">ε</text><text x="1082" y="48">Ψ</text><text x="1082" y="82">μ</text><text x="1082" y="116">Π</text><text x="1082" y="150">ω</text><text x="1082" y="184">χ</text><text x="1082" y="218">ν</text><text x="1082" y="252">Φ</text><text x="1082" y="286">δ</text><text x="1082" y="320">Σ</text><text x="1082" y="354">α</text><text x="1082" y="388">ι</text><text x="1082" y="422">Η</text><text x="1082" y="456">τ</text><text x="1082" y="490">Ξ</text><text x="1082" y="524">Ρ</text><text x="1082" y="558">ο</text><text x="1082" y="592">λ</text><text x="1082" y="626">Β</text>
+    <text x="1052" y="30">Σ</text><text x="1052" y="64">π</text><text x="1052" y="98">α</text><text x="1052" y="132">ρ</text><text x="1052" y="166">τ</text><text x="1052" y="200">ο</text><text x="1052" y="234">ί</text><text x="1052" y="268">Δ</text><text x="1052" y="302">Ω</text><text x="1052" y="336">θ</text><text x="1052" y="370">Λ</text><text x="1052" y="404">φ</text><text x="1052" y="438">Γ</text><text x="1052" y="472">ψ</text><text x="1052" y="506">β</text><text x="1052" y="540">η</text><text x="1052" y="574">κ</text><text x="1052" y="608">ζ</text><text x="1052" y="642">μ</text><text x="1052" y="676">Π</text>
+    <text x="1082" y="14">ε</text><text x="1082" y="48">Ψ</text><text x="1082" y="82">μ</text><text x="1082" y="116">Π</text><text x="1082" y="150">ω</text><text x="1082" y="184">χ</text><text x="1082" y="218">ν</text><text x="1082" y="252">Φ</text><text x="1082" y="286">δ</text><text x="1082" y="320">Σ</text><text x="1082" y="354">α</text><text x="1082" y="388">ι</text><text x="1082" y="422">Η</text><text x="1082" y="456">τ</text><text x="1082" y="490">Ξ</text><text x="1082" y="524">Ρ</text><text x="1082" y="558">ο</text><text x="1082" y="592">λ</text><text x="1082" y="626">Β</text><text x="1082" y="660">θ</text><text x="1082" y="694">Σ</text>
   </g>
   <g font-family="monospace" font-size="14" fill="rgba(180,255,180,0.85)">
-    <text x="1052" y="608">ζ</text><text x="1082" y="626">Β</text>
+    <text x="1052" y="676">Π</text><text x="1082" y="694">Σ</text>
   </g>
   <g font-family="monospace" font-size="14" fill="rgba(212,175,55,0.5)">
     <text x="1052" y="200">ο</text><text x="1082" y="388">ι</text>
