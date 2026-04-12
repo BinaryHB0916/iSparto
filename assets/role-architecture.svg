@@ -99,23 +99,23 @@
     <!-- ═══════════════ TEAMMATE CARD ═══════════════ -->
     <rect x="70" y="500" width="280" height="140" rx="10" fill="url(#card-exec)" stroke="rgba(180,255,180,0.15)" stroke-width="1"/>
 
-    <text x="210" y="528" text-anchor="middle" fill="rgba(0,255,65,0.06)" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="900" letter-spacing="0.1em" filter="url(#glow-green)">TEAMMATE</text>
-    <text x="210" y="528" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="900" letter-spacing="0.1em">TEAMMATE</text>
-    <text x="210" y="554" text-anchor="middle" fill="rgba(180,255,180,0.55)" font-family="'Courier New', monospace" font-size="12" letter-spacing="0.08em">TMUX SESSION</text>
+    <text x="210" y="538" text-anchor="middle" fill="rgba(0,255,65,0.06)" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="900" letter-spacing="0.1em" filter="url(#glow-green)">TEAMMATE</text>
+    <text x="210" y="538" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="900" letter-spacing="0.1em">TEAMMATE</text>
+    <text x="210" y="564" text-anchor="middle" fill="rgba(180,255,180,0.55)" font-family="'Courier New', monospace" font-size="12" letter-spacing="0.08em">TMUX SESSION</text>
     <g fill="rgba(255,255,255,0.55)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="14" text-anchor="middle">
-      <text x="210" y="585">Parallel prompt assembly</text>
-      <text x="210" y="603">Review Developer output</text>
+      <text x="210" y="595">Parallel prompt assembly</text>
+      <text x="210" y="613">Review Developer output</text>
     </g>
 
     <!-- ═══════════════ DEVELOPER CARD ═══════════════ -->
     <rect x="370" y="500" width="280" height="140" rx="10" fill="url(#card-exec)" stroke="rgba(180,255,180,0.15)" stroke-width="1"/>
 
-    <text x="510" y="528" text-anchor="middle" fill="rgba(0,255,65,0.06)" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="900" letter-spacing="0.1em" filter="url(#glow-green)">DEVELOPER</text>
-    <text x="510" y="528" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="900" letter-spacing="0.1em">DEVELOPER</text>
-    <text x="510" y="554" text-anchor="middle" fill="rgba(180,255,180,0.55)" font-family="'Courier New', monospace" font-size="12" letter-spacing="0.08em">CODEX · MCP CALL</text>
+    <text x="510" y="538" text-anchor="middle" fill="rgba(0,255,65,0.06)" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="900" letter-spacing="0.1em" filter="url(#glow-green)">DEVELOPER</text>
+    <text x="510" y="538" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="900" letter-spacing="0.1em">DEVELOPER</text>
+    <text x="510" y="564" text-anchor="middle" fill="rgba(180,255,180,0.55)" font-family="'Courier New', monospace" font-size="12" letter-spacing="0.08em">CODEX · MCP CALL</text>
     <g fill="rgba(255,255,255,0.55)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="14" text-anchor="middle">
-      <text x="510" y="585">Implement code · Fix issues</text>
-      <text x="510" y="603">QA smoke testing</text>
+      <text x="510" y="595">Implement code · Fix issues</text>
+      <text x="510" y="613">QA smoke testing</text>
     </g>
 
   </g>
