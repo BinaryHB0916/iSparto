@@ -75,47 +75,47 @@
     </g>
 
     <!-- Doc Engineer sub-card -->
-    <rect x="370" y="278" width="230" height="95" rx="8" fill="rgba(20,16,8,0.6)" stroke="rgba(212,175,55,0.25)" stroke-width="1"/>
-    <text x="485" y="310" text-anchor="middle" fill="rgba(212,175,55,0.85)" font-family="Georgia, 'Times New Roman', serif" font-size="18" font-weight="bold" letter-spacing="0.05em">Doc Engineer</text>
-    <text x="485" y="330" text-anchor="middle" fill="rgba(212,175,55,0.5)" font-family="'Courier New', monospace" font-size="11">子代理</text>
-    <text x="485" y="357" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="14">Wave 完成后 · 文档审计与同步</text>
+    <rect x="370" y="278" width="280" height="100" rx="8" fill="rgba(20,16,8,0.6)" stroke="rgba(212,175,55,0.25)" stroke-width="1"/>
+    <text x="510" y="312" text-anchor="middle" fill="rgba(212,175,55,0.85)" font-family="Georgia, 'Times New Roman', serif" font-size="18" font-weight="bold" letter-spacing="0.05em">Doc Engineer</text>
+    <text x="510" y="332" text-anchor="middle" fill="rgba(212,175,55,0.5)" font-family="'Courier New', monospace" font-size="11">子代理</text>
+    <text x="510" y="359" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="14">Wave 完成后 · 文档审计与同步</text>
 
     <!-- ═══════════════ INDEPENDENT REVIEWER CARD ═══════════════ -->
     <rect x="700" y="175" width="270" height="220" rx="10" fill="url(#card-lead)" stroke="rgba(212,175,55,0.18)" stroke-width="1" stroke-dasharray="8,4"/>
 
-    <text x="835" y="220" text-anchor="middle" fill="rgba(212,175,55,0.12)" font-family="Georgia, 'Times New Roman', serif" font-size="22" font-weight="900" letter-spacing="0.08em" filter="url(#glow-gold)">INDEPENDENT</text>
-    <text x="835" y="220" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Georgia, 'Times New Roman', serif" font-size="22" font-weight="900" letter-spacing="0.08em">INDEPENDENT</text>
-    <text x="835" y="248" text-anchor="middle" fill="rgba(212,175,55,0.12)" font-family="Georgia, 'Times New Roman', serif" font-size="22" font-weight="900" letter-spacing="0.08em" filter="url(#glow-gold)">REVIEWER</text>
-    <text x="835" y="248" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Georgia, 'Times New Roman', serif" font-size="22" font-weight="900" letter-spacing="0.08em">REVIEWER</text>
-    <text x="835" y="274" text-anchor="middle" fill="rgba(212,175,55,0.6)" font-family="'Courier New', monospace" font-size="12" letter-spacing="0.08em">独立队友 · 零上下文继承</text>
-    <text x="835" y="320" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="14">重大变更时独立审查</text>
+    <text x="835" y="240" text-anchor="middle" fill="rgba(212,175,55,0.12)" font-family="Georgia, 'Times New Roman', serif" font-size="22" font-weight="900" letter-spacing="0.08em" filter="url(#glow-gold)">INDEPENDENT</text>
+    <text x="835" y="240" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Georgia, 'Times New Roman', serif" font-size="22" font-weight="900" letter-spacing="0.08em">INDEPENDENT</text>
+    <text x="835" y="268" text-anchor="middle" fill="rgba(212,175,55,0.12)" font-family="Georgia, 'Times New Roman', serif" font-size="22" font-weight="900" letter-spacing="0.08em" filter="url(#glow-gold)">REVIEWER</text>
+    <text x="835" y="268" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Georgia, 'Times New Roman', serif" font-size="22" font-weight="900" letter-spacing="0.08em">REVIEWER</text>
+    <text x="835" y="294" text-anchor="middle" fill="rgba(212,175,55,0.6)" font-family="'Courier New', monospace" font-size="12" letter-spacing="0.08em">独立队友 · 零上下文继承</text>
+    <text x="835" y="340" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="14">重大变更时独立审查</text>
 
     <!-- ═══════════════ CONNECTION LINES ═══════════════ -->
     <line x1="670" y1="285" x2="700" y2="285" stroke="rgba(212,175,55,0.3)" stroke-width="1" stroke-dasharray="6,4"/>
     <rect x="100" y="395" width="540" height="1" fill="url(#gold-line)"/>
-    <line x1="210" y1="395" x2="210" y2="480" stroke="rgba(180,255,180,0.3)" stroke-width="1"/>
-    <line x1="510" y1="395" x2="510" y2="480" stroke="rgba(180,255,180,0.3)" stroke-width="1"/>
+    <line x1="210" y1="395" x2="210" y2="500" stroke="rgba(180,255,180,0.3)" stroke-width="1"/>
+    <line x1="510" y1="395" x2="510" y2="500" stroke="rgba(180,255,180,0.3)" stroke-width="1"/>
 
     <!-- ═══════════════ TEAMMATE CARD ═══════════════ -->
-    <rect x="70" y="480" width="280" height="140" rx="10" fill="url(#card-exec)" stroke="rgba(180,255,180,0.15)" stroke-width="1"/>
+    <rect x="70" y="500" width="280" height="140" rx="10" fill="url(#card-exec)" stroke="rgba(180,255,180,0.15)" stroke-width="1"/>
 
-    <text x="210" y="508" text-anchor="middle" fill="rgba(0,255,65,0.06)" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="900" letter-spacing="0.1em" filter="url(#glow-green)">TEAMMATE</text>
-    <text x="210" y="508" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="900" letter-spacing="0.1em">TEAMMATE</text>
-    <text x="210" y="534" text-anchor="middle" fill="rgba(180,255,180,0.55)" font-family="'Courier New', monospace" font-size="12" letter-spacing="0.08em">TMUX 会话</text>
+    <text x="210" y="528" text-anchor="middle" fill="rgba(0,255,65,0.06)" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="900" letter-spacing="0.1em" filter="url(#glow-green)">TEAMMATE</text>
+    <text x="210" y="528" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="900" letter-spacing="0.1em">TEAMMATE</text>
+    <text x="210" y="554" text-anchor="middle" fill="rgba(180,255,180,0.55)" font-family="'Courier New', monospace" font-size="12" letter-spacing="0.08em">TMUX 会话</text>
     <g fill="rgba(255,255,255,0.55)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="14" text-anchor="middle">
-      <text x="210" y="565">并行组装 prompt</text>
-      <text x="210" y="583">审查 Developer 输出</text>
+      <text x="210" y="585">并行组装 prompt</text>
+      <text x="210" y="603">审查 Developer 输出</text>
     </g>
 
     <!-- ═══════════════ DEVELOPER CARD ═══════════════ -->
-    <rect x="370" y="480" width="280" height="140" rx="10" fill="url(#card-exec)" stroke="rgba(180,255,180,0.15)" stroke-width="1"/>
+    <rect x="370" y="500" width="280" height="140" rx="10" fill="url(#card-exec)" stroke="rgba(180,255,180,0.15)" stroke-width="1"/>
 
-    <text x="510" y="508" text-anchor="middle" fill="rgba(0,255,65,0.06)" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="900" letter-spacing="0.1em" filter="url(#glow-green)">DEVELOPER</text>
-    <text x="510" y="508" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="900" letter-spacing="0.1em">DEVELOPER</text>
-    <text x="510" y="534" text-anchor="middle" fill="rgba(180,255,180,0.55)" font-family="'Courier New', monospace" font-size="12" letter-spacing="0.08em">CODEX · MCP 调用</text>
+    <text x="510" y="528" text-anchor="middle" fill="rgba(0,255,65,0.06)" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="900" letter-spacing="0.1em" filter="url(#glow-green)">DEVELOPER</text>
+    <text x="510" y="528" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="900" letter-spacing="0.1em">DEVELOPER</text>
+    <text x="510" y="554" text-anchor="middle" fill="rgba(180,255,180,0.55)" font-family="'Courier New', monospace" font-size="12" letter-spacing="0.08em">CODEX · MCP 调用</text>
     <g fill="rgba(255,255,255,0.55)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="14" text-anchor="middle">
-      <text x="510" y="565">按 prompt 实现代码 · 修复问题</text>
-      <text x="510" y="583">QA 冒烟测试</text>
+      <text x="510" y="585">按 prompt 实现代码 · 修复问题</text>
+      <text x="510" y="603">QA 冒烟测试</text>
     </g>
 
   </g>
