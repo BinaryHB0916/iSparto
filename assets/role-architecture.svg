@@ -82,27 +82,40 @@
 
     <!-- ═══════════════ CONNECTION LINES ═══════════════ -->
     <rect x="200" y="395" width="600" height="1" fill="url(#gold-line)"/>
-    <line x1="270" y1="395" x2="270" y2="460" stroke="rgba(180,255,180,0.3)" stroke-width="1"/>
-    <line x1="730" y1="395" x2="730" y2="460" stroke="rgba(180,255,180,0.3)" stroke-width="1"/>
+    <line x1="205" y1="395" x2="205" y2="460" stroke="rgba(180,255,180,0.3)" stroke-width="1"/>
+    <line x1="500" y1="395" x2="500" y2="460" stroke="rgba(180,255,180,0.3)" stroke-width="1" stroke-dasharray="6,4"/>
+    <line x1="795" y1="395" x2="795" y2="460" stroke="rgba(180,255,180,0.3)" stroke-width="1"/>
 
-    <!-- ═══════════════ DEVELOPER CARD ═══════════════ -->
-    <rect x="70" y="460" width="400" height="140" rx="10" fill="url(#card-exec)" stroke="rgba(180,255,180,0.15)" stroke-width="1"/>
+    <!-- ═══════════════ TEAMMATE CARD ═══════════════ -->
+    <rect x="70" y="460" width="270" height="140" rx="10" fill="url(#card-exec)" stroke="rgba(180,255,180,0.15)" stroke-width="1"/>
 
-    <text x="270" y="508" text-anchor="middle" fill="rgba(0,255,65,0.06)" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="900" letter-spacing="0.1em" filter="url(#glow-green)">TEAMMATE</text>
-    <text x="270" y="508" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="900" letter-spacing="0.1em">TEAMMATE</text>
-    <text x="270" y="534" text-anchor="middle" fill="rgba(180,255,180,0.55)" font-family="'Courier New', monospace" font-size="12" letter-spacing="0.08em">TMUX SESSION</text>
+    <text x="205" y="508" text-anchor="middle" fill="rgba(0,255,65,0.06)" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="900" letter-spacing="0.1em" filter="url(#glow-green)">TEAMMATE</text>
+    <text x="205" y="508" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="900" letter-spacing="0.1em">TEAMMATE</text>
+    <text x="205" y="534" text-anchor="middle" fill="rgba(180,255,180,0.55)" font-family="'Courier New', monospace" font-size="12" letter-spacing="0.08em">TMUX SESSION</text>
     <g fill="rgba(255,255,255,0.55)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="14" text-anchor="middle">
-      <text x="270" y="570">Parallel prompt assembly · Review Developer output</text>
+      <text x="205" y="565">Parallel prompt assembly</text>
+      <text x="205" y="583">Review Developer output</text>
     </g>
 
-    <!-- ═══════════════ CODEX REVIEWER CARD ═══════════════ -->
-    <rect x="530" y="460" width="400" height="140" rx="10" fill="url(#card-exec)" stroke="rgba(180,255,180,0.15)" stroke-width="1"/>
+    <!-- ═══════════════ INDEPENDENT REVIEWER CARD ═══════════════ -->
+    <rect x="365" y="460" width="270" height="140" rx="10" fill="url(#card-exec)" stroke="rgba(180,255,180,0.15)" stroke-width="1" stroke-dasharray="8,4"/>
 
-    <text x="730" y="508" text-anchor="middle" fill="rgba(0,255,65,0.06)" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="900" letter-spacing="0.1em" filter="url(#glow-green)">DEVELOPER</text>
-    <text x="730" y="508" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="900" letter-spacing="0.1em">DEVELOPER</text>
-    <text x="730" y="534" text-anchor="middle" fill="rgba(180,255,180,0.55)" font-family="'Courier New', monospace" font-size="12" letter-spacing="0.08em">CODEX · MCP CALL</text>
+    <text x="500" y="508" text-anchor="middle" fill="rgba(0,255,65,0.06)" font-family="Georgia, 'Times New Roman', serif" font-size="20" font-weight="900" letter-spacing="0.06em" filter="url(#glow-green)">INDEPENDENT REVIEWER</text>
+    <text x="500" y="508" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Georgia, 'Times New Roman', serif" font-size="20" font-weight="900" letter-spacing="0.06em">INDEPENDENT REVIEWER</text>
+    <text x="500" y="534" text-anchor="middle" fill="rgba(180,255,180,0.55)" font-family="'Courier New', monospace" font-size="12" letter-spacing="0.08em">TEAMMATE · ZERO CONTEXT</text>
     <g fill="rgba(255,255,255,0.55)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="14" text-anchor="middle">
-      <text x="730" y="570">Implement code · Fix issues · QA smoke testing</text>
+      <text x="500" y="570">Phase 0 · Wave Boundary · A-layer Peer Review</text>
+    </g>
+
+    <!-- ═══════════════ DEVELOPER CARD ═══════════════ -->
+    <rect x="660" y="460" width="270" height="140" rx="10" fill="url(#card-exec)" stroke="rgba(180,255,180,0.15)" stroke-width="1"/>
+
+    <text x="795" y="508" text-anchor="middle" fill="rgba(0,255,65,0.06)" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="900" letter-spacing="0.1em" filter="url(#glow-green)">DEVELOPER</text>
+    <text x="795" y="508" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="900" letter-spacing="0.1em">DEVELOPER</text>
+    <text x="795" y="534" text-anchor="middle" fill="rgba(180,255,180,0.55)" font-family="'Courier New', monospace" font-size="12" letter-spacing="0.08em">CODEX · MCP CALL</text>
+    <g fill="rgba(255,255,255,0.55)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="14" text-anchor="middle">
+      <text x="795" y="565">Implement code · Fix issues</text>
+      <text x="795" y="583">QA smoke testing</text>
     </g>
 
   </g>

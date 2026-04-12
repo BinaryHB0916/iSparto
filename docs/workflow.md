@@ -2,6 +2,19 @@
 
 ## Phase 0: Product Initialization
 
+### Independent Reviewer — Trigger Points across the Wave Lifecycle
+
+```mermaid
+timeline
+    title Independent Reviewer Trigger Points
+    section Phase 0 (Project Init)
+        Full spec review : Reads product-spec + tech-spec from scratch (most token-intensive invocation)
+    section Wave Development
+        A-layer Peer Review : Triggered per decision-interrupt — reads proposed output + relevant context
+    section Wave Close-out
+        Wave Boundary Review : Reads Wave tasks + relevant spec sections + git diff (scope-limited)
+```
+
 ```
 User describes product requirements
     |
@@ -18,7 +31,7 @@ Developer (Codex) reviews technical architecture (Team Lead invokes via MCP, bas
   - Potential performance bottlenecks and security issues
   - Whether tech choices match requirements
     |
-Independent Reviewer (Teammate — zero inherited context, reads product-spec then tech-spec independently):
+Independent Reviewer (Teammate — zero inherited context; most token-intensive role per invocation; reads product-spec then tech-spec independently):
   - Product-technical alignment: does tech-spec implement what product-spec describes?
   - Implicit assumptions check: any simplifications that change user-facing behavior?
   - Requirement coverage: any product requirements with no technical approach?
