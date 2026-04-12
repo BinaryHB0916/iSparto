@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 640" width="1100" height="640">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 700" width="1100" height="700">
   <defs>
     <linearGradient id="gold-line" x1="0" y1="0" x2="1" y2="0">
       <stop offset="0%" stop-color="rgba(212,175,55,0)"/>
@@ -18,7 +18,7 @@
   </defs>
 
   <!-- Background -->
-  <rect width="1100" height="640" fill="#000"/>
+  <rect width="1100" height="700" fill="#000"/>
 
   <!-- Side matrix rain — left 2 columns -->
   <g font-family="monospace" font-size="14" fill="rgba(180,255,180,0.3)">
@@ -44,10 +44,10 @@
     <text x="1052" y="200">ο</text><text x="1082" y="388">ι</text>
   </g>
 
-  <!-- ═══════════════ CENTER CONTENT ═══════════════ -->
+  <!-- ═══════════════ CENTER CONTENT (shifted +50 for balanced margins) ═══════════════ -->
   <g transform="translate(50,0)">
 
-    <!-- ═══════════════ 用户 ═══════════════ -->
+    <!-- ═══════════════ USER ═══════════════ -->
     <text x="500" y="72" text-anchor="middle" fill="rgba(212,175,55,0.12)" font-family="Georgia, 'Times New Roman', serif" font-size="36" font-weight="900" letter-spacing="0.15em" filter="url(#glow-gold)">USER</text>
     <text x="500" y="72" text-anchor="middle" fill="rgba(212,175,55,0.9)" font-family="Georgia, 'Times New Roman', serif" font-size="36" font-weight="900" letter-spacing="0.15em">USER</text>
     <text x="500" y="100" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="15" letter-spacing="0.06em">产品方向 · 需求定义 · Wave 边界验收</text>
@@ -55,11 +55,11 @@
     <rect x="300" y="125" width="400" height="1" fill="url(#gold-line)"/>
     <line x1="500" y1="126" x2="500" y2="175" stroke="rgba(212,175,55,0.3)" stroke-width="1"/>
 
-    <!-- ═══════════════ TEAM LEAD ═══════════════ -->
-    <rect x="70" y="175" width="510" height="220" rx="10" fill="url(#card-lead)" stroke="rgba(212,175,55,0.18)" stroke-width="1"/>
+    <!-- ═══════════════ TEAM LEAD CARD ═══════════════ -->
+    <rect x="70" y="175" width="600" height="220" rx="10" fill="url(#card-lead)" stroke="rgba(212,175,55,0.18)" stroke-width="1"/>
 
-    <text x="325" y="225" text-anchor="middle" fill="rgba(255,255,255,0.92)" font-family="Georgia, 'Times New Roman', serif" font-size="28" font-weight="900" letter-spacing="0.1em">TEAM LEAD</text>
-    <text x="325" y="251" text-anchor="middle" fill="rgba(212,175,55,0.6)" font-family="'Courier New', monospace" font-size="13" letter-spacing="0.08em">主会话</text>
+    <text x="370" y="225" text-anchor="middle" fill="rgba(255,255,255,0.92)" font-family="Georgia, 'Times New Roman', serif" font-size="28" font-weight="900" letter-spacing="0.1em">TEAM LEAD</text>
+    <text x="370" y="251" text-anchor="middle" fill="rgba(212,175,55,0.6)" font-family="'Courier New', monospace" font-size="13" letter-spacing="0.08em">主会话</text>
 
     <g fill="rgba(212,175,55,0.5)">
       <circle cx="155" cy="291" r="2.5"/>
@@ -74,47 +74,48 @@
       <text x="167" y="364">合并代码</text>
     </g>
 
-    <!-- Doc Engineer 子卡片 -->
-    <rect x="340" y="278" width="225" height="95" rx="8" fill="rgba(20,16,8,0.6)" stroke="rgba(212,175,55,0.25)" stroke-width="1"/>
-    <text x="453" y="310" text-anchor="middle" fill="rgba(212,175,55,0.85)" font-family="Georgia, 'Times New Roman', serif" font-size="18" font-weight="bold" letter-spacing="0.05em">Doc Engineer</text>
-    <text x="453" y="330" text-anchor="middle" fill="rgba(212,175,55,0.5)" font-family="'Courier New', monospace" font-size="11">子代理</text>
-    <text x="453" y="357" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="14">Wave 完成后 · 文档审计与同步</text>
+    <!-- Doc Engineer sub-card -->
+    <rect x="370" y="278" width="230" height="95" rx="8" fill="rgba(20,16,8,0.6)" stroke="rgba(212,175,55,0.25)" stroke-width="1"/>
+    <text x="485" y="310" text-anchor="middle" fill="rgba(212,175,55,0.85)" font-family="Georgia, 'Times New Roman', serif" font-size="18" font-weight="bold" letter-spacing="0.05em">Doc Engineer</text>
+    <text x="485" y="330" text-anchor="middle" fill="rgba(212,175,55,0.5)" font-family="'Courier New', monospace" font-size="11">子代理</text>
+    <text x="485" y="357" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="14">Wave 完成后 · 文档审计与同步</text>
 
-    <!-- ═══════════════ INDEPENDENT REVIEWER ═══════════════ -->
-    <rect x="600" y="175" width="260" height="220" rx="10" fill="url(#card-lead)" stroke="rgba(212,175,55,0.18)" stroke-width="1" stroke-dasharray="8,4"/>
+    <!-- ═══════════════ INDEPENDENT REVIEWER CARD ═══════════════ -->
+    <rect x="700" y="175" width="270" height="220" rx="10" fill="url(#card-lead)" stroke="rgba(212,175,55,0.18)" stroke-width="1" stroke-dasharray="8,4"/>
 
-    <text x="730" y="230" text-anchor="middle" fill="rgba(212,175,55,0.12)" font-family="Georgia, 'Times New Roman', serif" font-size="20" font-weight="900" letter-spacing="0.06em" filter="url(#glow-gold)">INDEPENDENT REVIEWER</text>
-    <text x="730" y="230" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Georgia, 'Times New Roman', serif" font-size="20" font-weight="900" letter-spacing="0.06em">INDEPENDENT REVIEWER</text>
-    <text x="730" y="256" text-anchor="middle" fill="rgba(212,175,55,0.6)" font-family="'Courier New', monospace" font-size="12" letter-spacing="0.08em">独立队友 · 零上下文继承</text>
-    <text x="730" y="305" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="14">Phase 0 · Wave 边界</text>
-    <text x="730" y="328" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="14">A 层同行审查</text>
+    <text x="835" y="220" text-anchor="middle" fill="rgba(212,175,55,0.12)" font-family="Georgia, 'Times New Roman', serif" font-size="22" font-weight="900" letter-spacing="0.08em" filter="url(#glow-gold)">INDEPENDENT</text>
+    <text x="835" y="220" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Georgia, 'Times New Roman', serif" font-size="22" font-weight="900" letter-spacing="0.08em">INDEPENDENT</text>
+    <text x="835" y="248" text-anchor="middle" fill="rgba(212,175,55,0.12)" font-family="Georgia, 'Times New Roman', serif" font-size="22" font-weight="900" letter-spacing="0.08em" filter="url(#glow-gold)">REVIEWER</text>
+    <text x="835" y="248" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Georgia, 'Times New Roman', serif" font-size="22" font-weight="900" letter-spacing="0.08em">REVIEWER</text>
+    <text x="835" y="274" text-anchor="middle" fill="rgba(212,175,55,0.6)" font-family="'Courier New', monospace" font-size="12" letter-spacing="0.08em">独立队友 · 零上下文继承</text>
+    <text x="835" y="320" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="14">重大变更时独立审查</text>
 
-    <!-- ═══════════════ 连接线 ═══════════════ -->
-    <line x1="580" y1="285" x2="600" y2="285" stroke="rgba(212,175,55,0.3)" stroke-width="1" stroke-dasharray="6,4"/>
-    <rect x="100" y="395" width="800" height="1" fill="url(#gold-line)"/>
-    <line x1="270" y1="395" x2="270" y2="460" stroke="rgba(180,255,180,0.3)" stroke-width="1"/>
-    <line x1="730" y1="395" x2="730" y2="460" stroke="rgba(180,255,180,0.3)" stroke-width="1"/>
+    <!-- ═══════════════ CONNECTION LINES ═══════════════ -->
+    <line x1="670" y1="285" x2="700" y2="285" stroke="rgba(212,175,55,0.3)" stroke-width="1" stroke-dasharray="6,4"/>
+    <rect x="100" y="395" width="540" height="1" fill="url(#gold-line)"/>
+    <line x1="210" y1="395" x2="210" y2="480" stroke="rgba(180,255,180,0.3)" stroke-width="1"/>
+    <line x1="510" y1="395" x2="510" y2="480" stroke="rgba(180,255,180,0.3)" stroke-width="1"/>
 
-    <!-- ═══════════════ TEAMMATE ═══════════════ -->
-    <rect x="70" y="460" width="400" height="140" rx="10" fill="url(#card-exec)" stroke="rgba(180,255,180,0.15)" stroke-width="1"/>
+    <!-- ═══════════════ TEAMMATE CARD ═══════════════ -->
+    <rect x="70" y="480" width="280" height="140" rx="10" fill="url(#card-exec)" stroke="rgba(180,255,180,0.15)" stroke-width="1"/>
 
-    <text x="270" y="508" text-anchor="middle" fill="rgba(0,255,65,0.06)" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="900" letter-spacing="0.1em" filter="url(#glow-green)">TEAMMATE</text>
-    <text x="270" y="508" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="900" letter-spacing="0.1em">TEAMMATE</text>
-    <text x="270" y="534" text-anchor="middle" fill="rgba(180,255,180,0.55)" font-family="'Courier New', monospace" font-size="12" letter-spacing="0.08em">TMUX 会话</text>
+    <text x="210" y="508" text-anchor="middle" fill="rgba(0,255,65,0.06)" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="900" letter-spacing="0.1em" filter="url(#glow-green)">TEAMMATE</text>
+    <text x="210" y="508" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="900" letter-spacing="0.1em">TEAMMATE</text>
+    <text x="210" y="534" text-anchor="middle" fill="rgba(180,255,180,0.55)" font-family="'Courier New', monospace" font-size="12" letter-spacing="0.08em">TMUX 会话</text>
     <g fill="rgba(255,255,255,0.55)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="14" text-anchor="middle">
-      <text x="270" y="565">并行组装 prompt</text>
-      <text x="270" y="583">审查 Developer 输出</text>
+      <text x="210" y="565">并行组装 prompt</text>
+      <text x="210" y="583">审查 Developer 输出</text>
     </g>
 
-    <!-- ═══════════════ DEVELOPER ═══════════════ -->
-    <rect x="530" y="460" width="400" height="140" rx="10" fill="url(#card-exec)" stroke="rgba(180,255,180,0.15)" stroke-width="1"/>
+    <!-- ═══════════════ DEVELOPER CARD ═══════════════ -->
+    <rect x="370" y="480" width="280" height="140" rx="10" fill="url(#card-exec)" stroke="rgba(180,255,180,0.15)" stroke-width="1"/>
 
-    <text x="730" y="508" text-anchor="middle" fill="rgba(0,255,65,0.06)" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="900" letter-spacing="0.1em" filter="url(#glow-green)">DEVELOPER</text>
-    <text x="730" y="508" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="900" letter-spacing="0.1em">DEVELOPER</text>
-    <text x="730" y="534" text-anchor="middle" fill="rgba(180,255,180,0.55)" font-family="'Courier New', monospace" font-size="12" letter-spacing="0.08em">CODEX · MCP 调用</text>
+    <text x="510" y="508" text-anchor="middle" fill="rgba(0,255,65,0.06)" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="900" letter-spacing="0.1em" filter="url(#glow-green)">DEVELOPER</text>
+    <text x="510" y="508" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Georgia, 'Times New Roman', serif" font-size="26" font-weight="900" letter-spacing="0.1em">DEVELOPER</text>
+    <text x="510" y="534" text-anchor="middle" fill="rgba(180,255,180,0.55)" font-family="'Courier New', monospace" font-size="12" letter-spacing="0.08em">CODEX · MCP 调用</text>
     <g fill="rgba(255,255,255,0.55)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="14" text-anchor="middle">
-      <text x="730" y="565">按 prompt 实现代码 · 修复问题</text>
-      <text x="730" y="583">QA 冒烟测试</text>
+      <text x="510" y="565">按 prompt 实现代码 · 修复问题</text>
+      <text x="510" y="583">QA 冒烟测试</text>
     </g>
 
   </g>
