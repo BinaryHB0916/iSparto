@@ -1,5 +1,28 @@
 # Session Log
 
+## 2026-04-12 Session — SVG diagram polish + v0.7.6 release (PR #193 + PR #195)
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | Post-Wave follow-up (IR Token Cost Documentation Wave already complete) |
+| Tasks completed | (1) Visual polish of both role-architecture SVGs: IR card text vertical centering, Doc Engineer sub-card widened for EN text, Teammate/Developer card top padding increased, matrix rain extended to full viewBox height. PR #193 merged. (2) v0.7.6 released via `/release` — CHANGELOG prep PR #194, release PR #195. |
+| Key decisions | (1) SVG edits done as Lead direct edit under self-referential boundary (coordinate markup in framework's own assets). (2) Doc Engineer skipped via ad-hoc fix exception (no Wave completed, SVG visual polish has no code↔doc sync risk). (3) IR not triggered (no Wave boundary). |
+
+### Files Changed
+```
+ assets/role-architecture-zh.svg | 60 +++++++++++++++++++++---------------------
+ assets/role-architecture.svg    | 60 +++++++++++++++++++++---------------------
+ CHANGELOG.md                    | 12 ++++++++++
+ VERSION                         |  2 +-
+ 4 files changed, 63 insertions(+), 61 deletions(-)
+```
+
+### Notes
+- **Iterative visual feedback loop.** User reviewed SVG rendering 4 times across 2 sessions (rounds 1-2 in prior session, rounds 3-4 this session). Each round addressed progressively finer issues: round 1 (IR position wrong — Lead level not bottom), round 2 (connection line logic + jargon description + title overflow), round 3 (text centering + card padding + Doc Engineer overflow), round 4 (matrix rain not reaching bottom). This graduated feedback pattern is natural for visual work where problems only surface upon rendering.
+- **Doc Engineer audit: skipped via ad-hoc fix exception.** Session did not complete any Wave; changes were SVG visual polish + release (no code↔documentation sync risk). Lead self-assessed ✅.
+- **Process Observer audit: sub-agent run.** See audit results in closing briefing if any findings.
+
 ## 2026-04-09 Session (#e) — Framework-feedback polish sweep (PR #187 + PR #188)
 
 | Metric | Value |
