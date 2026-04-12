@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Independent Reviewer in role-architecture diagrams** — Both `assets/role-architecture.svg` and `assets/role-architecture-zh.svg` now include the Independent Reviewer as a first-class node at the Lead level (gold theme, dashed border encoding zero-context inheritance). Previous diagrams showed only 4 nodes (USER → Lead+Doc Engineer → Teammate + Developer); users encountering IR at runtime had no visual reference for where it fits. Connection lines, matrix rain coverage, and card spacing polished across 4 iterative rounds (#190, #191, #192, #193).
+
+- **IR token cost documentation across framework docs** — New `Token Budget Awareness` subsection in `docs/configuration.md` with a 5-column per-invocation × cumulative cost table covering all roles. IR row rationale in the Role-Model Mapping Table extended to explain why Opus is required. New Opus cost tradeoff row in `docs/design-decisions.md`. IR Quick Reference entry in `docs/concepts.md`. Token budget awareness section in `docs/user-guide.md` with cross-references. IR trigger sequence mermaid timeline diagram in `docs/workflow.md`. Token annotation at first IR occurrence in workflow.md Phase 0 block (#190).
+
+### Changed
+
+- **Framework-feedback close-out (0409 series)** — Closed framework-feedback items 0409 R1/R2, 0409-b F1, 0409-c F1/F2, 0409-d F1/F2 covering rule gaps, design-principle refinements, and documentation consistency (#187, #188, #189).
+
 ## [0.7.5] - 2026-04-09
 
 ### Added
