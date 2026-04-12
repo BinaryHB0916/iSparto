@@ -43,6 +43,12 @@
 - **Product direction decisions** — /plan proposals, /migrate migration plans, /restore actions still require your confirmation
 - **Compliance audit reports** — shown in /end-working session briefing; review any FAIL or WARNING items, and decide whether to adopt the suggested corrections next session
 
+## Token Budget Awareness
+
+The Independent Reviewer appears at three points in the workflow: Phase 0 (full spec review at project initialization), Wave Boundary (scope-limited review at Wave completion), and A-layer interrupts (validating Lead's decision-interruption classification). For a visual timeline of when IR triggers and what it reads at each point, see the [IR trigger diagram in workflow.md](workflow.md#independent-reviewer--trigger-points-across-the-wave-lifecycle).
+
+iSparto runs on fixed-price subscriptions — no invocation increases your bill. The practical impact of token consumption is context window pressure: if you notice frequent `/compact` runs, consider running `/end-working` to start a fresh session. All state is preserved in plan.md — nothing is lost across sessions. For a detailed breakdown by role, see [Token Budget Awareness in configuration.md](configuration.md#token-budget-awareness).
+
 ## Your Preferences and the Agent Team (User Preference Interface)
 
 Your personal preferences (communication language, output style, interaction pace, etc.) are stored in Claude Code's auto-memory and **respected by the agent team automatically**. You don't need to configure or manage them — they evolve naturally through your conversations.

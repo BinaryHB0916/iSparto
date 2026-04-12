@@ -556,6 +556,58 @@ Branch: `feat/v075-readme-restraint`. Mode: Solo + Lead direct edit (Framework P
 
 🚨 BLOCKING: Next Wave requires NEW SESSION
 > ✅ Session boundary acknowledged 2026-04-09 by /start-working
+> ✅ Session boundary acknowledged 2026-04-10 by /start-working
+
+### IR Token Cost Documentation Wave (2026-04-10) — Complete
+
+Branch: `feat/ir-token-doc-wave`. Mode: Solo (T8a via Developer/Codex for SVG coordinate work, all other tasks Lead direct edit under self-referential boundary).
+
+**Goal:** Surface the Independent Reviewer's token cost impact across documentation and the architecture diagram. Root cause: the README architecture diagram (`assets/role-architecture.svg` / `assets/role-architecture-zh.svg`) showed only 4 nodes (USER → Lead+Doc Engineer → Teammate + Developer) while IR appears at runtime as a first-class role. Secondary gap: IR is the most token-intensive role per invocation (Opus, zero inherited context, 3 trigger modes) but this cost impact had only one sentence in the entire codebase (information-layering-policy.md Principle 3).
+
+Principle: diagram first, then text. T8a (architecture diagram) is highest priority because it fixes the root mismatch between what users see and what actually runs.
+
+**Task list:**
+
+- [x] **T8a — `assets/role-architecture.svg` + `assets/role-architecture-zh.svg`: Add IR node.** Bottom row rearranged from 2-card (width=400) to 3-card (width=270): TEAMMATE left, INDEPENDENT REVIEWER center, DEVELOPER right. IR card uses dashed border (`stroke-dasharray="8,4"`) and dashed connection line from Lead — visually encodes "zero context inheritance". viewBox kept at 1100×640. ZH version follows established convention: title stays English ("INDEPENDENT REVIEWER"), subtitle Chinese ("独立队友 · 零上下文继承"), description mixed ("Phase 0 · Wave 边界 · A 层同行审查"). Via Developer (Codex) — SVG is coordinate-precise markup.
+- [x] **T8b — `docs/workflow.md`: IR trigger sequence diagram.** Added mermaid `timeline` diagram as a new subsection "### Independent Reviewer — Trigger Points across the Wave Lifecycle" near the top of the file. Three timeline sections: Phase 0 (full spec review), Wave Development (A-layer Peer Review per decision-interrupt), Wave Close-out (Wave Boundary Review, scope-limited).
+- [x] **T1 — `docs/configuration.md`: IR row rationale + Token Budget Awareness subsection.** Extended IR row rationale (line 57) with Opus justification and token-cost forward-pointer. Added `### Token Budget Awareness` subsection with 5-column table showing two consumption dimensions (per-invocation and cumulative per Wave). IR: Highest per-call / Medium cumulative; Developer: High per-call / Highest cumulative. Actionable guidance: frequent `/compact` → run `/end-working`. Cross-reference to Information Layering Policy Principle 3.
+- [x] **T2 — `docs/design-decisions.md`: Opus cost tradeoff row.** New row after existing IR rows: "Independent Reviewer model choice | claude-opus-4-6 rather than Sonnet | IR's alignment-detection task has no structural backstop — PO Audit's checklist-verification is backstopped by Hooks core layer, so Sonnet suffices there."
+- [x] **T3 — `docs/concepts.md`: IR Quick Reference row.** Inserted after "Agent Team" row. Explanation ≤35 words. Analogy: "Blind peer reviewer in academic publishing — reads the paper fresh, without the authors' cover letter."
+- [x] **T4 — `docs/user-guide.md`: Token Budget Awareness section.** Two paragraphs between "What You Should Focus On" and "Your Preferences and the Agent Team": (1) when IR triggers + link to workflow.md timeline diagram; (2) context pressure mitigation + link to configuration.md#token-budget-awareness.
+- [x] **T5 — `docs/workflow.md`: Token annotation at first occurrence.** Line 34 only: appended "most token-intensive role per invocation" to the Phase 0 IR description. Lines 116 and 168 (Solo/Agent Team blocks) left unchanged — T8b diagram carries the message.
+- [x] **T7 — `docs/plan.md`: This Wave entry.**
+
+**Acceptance script (9 commands — A1 under trivial-CLI carve-out, A2-A9 are grep existence checks):**
+
+| # | Command | Expected | Actual |
+|---|---------|----------|--------|
+| A1 | `bash scripts/language-check.sh && bash scripts/language-check.sh --self-test` | both exit 0 | ✅ exit 0 / exit 0 |
+| A2 | `grep -q 'Token Budget Awareness' docs/configuration.md` | exit 0 | ✅ exit 0 |
+| A3 | `grep -q 'Independent Reviewer model choice' docs/design-decisions.md` | exit 0 | ✅ exit 0 |
+| A4 | `grep -q 'Independent Reviewer' docs/concepts.md` | exit 0 | ✅ exit 0 |
+| A5 | `grep -q 'token-budget-awareness' docs/user-guide.md` | exit 0 | ✅ exit 0 |
+| A6 | `grep -q 'INDEPENDENT REVIEWER' assets/role-architecture.svg && grep -q 'INDEPENDENT REVIEWER' assets/role-architecture-zh.svg` | both exit 0 | ✅ exit 0 |
+| A7 | `awk '/^```mermaid$/,/^```$/' docs/workflow.md \| grep -q 'timeline' && awk '/^```mermaid$/,/^```$/' docs/workflow.md \| grep -q 'Phase 0' && awk '/^```mermaid$/,/^```$/' docs/workflow.md \| grep -q 'Wave Boundary' && awk '/^```mermaid$/,/^```$/' docs/workflow.md \| grep -q 'A-layer'` | all 4 checks pass | ✅ exit 0 |
+| A8 | `grep -c 'INDEPENDENT REVIEWER' assets/role-architecture.svg` = `grep -c 'INDEPENDENT REVIEWER' assets/role-architecture-zh.svg` | counts match | ✅ 3 = 3 |
+| A9 | `grep -q 'TEAMMATE' assets/role-architecture.svg && grep -q 'DEVELOPER' assets/role-architecture.svg && grep -q 'INDEPENDENT REVIEWER' assets/role-architecture.svg` | exit 0 (repeat for ZH) | ✅ exit 0 (both EN and ZH) |
+
+**Files modified (8):**
+- `assets/role-architecture.svg` (T8a — IR node added, 3-column layout)
+- `assets/role-architecture-zh.svg` (T8a — IR node added, 3-column layout, Chinese subtitles)
+- `docs/workflow.md` (T8b + T5 — mermaid timeline diagram + first-occurrence token annotation)
+- `docs/configuration.md` (T1 — IR row rationale extension + Token Budget Awareness subsection)
+- `docs/design-decisions.md` (T2 — Opus cost tradeoff row)
+- `docs/concepts.md` (T3 — IR Quick Reference row)
+- `docs/user-guide.md` (T4 — Token Budget Awareness section)
+- `docs/plan.md` (T7 — this entry)
+
+**Mode Selection Checkpoint.** Grouping: 8 files across 4 modules (Assets, Framework Docs, Project Docs). Decomposable? T8a (SVG) is independent of T1-T5 (markdown); T1-T5 are independent of each other. Sufficient volume? T8a requires Developer for coordinate layout; T1-T5 are small targeted edits. Agent Team coordination overhead exceeds serial cost. Decision: **Solo**. T8a via Developer (Codex), all others Lead direct edit.
+
+**Why Lead direct edit for markdown tasks:** All markdown target files are Tier 2 reference docs (`docs/*.md`). Framework self-referential boundary applies — markdown-only additions to existing documentation under the self-referential boundary. v0.7.4 and v0.7.5 precedents apply.
+
+**Why no BLOCKING marker:** No Tier 1 system prompt files modified. All changes are Tier 2 reference docs (read by IR at spawn time from fresh context) or visual assets (never loaded into conversation context). Next session may begin without cross-session barrier.
+
+**Why no Independent Reviewer:** Not a Wave boundary in the i18n/framework-polish sense — this is a documentation gap-fill for an already-shipped role. Scope is additive text + diagram only, no behavioral or architectural change. Doc Engineer and Process Observer audits are sufficient. Precedent: Post-Wave 5 Follow-up Hotfixes, Framework Polish Round 2.
 
 ### 技术生态追踪（暂不执行）
 

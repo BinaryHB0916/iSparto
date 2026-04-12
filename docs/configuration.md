@@ -54,10 +54,25 @@ Swapping models is purely a configuration change — role definition files do no
 | Teammate | claude-opus-4-6 | tmux session | Claude Max | max | Inherits Lead's capabilities |
 | Developer (implementation) | gpt-5.3-codex | MCP (codex tool) | ChatGPT Plus | xhigh | Terminal-Bench 77.3%, leads 5.4 by a wide margin, pure-coding specialist |
 | Developer (QA / quick fix) | gpt-5.4-mini | MCP (codex tool, model param) | ChatGPT Plus | high | QA / quick fixes have simple structure; mini is sufficient and fast |
-| Independent Reviewer | claude-opus-4-6 | tmux (Teammate) | Claude Max | max | Cross-model blind review, zero context inheritance |
+| Independent Reviewer | claude-opus-4-6 | tmux (Teammate) | Claude Max | max | Cross-model blind review, zero context inheritance. Opus required because IR must independently comprehend full specs without inherited context — most token-intensive role per invocation (see [Token Budget Awareness](#token-budget-awareness)) |
 | Doc Engineer | claude-opus-4-6 | sub-agent (inherits Lead) | Claude Max | max | Requires Lead's global context |
 | Process Observer (Hooks) | — | PreToolUse hook (shell script, no model) | — | — | Unbypassable structural safeguard |
 | Process Observer (Audit) | claude-sonnet-4-6 | sub-agent | Claude Max | — | Advisory layer, reduces token consumption |
+
+### Token Budget Awareness
+
+iSparto runs on fixed-price subscriptions (Claude Max + ChatGPT Plus). No invocation increases the user's bill. However, each role consumes tokens from the session's context budget, and understanding the relative consumption helps users anticipate session behavior.
+
+| Role | Per-invocation cost | Typical invocations per Wave | Cumulative per Wave | Notes |
+|------|-------------------|------------------------------|---------------------|-------|
+| Independent Reviewer | Highest | 1-2 (1 Wave Boundary + 0-1 A-layer) | Medium | Spawns as Teammate with zero inherited context; loads specs from scratch each time |
+| Developer | High | N (multi-round iteration) | Highest | Full structured prompt + code files per call; cumulative cost often exceeds IR |
+| Lead / Teammate | Moderate | Continuous | High | Context grows incrementally across the session |
+| Doc Engineer / PO Audit | Low | 1 each | Low | Focused scope; PO Audit intentionally uses Sonnet to reduce token consumption |
+
+The main user-visible effect of high token consumption is increased frequency of `/compact` runs and a practical ceiling on how many Waves fit in a single session. If sessions frequently hit context limits, consider running `/end-working` more frequently to start fresh sessions — `plan.md` preserves all state across sessions.
+
+The Independent Reviewer's per-invocation cost is bounded by design: [Information Layering Policy Principle 3](design-principles/information-layering-policy.md) restricts IR to A-layer-only runtime review, preventing the "IR runs dozens of times per session" scenario that would make the cost prohibitive.
 
 ### Developer Tiered Model Strategy
 
