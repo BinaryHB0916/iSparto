@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.6] - 2026-04-12
+
 ### Added
 
 - **Independent Reviewer in role-architecture diagrams** — Both `assets/role-architecture.svg` and `assets/role-architecture-zh.svg` now include the Independent Reviewer as a first-class node at the Lead level (gold theme, dashed border encoding zero-context inheritance). Previous diagrams showed only 4 nodes (USER → Lead+Doc Engineer → Teammate + Developer); users encountering IR at runtime had no visual reference for where it fits. Connection lines, matrix rain coverage, and card spacing polished across 4 iterative rounds (#190, #191, #192, #193).
