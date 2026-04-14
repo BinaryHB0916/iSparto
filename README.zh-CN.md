@@ -55,7 +55,7 @@ curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/bootstrap
 
 一行搞定:从 GitHub Releases 下载经过校验的安装器、检查/安装 Claude Code 和 Codex CLI、登录 Codex、复制命令和模板到 `~/.claude/`、注册全局 MCP Server。不会修改你现有的 `~/.claude/settings.json`。安装前会自动对原始文件拍快照,随时可以回滚。
 
-**安装前先预览:**
+**安装前 Dry run(预览):**
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/bootstrap.sh | bash -s -- --dry-run

@@ -55,7 +55,7 @@ curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/bootstrap
 
 One command handles everything: downloads a verified installer from GitHub Releases, checks and installs Claude Code and the Codex CLI, logs into Codex, copies commands and templates to `~/.claude/`, and registers the global MCP Server. Your existing `~/.claude/settings.json` is never modified. A snapshot of your original files is automatically taken before any changes, so you can always revert.
 
-**Preview before installing:**
+**Dry run (Preview) before installing:**
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/bootstrap.sh | bash -s -- --dry-run
