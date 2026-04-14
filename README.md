@@ -8,7 +8,7 @@
 
 ---
 
-**iSparto turns Claude Code into a restrained AI development team.** A lead role assembles prompts, a developer role (Codex) implements, teammates parallelize, a doc engineer keeps documentation in sync. You direct the team; the team does not dump its internal operations onto you.
+**iSparto is an open-source Agent Team framework for Claude Code — built for solopreneurs.** One command spins up the whole agent team — all working in perfect sync. You direct the team through the Team Lead; the rest runs in the background.
 
 > **中文用户** can start from [docs/zh/quick-start.md](docs/zh/quick-start.md) — a Chinese quick-start covering install, first use, and the daily workflow.
 >
