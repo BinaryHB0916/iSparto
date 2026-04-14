@@ -150,9 +150,16 @@ The lead only comes back to you at genuine decision points
   <img src="assets/role-architecture.svg" alt="Role Architecture" width="100%"/>
 </p>
 
-- Lead / Teammate / Doc Engineer: Claude primary sessions (see [model configuration](docs/configuration.md#agent-model-configuration))
-- Developer: Codex via MCP (see [model configuration](docs/configuration.md#agent-model-configuration))
-- Real-time compliance oversight: three-layer security defense covering Write/Edit content scanning, pre-commit secret/PII scanning, and milestone-level full audit via `/security-audit`. See [docs/security.md](docs/security.md).
+The agent team has six roles:
+
+- **Team Lead** — the one you talk to. Plans tasks, coordinates the team, and escalates only when a decision is actually needed.
+- **Teammate** — parallel Claude session that takes on work the Team Lead delegates. Runs in its own tmux pane.
+- **Independent Reviewer** — spawned with zero inherited context at review time, so it cannot rubber-stamp decisions it helped make.
+- **Developer** — implementation specialist, invoked via MCP (Codex). Receives specs from the Team Lead, returns code.
+- **Doc Engineer** — audits documentation at every Wave boundary.
+- **Process Observer** — a PreToolUse hook (shell, no model) that blocks ceremonial steps from being skipped, plus an advisory Sonnet audit layer.
+
+Full model assignments and reasoning levels live in [docs/configuration.md](docs/configuration.md#agent-model-configuration). Security oversight (Write/Edit scanning, pre-commit secret/PII checks, `/security-audit`) is documented in [docs/security.md](docs/security.md).
 
 ---
 
