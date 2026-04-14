@@ -118,5 +118,16 @@
       <text x="510" y="613">QA smoke testing</text>
     </g>
 
+    <!-- ═══════════════ PROCESS OBSERVER CARD ═══════════════ -->
+    <rect x="700" y="500" width="270" height="140" rx="10" fill="url(#card-lead)" stroke="rgba(212,175,55,0.18)" stroke-width="1"/>
+
+    <text x="835" y="540" text-anchor="middle" fill="rgba(212,175,55,0.12)" font-family="Georgia, 'Times New Roman', serif" font-size="22" font-weight="900" letter-spacing="0.08em" filter="url(#glow-gold)">PROCESS</text>
+    <text x="835" y="540" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Georgia, 'Times New Roman', serif" font-size="22" font-weight="900" letter-spacing="0.08em">PROCESS</text>
+    <text x="835" y="568" text-anchor="middle" fill="rgba(212,175,55,0.12)" font-family="Georgia, 'Times New Roman', serif" font-size="22" font-weight="900" letter-spacing="0.08em" filter="url(#glow-gold)">OBSERVER</text>
+    <text x="835" y="568" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Georgia, 'Times New Roman', serif" font-size="22" font-weight="900" letter-spacing="0.08em">OBSERVER</text>
+    <text x="835" y="592" text-anchor="middle" fill="rgba(212,175,55,0.6)" font-family="'Courier New', monospace" font-size="12" letter-spacing="0.08em">HOOKS + AUDIT SUB-AGENT</text>
+    <text x="835" y="615" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="13">Intercept unsafe tool calls</text>
+    <text x="835" y="632" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="13">Post-session compliance audit</text>
+
   </g>
 </svg>
