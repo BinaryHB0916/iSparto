@@ -22,10 +22,10 @@ iSparto's central move is to turn that single agent into an Agent Team. One comm
 
 |  | Single-agent tools | iSparto |
 |--|---|---|
-| What you see | Everything the agent just read, reconstructed in prose | The one line you need to act on; the rest lives in `docs/` |
-| When you are interrupted | Whenever the agent has "something to say" | Only at genuine decision points |
+| What you see | Everything the agent just read, reconstructed in prose | The one line the Team Lead decides you need; the rest lives in `docs/` |
+| When you are interrupted | Whenever the agent has something to say | Only at genuine decision points |
 | Cross-session state | Lost — you re-explain context every time | Restored automatically from `docs/plan.md` at session start |
-| Documentation sync | Manual | Audited every Wave |
+| Documentation sync | Manual | Audited every Wave by the Doc Engineer |
 
 ### Who this is for
 
