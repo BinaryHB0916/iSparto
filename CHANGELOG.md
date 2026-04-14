@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Process Observer on architecture diagrams — card, monitored zone, solder-joint connectors** — Both `assets/role-architecture.svg` and `assets/role-architecture-zh.svg` gain a first-class PROCESS OBSERVER card in the bottom-right slot (gold solid border, distinct from Independent Reviewer's zero-context dashed styling), with `Full-process oversight` / `全流程监察` as the primary body line. Prior to this release PO had no visual reference in the diagram even though the README bullets listed it as one of the six roles. A dashed gold perimeter frames the four Claude roles whose tool calls PO hooks intercept (Team Lead including the Doc Engineer sub-card, Independent Reviewer, Teammate, Developer), labeled `OBSERVED ZONE` / `监管范围`; the frame has a notch carved out at the bottom-right so the PO card sits visually outside the monitored area. Ten short gold solder-joint connectors (six on top, four on left) weld PO's top and left edges to the frame's notch edges — a circuit-board metaphor for PO's always-on oversight of the zone (#200).
+
+### Changed
+
+- **README realigned with the homepage four-line value prop** — `README.md` and `README.zh-CN.md` rewritten across 7 sections (Lead paragraph, Core idea, comparison table, Who this is for, Role Architecture bullets, Dogfood Log, Origin of the Name coda) to match the homepage proposition: `Open-source Agent Team framework for Claude Code` · `Built for solopreneurs` · `One command spins up the whole agent team — all working in perfect sync` · `Team Lead · Teammate · Independent Reviewer · Developer · Doc Engineer · Process Observer`. Prior restraint-narrative vocabulary (`restrained`, `one-person army`, `full AI development team`, `Claude Code Agent Team mode`, `team with clear roles`, `克制`, `停止倾倒`, `克制叙事`, `一人成军`) removed from active Tier 1/2/3 files; remaining occurrences are confined to Tier 4 frozen artifacts per convention. GitHub repo description and topics updated: description replaced with the new value prop; topics drop `agent-team`/`ai-development` and add `solopreneur` (#197).
+- **Install section "Preview before installing" reframed to lead with "Dry run"** — Both READMEs update the preview-heading wording to `**Dry run (Preview) before installing:**` / `**安装前 Dry run(预览):**`, placing the technical term first and the user-facing word as parenthetical clarifier. Matches the convention for developer documentation where the concrete flag name (`--dry-run`) is the primary reference (#199).
+- **`docs/product-spec.md` Competitive Differentiation aligned with new Agent Team vocabulary** — Line 63 rewritten to use the six-role vocabulary and the `one command spins up the whole agent team` phrasing, replacing the prior `team with clear role separation` language. Line 58's `Claude Code Agent Team mode` retained as a reference to Claude Code's own feature (#200).
+
+### Fixed
+
+- **Teammate role described as writing code prompts, not writing code directly** — `README.md` and `README.zh-CN.md` Core idea section second paragraph: `Teammate writes code` → `Teammate writes code prompts in parallel` / `Teammate 并行写代码 prompt`. Teammate follows the same prompt→Developer→review loop as Lead per CLAUDE.md — it does not write code directly. The initial value-prop rewrite (#197) inadvertently introduced the incorrect verb; this is the follow-up correction (#198).
+
 ## [0.7.6] - 2026-04-12
 
 ### Added
