@@ -126,8 +126,29 @@
     <text x="835" y="568" text-anchor="middle" fill="rgba(212,175,55,0.12)" font-family="Georgia, 'Times New Roman', serif" font-size="22" font-weight="900" letter-spacing="0.08em" filter="url(#glow-gold)">OBSERVER</text>
     <text x="835" y="568" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-family="Georgia, 'Times New Roman', serif" font-size="22" font-weight="900" letter-spacing="0.08em">OBSERVER</text>
     <text x="835" y="592" text-anchor="middle" fill="rgba(212,175,55,0.6)" font-family="'Courier New', monospace" font-size="12" letter-spacing="0.08em">HOOKS + AUDIT SUB-AGENT</text>
-    <text x="835" y="615" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="13">拦截不安全工具调用</text>
-    <text x="835" y="632" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="13">会话后合规审计</text>
+    <text x="835" y="610" text-anchor="middle" fill="rgba(212,175,55,0.78)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="13" font-weight="600">全流程监察</text>
+    <text x="835" y="625" text-anchor="middle" fill="rgba(255,255,255,0.45)" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="11">Hooks 拦截 · Audit 审查</text>
+
+    <!-- ═══════════════ MONITORED ZONE FRAME ═══════════════ -->
+    <!-- Dashed gold perimeter around the four Claude roles whose tool calls PO hooks intercept. -->
+    <!-- Notch at bottom-right carves out the PO card; solder joints weld PO's top+left edges to the frame. -->
+    <path d="M 62,167 L 977,167 L 977,480 L 680,480 L 680,647 L 62,647 Z" fill="none" stroke="rgba(212,175,55,0.22)" stroke-width="1" stroke-dasharray="6,4"/>
+    <text x="72" y="160" fill="rgba(212,175,55,0.5)" font-family="'Courier New', monospace" font-size="11" letter-spacing="0.1em">监管范围</text>
+
+    <!-- ═══════════════ PO SOLDER JOINTS ═══════════════ -->
+    <!-- Circuit-board-style connectors welding PO's top and left edges to the frame's notch edges. -->
+    <!-- Top solder: 6 pins from notch-top (y=480) down to PO top (y=500) -->
+    <line x1="725" y1="480" x2="725" y2="500" stroke="rgba(212,175,55,0.55)" stroke-width="1"/>
+    <line x1="770" y1="480" x2="770" y2="500" stroke="rgba(212,175,55,0.55)" stroke-width="1"/>
+    <line x1="815" y1="480" x2="815" y2="500" stroke="rgba(212,175,55,0.55)" stroke-width="1"/>
+    <line x1="860" y1="480" x2="860" y2="500" stroke="rgba(212,175,55,0.55)" stroke-width="1"/>
+    <line x1="905" y1="480" x2="905" y2="500" stroke="rgba(212,175,55,0.55)" stroke-width="1"/>
+    <line x1="950" y1="480" x2="950" y2="500" stroke="rgba(212,175,55,0.55)" stroke-width="1"/>
+    <!-- Left solder: 4 pins from notch-left (x=680) right to PO left (x=700) -->
+    <line x1="680" y1="525" x2="700" y2="525" stroke="rgba(212,175,55,0.55)" stroke-width="1"/>
+    <line x1="680" y1="560" x2="700" y2="560" stroke="rgba(212,175,55,0.55)" stroke-width="1"/>
+    <line x1="680" y1="595" x2="700" y2="595" stroke="rgba(212,175,55,0.55)" stroke-width="1"/>
+    <line x1="680" y1="625" x2="700" y2="625" stroke="rgba(212,175,55,0.55)" stroke-width="1"/>
 
   </g>
 </svg>
