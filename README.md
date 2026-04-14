@@ -8,28 +8,28 @@
 
 ---
 
-**iSparto turns Claude Code into a restrained AI development team.** A lead role assembles prompts, a developer role (Codex) implements, teammates parallelize, a doc engineer keeps documentation in sync. You direct the team; the team does not dump its internal operations onto you.
+**iSparto is an open-source Agent Team framework for Claude Code — built for solopreneurs.** One command spins up the whole agent team — all working in perfect sync. You direct the team through the Team Lead; the rest runs in the background.
 
 > **中文用户** can start from [docs/zh/quick-start.md](docs/zh/quick-start.md) — a Chinese quick-start covering install, first use, and the daily workflow.
 >
 > iSparto uses a deliberate bilingual strategy: user-facing entries (both READMEs + the Chinese quick-start + `CONTRIBUTING.md`) are maintained in parallel; framework instructions and reference documentation are English-only as a single source of truth, so AI instruction-following stays stable and non-Chinese-speaking contributors can review the framework. See [CLAUDE.md > Documentation Language Convention](CLAUDE.md#documentation-language-convention) for the full rationale.
 
-### The core idea — restraint, not more agents
+### The core idea — one command, the whole team
 
-Every existing AI coding tool — Cursor, Windsurf, Copilot, Claude Code on its own — puts you in a loop with a single agent. You and it trade messages, and when the agent has read your CLAUDE.md, studied your code, traced your branch state, and assembled a mental picture of what it is about to do, it tends to narrate all of that back to you before doing anything. You end up sorting its facts instead of making decisions.
+Every existing AI coding tool — Cursor, Windsurf, Copilot, Claude Code on its own — puts you in a loop with a single agent. You and it trade messages for every decision, every file, every commit. The whole development cycle runs through one conversation window.
 
-iSparto's central move is to stop dumping. The team has roles — lead, teammate, developer, doc engineer — but the payoff is not "more agents." The payoff is that the lead knows **which one sentence you actually need to hear** at any given moment, and keeps the rest in files you can grep when you care. You get the decision, not the dossier.
+iSparto's central move is to turn that single agent into an Agent Team. One command (`/init-project` or `/start-working`) spins up the whole agent team — six roles in parallel: Team Lead plans and coordinates, Teammate writes code, Independent Reviewer audits with fresh context, Developer implements via Codex, Doc Engineer keeps documentation synced, Process Observer guards the workflow. You direct the team through the Team Lead; the rest stays out of your way until a decision is actually needed.
 
 |  | Single-agent tools | iSparto |
 |--|---|---|
-| What you see | Everything the agent just read, reconstructed in prose | The one line you need to act on; the rest lives in `docs/` |
-| When you are interrupted | Whenever the agent has "something to say" | Only at genuine decision points |
+| What you see | Everything the agent just read, reconstructed in prose | The one line the Team Lead decides you need; the rest lives in `docs/` |
+| When you are interrupted | Whenever the agent has something to say | Only at genuine decision points |
 | Cross-session state | Lost — you re-explain context every time | Restored automatically from `docs/plan.md` at session start |
-| Documentation sync | Manual | Audited every Wave |
+| Documentation sync | Manual | Audited every Wave by the Doc Engineer |
 
 ### Who this is for
 
-Independent macOS developers who want to multiply their output with Claude Code. Requires Claude Max and ChatGPT subscriptions.
+Solopreneurs shipping software on macOS who want to run a full agent team on top of Claude Code. Requires Claude Max and ChatGPT subscriptions.
 
 > **Platform: macOS only.** Parallel-execution mode relies on iTerm2's built-in tmux integration. Single-session mode may work on other platforms but is untested.
 
@@ -150,9 +150,16 @@ The lead only comes back to you at genuine decision points
   <img src="assets/role-architecture.svg" alt="Role Architecture" width="100%"/>
 </p>
 
-- Lead / Teammate / Doc Engineer: Claude primary sessions (see [model configuration](docs/configuration.md#agent-model-configuration))
-- Developer: Codex via MCP (see [model configuration](docs/configuration.md#agent-model-configuration))
-- Real-time compliance oversight: three-layer security defense covering Write/Edit content scanning, pre-commit secret/PII scanning, and milestone-level full audit via `/security-audit`. See [docs/security.md](docs/security.md).
+The agent team has six roles:
+
+- **Team Lead** — the one you talk to. Plans tasks, coordinates the team, and escalates only when a decision is actually needed.
+- **Teammate** — parallel Claude session that takes on work the Team Lead delegates. Runs in its own tmux pane.
+- **Independent Reviewer** — spawned with zero inherited context at review time, so it cannot rubber-stamp decisions it helped make.
+- **Developer** — implementation specialist, invoked via MCP (Codex). Receives specs from the Team Lead, returns code.
+- **Doc Engineer** — audits documentation at every Wave boundary.
+- **Process Observer** — a PreToolUse hook (shell, no model) that blocks ceremonial steps from being skipped, plus an advisory Sonnet audit layer.
+
+Full model assignments and reasoning levels live in [docs/configuration.md](docs/configuration.md#agent-model-configuration). Security oversight (Write/Edit scanning, pre-commit secret/PII checks, `/security-audit`) is documented in [docs/security.md](docs/security.md).
 
 ---
 
@@ -162,7 +169,7 @@ iSparto dogfoods itself — the framework is developed using its own workflow. E
 
 ## Dogfood Log
 
-Subjective session-by-session notes on whether the framework actually feels restrained in practice live in [docs/dogfood-log.md](docs/dogfood-log.md). This is the evidence-chain companion to the restraint pitch on this page.
+Subjective session-by-session notes on whether the framework actually runs in sync in practice live in [docs/dogfood-log.md](docs/dogfood-log.md). This is the evidence-chain companion to the value prop on this page.
 
 ## Repository Structure
 
@@ -196,7 +203,7 @@ This is the same story as iSparto's workflow: you sow your product requirements 
 
 The **i** was moved from the end of Spartoi to the front. Lowercase i = I = me, one person.
 
-**iSparto = I + Sparto = one-person army.**
+**iSparto = I + Sparto = one person, a whole agent team sown from a single seed.**
 
 ---
 

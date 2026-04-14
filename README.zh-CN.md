@@ -8,28 +8,28 @@
 
 ---
 
-**iSparto 把 Claude Code 变成一支会克制的 AI 开发团队。** Lead 组装 prompt,Developer(Codex)写代码,Teammate 并行执行,Doc Engineer 同步文档。你指挥团队,团队不把自己做事的过程倒回给你。
+**iSparto 是一个为 Claude Code 打造的开源 Agent Team 框架,面向 solopreneur。** 一条命令启动整支 agent team,全员同步协作。你通过 Team Lead 指挥团队,其余在后台跑。
 
 > **中文用户第一次使用?** 先看 [docs/zh/quick-start.md](docs/zh/quick-start.md) — 安装、首次使用、日常工作流的中文速览。
 >
 > iSparto 采用双语策略:用户入口(双语 README + 中文 quick-start + CONTRIBUTING)平行维护;框架指令和参考文档单一英文来源,保证 AI 指令跟随的稳定性,同时让不懂中文的开源贡献者能参与审查。详情见 [CLAUDE.md > Documentation Language Convention](CLAUDE.md#documentation-language-convention)。
 
-### 核心差异 — 克制,不是「更多 Agent」
+### 核心差异 — 一条命令,整支团队
 
-现有的 AI 编程工具(Cursor、Windsurf、Copilot、单会话的 Claude Code)都是**你和一个 Agent 反复沟通**。Agent 读了你的 CLAUDE.md、看了你的代码、查了你的分支状态,把这一整套脑内画面组织好之后,倾向于在动手之前先把它全部说给你听。于是你的时间花在**给它的信息分类**,而不是做决定。
+现有的 AI 编程工具(Cursor、Windsurf、Copilot、单会话的 Claude Code)都让你和一个 Agent 反复交换消息——每一个决策、每一份文件、每一次 commit,整个开发循环都跑在同一个对话窗口里。
 
-iSparto 的核心动作是**停止倾倒**。团队有角色——Lead、Teammate、Developer、Doc Engineer——但卖点不是「Agent 更多了」,而是 Lead 知道**在这一刻你真正需要听见的那一句话是什么**,其余的东西写到你需要时可以 grep 的文件里去。你拿到的是决策,不是一份卷宗。
+iSparto 的核心动作是把这一个 Agent 变成一支 Agent Team。一条命令(`/init-project` 或 `/start-working`)启动整支 agent team——六个角色并行:Team Lead 拆任务、协调团队,Teammate 写代码,Independent Reviewer 以零上下文独立审查,Developer 通过 Codex 实现代码,Doc Engineer 同步文档,Process Observer 守护工作流。你通过 Team Lead 指挥团队,其余在真正需要决策时才回来。
 
 |  | 单 Agent 工具 | iSparto |
 |--|---|---|
 | 你看到什么 | Agent 刚读到的所有事实,用散文复述一遍 | 你现在必须知道的那一句,其余留在 `docs/` 里 |
-| 什么时候打断你 | 只要 Agent「有话想说」 | 只在真正需要决策的时刻 |
+| 什么时候打断你 | 只要 Agent 有话想说 | 只在真正需要决策的时刻 |
 | 跨会话状态 | 会丢,每次都得重新解释上下文 | `/start-working` 从 `docs/plan.md` 自动恢复 |
-| 文档同步 | 手动 | 每个 Wave 自动审计 |
+| 文档同步 | 手动 | 每个 Wave 由 Doc Engineer 审计 |
 
 ### 适合谁用
 
-想用 Claude Code 成倍提升产出的 macOS 独立开发者。需要 Claude Max 和 ChatGPT 订阅。
+在 macOS 上用 Claude Code 开发软件的 solopreneur。需要 Claude Max 和 ChatGPT 订阅。
 
 > **平台:仅支持 macOS。** 并行执行模式依赖 iTerm2 内置的 tmux 集成。单会话模式在其他平台上可能可用,但未经测试。
 
@@ -150,9 +150,16 @@ claude --effort max
   <img src="assets/role-architecture-zh.svg" alt="角色架构" width="100%"/>
 </p>
 
-- Lead / Teammate / Doc Engineer:Claude 主会话(见[模型配置](docs/configuration.md#agent-model-configuration))
-- Developer:Codex 通过 MCP(见[模型配置](docs/configuration.md#agent-model-configuration))
-- 实时合规监督:三层安全防御 — Write/Edit 实时内容扫描、commit 前 secret/PII 扫描、里程碑全量审计 `/security-audit`。详见 [docs/security.md](docs/security.md)。
+Agent Team 有六个角色:
+
+- **Team Lead** —— 你直接对话的角色。拆任务、协调团队,只在真正需要决策时打断你。
+- **Teammate** —— 并行的 Claude 会话,承接 Team Lead 分派的工作。在独立的 tmux pane 里运行。
+- **Independent Reviewer** —— 在审查时刻以零上下文启动,不会对自己参与过的决定盖章放行。
+- **Developer** —— 实现角色,通过 MCP 调用(Codex)。从 Team Lead 接到规格,返回代码。
+- **Doc Engineer** —— 在每个 Wave 边界审计文档。
+- **Process Observer** —— 一个 PreToolUse hook(shell,无模型),防止仪式步骤被跳过。
+
+完整的模型分配和推理等级见 [docs/configuration.md](docs/configuration.md#agent-model-configuration)。安全监督(Write/Edit 扫描、commit 前 secret/PII 扫描、`/security-audit` 里程碑审计)见 [docs/security.md](docs/security.md)。
 
 ---
 
@@ -162,7 +169,7 @@ iSparto 自举开发——框架用自己的工作流开发自己。端到端的
 
 ## Dogfood Log
 
-每个 Wave 跑完后的主观感受记录在 [docs/dogfood-log.md](docs/dogfood-log.md)——框架是否真的「更安静」、什么时候被打扰、打扰得值不值,都写在那里。它和本页上的克制叙事是「pitch + 证据」的关系。
+每个 Wave 跑完后的主观感受记录在 [docs/dogfood-log.md](docs/dogfood-log.md)——框架是否真的「更安静」、什么时候被打扰、打扰得值不值,都写在那里。它和本页上的价值主张是「pitch + 证据」的关系。
 
 ## 仓库结构
 
@@ -196,7 +203,7 @@ iSparto 自举开发——框架用自己的工作流开发自己。端到端的
 
 **i** 从 Spartoi 末尾移到了最前面。小写的 i = I = 我,一个人。
 
-**iSparto = I + Sparto = 一人成军。**
+**iSparto = I + Sparto = 一个人,从一颗种子长出的一整支 Agent Team。**
 
 ---
 
