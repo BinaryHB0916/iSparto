@@ -169,7 +169,7 @@ iSparto dogfoods itself — the framework is developed using its own workflow. E
 
 ## Dogfood Log
 
-Subjective session-by-session notes on whether the framework actually feels restrained in practice live in [docs/dogfood-log.md](docs/dogfood-log.md). This is the evidence-chain companion to the restraint pitch on this page.
+Subjective session-by-session notes on whether the framework actually runs in sync in practice live in [docs/dogfood-log.md](docs/dogfood-log.md). This is the evidence-chain companion to the value prop on this page.
 
 ## Repository Structure
 
