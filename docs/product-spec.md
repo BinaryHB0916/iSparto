@@ -60,7 +60,7 @@ Users describe business requirements in natural language; the team translates th
 - Depends on iTerm2's tmux integration (macOS only)
 
 ## Competitive Differentiation
-Other AI coding tools (Cursor, Windsurf, Copilot, single-session Claude Code) all have the user iterating with a single agent. iSparto turns that single agent into a team with clear role separation; the user only talks to the Lead, and the Lead coordinates the entire team.
+Other AI coding tools (Cursor, Windsurf, Copilot, single-session Claude Code) all have the user iterating with a single agent. iSparto turns that single agent into an Agent Team — one command spins up the whole agent team, all working in perfect sync. The user only talks to the Team Lead, and the Team Lead coordinates the Teammate, Independent Reviewer, Developer, Doc Engineer, and Process Observer roles in the background.
 
 ## Three-Layer Capability Model
 
