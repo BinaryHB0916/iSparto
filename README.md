@@ -203,7 +203,7 @@ This is the same story as iSparto's workflow: you sow your product requirements 
 
 The **i** was moved from the end of Spartoi to the front. Lowercase i = I = me, one person.
 
-**iSparto = I + Sparto = one-person army.**
+**iSparto = I + Sparto = one person, a whole agent team sown from a single seed.**
 
 ---
 
