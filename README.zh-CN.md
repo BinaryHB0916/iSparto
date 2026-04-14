@@ -18,7 +18,7 @@
 
 现有的 AI 编程工具(Cursor、Windsurf、Copilot、单会话的 Claude Code)都让你和一个 Agent 反复交换消息——每一个决策、每一份文件、每一次 commit,整个开发循环都跑在同一个对话窗口里。
 
-iSparto 的核心动作是把这一个 Agent 变成一支 Agent Team。一条命令(`/init-project` 或 `/start-working`)启动整支 agent team——六个角色并行:Team Lead 拆任务、协调团队,Teammate 写代码,Independent Reviewer 以零上下文独立审查,Developer 通过 Codex 实现代码,Doc Engineer 同步文档,Process Observer 守护工作流。你通过 Team Lead 指挥团队,其余在真正需要决策时才回来。
+iSparto 的核心动作是把这一个 Agent 变成一支 Agent Team。一条命令(`/init-project` 或 `/start-working`)启动整支 agent team——六个角色并行:Team Lead 拆任务、协调团队,Teammate 并行写代码 prompt,Independent Reviewer 以零上下文独立审查,Developer 通过 Codex 实现代码,Doc Engineer 同步文档,Process Observer 守护工作流。你通过 Team Lead 指挥团队,其余在真正需要决策时才回来。
 
 |  | 单 Agent 工具 | iSparto |
 |--|---|---|
