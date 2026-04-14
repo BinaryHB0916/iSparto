@@ -14,11 +14,11 @@
 >
 > iSparto uses a deliberate bilingual strategy: user-facing entries (both READMEs + the Chinese quick-start + `CONTRIBUTING.md`) are maintained in parallel; framework instructions and reference documentation are English-only as a single source of truth, so AI instruction-following stays stable and non-Chinese-speaking contributors can review the framework. See [CLAUDE.md > Documentation Language Convention](CLAUDE.md#documentation-language-convention) for the full rationale.
 
-### The core idea — restraint, not more agents
+### The core idea — one command, the whole team
 
-Every existing AI coding tool — Cursor, Windsurf, Copilot, Claude Code on its own — puts you in a loop with a single agent. You and it trade messages, and when the agent has read your CLAUDE.md, studied your code, traced your branch state, and assembled a mental picture of what it is about to do, it tends to narrate all of that back to you before doing anything. You end up sorting its facts instead of making decisions.
+Every existing AI coding tool — Cursor, Windsurf, Copilot, Claude Code on its own — puts you in a loop with a single agent. You and it trade messages for every decision, every file, every commit. The whole development cycle runs through one conversation window.
 
-iSparto's central move is to stop dumping. The team has roles — lead, teammate, developer, doc engineer — but the payoff is not "more agents." The payoff is that the lead knows **which one sentence you actually need to hear** at any given moment, and keeps the rest in files you can grep when you care. You get the decision, not the dossier.
+iSparto's central move is to turn that single agent into an Agent Team. One command (`/init-project` or `/start-working`) spins up the whole agent team — six roles in parallel: Team Lead plans and coordinates, Teammate writes code, Independent Reviewer audits with fresh context, Developer implements via Codex, Doc Engineer keeps documentation synced, Process Observer guards the workflow. You direct the team through the Team Lead; the rest stays out of your way until a decision is actually needed.
 
 |  | Single-agent tools | iSparto |
 |--|---|---|
