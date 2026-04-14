@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.7] - 2026-04-14
+
 ### Added
 
 - **Process Observer on architecture diagrams — card, monitored zone, solder-joint connectors** — Both `assets/role-architecture.svg` and `assets/role-architecture-zh.svg` gain a first-class PROCESS OBSERVER card in the bottom-right slot (gold solid border, distinct from Independent Reviewer's zero-context dashed styling), with `Full-process oversight` / `全流程监察` as the primary body line. Prior to this release PO had no visual reference in the diagram even though the README bullets listed it as one of the six roles. A dashed gold perimeter frames the four Claude roles whose tool calls PO hooks intercept (Team Lead including the Doc Engineer sub-card, Independent Reviewer, Teammate, Developer), labeled `OBSERVED ZONE` / `监管范围`; the frame has a notch carved out at the bottom-right so the PO card sits visually outside the monitored area. Ten short gold solder-joint connectors (six on top, four on left) weld PO's top and left edges to the frame's notch edges — a circuit-board metaphor for PO's always-on oversight of the zone (#200).
