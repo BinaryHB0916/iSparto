@@ -29,7 +29,7 @@ iSparto's central move is to turn that single agent into an Agent Team. One comm
 
 ### Who this is for
 
-Independent macOS developers who want to multiply their output with Claude Code. Requires Claude Max and ChatGPT subscriptions.
+Solopreneurs shipping software on macOS who want to run a full agent team on top of Claude Code. Requires Claude Max and ChatGPT subscriptions.
 
 > **Platform: macOS only.** Parallel-execution mode relies on iTerm2's built-in tmux integration. Single-session mode may work on other platforms but is untested.
 
