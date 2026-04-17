@@ -106,6 +106,7 @@ This Policy is enforced structurally, not by runtime self-discipline. The enforc
 - **Conversation style guide** (`docs/design-principles/conversation-style.md`) defines the A-layer wording rule and provides before-after samples.
 - **Agent role definitions** (`agents/independent-reviewer.md`) specify IR's A-layer peer-review trigger and the single-voice delivery rule.
 - **Doc Engineer audit** (part of `/end-working`) verifies that any new command template or agent role definition carries a `Reference: docs/design-principles/information-layering-policy.md` line.
+- **Mechanical guardian** (`scripts/policy-lint.sh`, invoked by Doc Engineer audit item 10 — see `docs/roles.md`) scans the most recent `docs/session-log.md` entry for the 5 ceremonial wrapper phrases listed as C-layer forbidden in `commands/end-working.md` (`Session complete`, `Ready for next session`, `Doc Engineer audit passed`, `Process Observer audit passed`, `Security scan passed`). Hard failure on hit — the guardian blocks merge when the most recent session-log entry violates the rule. v1 scope is the ceremonial-wrapper detector only; bullet-stack and A-layer wording detectors are intentionally out of v1 to preserve signal purity.
 
 A command template that does not reference this Policy is, by definition, not in scope for Policy enforcement. This is deliberate: the Policy governs user-facing output, and user-facing output happens through command templates. If a new command template is added, it must explicitly opt in.
 

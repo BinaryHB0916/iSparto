@@ -23,7 +23,8 @@ iSparto/
 ├── isparto.sh                 ← Local stub (upgrade / uninstall / version)
 ├── scripts/
 │   ├── release.sh             ← Automated release (bump version → changelog → tag → gh release)
-│   └── language-check.sh      ← Four-tier language guardian (Tier 1 / Tier 2 CJK scan + Principle 1 heuristic)
+│   ├── language-check.sh      ← Four-tier language guardian (Tier 1 / Tier 2 CJK scan + Principle 1 heuristic)
+│   └── policy-lint.sh         ← Information Layering Policy guardian (C-layer ceremonial wrapper detector, v1)
 ├── lib/
 │   └── snapshot.sh            ← Snapshot / restore engine (factory-reset capability)
 ├── hooks/
