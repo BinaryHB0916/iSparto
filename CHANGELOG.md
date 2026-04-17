@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.8] - 2026-04-17
+
 ### Added
 
 - **`scripts/policy-lint.sh` v1 — Information Layering Policy mechanical guardian** — New Tier 1 script mirroring `scripts/language-check.sh` structure (bash wrapper + python3 heredoc + `--self-test` fixtures + exit 0/1/2 semantics). Single detector in v1 scans the most recent `docs/session-log.md` entry for the 5 ceremonial wrapper phrases enumerated as C-layer forbidden in `commands/end-working.md` (`Session complete` / `Ready for next session` / `Doc Engineer audit passed` / `Process Observer audit passed` / `Security scan passed`) — hard failure on hit. 8 self-test fixtures (5 positive + 3 negative). Bullet-stack and A-layer wording detectors intentionally excluded from v1 to preserve signal purity. Integrated as new Doc Engineer audit item 10 in `docs/roles.md` parallel to item 9's language-check invocation; `commands/end-working.md` re-audit trigger list updated accordingly (#209).
