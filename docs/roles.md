@@ -362,6 +362,14 @@ Audit checklist:
    - On exit code 2: ⚠️ environment error (Python 3 missing, repo root unresolved) — surface in the report as a warning, do not block (degraded mode)
    - If the script does not exist (e.g., the project has not adopted iSparto's language convention): skip silently, do not include in the report
 
+10. Policy compliance check
+   - If `scripts/policy-lint.sh` exists in the project: run `bash scripts/policy-lint.sh`
+   - This is a hard mechanical gate against Information Layering Policy C-layer forbidden wrappers — see `docs/design-principles/information-layering-policy.md` and the "C-layer items — NEVER emit in the closing briefing" list at the bottom of `commands/end-working.md`. Scope (v1): ceremonial wrapper detector only (5 forbidden phrases — `Session complete`, `Ready for next session`, `Doc Engineer audit passed`, `Process Observer audit passed`, `Security scan passed`) scanned against the most recent `docs/session-log.md` entry
+   - On exit code 0: ✅ pass
+   - On exit code 1: ❌ FAIL — copy the per-line `[Policy C-layer]` violations and the summary line into the audit report; this is a hard FAIL, the report blocks Lead from proceeding to push/PR
+   - On exit code 2: ⚠️ environment error (Python 3 missing, repo root unresolved) — surface in the report as a warning, do not block (degraded mode)
+   - If the script does not exist (e.g., the project has not adopted iSparto's Policy linter): skip silently, do not include in the report
+
 Output format (the following is the report template from Doc Engineer to the Team Lead, not a section of this document):
 
 === Documentation Audit Report ===
@@ -374,6 +382,7 @@ Output format (the following is the report template from Doc Engineer to the Tea
 | plan.md | [specific content] | [Updated] |
 | ... | ... | ... |
 | Language convention | [pass / fail with violation count] | [Updated / FAIL: see violation list below] |
+| Policy compliance | [pass / fail with violation count] | [Updated / FAIL: see violation list below] |
 
 --- No Updates Needed ---
 [List documents checked but not requiring changes, with reasons]
@@ -384,11 +393,14 @@ Output format (the following is the report template from Doc Engineer to the Tea
 --- Language Convention Violations (item 9) ---
 [paste raw `bash scripts/language-check.sh` output here, only when item 9 FAILs; omit this section entirely on PASS]
 
+--- Policy Compliance Violations (item 10) ---
+[paste raw `bash scripts/policy-lint.sh` output here, only when item 10 FAILs; omit this section entirely on PASS]
+
 Key principles:
 - Directly update all documents that need changes — do not wait for manual confirmation
 - Mark changes involving product decisions with "Warning: product decision change" in the report, so the user can focus on them during post-review
 - Report coverage honestly — do not skip any checklist items
-- If any audit item FAILs (including item 8 mechanical security scan or item 9 mechanical language check): the Doc Engineer reports FAIL with the specific failing items in its output, then **stops** — does NOT attempt to fix the violations itself. The Lead — not the Doc Engineer — performs the fix, then **spawns a fresh Doc Engineer sub-agent** (zero inherited context) for a full re-audit. This audit-fix separation prevents the agent that found a problem from also being the agent that fixes it (avoids motivated reasoning and incomplete patches). Bound the loop at 3 iterations. If the third re-audit still FAILs, execute the **6-step blocked recovery path** (do NOT leave recovery to Lead's discretion):
+- If any audit item FAILs (including item 8 mechanical security scan, item 9 mechanical language check, or item 10 mechanical policy compliance check): the Doc Engineer reports FAIL with the specific failing items in its output, then **stops** — does NOT attempt to fix the violations itself. The Lead — not the Doc Engineer — performs the fix, then **spawns a fresh Doc Engineer sub-agent** (zero inherited context) for a full re-audit. This audit-fix separation prevents the agent that found a problem from also being the agent that fixes it (avoids motivated reasoning and incomplete patches). Bound the loop at 3 iterations. If the third re-audit still FAILs, execute the **6-step blocked recovery path** (do NOT leave recovery to Lead's discretion):
   1. **Stop the loop** — do not attempt a 4th audit.
   2. **Generate a blocked-audit report** — capture the final FAIL state (which items failed, the violation list, what fixes were attempted across the 3 iterations).
   3. **Write a blocked-audit entry to `docs/plan.md`** — append a dated entry under a "Blocked audits" section (create the section if it doesn't exist) describing what was blocked and why; this is a Tier 4 historical artifact.

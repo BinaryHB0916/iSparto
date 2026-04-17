@@ -68,6 +68,39 @@ Either produces a clean audit signal. Option 1 is stricter (eliminates the inter
 
 **Session context:** Wave C (2026-04-17) / PO audit E3 flagged this as a WARN with a correct recovery recommendation (append the sentinel before commit). Lead applied the recovery in the same edit sequence that introduced this Rule 3. Filed here as the next-/plan candidate for the follow-up framework-polish Wave.
 
+## Rule 4 — Independent Reviewer skip at Wave boundary lacks explicit exit criteria
+
+**Rule ID:** `commands/end-working.md` Step 3 (Wave Boundary Review) — specifies that upon Wave completion, Independent Reviewer is spawned as a Teammate with a fixed prompt; does not enumerate conditions under which the spawn may be skipped.
+
+**Gap description:** The project's actual practice across 6+ consecutive Waves (Wave A / Wave B / Semantic Gate / Gate Narrowing / Wave C / v0.7.8 Polish) has been to skip IR for framework-self-referential polish Waves, documenting the rationale inline in each Wave's plan.md entry under a "Why no Independent Reviewer at Wave boundary" paragraph. This established precedent has effectively modified Step 3 by custom, but the command definition has not been updated to acknowledge it. A future Lead operating without the current session's precedent context would read Step 3 as mandatory and either invoke IR unnecessarily (cost: 10-20 min + user review attention for framework-internal polish that does not need IR product-behavior coverage) or feel procedural uncertainty and freeze at the boundary.
+
+**Expected behavior — skip carve-out parallel to the BLOCKING marker's skip-rationale mechanism.** Add a carve-out to Step 3 with three conditions that ALL must hold for skip to be acceptable:
+
+1. All modified files are within the framework self-referential boundary (per CLAUDE.md Development Rules — Tier 1 System Prompt Layer files + `scripts/` + `hooks/` + Tier 2 `docs/`).
+2. Scope is limited to doc-layer edits or internal tooling with no new product-behavior surface (no new user-facing features, no public API/interface additions, no hook rule changes that would change user-observable behavior).
+3. Doc Engineer audit + Process Observer audit are confirmed complete in the same session.
+
+When all three hold, skip is acceptable; Lead MUST document the rationale in the Wave's plan.md entry ("Why no Independent Reviewer at Wave boundary: …") citing which conditions are met. Default on doubt = spawn IR. Otherwise the current mandatory-spawn text remains in force.
+
+**Session context:** v0.7.8 Framework Polish Wave Process Observer audit (2026-04-17) flagged the precedent-vs-spec divergence. Audit classified F1 as PASS under the spirit of the rule, given the explicit rationale in the Wave's plan.md entry; identified the gap as framework-level. Recommendation: fold into the next framework-polish Wave or the v0.8 roadmap `/plan` session.
+
+## Rule 5 — BLOCKING marker boundary acknowledgement path undefined for mid-session CLAUDE.md updates
+
+**Rule ID:** `commands/start-working.md` Step 0 (Session boundary check) + `commands/end-working.md` Step 2 BLOCKING marker decision.
+
+**Gap description:** Step 0's marker-detection gate assumes the BLOCKING marker is acknowledged at the start of a new session via the Step 0 ceremony (user confirms "new session" → Lead writes a "✅ Session boundary acknowledged YYYY-MM-DD by /start-working" annotation below the marker). The gate does NOT define what happens when all four of the following occur:
+
+1. A Wave that emits BLOCKING lands (e.g., Wave C + Rule 2, 2026-04-17).
+2. The user continues in the same Claude Code session (does NOT close the window and open a new one).
+3. CLAUDE.md was modified by the landed Wave, and Claude Code's system-reminder mechanism injects the updated `## Contents of ... CLAUDE.md` content into the active session context when the file changes on disk.
+4. The Lead now operates with the updated rule visible in context, satisfying the marker's underlying intent (no stale-cache operation) through a mechanism the Step 0 ceremony does not account for.
+
+The current session (v0.7.8 Polish Wave) hit exactly this scenario and handled it by writing a boundary annotation below Wave C's marker documenting the non-standard acknowledgement path. But the path is undocumented in the framework, making it ad hoc and depending on Lead judgment rather than rule.
+
+**Expected behavior:** Add one sentence to `commands/start-working.md` Step 0 (and cross-reference from `commands/end-working.md` Step 2): "If CLAUDE.md was modified mid-session AND the updated content was surfaced to Lead via Claude Code's system-reminder injection before any subsequent Wave work began, the BLOCKING boundary is considered acknowledged for that session's continuation. Lead documents the acknowledgement path in a prose annotation immediately below the marker in plan.md (format: `> ✅ Session boundary acknowledged YYYY-MM-DD — <rule name> update surfaced via mid-session CLAUDE.md system-reminder injection`). This path applies only when the active session's context demonstrably includes the updated CLAUDE.md content; it does not extend to scenarios where the session was dormant across the Wave or where system-reminder injection did not fire."
+
+**Session context:** v0.7.8 Framework Polish Wave Process Observer audit (2026-04-17) classified G1 as PASS under the spirit of the rule; identified the gap as framework-level. The session handled the case correctly but ad hoc; formalizing the path prevents future Lead uncertainty. Recommendation: fold into the next framework-polish Wave or v0.8 roadmap planning.
+
 ## Summary
 
-Three framework-side rule refinement candidates. Rule 1 (BLOCKING marker rule over-coarse) was surfaced during Wave B close-out and **addressed by the BLOCKING Marker Semantic Gate Wave + Gate Narrowing Wave in the same day (2026-04-17)** — now retrospective documentation of the problem and fix. Rule 2 (plan.md commit count timing ambiguity) surfaced from the Semantic Gate Wave's PO audit and was **addressed by the Wave C + Rule 2 Wave in the same day (2026-04-17, CLAUDE.md + CLAUDE-TEMPLATE.md wording updated)** — also now retrospective. Rule 3 (BLOCKING literal sentinel vs rationale prose write-together rule) surfaced from the Wave C PO audit and is deferred to the next framework-polish Wave or v0.8 roadmap planning session. None of the rules — addressed or open — is blocking any current work.
+Five framework-side rule refinement candidates surfaced across 2026-04-17's Wave sequence. Rule 1 (BLOCKING marker rule over-coarse) was surfaced during Wave B close-out and **addressed by the BLOCKING Marker Semantic Gate Wave + Gate Narrowing Wave in the same day** — now retrospective documentation of the problem and fix. Rule 2 (plan.md commit count timing ambiguity) surfaced from the Semantic Gate Wave's PO audit and was **addressed by the Wave C + Rule 2 Wave in the same day (CLAUDE.md + CLAUDE-TEMPLATE.md wording updated)** — also now retrospective. Rule 3 (BLOCKING literal sentinel vs rationale prose write-together rule) surfaced from Wave C's PO audit and is deferred to the next framework-polish Wave or v0.8 roadmap planning session. Rule 4 (IR skip at Wave boundary lacks explicit exit criteria) and Rule 5 (BLOCKING marker boundary acknowledgement path undefined for mid-session CLAUDE.md updates) surfaced from v0.7.8 Polish Wave's PO audit (both classified PASS under spirit of rule, framework-level gaps) and are deferred to the same follow-up Wave. None of the five rules — addressed or open — is blocking any current work.
