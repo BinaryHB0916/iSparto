@@ -15,6 +15,12 @@ Your responsibility: Ensure all changes and decisions from this session are capt
    - If all Teams in the current Wave are finished, mark the Wave status as completed
    - List next-session to-dos
    - Record remaining issues and manual intervention points
+   - **BLOCKING marker decision (Wave-completion entries only; skip for mid-Wave updates).** When the Wave status flips to completed AND the session touched any Tier 1 file (per Documentation Language Convention in CLAUDE.md), decide whether to emit the `🚨 BLOCKING: Next Wave requires NEW SESSION` marker at the end of the Wave entry. Apply the semantic gate:
+     - **Master question:** would a Lead operating on pre-change cached Tier 1 files take an action materially different from a Lead on post-change files?
+     - **Decision aid — any single "yes" triggers BLOCKING:** (a) **Behavior change?** — did the change add/remove/modify a rule, constraint, or workflow step Lead executes? (b) **New identifier?** — did the change introduce a new command / role / skill / marker / convention name Lead must recognize by name? (c) **Contract/interface change?** — did the change modify a protocol Lead interacts with (hook matcher, tool-call shape, MCP server name, file-path convention, annotation format)?
+     - **If all three "no" (structural-only change — e.g., content extraction to a pointer, rewording that preserves semantics, typo fix, formatting):** skip the BLOCKING marker. Append a short prose rationale in the Wave entry (a line along the lines of `Why no BLOCKING marker for next session:` followed by one sentence citing the specific structural nature — extraction with pointer preservation, verbatim translation, formatting-only, etc.). This rationale is mandatory whenever the marker is skipped on a Tier 1-touching Wave — it is the audit evidence that the decision was made, not forgotten.
+     - **Default on doubt:** emit BLOCKING. Cross-session safety outweighs session-continuity convenience.
+     - **Tier 2/3/4-only changes:** no BLOCKING marker needed regardless — these files are not cached into Claude Code's session-start system prompt, so stale-cache risk is structurally zero. A one-line rationale is still recommended but not mandatory.
 3. Wave Boundary Review (conditional):
    - Trigger: Step 2 marked the current Wave status as completed
    - If triggered:

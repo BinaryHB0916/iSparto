@@ -700,7 +700,52 @@ Source plan: `~/.claude/plans/lovely-munching-hopper.md` (v2.4, approved 2026-04
 
 **Follow-up carry-over for next /plan:** BLOCKING marker rule is currently coarse — it fires on any Tier 1 modification regardless of whether the next Wave's execution semantically depends on the specific change. A refinement candidate: only emit BLOCKING when the Tier 1 change alters behavior that the next Wave's Lead would read from the stale session-start cache. Discussed conversationally during this Wave B close-out; not planned yet. Record here as a next-/plan input; framework refinement (would modify `commands/start-working.md` and `commands/end-working.md`, both Tier 1) lands in a separate session.
 
-**Next step:** Plan v2.4 two-Wave sprint complete. No follow-on Wave from this plan. Open carry-over items: (1) BLOCKING rule refinement (above), (2) Wave C infrastructure hardening milestone (unchanged — still independent milestone, v0.8-launch gate per Wave A close-out), (3) v0.8 roadmap planning (deferred to its own /plan session).
+**Next step:** Plan v2.4 two-Wave sprint complete. No follow-on Wave from this plan. Open carry-over items: (1) BLOCKING rule refinement — promoted to the Wave directly below (same session, 2026-04-17), (2) Wave C infrastructure hardening milestone (unchanged — still independent milestone, v0.8-launch gate per Wave A close-out), (3) v0.8 roadmap planning (deferred to its own /plan session).
+
+### Wave — BLOCKING Marker Semantic Gate (2026-04-17) — Complete
+
+Branch: `feat/blocking-rule-refinement`. Mode: Solo + Lead direct edit (both target files are under the framework self-referential boundary).
+
+Source: Promoted from Wave B close-out's "Follow-up carry-over for next /plan" above. Same-session /plan (2026-04-17) approved the semantic-gate proposal; executed immediately.
+
+**Goal:** Refine BLOCKING marker emission from mechanical "Tier 1 modified → BLOCKING" to a semantic gate. Current rule over-fires on content-extraction refactors (Wave A precedent) where stale-cache Lead still reaches correct behavior via pointer follow-through. New rule: only emit BLOCKING when the Tier 1 change is behavioral (rule/constraint/workflow-step change, new identifier, or contract/interface change); default-on-doubt stays BLOCKING; skipping requires a prose rationale.
+
+**Task list:**
+
+- [x] **T1 — Codify the decision gate in `commands/end-working.md`.** New sub-bullet under Step 2 ("Update docs/plan.md"): master question + three-question decision aid (behavior? identifier? contract?) + default-on-doubt = BLOCKING + skip-rationale prose requirement + Tier 2/3/4 structural-zero-risk carve-out. Existing BLOCKING marker literal unchanged (`🚨 BLOCKING: Next Wave requires NEW SESSION`) so `commands/start-working.md` Step 0's detector stays stable (contract preservation — the marker is cross-command interface).
+- [x] **T2 — Record the decision in `docs/design-decisions.md`.** One new row citing Wave A → Wave B (2026-04-17) as the driver; summarizes the semantic gate, default-on-doubt, skip-rationale requirement; notes two rejected alternatives (remove BLOCKING entirely / file-whitelist).
+
+**Acceptance script (4 Lead-direct bash commands — eligible under the trivial-CLI carve-out):**
+
+| # | Command | Expected | Actual |
+|---|---------|----------|--------|
+| A1 | `grep -c "BLOCKING marker decision" commands/end-working.md` | ≥ 1 | 1 — PASS |
+| A2 | `grep -oE 'Behavior change\?\|New identifier\?\|Contract/interface change\?' commands/end-working.md \| wc -l` | 3 | 3 — PASS |
+| A3 | `grep -c "BLOCKING marker semantic gate" docs/design-decisions.md` | 1 | 1 — PASS |
+| A4 | `bash scripts/language-check.sh && bash scripts/language-check.sh --self-test` | both exit 0 | exit 0 / exit 0 — PASS |
+
+4 commands, all [code], all exit-code determinate → eligible under the trivial-CLI carve-out.
+
+**Files modified (3):**
+- `commands/end-working.md` (T1 — new decision sub-bullet under Step 2, ~8 lines added)
+- `docs/design-decisions.md` (T2 — one new row appended)
+- `docs/plan.md` (this entry + /end-working close-out updates)
+
+**Mode Selection Checkpoint.** Grouping: 2 framework files (Tier 1 + Tier 2). Decomposable? T1 and T2 are independent but both small-volume (single sub-bullet + single row). Teammate coordination overhead exceeds serial edit cost. Decision: **Solo + Lead direct edit**. Same precedent chain as Wave A, Wave B.
+
+**Why Lead direct edit:** Both target files are under the framework self-referential boundary (CLAUDE.md Development Rules). No code files, no Developer/Codex calls. Precedent chain: Wave A, Wave B, IR Token Cost Documentation Wave, v0.7.5 README Restraint Wave, v0.7.4 Information Layering Policy Wave.
+
+**Commit count verification:** 1 non-merge commit on the Wave branch (`git log --oneline --no-merges 2e5f79a..HEAD | wc -l` = 1). Base `2e5f79a` is the Wave B merge commit (PR #205) — this Wave's divergence base from main.
+
+**Why no Independent Reviewer at Wave boundary:** Same precedent chain as Wave A/B — framework-self-referential work. This Wave adds substantive decision logic rather than merely preserving content, but scope is narrow (one sub-bullet + one row), and the Doc Engineer + Process Observer /end-working audit is sufficient coverage for framework-internal logic changes this size.
+
+**BLOCKING marker rationale for next session (meta self-application):** Under the NEW rule introduced by this Wave, the Wave itself triggers gate question (a) "behavior rule change?" = yes — adds new decision logic to `commands/end-working.md` that Lead executes at every future /end-working. Emit BLOCKING. Wave C / v0.8-plan starts in a fresh session. The rule self-applies on its own introducing Wave; expected and consistent.
+
+**Honest note on first-application subtlety (next-/plan input):** The gate's master question references "cached Tier 1 files," but not all Tier 1 files are actually cached in the per-session system prompt. CLAUDE.md is (via the `# claudeMd` injection); `commands/*.md` and `agents/*.md` are read at invocation time (via the Skill tool for slash commands, or the Agent tool for sub-agents), so cache-staleness risk for those files is near-zero. This Wave modified `commands/end-working.md` — strictly, the master question answers "no" (no cache divergence). But the decision-aid question (a) answers "yes" (behavior change). The gate defaulted to conservative (decision-aid wins → BLOCKING). A future refinement candidate: narrow the gate trigger to files actually cached in the session system prompt (CLAUDE.md, `.claude/settings.json`) rather than all of Tier 1. Recorded here as a next-/plan input; not executed in this session to keep the Wave scope clean.
+
+**Next step:** Wave C infrastructure hardening (v0.8 launch gate, independent milestone per Wave A close-out) OR v0.8 roadmap /plan — user decides in next session.
+
+🚨 BLOCKING: Next Wave requires NEW SESSION
 
 ### 技术生态追踪（暂不执行）
 
