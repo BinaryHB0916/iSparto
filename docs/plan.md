@@ -785,7 +785,60 @@ Source: Promoted from the Semantic Gate Wave's "Honest note on first-application
 
 **Why no BLOCKING marker for next session (under the NEW narrowed gate this Wave just codified):** This Wave did NOT modify `CLAUDE.md` — modifications were to `commands/end-working.md` (invocation-read via Skill tool at every /end-working call) and `docs/design-decisions.md` (Tier 2, not cached). Narrowed gate's trigger not met → skip BLOCKING. Stale-cache risk is structurally zero; session continuity preserved. The gate narrowing demonstrates its own value on its own introducing Wave — the Semantic Gate Wave emitted BLOCKING unnecessarily (false-positive predicted + recorded); this Wave, under the narrowed rule, emits none (true-negative). Retrospective validation of the narrowing.
 
-**Next step:** User decides — Wave C infrastructure hardening (v0.8 launch gate, independent milestone per Wave A close-out), v0.8 roadmap /plan, or other work. No session boundary required; next /start-working may continue in the same Claude Code session at user's discretion.
+**Next step:** User elected to proceed directly with Wave C + Rule 2 in the same session via Agent Team. Entry below.
+
+### Wave C — Infrastructure Hardening + Commit-Count Rule Refinement (2026-04-17) — Complete
+
+Branch: `feat/wave-c-rule2-infra-hardening`. Mode: **Agent Team** (2 parallel Teammates + Lead direct for small-volume Tier 1 edits). Teammate 1 scope: `hooks/process-observer/scripts/pre-tool-check.sh` (T1 + T2). Teammate 2 scope: `install.sh` (T3). Lead scope: `CLAUDE.md` + `CLAUDE-TEMPLATE.md` (T4, Rule 2). All three work streams fired in a single parallel message; zero file-ownership overlap.
+
+Source: (a) Wave C candidate scope enumerated in Semantic Gate Wave session-log ("one-shot Python JSON parse, canary schema drift, install.sh version extraction hardening"). (b) Rule 2 filed in `docs/framework-feedback-0417.md` (commit-count timing ambiguity, PO audit E3 fragile classification).
+
+**Goal (Wave C):** Close three known infrastructure gaps before v0.8 external-user validation: (1) replace the documented-limitation awk JSON parser in pre-tool-check.sh with a python3 implementation that handles `\uXXXX` + nested objects; (2) add a canary schema drift check that logs a stderr warning when Claude Code's `tool_input` shape deviates from current assumptions (fail-open, not blocking); (3) harden install.sh's VERSION file reading with trim + semver validation, fail-fast on malformed content.
+
+**Goal (Rule 2):** Update CLAUDE.md and CLAUDE-TEMPLATE.md commit-count-accuracy rule to acknowledge the pre-commit-projected / post-commit-verify cadence that `/end-working` actually uses.
+
+**Task list:**
+
+- [x] **T1 — pre-tool-check.sh python3 JSON parse.** `extract_json_field` function (previously awk-based, documented in `design-decisions.md` row 56 as unable to handle Unicode escapes or nesting) replaced with a python3-backed implementation. Preserves function signature `extract_json_field <input> <field> [unescape_newlines]`. Fail-open on JSON decode errors (empty string + exit 0) — matches prior behavior semantics. Teammate 1 flagged: lookup order searches `tool_input` first, falls back to top-level payload — preserves existing call sites and the bare-`{"prompt":...}` smoke-test fixture.
+- [x] **T2 — pre-tool-check.sh canary schema drift check.** New python3 block inserted after `INPUT=$(cat)` and before `TOOL_NAME` extraction. Inspects `tool_input`; if it is not a plain object, or if the known fields (`command` / `file_path` / `prompt`) exist but are not strings (e.g., nested object, array, number), writes a single-line warning to stderr: `iSparto canary: tool_input schema drift detected (tool=<name>, field=<name>, type=<actual_type>) — see hooks/process-observer/scripts/pre-tool-check.sh`. Does NOT block. Silent when python3 is missing or tool_input is absent/empty. Canary only inspects the 3 currently-known fields — future tool additions will need their field names appended as they land.
+- [x] **T3 — install.sh read_version_file helper.** New POSIX-compatible function (25 lines) near the top of install.sh: trims all whitespace via `tr -d '[:space:]'`, validates against `^[0-9]+\.[0-9]+\.[0-9]+([-+][A-Za-z0-9.-]+)?$` (semver-ish with optional pre-release/build tail), returns trimmed string on stdout or exits 1 with a clear stderr error (`install.sh: VERSION file at <path> is missing or malformed`). Three call sites replaced: local-repo INSTALL_VERSION read is fatal on malformed (`|| exit 1`); the upgrade idempotency check and OLD_VERSION read are tolerant (`2>/dev/null || true`) to preserve CLAUDE.md's backward-compat rule for users whose installed `~/.isparto/VERSION` may be corrupted. POSIX-compliant (no bashisms, no jq, no python3 dependency at install-time).
+- [x] **T4 — Rule 2: commit-count verification timing.** `CLAUDE.md` line on plan.md verification-count accuracy updated to acknowledge the pre-commit-projected / post-commit-verify cycle: "For entries authored pre-commit (standard `/end-working` cadence, where the Wave entry ships inside the same commit it documents), write the projected count and re-verify via the same command immediately after the commit lands; if mismatch, amend before push." Same clause added to `CLAUDE-TEMPLATE.md` (minus the "Applies to every Wave" framing that CLAUDE-TEMPLATE.md does not carry).
+
+**Acceptance script (5 Lead-direct bash commands — eligible under the trivial-CLI carve-out):**
+
+| # | Command | Expected | Actual |
+|---|---------|----------|--------|
+| A1 | `bash scripts/language-check.sh && bash scripts/language-check.sh --self-test` | both exit 0 | exit 0 / exit 0 — PASS |
+| A2 | `bash -n hooks/process-observer/scripts/pre-tool-check.sh && bash -n install.sh` | exit 0 | exit 0 — PASS |
+| A3 | `./install.sh --dry-run` | exit 0, VERSION parses cleanly | exit 0 — PASS |
+| A4 | `echo '{"tool_name":"Bash","tool_input":{"command":{"nested":"oops"}}}' \| bash hooks/process-observer/scripts/pre-tool-check.sh 2>&1 >/dev/null \| grep -c "canary: tool_input schema drift"` | ≥ 1 (canary fires on drift) | 1 — PASS |
+| A5 | `grep -c "re-verify via the same command immediately after the commit lands" CLAUDE.md CLAUDE-TEMPLATE.md` | 1 each | 1 / 1 — PASS |
+
+5 commands, all [code] / [runtime], all exit-code determinate → eligible under the trivial-CLI carve-out.
+
+**Files modified (6):**
+- `hooks/process-observer/scripts/pre-tool-check.sh` (T1 + T2 — awk parser replaced + canary added; 344 → 408 lines; +64 / -0 net)
+- `install.sh` (T3 — read_version_file helper + 3 call sites; 512 → 542 lines; +37 / -7 net)
+- `CLAUDE.md` (T4 — plan.md verification-count clause reworded; +1 / -1 line)
+- `CLAUDE-TEMPLATE.md` (T4 — same clause; +1 / -1 line)
+- `docs/plan.md` (this entry + /end-working close-out updates)
+- `docs/design-decisions.md` (one new row for Rule 2 codification)
+
+**Mode Selection Checkpoint.** Grouping: 4 files across 3 non-overlapping scopes (hooks/ + install.sh + CLAUDE.md pair). Decomposable? T1+T2 share a file (must be one Teammate); T3 is independent; T4 is tiny Lead-direct. File count × workload per stream justifies Teammate coordination: Teammate 1 drafted + smoke-tested ~70-line hook changes including Unicode-aware JSON parsing, and Teammate 2 drafted + smoke-tested a POSIX helper + 3 caller migrations — both streams involved non-trivial judgment (lookup order in T1, fatal-vs-tolerant caller split in T3). Decision: **Agent Team**, 2 Teammates + Lead direct on T4. Per-Teammate file ownership hard-partitioned, zero overlap.
+
+**Why Lead direct for T4:** CLAUDE.md + CLAUDE-TEMPLATE.md are under the self-referential boundary. The Rule 2 change is a 1-line wording tweak per file; Teammate coordination overhead would exceed serial edit cost.
+
+**Why Codex not used:** All four target files (hook script, installer, two system prompt files) are under the framework self-referential boundary (CLAUDE.md Development Rules). Teammates wrote drafts directly via Edit tool; no Codex call required. Precedent chain: Wave A, Wave B, Semantic Gate Wave, Gate Narrowing Wave.
+
+**Commit count verification:** 1 non-merge commit projected on the Wave branch (`git log --oneline --no-merges 38d91cd..HEAD | wc -l` = 1 post-commit). Base `38d91cd` is the Gate Narrowing Wave merge commit (PR #207) — this Wave's divergence base from main. Pre-commit projected count per the Rule 2 refinement this Wave just codified; will re-verify immediately after the `/end-working` commit lands and amend if mismatch.
+
+**Why no Independent Reviewer at Wave boundary:** Same precedent chain as Wave A/B/Semantic Gate/Gate Narrowing — framework-self-referential work. This Wave's scope includes code (hook script + installer), which is a slight extension of the precedent (prior Waves were doc-layer only). The mitigation: each Teammate ran a self-contained smoke-test suite (T1+T2: 6 smoke tests; T3: 8 smoke tests) embedded in the Agent prompt; results attached to this Wave's Teammate returns for audit trail. Doc Engineer + Process Observer /end-working audit provide the standard coverage.
+
+**BLOCKING marker rationale for next session (under the narrowed gate codified in PR #207):** This Wave modified `CLAUDE.md` (T4 — plan.md commit-count verification timing, a behavioral rule change: adds the "re-verify immediately after the commit lands; amend before push if mismatch" workflow requirement that Lead executes at every /end-working). Narrowed gate's trigger IS met; decision aid question (a) = yes (behavior rule change). Emit BLOCKING. Next session required for Wave D / v0.8 roadmap /plan / any other work that would load CLAUDE.md fresh.
+
+**Next step:** User decides in the next session — remaining open items are v0.8 roadmap /plan (external-user validation milestone), any follow-on framework polish, or external work (commercialization / Heddle dogfooding / etc.).
+
+🚨 BLOCKING: Next Wave requires NEW SESSION
 
 ### 技术生态追踪（暂不执行）
 

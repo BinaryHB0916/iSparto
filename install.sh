@@ -13,6 +13,29 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
+# ── Helper: read_version_file ──────────────────────────────
+# Read a VERSION file, strip all whitespace, validate semver-ish format.
+# Usage: read_version_file <path_to_VERSION_file>
+# On success: echoes the trimmed version to stdout, returns 0.
+# On error  : writes a clear message to stderr, returns 1.
+# Accepted format: MAJOR.MINOR.PATCH with optional -prerelease or +build tail.
+read_version_file() {
+    _rvf_path="$1"
+    if [ ! -f "$_rvf_path" ]; then
+        echo "install.sh: VERSION file not found at $_rvf_path" >&2
+        return 1
+    fi
+    _rvf_raw=$(cat "$_rvf_path")
+    _rvf_trimmed=$(printf '%s' "$_rvf_raw" | tr -d '[:space:]')
+    # Portable semver-ish check via grep -E (POSIX ERE; works on macOS and Linux).
+    if ! printf '%s' "$_rvf_trimmed" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+([-+][A-Za-z0-9.-]+)?$'; then
+        echo "install.sh: VERSION file at $_rvf_path is malformed (got: '$_rvf_raw')" >&2
+        return 1
+    fi
+    printf '%s\n' "$_rvf_trimmed"
+    return 0
+}
+
 # ── Platform check ─────────────────────────────────────────
 if [ "$(uname)" != "Darwin" ]; then
     printf "${YELLOW}Warning:${NC} iSparto is designed for macOS. Agent Team mode requires iTerm2.\n"
@@ -58,7 +81,7 @@ if [ -f "$(dirname "$0")/commands/start-working.md" ] 2>/dev/null; then
         _use_local_source=true
         SCRIPT_DIR="$_candidate_dir"
         if [ -z "$INSTALL_VERSION" ] && [ -f "$SCRIPT_DIR/VERSION" ]; then
-            INSTALL_VERSION=$(cat "$SCRIPT_DIR/VERSION")
+            INSTALL_VERSION=$(read_version_file "$SCRIPT_DIR/VERSION") || exit 1
         fi
     fi
 fi
@@ -75,11 +98,17 @@ if ! $_use_local_source; then
         echo "  curl -fsSL https://raw.githubusercontent.com/$REPO/main/bootstrap.sh | bash" >&2
         exit 1
     fi
-    if $UPGRADE && [ -f "$ISPARTO_HOME/VERSION" ] && [ "$(cat "$ISPARTO_HOME/VERSION")" = "$INSTALL_VERSION" ]; then
-        echo ""
-        printf "  ${GREEN}✓${NC} Already up to date (v$INSTALL_VERSION)\n"
-        echo ""
-        exit 0
+    if $UPGRADE && [ -f "$ISPARTO_HOME/VERSION" ]; then
+        # Only short-circuit when the installed VERSION is valid AND matches.
+        # A malformed installed VERSION falls through to reinstall, which is safer
+        # than silently exiting.
+        if _installed_ver=$(read_version_file "$ISPARTO_HOME/VERSION" 2>/dev/null) \
+           && [ "$_installed_ver" = "$INSTALL_VERSION" ]; then
+            echo ""
+            printf "  ${GREEN}✓${NC} Already up to date (v$INSTALL_VERSION)\n"
+            echo ""
+            exit 0
+        fi
     fi
 
     TAG="v${INSTALL_VERSION}"
@@ -140,7 +169,8 @@ echo ""
 
 OLD_VERSION=""
 if [ -f "$ISPARTO_HOME/VERSION" ]; then
-    OLD_VERSION=$(cat "$ISPARTO_HOME/VERSION")
+    # Tolerate a malformed installed VERSION here (stay empty and proceed as fresh install).
+    OLD_VERSION=$(read_version_file "$ISPARTO_HOME/VERSION" 2>/dev/null || true)
 fi
 NEW_VERSION="$INSTALL_VERSION"
 

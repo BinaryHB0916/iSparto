@@ -53,6 +53,21 @@ Priority: low-to-medium. Not blocking any current Wave. Current over-conservativ
 
 **Session context:** Surfaced by Process Observer audit of the BLOCKING Marker Semantic Gate Wave (2026-04-17, same session as this Rule 1 refinement). PO classified E3 as PASS (projected) while noting the fragility. Low-priority polish — the actual failure mode (Lead forgets to verify post-commit and commits a wrong count) has not occurred in any recorded Wave close-out. Fold into the same v0.8 roadmap planning or framework-polish Wave that would address Rule 1-style refinements if they recur.
 
+## Rule 3 — BLOCKING literal sentinel vs rationale prose lack an explicit "same edit" write-together rule
+
+**Rule ID:** `commands/end-working.md` Step 2 BLOCKING marker decision sub-bullet (codified by the Semantic Gate Wave and refined by the Gate Narrowing Wave, 2026-04-17) + mid-sequence PO audit expectations.
+
+**Gap description:** The BLOCKING emission decision has two outputs: (a) a prose "BLOCKING marker rationale for next session" paragraph inside the Wave plan.md entry, and (b) the literal sentinel `🚨 BLOCKING: Next Wave requires NEW SESSION` appended after the entry as the machine-detectable boundary token matched by `commands/start-working.md` Step 0. The current rule text describes when to emit the marker and what prose to include, but does not explicitly require the sentinel and the rationale to be written in the same edit operation. PO audit on Wave C (2026-04-17) caught the real-world failure mode: the rationale was present in the Wave entry but the sentinel was not yet appended after the Next step line, and since the PO audit runs pre-commit inside `/end-working`, the audit classified this as WARN rather than IN-PROGRESS.
+
+**Expected behavior — two acceptable fixes:**
+
+1. **Tighten `commands/end-working.md` to require atomicity:** add one sentence to the BLOCKING marker decision sub-bullet — "When the gate fires (BLOCKING required), the literal sentinel MUST be appended to plan.md in the same edit operation as the rationale prose; do not defer." This eliminates the interim state.
+2. **Or tighten `agents/process-observer-audit.md` audit criteria:** add one line to the BLOCKING-marker check — "Rationale-without-sentinel pre-commit is IN-PROGRESS, not WARN. WARN only if the Wave entry is committed without the sentinel." This documents the interim state as expected.
+
+Either produces a clean audit signal. Option 1 is stricter (eliminates the interim state entirely); option 2 is more permissive (tolerates the interim state as valid). Recommend option 1 — it aligns with the framework's general preference for mechanical structure over runtime discretion (per CLAUDE.md §Runtime Output Layering).
+
+**Session context:** Wave C (2026-04-17) / PO audit E3 flagged this as a WARN with a correct recovery recommendation (append the sentinel before commit). Lead applied the recovery in the same edit sequence that introduced this Rule 3. Filed here as the next-/plan candidate for the follow-up framework-polish Wave.
+
 ## Summary
 
-Two framework-side rule refinement candidates. Rule 1 (BLOCKING marker rule over-coarse) was surfaced during Wave B close-out and **addressed by the BLOCKING Marker Semantic Gate Wave in the same day (2026-04-17)** — this file's Rule 1 is now retrospective documentation of the problem and fix. Rule 2 (plan.md commit count timing ambiguity) surfaced from the gate Wave's own PO audit and is deferred to v0.8 roadmap planning or the next framework-polish Wave. Neither is blocking any current work. Both are recorded here + in their originating Wave's plan.md entry + in session-log.md as next-`/plan` carry-over.
+Three framework-side rule refinement candidates. Rule 1 (BLOCKING marker rule over-coarse) was surfaced during Wave B close-out and **addressed by the BLOCKING Marker Semantic Gate Wave + Gate Narrowing Wave in the same day (2026-04-17)** — now retrospective documentation of the problem and fix. Rule 2 (plan.md commit count timing ambiguity) surfaced from the Semantic Gate Wave's PO audit and was **addressed by the Wave C + Rule 2 Wave in the same day (2026-04-17, CLAUDE.md + CLAUDE-TEMPLATE.md wording updated)** — also now retrospective. Rule 3 (BLOCKING literal sentinel vs rationale prose write-together rule) surfaced from the Wave C PO audit and is deferred to the next framework-polish Wave or v0.8 roadmap planning session. None of the rules — addressed or open — is blocking any current work.
