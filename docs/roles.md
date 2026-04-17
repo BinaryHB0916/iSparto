@@ -47,7 +47,7 @@ Before launching the Agent Team, you must:
 6. Confirm you are on the correct feature/fix/hotfix branch (not on main)
 
 When breaking down tasks, you must:
-- First assess decoupling: which tasks have no file overlap, no data dependencies, and no runtime dependencies? Tasks that can be decoupled go in the same Wave; those that cannot are split into different Waves
+- **Wave Parallelism**: Wave-level parallelism requires file ownership plus interface contracts. See [concepts.md](concepts.md) §Wave Parallelism for the full rule.
 - Assign explicit file ownership for each Developer (no overlap)
 - When multiple Developers have data interactions, define interface contracts first
 - Assign modifications to shared files to only one Developer, or specify a clear sequence
@@ -150,10 +150,9 @@ Never do:
 
 ```
 Developer invocation configuration:
-- "codex" tool (implementation, architecture pre-review, QA): specify model and reasoningEffort per the Agent Model Configuration table in configuration.md.
-- "review" tool (code review of existing code): specify model per the Agent Model Configuration table. Note: the review tool does not expose a reasoningEffort parameter — it uses the server default.
-- Fast mode: not available via MCP (the codex-mcp-server does not expose a fast mode parameter).
-- Model configuration: see the Agent Model Configuration table in configuration.md.
+- **Model Assignment**: Each role uses a designated model with effort level. See [configuration.md](configuration.md) §Agent Model Configuration for the full table.
+- "review" tool caveat: does not expose a reasoningEffort parameter — it uses the server default.
+- Fast mode caveat: not available via MCP (the codex-mcp-server does not expose a fast mode parameter).
 
 IMPORTANT — Scoping Developer invocations to current changes only:
 - For code review: use the MCP "review" tool with the "commit" parameter set to the latest commit SHA, or "base" set to the branch point (e.g., "main"). This ensures Developer only reviews the current Wave's diff, not the entire repository history.

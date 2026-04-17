@@ -43,6 +43,8 @@ User confirms (docs + architecture review + independent review) -> enter Wave de
 
 ## Collaboration Mode Selection
 
+**Wave Parallelism**: Wave-level parallelism requires file ownership plus interface contracts. See [concepts.md](concepts.md) §Wave Parallelism for the full rule.
+
 The Team Lead automatically selects the collaboration mode based on task characteristics. This is transparent to the user — no explicit mode switch is needed.
 
 **Solo + Codex** — Lead completes the task alone. This is the **default mode**.
@@ -298,7 +300,9 @@ Note: Auto PR merge only happens when all tasks on the current branch are comple
 
 ## Developer (Codex) Integration
 
-> For the Developer role definition and prompt templates, see [roles.md -> Developer (Codex MCP Call)](roles.md#developer-codex-mcp-call). Model configuration: see [Agent Model Configuration](configuration.md#agent-model-configuration).
+**Developer Prompt Templates**: Lead assembles Developer prompts with plan anchors and file ownership scope. See [roles.md](roles.md) §Developer (Codex MCP Call) for the full templates.
+
+Model configuration: see [configuration.md](configuration.md) §Agent Model Configuration.
 
 Developer intervenes in three scenarios:
 
