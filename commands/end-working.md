@@ -10,6 +10,11 @@ Your responsibility: Ensure all changes and decisions from this session are capt
    - Are code changes consistent with docs/ documentation? If not, you (Lead) update the docs directly, or spawn a Doc Engineer to update them
    - Have verbal decisions made during the conversation been written into the corresponding docs? If not, add them
    - Were any approaches tried and rejected/rolled back during this session? If yes, append them to the "Rejected Approaches" table in docs/plan.md (date, module/feature, what was tried, why rejected, notes on alternatives or conditions for revisiting)
+   - **TODO-homing check (Single TODO source rule enforcement, CLAUDE.md Development Rules).** Guard against new TODOs / deferred actions / rule-fix candidates landing anywhere other than `docs/plan.md`'s Backlog. Run two scans over this session's changes (`git diff HEAD` for modifications, `git status --porcelain` for additions):
+     - **File-pattern scan:** flag any newly-added `docs/framework-feedback-*.md` file (the pattern was retired 2026-04-17 — creation of a new one is a workflow violation).
+     - **Phrase-pattern scan:** grep modifications in non-plan.md files for deferred-action phrases. The English set is: `defer to`, `fold into`, `next Wave`, `open Rule`, `TODO:`, `FIXME:`. When the session conversation occurred in a non-English language, Lead extends the grep with the user-language deferred-action vocabulary the user would naturally type (derived from the live session context per the hard-coded user-facing strings rule — do not embed non-English literals in this Tier 1 spec). Exclude `docs/session-log.md` historical-reference prose (reporting on past work is not a new TODO) and `docs/plan.md` (authoritative home) from the scan scope.
+     - If any hit: **A-layer (Policy trigger type e — critical intercept).** Emit one A-layer interrupt naming the specific violation (file + line + snippet); the Lead is NOT committing; the remediation is to move the flagged content into `docs/plan.md`'s `### Backlog` (under Framework Rule Polish, Deferred to v0.8+, or External Direction as appropriate) and re-run the check. Wait for user response before resuming.
+     - If no hits: proceed silently (C-layer). The check's green state is the expected condition.
 2. Update docs/plan.md:
    - Mark completed tasks
    - If all Teams in the current Wave are finished, mark the Wave status as completed
@@ -65,10 +70,10 @@ Your responsibility: Ensure all changes and decisions from this session are capt
      - If any checks FAIL: include only the failed items with one-line recovery suggestions inside the B-layer closing briefing's "what Codex/audits caught" slot. Do not dump the full compliance table.
    - If rule correction suggestions are identified, record them in the briefing for the next /start-working session to reference (they become next-session carry-over, not this-session narration)
    - If the audit identifies any "Framework-side" rule corrections:
-     a. Generate a brief Markdown file: `docs/framework-feedback-MMDD.md`
-     b. Include: rule ID, gap description, expected behavior, session context
-     c. Save to docs/ (will be committed with session changes)
-     d. **B-layer (closing briefing integration).** The briefing's "what Codex/audits caught" slot references the framework-feedback file by name (one clause, e.g., "Process Observer flagged N framework rule gaps → saved to docs/framework-feedback-MMDD.md"); do NOT emit a separate status line or suggest they submit it — the file path is sufficient for the user to act on.
+     a. Append a new row to the `#### Framework Rule Polish` table inside `docs/plan.md`'s `### Backlog` section. Each row: `FR-N | gap in one sentence | fix target (Tier 1 file and clause) | priority (low/medium/high) | origin (brief session context, e.g., "PO audit of 2026-MM-DD Session — <Wave name>")`. Use the next available `FR-N` identifier.
+     b. Do NOT create a `docs/framework-feedback-*.md` file — that pattern was retired 2026-04-17 per CLAUDE.md's Single TODO source rule. All PO framework-level findings route through `docs/plan.md`'s Backlog; any other channel is a workflow violation.
+     c. The new Backlog row(s) ship in the same commit as this session's close-out.
+     d. **B-layer (closing briefing integration).** The briefing's "what Codex/audits caught" slot references the new Backlog rows by identifier (one clause, e.g., "Process Observer flagged N framework rule gaps → plan.md Backlog FR-A..FR-B"); do NOT emit a separate status line or suggest the user act on them — they will surface at the next planning moment naturally.
    - This step has no data dependency on step 1 (Doc Engineer audit), but both are triggered sequentially by the Lead within the same session.
 6. Security scan (before commit):
    - Execute `bash $HOME/.isparto/hooks/process-observer/scripts/pre-commit-security.sh`
@@ -121,7 +126,7 @@ Your responsibility: Ensure all changes and decisions from this session are capt
 
 1. **What shipped today** — one sentence naming the concrete outcome, referencing Wave completion if applicable (e.g., "Wave 7 / v0.7.4 Information Layering Policy is complete — T1–T5 merged to main via PR #NNN"). If mid-Wave, name the tasks that closed (e.g., "T1 and T2 of Wave 7 are done; T3 is next"). This is the cross-session recovery surface for the next /start-working — it must always be emitted.
 
-2. **What Codex/audits caught** — one sentence OR one short bullet cluster (max 3 bullets) listing only non-empty findings: Codex P0/P1 findings, Doc Engineer audit failures (if any), Process Observer rule gaps (if any, reference the `docs/framework-feedback-MMDD.md` file path), security-scan warnings (if any). If ALL of these are empty, **omit this sentence entirely** — do not emit a "no findings" placeholder. Empty = C-layer.
+2. **What Codex/audits caught** — one sentence OR one short bullet cluster (max 3 bullets) listing only non-empty findings: Codex P0/P1 findings, Doc Engineer audit failures (if any), Process Observer rule gaps (if any, reference the new plan.md Backlog FR-N identifiers added in Step 5), security-scan warnings (if any), TODO-homing violations (if any, named by file + short description). If ALL of these are empty, **omit this sentence entirely** — do not emit a "no findings" placeholder. Empty = C-layer.
 
 3. **What's next** — one sentence proposing the next concrete action using the A-layer wording rule only when there IS a next decision the user needs to make; otherwise a plain pointer ("next: T3 at the next /start-working" or "Wave is complete, awaiting your direction"). If a Wave Boundary Review CRITICAL was raised in Step 3, this sentence names the CRITICAL as the blocker to the next Wave.
 

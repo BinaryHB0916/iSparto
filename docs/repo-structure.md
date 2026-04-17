@@ -81,6 +81,6 @@ iSparto/
 - **Tier 1 (System Prompt Layer, English-only):** `CLAUDE.md`, `CLAUDE-TEMPLATE.md`, `commands/`, `agents/`, `templates/`, `hooks/`, `bootstrap.sh`, `install.sh`, `isparto.sh`, `scripts/`, `lib/`.
 - **Tier 2 (Reference Documentation, English-only):** All files under `docs/` except Tier 4 artifacts and `docs/zh/`.
 - **Tier 3 (User-facing entry, bilingual):** `README.md`, `README.zh-CN.md`, `docs/zh/quick-start.md`, `CONTRIBUTING.md`.
-- **Tier 4 (Historical artifacts, frozen):** `docs/session-log.md`, `docs/framework-feedback-*.md`, `docs/plan.md`, `docs/dogfood-log.md`, and historical entries in `CHANGELOG.md`.
+- **Tier 4 (Historical artifacts, frozen):** `docs/session-log.md`, `docs/plan.md`, `docs/dogfood-log.md`, and historical entries in `CHANGELOG.md`. (The `docs/framework-feedback-*.md` pattern was retired 2026-04-17 per the Single TODO source rule; see `CLAUDE.md` Development Rules.)
 
 See `CLAUDE.md > Documentation Language Convention` for the full rationale and the language-check guardian behavior.
