@@ -840,7 +840,57 @@ Source: (a) Wave C candidate scope enumerated in Semantic Gate Wave session-log 
 
 🚨 BLOCKING: Next Wave requires NEW SESSION
 
-### 技术生态追踪（暂不执行）
+> ✅ Session boundary acknowledged 2026-04-17 — Rule 2 CLAUDE.md update was loaded into Lead's active context via mid-session system-reminder injection, so the stale-cache risk the marker guards against was mitigated along a non-standard path (not `/start-working` Step 0). Subsequent work proceeds in the same conversation with the updated rule visible. Wave entry below honors Rule 2 (projected commit count written pre-commit, re-verify post-commit).
+
+### Wave — v0.7.8 Framework Polish (2026-04-17) — Complete
+
+Branch: `feat/v0.7.8-polish`. Mode: Solo + Lead direct edit (all target files under the framework self-referential boundary).
+
+Source: Lead ran a verification pass against an 8-point external diagnosis of the repo produced by Kimi 2.6 and classified each item by symptom-accuracy, root-cause accuracy, and prescription-fit. Two items survived verification as genuinely worth doing in this Wave (T1 + T2 below); two items surfaced partial merit and were deferred to v0.8+ roadmap (see "Out of scope" below); four items were rejected and recorded in the Rejected Approaches table.
+
+**Goal:** (T1) stop `/start-working` Step 3 from reading the entire `docs/session-log.md` (1386 lines at Wave start and growing monotonically) when only the most recent entry is consumed by the Step 9 briefing — the rest is per-session token waste that compounds over time. (T2) introduce a mechanical guardian for the Information Layering Policy C-layer "ceremonial wrapper" rule (`scripts/policy-lint.sh`, single-detector v1), wire it into the Doc Engineer audit as item 10 parallel to the existing item 9 (`language-check.sh`). Both tasks are framework-internal polish; no user-facing product-behavior change.
+
+**Task list:**
+
+- [x] **T1 — `/start-working` Step 3 read-pattern fix.** Pre-implementation verification ran `grep -n -i "cumulative|total sessions|total codex" commands/start-working.md` to confirm Step 3 is the only producer of cumulative-stats collection and no downstream step consumes them; grep surfaced only the Step 3 producer bullet, closing the loop. Step 3 rewritten so that when `docs/session-log.md` exists and contains at least one `## .* Session` heading, Lead reads only the most recent session entry via `grep -n '^## .* Session' docs/session-log.md | tail -1` + `sed -n '<N>,$p'` instead of the whole file. Empty-grep case (file exists but no session heading yet — e.g., only the `# Session Log` top-level header) takes the same skip branch as "file does not exist," preventing a `sed -n ',$p'` empty-parameter stall. Cumulative-stats collection bullet (total sessions / total Codex reviews / historical issue counts) deleted — Step 9 C-layer rules already forbid emitting these, so scanning the whole log to compute them was dead work.
+- [x] **T2 — `scripts/policy-lint.sh` v1 (ceremonial wrapper detector only).** New mechanical guardian mirroring `scripts/language-check.sh` structure: bash wrapper resolves repo root (git-rev-parse fallback to script-relative), Python3 heredoc does the scan, `--self-test` argument runs fixtures, exit 0 / 1 / 2 semantics. Single regex matches the 5 forbidden C-layer phrases enumerated in `commands/end-working.md` ("C-layer items — NEVER emit in the closing briefing"): `Session complete`, `Ready for next session`, `Doc Engineer audit passed`, `Process Observer audit passed`, `Security scan passed`. Scope scoped to the most recent session-log entry only (same retrieval strategy as T1 — locate last `^## .* Session` heading, scan from there to EOF). 8 self-test fixtures total: 5 positive (one per forbidden phrase) + 3 negative (`"The session was productive"` / `"Doc Engineer caught 2 issues"` / `"Security patterns updated"` — keyword subsets present but forbidden phrase absent). Hard failure on hit; warning-only detectors for bullet-stack and A-layer wording explicitly excluded from v1 to preserve signal-to-noise ratio (prevents heuristic false positives from diluting the ceremonial detector's hard-failure channel). Integration: new item 10 "Policy compliance check" added to `docs/roles.md` Doc Engineer audit checklist, parallel wording + exit-code semantics to item 9; audit-report table gets a new `Policy compliance` row and a new `--- Policy Compliance Violations (item 10) ---` section; `commands/end-working.md` line 94 (Doc Engineer re-audit trigger list) updated to include item 10 alongside items 8 and 9.
+
+**Acceptance script (8 commands, mixed [code] + [build] + [runtime] — trivial-CLI carve-out eligible for A1/A2/A3/A6 only):**
+
+| # | Tag | Command | Expected | Actual |
+|---|-----|---------|----------|--------|
+| A1 | [code] | `grep -c "read only the most recent session entry" commands/start-working.md` | ≥ 1 | 1 — PASS |
+| A2 | [code] | `grep -c "Cumulative project stats" commands/start-working.md` | 0 | 0 — PASS |
+| A3 | [code] | `test -x scripts/policy-lint.sh && echo PASS` | `PASS` | PASS |
+| A4 | [build] | `bash scripts/policy-lint.sh --self-test` | exit 0, 8/8 fixtures pass | exit 0, 8/8 — PASS |
+| A5 | [build] | `bash scripts/policy-lint.sh` in the current repo | exit 0 (or exit 1 with violations) | exit 0 — PASS (most recent session entry clean) |
+| A6 | [code] | `grep -c "scripts/policy-lint.sh" docs/roles.md` | ≥ 1 | 2 — PASS (item 10 invocation line + violations section reference) |
+| A7 | [runtime] | In throwaway branch, manually spawn a zero-context sub-agent, have it read `docs/roles.md` item 10 and execute the literal instruction. Confirm the linter is locatable, the exit-code table maps correctly, and the path is end-to-end clean — NOT via `/end-working` so a linter bug cannot trigger the real 3-iteration Doc Engineer re-audit loop on the session's own commits. | Sub-agent quotes item 10 verbatim + runs policy-lint.sh → exit 0 + maps to ✅ verdict | Sub-agent quoted item 10 bullets 1–2 verbatim, ran default + --self-test, both exit 0, both mapped to ✅ — PASS |
+| A8 | [build] | `bash scripts/language-check.sh && bash scripts/language-check.sh --self-test` (regression — ensure T2 doesn't introduce CJK or Principle 1 violations) | both exit 0 | exit 0 / exit 0 — PASS |
+
+**Files modified (4 + this plan.md entry):**
+- `commands/start-working.md` (T1 — Step 3 rewrite; ~3 lines net)
+- `scripts/policy-lint.sh` (T2 — new file, 139 lines — estimate in plan was 40-60 lines single-detector; the parallel heredoc structure + 8 fixtures + full colored output pushed it to ~140, still well under language-check.sh's 346-line comparable)
+- `docs/roles.md` (T2 integration — new item 10 block, audit-report table row added, new violations section)
+- `commands/end-working.md` (T2 integration — line 94 re-audit trigger list extended to include item 10)
+- `docs/plan.md` (this entry)
+
+**Mode Selection Checkpoint.** Grouping: 4 Tier 1 files + 1 Tier 4 plan.md. Decomposable? T1 and T2 touch different files, yes. Volume? T1 is ~3 lines of doc edit; T2 is one new ~140-line script + 3 doc edits across 2 files. Teammate coordination overhead (tmux spawn + prompt + wait + merge) strictly exceeds serial Edit-tool cost for edits of this aggregate size. Decision: **Solo + Lead direct edit**. Precedent chain: Wave A, Wave B, Semantic Gate Wave, Gate Narrowing Wave, Wave C T4.
+
+**Why Lead direct edit:** All target files are under the framework self-referential boundary (CLAUDE.md Development Rules). No code files outside that boundary; no Developer/Codex calls required. T2's new script is itself a Tier 1 file (`scripts/policy-lint.sh`), covered by the self-referential exception.
+
+**Commit count verification (Rule 2 cadence):** 1 non-merge commit projected on the Wave branch at `/end-working` time. Post-commit re-verification command: `git log --oneline --no-merges 3c22eba..HEAD | wc -l` — expected `= 1`; amend and re-verify before push if mismatch. Base `3c22eba` is the Wave C + Rule 2 merge commit (PR #208) — this Wave's divergence base from main.
+
+**Why no Independent Reviewer at Wave boundary:** Precedent chain applies — framework-self-referential polish, narrow scope, no new product-behavior surface. Doc Engineer + Process Observer `/end-working` audit is sufficient coverage. The new `policy-lint.sh` itself becomes part of the Doc Engineer audit tool-set from this Wave forward, so next Wave's audit inherits the additional guardian.
+
+**BLOCKING marker rationale for next session (under the narrowed gate codified in PR #207):** This Wave did NOT modify `CLAUDE.md`. Target files: `commands/start-working.md`, `commands/end-working.md`, `docs/roles.md`, `scripts/policy-lint.sh` — all Skill-invoked / on-demand-read, stale-cache risk structurally zero. Narrowed-gate trigger not met → **skip BLOCKING**. Next Wave may start in the same session if desired.
+
+**Out of scope (Kimi diagnosis disposition):**
+- **Accepted into this Wave (items 1 and 6):** session-log read-pattern fix (T1) and A/B/C Policy linter v1 (T2).
+- **Deferred to v0.8+ roadmap (items 3 and 8-backhalf):** (a) `/env-nogo` deep consistency checks (CLAUDE.md Module Boundaries ↔ actual disk structure, plan.md In-Progress ↔ branch diff) — partial merit but CLAUDE.md-half is higher value than plan.md-diff-half (latter has high false-positive risk on mid-task branches); (b) `install.sh --rollback` — the existing `lib/snapshot.sh` engine already covers most config-file rollback needs, so self-rollback of `install.sh` itself is lower-priority.
+- **Rejected (items 2, 4, 5, 7):** disposition recorded in the Rejected Approaches table below.
+
+**Next step:** User decides in the next session — v0.8 roadmap /plan (external-user validation milestone), further framework polish, or external work (Heddle dogfooding / commercialization / etc.).
 
 以下项目受外部生态演进驱动，iSparto 只追踪不行动，满足触发条件时再评估：
 
@@ -934,3 +984,7 @@ v2.x  CEO 工作台      用户 = 老板，说需求看结果，不碰过程
 | 2026-04-08 | Onboarding 提醒 | plan.md 挂"本地 hook 更新提醒"长期项,督促用户运行 `install.sh --upgrade` | 僵尸提醒（来自 2026-04-03,经过 10 个版本已失效）；时效性提醒不属于 plan.md,应该进 CHANGELOG + /start-working hook 自修复 | 未来需要用户重装 hook 时用 CHANGELOG + /start-working 提示替代 |
 | 2026-04-08 | 发布工具 | `scripts/macos-compat-check.sh` — 机械检查 shell 脚本里 BSD 不兼容的 sed 正则（来源：Session #b v0.7.0 BSD-sed 事故） | 单次事件的防御,缺乏模式证据；shellcheck 已免费提供很多 BSD/GNU 差异检查 | 如果再出一次同类 bug 就做；或者把 shellcheck 接进 language-check.sh pipeline |
 | 2026-04-08 | 模板美观 | Framework Polish Round 2 的 Doc Engineer PASS WITH MINOR 两条模板对称性建议 | DE 自己说 non-blocking、safe to push；用户明确要求"一次搞完,不要 scope creep" | 只在具体用户反馈因为不对称造成困惑时重启；纯美学抛光永久 deferred |
+| 2026-04-17 | plan.md | 自动压缩规则：完成超过 7 天的 Wave 自动折叠成单行，详情移入 plan-archive.md | 前提伪造 — plan.md 和 end-working.md 里根本没有这条规则（Lead grep 验证）。现有机制是手动 `<details>` 折叠（见 plan.md v0.x 已完成项 block），工作正常；plan.md 在 v0.7.8 之前 ~935 行，远未臃肿到需要自动化压缩机制 | 来源：Kimi 2.6 外部 repo 诊断（item 2）。触发条件：plan.md 超过 ~2000 行且 `<details>` 折叠模式无法保持 Wave 历史可读性 |
+| 2026-04-17 | Agent Team 模式 | Teammate 失败断点续传：plan.md 每个 task 加 checkpoint 字段 + docs/teammate-failures.md 经验库 | 当前规模过早 — iSparto 是 solo founder 框架，Agent Team 每天调用次数极低，Teammate 崩了由 Lead re-dispatch 比维护一套 checkpoint 基础设施省事得多 | 来源：Kimi 2.6 外部 repo 诊断（item 4）。触发条件：Agent Team 成为默认模式且 Teammate 崩溃频率 ≥ 1 次/天 |
+| 2026-04-17 | Git 托管平台 | PR/merge 流程解耦 `gh` CLI，引入 github / gitlab / gitee / generic fallback 适配层 | 与产品定位不符 — CLAUDE.md "Platform: macOS" + install.sh 深度依赖 `gh` 是刻意选择，iSparto v0.x 目标用户是 GitHub-native solo founder，平台扩展相对 v0.8 外部用户验证 gate 属于 scope creep | 来源：Kimi 2.6 外部 repo 诊断（item 5）。触发条件：v1.x 自治团队里程碑激活且有具体 GitLab/Gitee 用户实际反馈 |
+| 2026-04-17 | Rejected Approaches | 给表格加 Tags 列 + `isparto search-rejected <tag>` grep helper | 当前条目数过早 — 表格只有 ~10 条，现有 Module/Feature 列已起到隐式 tag 作用（`grep "框架全局"` 能达到 Tags 的同等检索精度），加结构化列的每条录入开销只在 ≥ ~30 条后才值回票价 | 来源：Kimi 2.6 外部 repo 诊断（item 7）。触发条件：表格超过 ~30 条且 Module/Feature 列精度失效 |

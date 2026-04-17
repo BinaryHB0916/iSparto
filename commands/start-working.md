@@ -33,10 +33,9 @@ Your responsibility: Run the setup sequence silently, then at Step 9 emit exactl
    - Remaining issues from the last session
    - Rejected approaches relevant to the current Wave's tasks (if any exist in plan.md's "Rejected Approaches" table)
    - If the current branch is named `feat/wip-MMDD` (placeholder from Step 0.5) and plan.md context suggests a better name (e.g., `feat/wave-3-auth`), rename it now with `git branch -m <better-name>`
-3. If docs/session-log.md exists, read it and include in your status report:
-   - Last session summary: date, tasks completed, issues noted
-   - Cumulative project stats: total sessions, total Codex reviews, total issues caught
-   - If the log doesn't exist yet, skip this — it will be created on the first /end-working
+3. If docs/session-log.md exists and contains at least one `## .* Session` heading, read only the most recent session entry (not the whole file) and include the last-session summary (date, tasks completed, issues noted) in your status report. Retrieval: run `grep -n '^## .* Session' docs/session-log.md | tail -1` to find the starting line number N, then `sed -n '<N>,$p' docs/session-log.md` reads from that heading to end-of-file. The `## .* Session` pattern is the entry heading format written by /end-working Step 4.
+   - If docs/session-log.md does not exist, or exists but contains no `## .* Session` heading yet (e.g., only the top-level `# Session Log` header is present), skip this step — it will be populated on the next /end-working. Both the file-missing and empty-grep cases take the same skip branch; do not attempt `sed -n ',$p'` with an empty line number.
+   - Do not collect aggregate metrics from older entries (total sessions, total Codex reviews, historical issue counts). Step 9 C-layer rules forbid emitting such aggregates in the briefing, so scanning the whole log to compute them is dead work.
 4. Quick check: Is the current code state consistent with docs/ documentation, or has any drift occurred?
 5. Runtime health check (if applicable):
    - Check CLAUDE.md's "Common Commands" section for explicit build/test commands (e.g., `npm run build`, `swift build`, `./gradlew test`). Do NOT use the "Build" field in Tech Stack — it is descriptive (e.g., "Xcode", "Vite"), not executable
