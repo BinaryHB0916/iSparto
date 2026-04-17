@@ -557,6 +557,7 @@ Branch: `feat/v075-readme-restraint`. Mode: Solo + Lead direct edit (Framework P
 🚨 BLOCKING: Next Wave requires NEW SESSION
 > ✅ Session boundary acknowledged 2026-04-09 by /start-working
 > ✅ Session boundary acknowledged 2026-04-10 by /start-working
+> ✅ Session boundary acknowledged 2026-04-17 by /start-working
 
 ### IR Token Cost Documentation Wave (2026-04-10) — Complete
 
@@ -608,6 +609,49 @@ Principle: diagram first, then text. T8a (architecture diagram) is highest prior
 **Why no BLOCKING marker:** No Tier 1 system prompt files modified. All changes are Tier 2 reference docs (read by IR at spawn time from fresh context) or visual assets (never loaded into conversation context). Next session may begin without cross-session barrier.
 
 **Why no Independent Reviewer:** Not a Wave boundary in the i18n/framework-polish sense — this is a documentation gap-fill for an already-shipped role. Scope is additive text + diagram only, no behavioral or architectural change. Doc Engineer and Process Observer audits are sufficient. Precedent: Post-Wave 5 Follow-up Hotfixes, Framework Polish Round 2.
+
+### Wave A — Concept Decoupling (2026-04-17) — Complete
+
+Branch: `feat/wave-a-concept-decoupling`. Mode: Solo + Lead direct edit (all 7 target files are Tier 1 system prompts, Tier 2 reference docs, or Tier 4 project docs under the self-referential boundary; no code files, no Developer/Codex calls).
+
+Source plan: `~/.claude/plans/lovely-munching-hopper.md` (v2.4, approved 2026-04-17 after v1 → v2 → v2.1 → v2.2 → v2.3 → v2.4 review cycle). Wave A is the first of two Waves in that plan; Wave B (docs layer dedup) is scheduled for a separate session.
+
+**Goal:** Execute Wave A — concept decoupling across `CLAUDE.md` and `agents/independent-reviewer.md`. The headline architectural move is A1 (extracting A-layer Peer Review into its own Tier 2 design-principle file); A2-A4 are supporting pointer + index work that rides on the same extraction discipline. Expected context savings: CLAUDE.md from ~208 lines to ~120 lines, cutting ~90 lines per new-session load.
+
+**Task list:**
+
+- [x] **A1 — Extract A-layer Peer Review (Mode 3) from `agents/independent-reviewer.md` to new `docs/design-principles/a-layer-peer-review.md`.** Original agent file dropped from 214 → 109 lines (-105), now focused on Phase 0 + Wave Boundary review modes only. New file at 124 lines, Tier 2, stands alone as a design-principle document covering invocation trigger, tool permissions (read-only + deep-IR gate), four judgment axes, verdict format, conflict-resolution, and scope. Cross-references in `CLAUDE.md §User Preference Interface`, `CLAUDE-TEMPLATE.md`, and `docs/design-decisions.md` row "Information Layering Policy — IR prevails…" updated to the new path. Commit: `e002fba`.
+- [x] **A2 — Extract Collaboration Mode from `CLAUDE.md` to new `docs/collaboration-mode.md`.** New Tier 2 file with required `## Overview` and `## Lifecycle` headings (A3 depends on the `## Lifecycle` anchor). Preserves verbatim: Mode Selection Checkpoint, Plan Mode triggers, Roles, Lifecycle Solo + Codex / Agent Team, Implementation Protocol, Branch Protocol, Developer Triggers, Branching and Merge. CLAUDE.md Collaboration Mode section shrunk to 1 pointer + 1 iSparto-specific exception note. `CLAUDE-TEMPLATE.md` intentionally unchanged per plan decision D1 = B1 (user projects keep inline content for open-box usability; the sync burden vs `docs/collaboration-mode.md` remains at today's level, and the real value of B1 is iSparto's own CLAUDE.md context savings). Commit: `8e08630`.
+- [x] **A3 — Shrink CLAUDE.md Development Workflow overview to a pointer.** The pre-refactor `Development Workflow (Solo + Codex)` / `(Agent Team)` overviews were a third-place repetition of lifecycle steps already defined in `commands/start-working.md` and `commands/end-working.md`. Replaced with a single pointer line: `See docs/collaboration-mode.md §Lifecycle for workflow phases; step-level execution in commands/start-working.md and commands/end-working.md`. Subsumed into the A2 commit. Commit: `8e08630`.
+- [x] **A4 — Update CLAUDE.md Documentation Index and Tier 2 definition.** Located by heading, not line number (A2/A3 shifted line numbers). `## Documentation Index` gained two entries (`docs/collaboration-mode.md`, `docs/design-principles/a-layer-peer-review.md`). `## Documentation Language Convention` Tier 2 line explicitly includes `docs/design-principles/*.md` subdirectory so the `scripts/language-check.sh` maintainer does not later misclassify new files under that path. Module Boundaries promoted from `**bold**` subsection to `## Module Boundaries` (it stands alone as iSparto-specific architecture, not tied to collaboration semantics). Commit: `8e08630`.
+
+**Acceptance script (3 Lead-direct bash commands — eligible under the trivial-CLI carve-out from the Solo lifecycle step 3):**
+
+| # | Command | Expected | Actual |
+|---|---------|----------|--------|
+| A1 | `bash scripts/language-check.sh --self-test && bash scripts/language-check.sh` | both exit 0 | exit 0 / exit 0 — PASS |
+| A2 | `./install.sh --dry-run` | exit 0, all commands + templates up to date, Codex MCP OK | exit 0 — PASS |
+| A3 | `wc -l CLAUDE.md` (target ~120) + `grep -n "^## Overview\|^## Lifecycle" docs/collaboration-mode.md` (each 1 hit) | CLAUDE.md ≤ 130 + both headings present | 124 lines / Overview line 3 + Lifecycle line 43 — PASS |
+
+3 commands, all [code], all exit-code determinate, no build, no runtime, no output parsing → eligible under the trivial-CLI carve-out.
+
+**Mode Selection Checkpoint.** Grouping: 7 files across 3 modules (Tier 1 system prompts: `CLAUDE.md` / `CLAUDE-TEMPLATE.md` / `agents/independent-reviewer.md`; Tier 2 framework docs: `docs/collaboration-mode.md` / `docs/design-principles/a-layer-peer-review.md` / `docs/design-decisions.md`; Tier 4 project doc: `docs/plan.md`). Decomposable? A1 independent of A2/A3/A4; A2/A3/A4 mutually dependent (A3 points into A2's new `## Lifecycle`, A4 indexes both A1 and A2 outputs). File count × workload per file is modest; the Agent Team coordination overhead would exceed serial cost given the A2↔A3↔A4 dependency chain. Decision: **Solo + Lead direct edit**.
+
+**Why Lead direct edit:** All target files are Tier 1 system prompts, Tier 2 reference docs, or Tier 4 project doc. Framework self-referential boundary applies (CLAUDE.md Development Rules). No code files, no Developer/Codex calls. Precedents: v0.7.4 Information Layering Policy Wave, v0.7.5 README restraint Wave, IR Token Cost Documentation Wave.
+
+**Commit count verification:** 2 non-merge commits on the Wave A branch (`git log --oneline --no-merges c0c6914..HEAD | wc -l` = 2).
+
+**Why no Independent Reviewer at Wave boundary:** Precedent chain — Framework Polish Round 2 (Session #c 2026-04-08), Post-Wave 5 Follow-up Hotfixes, IR Token Cost Documentation Wave. Wave A is a framework-self-referential refactor that preserves content verbatim (the extracted paragraphs are byte-identical to the pre-refactor originals per Doc Engineer spot checks). No new product behavior, no architecture change, no new rules. Doc Engineer audit (GREEN, 9/9 PASS) + Process Observer audit (10/12 PASS, 1 IN-PROGRESS resolved by the precedent above, 1 WARN resolved by this plan.md entry) are sufficient.
+
+**Doc Engineer audit results (GREEN):** 9/9 PASS. Cross-references clean, pointers valid, content preserved verbatim across the three spot-checked sections (Mode Selection Checkpoint, Implementation Protocol steps, Four Judgment Axes all byte-identical except for one intentional "above" → "below" preposition flip reflecting the new relative position). Tier boundaries respected (Tier 1 agent definition remains on agents/, Tier 2 design principle lives in docs/design-principles/). CLAUDE-TEMPLATE.md regression-free (182 lines, -1 for the single reference update). Language-check clean.
+
+**Process Observer audit results:** 10/12 PASS, 1 IN-PROGRESS (F1 — IR at Wave boundary; resolved by the Why-no-Independent-Reviewer rationale above), 1 WARN (C2 — plan.md Wave A entry missing; resolved by this entry). No Framework-side rule corrections suggested.
+
+**BLOCKING marker rationale for next Wave:** Wave A modified two Tier 1 system prompts (`CLAUDE.md`, `CLAUDE-TEMPLATE.md`) that are cached into every new Claude Code session's context. A fresh session is required so the next Wave's Lead reads the new pointer-based Collaboration Mode section (not a stale inline block). Marker emitted below.
+
+**Next step:** Wave B of the same plan — `docs/` layer dedup across `concepts.md` / `roles.md` / `workflow.md` / `configuration.md` / `user-guide.md` / `design-decisions.md`. Separate session, separate branch (`feat/wave-b-docs-dedup`), separate PR per plan v2.4. Pointer standard and TL;DR ≤ 30 字 hard constraints already fixed in the source plan.
+
+🚨 BLOCKING: Next Wave requires NEW SESSION
 
 ### 技术生态追踪（暂不执行）
 

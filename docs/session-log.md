@@ -1,5 +1,36 @@
 # Session Log
 
+## 2026-04-17 Session — Wave A: Concept Decoupling (v2.4 Two-Wave Doc Restructure)
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | Wave A of v2.4 Two-Wave Doc Restructure (Wave B pending, separate session) |
+| Tasks completed | **A1 — Extract A-layer Peer Review (Mode 3) to `docs/design-principles/a-layer-peer-review.md`.** `agents/independent-reviewer.md` 214 → 109 lines (-105); new Tier 2 file 124 lines covering invocation trigger, tool permissions (read-only + deep-IR gate), four judgment axes, verdict format, conflict-resolution, scope. Cross-references in CLAUDE.md, CLAUDE-TEMPLATE.md, docs/design-decisions.md updated to the new path. Commit `e002fba`. **A2 — Extract Collaboration Mode from CLAUDE.md to `docs/collaboration-mode.md`.** New Tier 2 file with required `## Overview` and `## Lifecycle` headings; preserves verbatim Mode Selection Checkpoint / Plan Mode / Roles / Lifecycle (Solo+Codex / Agent Team) / Implementation Protocol / Branch Protocol / Developer Triggers / Branching and Merge. CLAUDE.md Collaboration Mode shrunk to pointer + iSparto-specific exception. CLAUDE-TEMPLATE.md intentionally unchanged per plan D1=B1. **A3 — Shrink Development Workflow overview.** Third-place repetition removed; single pointer line replaces it. **A4 — Documentation Index + Tier 2 definition.** Two new entries in Documentation Index; Tier 2 line explicitly includes `docs/design-principles/*.md`. Module Boundaries promoted from bold subsection to `## Module Boundaries`. Commits `8e08630` + this /end-working commit. |
+| Key decisions | (1) **Plan v2.4 collapsed from v1's four-Wave sprint to a two-Wave sprint.** Three refinement cycles with user pushback narrowed scope: cut Wave C (infrastructure hardening — needs architectural pre-work on one-shot Python JSON parse + canary schema drift + install.sh version extraction, independent milestone with a v0.8-launch gate + depends_on blocker in plan.md as the triggering mechanism); cut Wave D (framework-feedback-*.md merge — append-only docs must not be merged because each future entry would need "new section vs new file" decision, permanent cognitive cost for a 15-minute aesthetic cleanup). (2) **D1 = B1 for CLAUDE-TEMPLATE.md.** CLAUDE.md references docs/collaboration-mode.md; CLAUDE-TEMPLATE.md keeps inline content. Honest framing: B1 doesn't eliminate the sync burden (two-way sync persists between docs/collaboration-mode.md and CLAUDE-TEMPLATE.md) — the real value is iSparto's own CLAUDE.md context savings (~90 lines per new-session load); user projects are unchanged. B2 (install-time template expansion) / B3 (copy-docs + init-project integration) deferred as higher-cost options with unclear ROI. (3) **Pointer standard hard-coded in the plan.** `See [path](path) §anchor for ...` markdown link syntax, TL;DR ≤ 30 字, no specific values/paths in TL;DR, anchor must resolve to an actual `##`/`###` heading. These constraints are fixed so Wave B executes mechanically in the next session. (4) **Line numbers are pre-refactor snapshots only.** Explicit whole-plan convention added to v2.4 Context: cited line numbers (CLAUDE.md:47-137, etc.) are locators for the original content only; execution uses heading lookup so A2/A3/B1/B2 refactors do not cascade-break later tasks. (5) **`## Overview` + `## Lifecycle` are A3's structural dependency.** Written into A2's structure requirements so A3's pointer anchor `§Lifecycle` does not silently dangle. (6) **IR not triggered at Wave boundary.** Precedent chain extending: Framework Polish Round 2 (Session #c), Post-Wave 5 Follow-up Hotfixes, IR Token Cost Documentation Wave. Wave A is a framework-self-referential refactor preserving content verbatim — no new product behavior, no architecture change. Doc Engineer (GREEN 9/9) + Process Observer (10/12 PASS + 1 IN-PROGRESS resolved by this rationale + 1 WARN resolved by the Wave A plan.md entry) are sufficient. |
+
+### Files Changed
+```
+ CLAUDE-TEMPLATE.md                            |   2 +-
+ CLAUDE.md                                     |  99 ++------------------
+ agents/independent-reviewer.md                | 118 ++----------------------
+ docs/collaboration-mode.md                    | 112 +++++++++++++++++++++++
+ docs/design-decisions.md                      |   2 +-
+ docs/design-principles/a-layer-peer-review.md | 124 ++++++++++++++++++++++++++
+ docs/plan.md                                  |  44 ++++++++++
+ docs/session-log.md                           |  (this entry)
+ 8 files changed, ~300 insertions(+), ~204 deletions(-)
+```
+(Computed via `git diff c0c6914..HEAD --stat` plus the pending Wave A plan.md entry and this session-log entry. `c0c6914` is the last main commit before Wave A branched.)
+
+### Notes
+
+- **Five-round plan refinement cycle as the real headline.** The Wave A implementation took ~60 minutes; the plan that produced it took significantly longer across v1 → v2 → v2.1 → v2.2 → v2.3 → v2.4 review cycles, each adding a specific hard constraint or architectural correction (v2 cut C/D scope; v2.1 refined decisions; v2.2 added pointer markdown-link syntax as a hard constraint; v2.3 added line-number-snapshot convention + heading-based anchors; v2.4 added B4 pre-check for design-decisions.md rewrite). Lesson: doc-layer refactor plans benefit disproportionately from iterative user-review — the four-Wave v1 plan would have bundled three different work types (concept decoupling / char-level dedup / infrastructure / aesthetic cleanup) into a single sprint, creating a blast-radius problem; v2.4 cleanly separates them.
+- **Auto-mode exited mid-session when the plan entered review territory.** After the initial four-Agent parallel audit ran, user mode switched to interactive discussion. The three-round plan refinement cycle happened in discussion mode. Auto mode returned implicitly for the implementation phase (approval via ExitPlanMode → user "继续" → execution). Handoff between auto and interactive modes was clean — no missed approvals, no forced confirmations.
+- **Voice-input corrections observed.** User typed "土度评估" (voice-input, interpreted as "逐个评估" per memory feedback rule). Pattern consistent with prior sessions.
+- **BLOCKING marker emitted for next Wave.** Wave A modifies CLAUDE.md + CLAUDE-TEMPLATE.md (both Tier 1 system prompts cached into Claude Code's per-session context), so next-session Lead must read the new pointer-based Collaboration Mode section — not a stale inline block. Marker added at the end of the Wave A plan.md entry.
+- **Next-session to-dos:** Wave B of the same plan (docs layer dedup across concepts.md / roles.md / workflow.md / configuration.md / user-guide.md / design-decisions.md). Pointer standard and TL;DR ≤ 30 字 constraints are already fixed in the source plan `~/.claude/plans/lovely-munching-hopper.md`. Separate session, separate branch `feat/wave-b-docs-dedup`, separate PR. Also passively tracked: Wave C (infrastructure hardening) remains an independent milestone with a v0.8-launch gate; this is out of scope for the current plan but should be added as a plan.md blocker entry with v0.8 `depends_on` before v0.8 launch so the gate is not a dead letter.
+
 ## 2026-04-14 Session — README value-prop realignment + SVG Process Observer + v0.7.7 release (PR #197-#202)
 
 | Metric | Value |
