@@ -24,42 +24,106 @@ WORKFLOW_RULES_FILE="$SCRIPT_DIR/../rules/workflow-rules.json"
 # ── Read JSON from stdin ─────────────────────────────────────
 INPUT=$(cat)
 
+# ── Canary: detect tool_input schema drift ───────────────────
+# If Claude Code evolves tool_input to use nested objects/arrays for
+# fields we currently treat as flat strings (command / file_path / prompt),
+# our parsers silently return empty and hooks fail-open invisibly. This
+# canary logs a stderr warning when drift is detected. It never blocks.
+# Python-internal errors (missing tool_input, parse failure) stay silent;
+# the try/except inside the script ensures no traceback reaches stderr.
+python3 - "$INPUT" <<'PYEOF' || true
+import json, sys
+try:
+    raw = sys.argv[1] if len(sys.argv) > 1 else ""
+    if not raw:
+        sys.exit(0)
+    try:
+        payload = json.loads(raw)
+    except Exception:
+        sys.exit(0)
+    if not isinstance(payload, dict):
+        sys.exit(0)
+    tool_input = payload.get("tool_input")
+    if tool_input is None:
+        sys.exit(0)
+    tool_name = payload.get("tool_name", "unknown")
+    script_ref = "hooks/process-observer/scripts/pre-tool-check.sh"
+    def warn(field, value):
+        t = type(value).__name__
+        sys.stderr.write(
+            f"iSparto canary: tool_input schema drift detected "
+            f"(tool={tool_name}, field={field}, type={t}) — see {script_ref}\n"
+        )
+    if not isinstance(tool_input, dict):
+        warn("tool_input", tool_input)
+        sys.exit(0)
+    for field in ("command", "file_path", "prompt"):
+        if field in tool_input and not isinstance(tool_input[field], str):
+            warn(field, tool_input[field])
+except Exception:
+    # Defensive: never let the canary crash or surface a traceback.
+    sys.exit(0)
+PYEOF
+# If python3 is not installed, bash emits "python3: command not found" on
+# stderr; hide that specific failure mode without silencing the canary body.
+# (We rely on install.sh's python3 dependency check to make this rare.)
+
 # ── Extract tool_name ────────────────────────────────────────
 # Parse tool_name from JSON without jq
 TOOL_NAME=$(echo "$INPUT" | grep -o '"tool_name"[[:space:]]*:[[:space:]]*"[^"]*"' | sed 's/.*:.*"\([^"]*\)"/\1/')
 
-# Extract a JSON string field value, handling escaped quotes
+# Extract a JSON string field value from the payload.
+# Signature: extract_json_field <input_json_string> <field_name> [unescape_newlines]
+# - Third arg defaults to "false".
+# - Lookup order: (1) payload["tool_input"][field] if tool_input is an object,
+#   (2) payload[field] (top-level fallback). Matches prior awk behavior where
+#   a flat regex found the field wherever it appeared.
+# - Nested objects are not recursed into beyond the two levels above.
+# - When unescape_newlines == "true", JSON escapes (\n, \t, \uXXXX, ...) are
+#   decoded naturally by python3's json module.
+# - When "false" (default), escape sequences are preserved as literal two-char
+#   sequences (e.g., "\n" stays as backslash + 'n'), matching prior awk behavior.
+# - On any failure (missing field, non-string value, parse error), emit empty
+#   and exit 0 (fail-open, matching prior semantics).
 extract_json_field() {
     local input="$1"
     local field="$2"
     local unescape_newlines="${3:-false}"
-    echo "$input" | awk -v field="$field" -v unescape="$unescape_newlines" '
-        BEGIN { RS="\0" }
-        {
-            pattern = "\"" field "\"[[:space:]]*:[[:space:]]*\""
-            if (match($0, pattern)) {
-                s = substr($0, RSTART + RLENGTH)
-                result = ""
-                for (i = 1; i <= length(s); i++) {
-                    c = substr(s, i, 1)
-                    if (c == "\\" && substr(s, i+1, 1) == "\"") {
-                        result = result "\""
-                        i++
-                    } else if (c == "\\" && unescape == "true") {
-                        nc = substr(s, i+1, 1)
-                        if (nc == "n") { result = result "\n"; i++ }
-                        else if (nc == "t") { result = result "\t"; i++ }
-                        else { result = result c }
-                    } else if (c == "\"") {
-                        break
-                    } else {
-                        result = result c
-                    }
-                }
-                print result
-            }
-        }
-    '
+    python3 - "$input" "$field" "$unescape_newlines" <<'PYEOF' 2>/dev/null || true
+import json, sys
+raw = sys.argv[1]
+field = sys.argv[2]
+unescape = sys.argv[3] == "true"
+try:
+    payload = json.loads(raw)
+except Exception:
+    sys.exit(0)
+if not isinstance(payload, dict):
+    sys.exit(0)
+value = None
+tool_input = payload.get("tool_input")
+if isinstance(tool_input, dict):
+    v = tool_input.get(field)
+    if isinstance(v, str):
+        value = v
+if value is None:
+    v = payload.get(field)
+    if isinstance(v, str):
+        value = v
+if value is None:
+    sys.exit(0)
+if unescape:
+    # json.loads already decoded all JSON escapes (including \uXXXX); emit as-is.
+    sys.stdout.write(value)
+else:
+    # Preserve literal escape sequences: re-encode the string via json.dumps
+    # with ensure_ascii=True so \n, \t, \uXXXX, etc. come back as their
+    # two-character literal forms (matching the old awk parser, which never
+    # decoded them). Strip surrounding quotes and unescape only \" sequences
+    # (which were actual embedded quotes in the source).
+    reencoded = json.dumps(value, ensure_ascii=True)[1:-1]
+    sys.stdout.write(reencoded.replace('\\"', '"'))
+PYEOF
 }
 
 # ── Helper: block and exit ───────────────────────────────────
