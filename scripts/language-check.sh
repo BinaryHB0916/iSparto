@@ -20,12 +20,16 @@
 #
 # Tier 2 explicit exclusions (Tier 4 historical, frozen by design):
 #   docs/session-log.md
-#   docs/framework-feedback-*.md
 #   docs/plan.md              (mixed historical Chinese + new English; reviewed manually)
 #   docs/independent-review.md (IR audit trail — entries quote plan.md section titles
 #                               and other Tier 4 source material verbatim in their original
 #                               language per the IR audit-trail-immutability principle)
 #   docs/zh/                  (dedicated Chinese-entry tree, not Tier 2)
+#
+# Retired (2026-04-17): docs/framework-feedback-*.md — the pattern was removed
+# from the repo per the Single TODO source rule (CLAUDE.md Development Rules);
+# any lingering references appear only in frozen historical entries (session-log,
+# plan.md Wave entries, CHANGELOG) which are already Tier 4.
 #
 # Status:
 #   Wave 1 — warning mode, manual invocation only.
@@ -117,9 +121,9 @@ TIER2_EXCLUDED_FILES = {
 }
 
 # Tier 2 exclusions — relative-path prefix matches (under docs/)
-TIER2_EXCLUDED_PREFIXES = (
-    'docs/framework-feedback-',
-)
+# Currently empty — the former `docs/framework-feedback-` prefix exclusion was
+# removed 2026-04-17 when the file pattern itself was retired.
+TIER2_EXCLUDED_PREFIXES = ()
 
 # Tier 2 exclusions — directory prefixes (anything below is excluded)
 TIER2_EXCLUDED_DIRS = (

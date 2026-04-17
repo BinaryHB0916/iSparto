@@ -887,7 +887,7 @@ Source: Lead ran a verification pass against an 8-point external diagnosis of th
 
 **Out of scope (Kimi diagnosis disposition):**
 - **Accepted into this Wave (items 1 and 6):** session-log read-pattern fix (T1) and A/B/C Policy linter v1 (T2).
-- **Deferred to v0.8+ roadmap (items 3 and 8-backhalf):** (a) `/env-nogo` deep consistency checks (CLAUDE.md Module Boundaries ↔ actual disk structure, plan.md In-Progress ↔ branch diff) — partial merit but CLAUDE.md-half is higher value than plan.md-diff-half (latter has high false-positive risk on mid-task branches); (b) `install.sh --rollback` — the existing `lib/snapshot.sh` engine already covers most config-file rollback needs, so self-rollback of `install.sh` itself is lower-priority.
+- **Deferred to v0.8+ roadmap (items 3 and 8-backhalf):** two items — migrated 2026-04-17 to the Backlog section below (see DV-1 `/env-nogo` deep consistency checks and DV-2 `install.sh --rollback`).
 - **Rejected (items 2, 4, 5, 7):** disposition recorded in the Rejected Approaches table below.
 
 **Next step:** User decides in the next session — v0.8 roadmap /plan (external-user validation milestone), further framework polish, or external work (Heddle dogfooding / commercialization / etc.).
@@ -969,6 +969,58 @@ v2.x  CEO 工作台      用户 = 老板，说需求看结果，不碰过程
 - [x] 去伪存真精简
 
 </details>
+
+### Backlog
+
+All deferred TODOs, framework rule-fix candidates, and open commitments live here. This is the **single source** of forward work for iSparto. Writing new backlog-type content into any other file — `docs/framework-feedback-*.md` (pattern retired 2026-04-17), memory entries, `docs/session-log.md` "next-session" prose, Wave-entry "Out of scope" paragraphs — is a workflow violation. Any new item surfaced in a session (PO audit rule gap, user-direction commitment, Wave-internal deferral) must land in one of the three tables below. Additions are per-session; no periodic audit of this list is required, but `/end-working`'s TODO-homing check guards against content landing elsewhere.
+
+#### Framework Rule Polish
+
+Open framework rule refinement candidates surfaced by Process Observer audits across 2026-04 sessions. Addressed rules (closed in-session by later Waves) are not listed here — see the original session-log entries for historical provenance. The 11 `docs/framework-feedback-*.md` dated files were retired 2026-04-17 (their open rules migrated to this table; their addressed rules were already closed in earlier Waves).
+
+| # | Gap | Fix target | Priority | Origin |
+|---|-----|------------|----------|--------|
+| FR-1 | Mode Selection Checkpoint declaration exists only in session dialogue, not as a durable audit-trail artifact | PR body template + CLAUDE.md Mode Selection Checkpoint documentation | high | feedback-0405 F1 |
+| FR-2 | PR test plan cannot distinguish whether Process Observer ran as independent sub-agent or Lead self-assessed — blocks audit verification of sub-agent independence | `commands/end-working.md` Step 4 + PR body template | high | feedback-0405 F2 |
+| FR-3 | CLAUDE.md does not clarify whether Doc Engineer should trigger for ad-hoc bug-fix sessions that complete no Wave | CLAUDE.md Development Rules (Doc Engineer trigger condition) | low-to-medium | feedback-0405b |
+| FR-4 | CLAUDE.md rule does not specify what to do when a fix doesn't correspond to any plan.md entry | CLAUDE.md Development Rules (plan.md update exception) | low-to-medium | feedback-0405b |
+| FR-5 | `scripts/language-check.sh` detects CJK violations but Principle 1 detector misses some literal English user-facing strings in Tier 1 files (heuristic has false-negative edge cases) | `scripts/language-check.sh` — second-pass refinement for residual quoted-English cases in Report/Inform/Output contexts | medium-to-high | feedback-0407 Sug3 |
+| FR-6 | CLAUDE.md four-tier language architecture does not clarify whether forward-looking sections of `docs/plan.md` should follow Tier 2 (English-only) or Tier 4 (frozen mixed-language) — partially addressed inline in 2026-04-17 Tier-4 annotation, but a direct one-liner in the convention would close the gap fully | CLAUDE.md Documentation Language Convention Tier 4 section | low | feedback-0407c |
+| FR-7 | CLAUDE.md enforces strict per-task plan.md updates but practice has settled on bulk T10/Wave-close updates — decision needed to align rule with practice (relax rule, or add mechanical hook to enforce per-task) | CLAUDE.md Development Rules plan.md update cadence | medium | feedback-0408 Rule 2 |
+| FR-8 | CLAUDE.md self-referential boundary clause lists framework directories but should enumerate root-level Tier 1 files explicitly (CLAUDE.md, bootstrap.sh, install.sh, isparto.sh) — partially addressed 2026-04-17; confirm language precision complete | CLAUDE.md "This project is the framework itself" clause | low | feedback-0408-b Rule 1 |
+| FR-9 | No emergency/hotfix exception path documented for Doc Engineer audit — v0.7.1 BSD-sed hotfix skipped audit under an assumed (nonexistent) exception | CLAUDE.md Solo/Agent Team workflow step 4 + `docs/workflow.md` Hotfix Workflow — add emergency exception with explicit criteria (≤3 changed files, Tier 1 shell scripts + CHANGELOG, explicit user emergency context) | medium | feedback-0408-b Rule 2 |
+| FR-10 | `docs/workflow.md` Hotfix Workflow section omits Doc Engineer audit requirement, making it appear optional to a first-time reader | `docs/workflow.md` Hotfix Workflow — add cross-reference to Solo/Agent Team step 4 audit requirement (and to FR-9's exception once added) | low | feedback-0408-b Rule 3 |
+| FR-11 | CLAUDE.md Branch Protocol forbids commits to main but does not explicitly forbid Edit/Write tool invocations on main before branch creation | CLAUDE.md Branch Protocol — add explicit language and name the recovery path (git checkout -b before committing) | low | feedback-0409 Rule 1 |
+| FR-12 | `agents/process-observer-audit.md` A-series branch checks do not explicitly audit Edit/Write tool invocations on main — relies on Lead self-report | `agents/process-observer-audit.md` A3 — add check distinguishing "commit on main" (strong violation) from "Edit/Write invoked on main before branch creation" (weak but still violation) | low | feedback-0409 Rule 2 |
+| FR-13 | `gh` account alignment snapshot at `/start-working` Step 6 becomes stale if PR creation happens mid-session outside `/end-working`, allowing account drift | CLAUDE.md Solo/Agent Team workflow step 6 — add inline gh alignment guard before mid-session `gh pr create` (mirror of `/end-working` Step 8 logic) | medium | feedback-0409-b |
+| FR-14 | Wave-level batch-review safety-net sentence in `docs/workflow.md` reads unconditional but Implementation Protocol exception for self-referential edits exists at clause level, creating audit confusion | `docs/workflow.md` Wave-level safety-net — add parenthetical carve-out for self-referential boundary | medium | feedback-0409-c F1 |
+| FR-15 | `agents/process-observer-audit.md` A3 detection guidance assumes reflog alone verifies branch-checkout ordering, but pre-commit verification requires a two-source check (reflog + session context) | `agents/process-observer-audit.md` A3 row detection sentence — replace with two-regime version | medium-low | feedback-0409-c F2 |
+| FR-16 | CLAUDE.md Branch Protocol cleanup step does not specify local-vs-remote deletion ordering; manual `git push origin --delete` from main gets intercepted by hook | CLAUDE.md Branch Protocol step 6 — add one sentence on remote deletion ordering | low | feedback-0409-d F1 |
+| FR-17 | Doc Engineer ad-hoc fix exception and emergency hotfix exception do not cover automated `release/` branch commits — strict reading would require audit for every release | CLAUDE.md Solo/Agent Team workflow step 4 — add third sub-bullet for automated release exception; mirror in CLAUDE-TEMPLATE.md, `docs/workflow.md` Hotfix section, and `agents/process-observer-audit.md` C1 check | medium-low | feedback-0409-d F2 |
+| FR-18 | BLOCKING sentinel and rationale lack an explicit "same edit" write-together rule — pre-commit interim state (rationale present, sentinel not yet appended) misclassified as WARN in PO audit | `commands/end-working.md` Step 2 BLOCKING decision — add atomic-write requirement | medium | feedback-0417 Rule 3 |
+| FR-19 | Independent Reviewer skip at Wave boundary lacks explicit exit criteria; 6-Wave precedent of skipping for self-referential polish Waves is not reflected in the command spec | `commands/end-working.md` Step 3 — add three-condition carve-out for IR skip (all self-referential files, no new product-behavior surface, DE+PO audits complete in same session) | low-to-medium | feedback-0417 Rule 4 |
+| FR-20 | BLOCKING marker boundary acknowledgement path undefined for the case where CLAUDE.md was modified mid-session and surfaced to Lead via system-reminder injection | `commands/start-working.md` Step 0 — add sentence documenting the non-standard acknowledgement path | low | feedback-0417 Rule 5 |
+| FR-21 | `/end-working` Step 4 Notes-section authoring guidance does not require mechanical computation of aggregate Wave count via `git log` before writing prose (parallels FR-7's commit-count verification) | `commands/end-working.md` Step 4 Notes guidance — add sub-bullet requiring mechanical Wave-count verification | low | feedback-0417 Rule 6 |
+
+#### Deferred to v0.8+
+
+Items surfaced in earlier Waves with partial merit but deferred pending external-user feedback.
+
+| # | Item | Notes |
+|---|------|-------|
+| DV-1 | `/env-nogo` deep consistency checks (CLAUDE.md Module Boundaries ↔ actual disk structure, plan.md In-Progress ↔ branch diff) | Partial merit — CLAUDE.md-half higher value than plan.md-diff-half (latter has high false-positive risk on mid-task branches). Source: v0.7.8 Polish Wave Out of scope. |
+| DV-2 | `install.sh --rollback` | Existing `lib/snapshot.sh` engine covers most config-file rollback needs, so self-rollback of `install.sh` is lower-priority. Source: v0.7.8 Polish Wave Out of scope. |
+
+#### External Direction
+
+Items tracking iSparto's external commitments (dogfooding projects, open-source launch prep). Migrated from `memory/` on 2026-04-17.
+
+| # | Item | Notes |
+|---|------|-------|
+| ED-1 | Heddle dogfooding — 3rd dogfooding scenario | Co-founded with Adam; generative UI runtime; will use `/init-project` from scratch. User-direction gate — iSparto framework side has no blocker. |
+| ED-2 | meic dogfooding — 4th dogfooding scenario | User-direction gate. |
+| ED-3 | Real-project benchmark + screenshots in README | Open-source launch prep: concrete project scale, Wave count, Codex impact numbers, actual tmux screenshots. Source: memory `project_opensource_todos.md`. |
+| ED-4 | CONTRIBUTING.md expansion (verify state first) | Open-source launch prep carry-over from memory; `CONTRIBUTING.md` already exists per completed work — this item may be stale. Verify current state vs memory before acting. Source: memory `project_opensource_todos.md`. |
 
 ### Rejected Approaches
 

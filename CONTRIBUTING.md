@@ -82,7 +82,7 @@ iSparto maintains a four-tier language architecture — contributors must unders
 | Tier 1 | System Prompt Layer (AI instructions) | English only | `CLAUDE.md`, `CLAUDE-TEMPLATE.md`, `commands/*.md`, `agents/*.md`, `templates/*.md`, `hooks/**`, `scripts/*.sh`, `lib/*.sh`, `install.sh`, `bootstrap.sh` |
 | Tier 2 | Reference Documentation | English only | All `docs/*.md` files (except Tier 4 historical artifacts and the `docs/zh/` directory) |
 | Tier 3 | User-Facing Entry | Bilingual | `README.md`, `README.zh-CN.md`, `docs/zh/quick-start.md`, `CONTRIBUTING.md` |
-| Tier 4 | Historical Artifacts | Frozen (not retroactively edited) | `docs/session-log.md`, `docs/framework-feedback-*.md`, historical entries in `docs/plan.md` and `CHANGELOG.md` |
+| Tier 4 | Historical Artifacts | Frozen (not retroactively edited) | `docs/session-log.md`, historical entries in `docs/plan.md` and `CHANGELOG.md` |
 
 **Key rules:**
 
