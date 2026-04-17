@@ -652,6 +652,55 @@ Source plan: `~/.claude/plans/lovely-munching-hopper.md` (v2.4, approved 2026-04
 **Next step:** Wave B of the same plan — `docs/` layer dedup across `concepts.md` / `roles.md` / `workflow.md` / `configuration.md` / `user-guide.md` / `design-decisions.md`. Separate session, separate branch (`feat/wave-b-docs-dedup`), separate PR per plan v2.4. Pointer standard and TL;DR ≤ 30 字 hard constraints already fixed in the source plan.
 
 🚨 BLOCKING: Next Wave requires NEW SESSION
+> ✅ Session boundary acknowledged 2026-04-17 by /start-working
+
+### Wave B — docs 层 dedup (2026-04-17) — Complete
+
+Branch: `feat/wave-b-docs-dedup`. Mode: Solo + Lead direct edit (all target files are Tier 2 reference documentation under the self-referential boundary; no code files, no Developer/Codex calls).
+
+Source plan: `~/.claude/plans/lovely-munching-hopper.md` (v2.4, approved 2026-04-17). Wave B is the second of two Waves in that plan; Wave A (concept decoupling) completed earlier the same day.
+
+**Goal:** Execute Wave B — cross-file rule dedup across `docs/concepts.md` / `docs/roles.md` / `docs/workflow.md` / `docs/configuration.md` / `docs/user-guide.md` / `docs/design-decisions.md`. Every rule keeps one authoritative location; other locations replaced with standardized `TL;DR + pointer` blocks per plan v2.4's four hard constraints (TL;DR ≤ 30 字, no specific values/paths in TL;DR, anchor must resolve to actual `##`/`###` heading, markdown-link syntax `See [path](path) §anchor`).
+
+**Task list:**
+
+- [x] **B1 — Wave Parallelism rule consolidation.** Authority: `docs/concepts.md §Wave Parallelism` (renamed from "The Most Critical Concept: Decoupling" so the anchor is a single-concept heading; "the framework's most critical concept" framing preserved in the opening sentence). `docs/roles.md` Team Lead system prompt: first "First assess decoupling..." bullet replaced with `**Wave Parallelism**: Wave-level parallelism requires file ownership plus interface contracts. See [concepts.md](concepts.md) §Wave Parallelism for the full rule.`; the four remaining operational bullets (file-ownership assignment / interface-contract timing / shared-file sequencing / context-capacity estimate) kept verbatim because they are actions the Lead must take, not restatements of the concept. `docs/workflow.md`: new pointer block added at the top of `## Collaboration Mode Selection` (the pre-existing "Decomposable | Sufficient volume" table kept intact — it is mode-selection criteria, not a Wave Parallelism restatement). Honest note: workflow.md has no paragraph-sized Wave Parallelism restatement to replace — the plan's "相应段落 → pointer" assumption under-fits the file's actual structure, so B1's workflow.md edit is a supplementary pointer (+2 lines) rather than a replacement.
+- [x] **B2 — Developer prompt template pointer consolidation.** Authority: `docs/roles.md §Developer (Codex MCP Call)` (the plan's `§Developer Prompt Templates` shorthand — actual heading kept as-is; templates live inside the Developer role's system-prompt code block, no sub-heading refactor warranted). `docs/workflow.md §Developer (Codex) Integration` pre-existing blockquote pointer converted to plan-standard format: `**Developer Prompt Templates**: Lead assembles Developer prompts with plan anchors and file ownership scope. See [roles.md](roles.md) §Developer (Codex MCP Call) for the full templates.` Scenario → timing table (Architecture pre-review / Implementation / QA) kept — it is scenario-timing mapping unique to workflow.md, not a prompt-template restatement.
+- [x] **B3 — Model Assignment table pointer.** Authority: `docs/configuration.md §Agent Model Configuration` (the plan's `§Model Assignment` shorthand). `docs/roles.md §Developer (Codex MCP Call)` — four model-related bullets consolidated to three: one `**Model Assignment**: Each role uses a designated model with effort level. See [configuration.md](configuration.md) §Agent Model Configuration for the full table.` (replaces the two redundant "see config.md table" pointers), plus the two unique caveats kept inline (review-tool lacks reasoningEffort, Fast mode unavailable via MCP). `roles.md` line 32's architecture-overview pointer left unchanged — it is already a one-liner pointer, not a restatement block.
+- [x] **B4 — User Preference Interface differentiated handling.** Authority (how): `CLAUDE.md §User Preference Interface` preserved unchanged. `docs/user-guide.md` "Your Preferences and the Agent Team" section — three-bullet restatement (habits respected / workflow rules win / edit CLAUDE.md to change workflow) replaced with `**User Preference Interface**: Three response levels — immediate, discuss-first, record-only. See [CLAUDE.md](../CLAUDE.md) §User Preference Interface for the full rule.` One user-friendly intro sentence kept for tier-2 reader context. `docs/design-decisions.md` row 34 — **pre-check result: skip, do not modify.** The row is a decision-record table entry (Decision column = what was decided: territory-based boundary + three-level model; Rationale column = why: memory rules may silently contradict workflow rules without explicit boundaries). It is already a decision statement (why this exists), not a CLAUDE.md how-it-works restatement — per plan v2.4's B4 pre-check rule, skip.
+
+**Acceptance script (3 Lead-direct bash commands — eligible under the trivial-CLI carve-out from the Solo lifecycle step 3):**
+
+| # | Command | Expected | Actual |
+|---|---------|----------|--------|
+| A1 | `bash scripts/language-check.sh && bash scripts/language-check.sh --self-test` | both exit 0 | exit 0 / exit 0 — PASS |
+| A2 | `./install.sh --dry-run` | exit 0, all commands + templates up to date | exit 0 — PASS |
+| A3 | `grep -n "See \[.*\](.*\.md) §" docs/roles.md docs/workflow.md docs/user-guide.md \| wc -l` (all B1-B4 pointers in plan format) + anchor existence greps for concepts.md §Wave Parallelism / configuration.md §Agent Model Configuration / roles.md §Developer (Codex MCP Call) / CLAUDE.md §User Preference Interface | 5 pointers + 4 anchors = 1 each | 5 pointers / each anchor count = 1 — PASS |
+
+3 commands, all [code], all exit-code determinate, no build, no runtime, no output parsing → eligible under the trivial-CLI carve-out.
+
+**Files modified (5):**
+- `docs/concepts.md` (B1 — heading rename + opening-sentence adjustment; content preserved verbatim)
+- `docs/roles.md` (B1 — Team Lead decoupling bullet → pointer; B3 — Model Assignment pointer consolidation)
+- `docs/workflow.md` (B1 — Wave Parallelism supplementary pointer; B2 — Developer Prompt Templates pointer standardization)
+- `docs/user-guide.md` (B4 — User Preference Interface restatement → pointer)
+- `docs/plan.md` (this entry + session-boundary acknowledgement from /start-working Step 0)
+
+**Mode Selection Checkpoint.** Grouping: 5 files across Framework Docs module only. Decomposable? B1/B2/B3/B4 independent of each other (each targets different heading/section). File count × workload per file is modest (each edit ≤ 10 lines). Teammate coordination overhead would exceed serial cost — 5 small targeted edits run faster serially than with Teammate spawn + coordination. Decision: **Solo + Lead direct edit**. Same precedent chain as Wave A.
+
+**Why Lead direct edit:** All target files are Tier 2 reference documentation under the framework self-referential boundary (CLAUDE.md Development Rules). No code files, no Developer/Codex calls. Precedents: Wave A, IR Token Cost Documentation Wave, v0.7.5 README Restraint Wave, v0.7.4 Information Layering Policy Wave.
+
+**Commit count verification:** 1 non-merge commit on the Wave B branch (`git log --oneline --no-merges cdbe08a..HEAD | wc -l` = 1). Base `cdbe08a` is the Wave A merge commit (PR #204).
+
+**Why no Independent Reviewer at Wave boundary:** Same precedent chain as Wave A — framework-self-referential refactor preserving content verbatim at the authoritative sources (concepts.md / roles.md / configuration.md / CLAUDE.md §User Preference Interface all untouched in substance; only pointer locations standardized). No new product behavior, no architecture change, no new rules. Doc Engineer audit + Process Observer audit sufficient.
+
+**Why no BLOCKING marker for next session:** Wave B modified only Tier 2 docs (`docs/concepts.md` / `docs/roles.md` / `docs/workflow.md` / `docs/user-guide.md`). Tier 2 files are not cached into Claude Code's per-session system prompt — they are loaded on-demand by `/start-working` Step 2 / `/plan` / Lead's explicit Read calls. No cross-session staleness risk. Next session may begin without session-boundary barrier.
+
+**Honest note on actual vs expected line reduction.** Plan v2.4 expected docs/ cross-file dedup of 100-150 lines. Actual Wave B reduction: docs/roles.md -1 line (B3 bullet consolidation), docs/user-guide.md -4 lines (B4 restatement removed), docs/workflow.md +4 lines (B1 + B2 added standardized pointer blocks where pre-existing pointer was more compact), docs/concepts.md ±0 (heading rename only) — net ≈ -1 line. The plan author's estimate over-fit the assumed volume of restatement; in reality, most cross-file references were already compact pointer-style sentences, and standardization to the plan's strict markdown-link + §anchor format added roughly as many characters as pure dedup removed. Value delivered is pointer-standardization discipline (every cross-file rule reference now uses the same `**Rule**: TL;DR. See [path](path) §anchor for the full rule.` shape) and anchor traceability (`grep "See \[.*\](.*\.md) §"` now enumerates every standardized pointer mechanically), not raw line count.
+
+**Follow-up carry-over for next /plan:** BLOCKING marker rule is currently coarse — it fires on any Tier 1 modification regardless of whether the next Wave's execution semantically depends on the specific change. A refinement candidate: only emit BLOCKING when the Tier 1 change alters behavior that the next Wave's Lead would read from the stale session-start cache. Discussed conversationally during this Wave B close-out; not planned yet. Record here as a next-/plan input; framework refinement (would modify `commands/start-working.md` and `commands/end-working.md`, both Tier 1) lands in a separate session.
+
+**Next step:** Plan v2.4 two-Wave sprint complete. No follow-on Wave from this plan. Open carry-over items: (1) BLOCKING rule refinement (above), (2) Wave C infrastructure hardening milestone (unchanged — still independent milestone, v0.8-launch gate per Wave A close-out), (3) v0.8 roadmap planning (deferred to its own /plan session).
 
 ### 技术生态追踪（暂不执行）
 

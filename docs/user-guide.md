@@ -51,10 +51,6 @@ iSparto runs on fixed-price subscriptions — no invocation increases your bill.
 
 ## Your Preferences and the Agent Team (User Preference Interface)
 
-Your personal preferences (communication language, output style, interaction pace, etc.) are stored in Claude Code's auto-memory and **respected by the agent team automatically**. You don't need to configure or manage them — they evolve naturally through your conversations.
+Your personal preferences are stored in Claude Code's auto-memory and respected by the agent team automatically — no manual configuration needed.
 
-Three things to know:
-
-1. **Your habits are respected** — if you prefer concise responses, discussions before execution, or a specific language, the team adapts
-2. **Workflow rules always win** — if your preference conflicts with a workflow rule (e.g., "skip Codex review"), the team follows the workflow and explains why
-3. **To change a workflow rule, edit CLAUDE.md** — the team won't store workflow overrides in memory; CLAUDE.md is the single source of truth for how the team works
+**User Preference Interface**: Three response levels — immediate, discuss-first, record-only. See [CLAUDE.md](../CLAUDE.md) §User Preference Interface for the full rule.
