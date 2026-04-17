@@ -557,6 +557,7 @@ Branch: `feat/v075-readme-restraint`. Mode: Solo + Lead direct edit (Framework P
 🚨 BLOCKING: Next Wave requires NEW SESSION
 > ✅ Session boundary acknowledged 2026-04-09 by /start-working
 > ✅ Session boundary acknowledged 2026-04-10 by /start-working
+> ✅ Session boundary acknowledged 2026-04-17 by /start-working
 
 ### IR Token Cost Documentation Wave (2026-04-10) — Complete
 

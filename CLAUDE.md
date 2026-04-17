@@ -180,7 +180,7 @@ The agent team treats the user's memory as **read-only input** used to adapt com
 - Forbidden: workflow rules, process changes, any entry that duplicates existing CLAUDE.md content
 - Pre-write check: does this topic belong to CLAUDE.md's territory? If yes, do not write
 
-**Runtime output layering:** see `docs/design-principles/information-layering-policy.md`. Lead must classify every user-facing output as A-layer (decision interruption), B-layer (decision preparation at natural pause points: `/start-working` open, `/end-working` close, `/plan` proposal), or C-layer (silent archive) before emitting it. The Policy is enforced structurally via fixed B-layer briefing shapes in `commands/start-working.md`, `commands/end-working.md`, and `commands/plan.md`; Lead's runtime judgment narrows to word choice, not layer assignment. A-layer outputs are subject to Independent Reviewer A-layer Peer Review (see `agents/independent-reviewer.md` Mode 3).
+**Runtime output layering:** see `docs/design-principles/information-layering-policy.md`. Lead must classify every user-facing output as A-layer (decision interruption), B-layer (decision preparation at natural pause points: `/start-working` open, `/end-working` close, `/plan` proposal), or C-layer (silent archive) before emitting it. The Policy is enforced structurally via fixed B-layer briefing shapes in `commands/start-working.md`, `commands/end-working.md`, and `commands/plan.md`; Lead's runtime judgment narrows to word choice, not layer assignment. A-layer outputs are subject to Independent Reviewer A-layer Peer Review (see `docs/design-principles/a-layer-peer-review.md`).
 
 ## Common Commands
 - Install test: `./install.sh --dry-run`
