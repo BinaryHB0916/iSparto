@@ -743,9 +743,49 @@ Source: Promoted from Wave B close-out's "Follow-up carry-over for next /plan" a
 
 **Honest note on first-application subtlety (next-/plan input):** The gate's master question references "cached Tier 1 files," but not all Tier 1 files are actually cached in the per-session system prompt. CLAUDE.md is (via the `# claudeMd` injection); `commands/*.md` and `agents/*.md` are read at invocation time (via the Skill tool for slash commands, or the Agent tool for sub-agents), so cache-staleness risk for those files is near-zero. This Wave modified `commands/end-working.md` — strictly, the master question answers "no" (no cache divergence). But the decision-aid question (a) answers "yes" (behavior change). The gate defaulted to conservative (decision-aid wins → BLOCKING). A future refinement candidate: narrow the gate trigger to files actually cached in the session system prompt (CLAUDE.md, `.claude/settings.json`) rather than all of Tier 1. Recorded here as a next-/plan input; not executed in this session to keep the Wave scope clean.
 
-**Next step:** Wave C infrastructure hardening (v0.8 launch gate, independent milestone per Wave A close-out) OR v0.8 roadmap /plan — user decides in next session.
+**Next step:** Same-session follow-up Wave (Gate Narrowing) promoted directly below — user pushed back on the emitted BLOCKING marker ("非得开新会话不能直接搞吗？") and Lead confirmed the marker was a predicted false-positive; narrowing landed in the same session.
 
 🚨 BLOCKING: Next Wave requires NEW SESSION
+
+### Wave — BLOCKING Gate Narrowing (2026-04-17) — Complete
+
+Branch: `feat/blocking-gate-narrow`. Mode: Solo + Lead direct edit (same-session follow-up to the Semantic Gate Wave; all target files under the framework self-referential boundary).
+
+Source: Promoted from the Semantic Gate Wave's "Honest note on first-application subtlety" above. User challenged the BLOCKING marker in-session ("非得开新会话不能直接搞吗？"); Lead confirmed the marker was a gate false-positive (predicted and recorded earlier) and executed the narrowing refinement immediately rather than deferring to a later session.
+
+**Goal:** Narrow the gate trigger from "any Tier 1 file" to `CLAUDE.md` specifically — the only file Claude Code injects into its session-start system prompt via `# claudeMd`. Other Tier 1 files (`commands/*.md`, `agents/*.md`, `templates/*.md`, `CLAUDE-TEMPLATE.md`, `hooks/**`, `scripts/*.sh`, `lib/*.sh`, `bootstrap/install/isparto.sh`) are read on-demand at tool-invocation time, so stale-cache risk is structurally zero for them. Semantics of the gate (master question + 3-question decision aid + default-on-doubt + skip-rationale) unchanged for genuine cache-staleness cases.
+
+**Task list:**
+
+- [x] **T1 — Narrow the gate trigger in `commands/end-working.md` Step 2.** Trigger clause changed from "any Tier 1 file (per Documentation Language Convention in CLAUDE.md)" to "`CLAUDE.md` (the only file Claude Code injects into its session-start system prompt — see the `# claudeMd` context block that every session receives)". Master question reworded to reference CLAUDE.md specifically. The former "Tier 2/3/4-only" carve-out expanded into an "all other files" carve-out that enumerates the invocation-read Tier 1 files and names the mechanism each is read by (Skill tool / Agent tool / /init-project / runtime hook dispatch / external shell execution).
+- [x] **T2 — Record the refinement in `docs/design-decisions.md`.** New row appended (2026-04-17 refinement); the previous 2026-04-17 row marked "Superseded by the refinement below" to preserve decision history without overwriting the audit trail.
+
+**Acceptance script (3 Lead-direct bash commands — eligible under the trivial-CLI carve-out):**
+
+| # | Command | Expected | Actual |
+|---|---------|----------|--------|
+| A1 | `grep -c "session modified \`CLAUDE.md\`" commands/end-working.md` | 1 | 1 — PASS |
+| A2 | `grep -c "gate narrowed to CLAUDE.md" docs/design-decisions.md` | 1 | 1 — PASS |
+| A3 | `bash scripts/language-check.sh && bash scripts/language-check.sh --self-test` | both exit 0 | exit 0 / exit 0 — PASS |
+
+3 commands, all [code], all exit-code determinate → eligible under the trivial-CLI carve-out.
+
+**Files modified (3):**
+- `commands/end-working.md` (T1 — Step 2 sub-bullet narrowed; trigger + master question + carve-out rewritten)
+- `docs/design-decisions.md` (T2 — one new row appended + supersession note on previous same-day row)
+- `docs/plan.md` (this entry + /end-working close-out updates)
+
+**Mode Selection Checkpoint.** Grouping: 2 framework files (Tier 1 + Tier 2). Decomposable? T1 and T2 are independent but both tiny (~8 lines + 2 lines). Teammate coordination overhead (tmux spawn + prompt + wait + merge per Teammate) strictly exceeds serial Edit-tool cost for edits of this size. User's "Agent Team when possible" directive acknowledged; honest-assessment mode threshold not met for edits this small — Solo is faster. Decision: **Solo + Lead direct edit**. Same precedent chain as Wave A, Wave B, Semantic Gate Wave.
+
+**Why Lead direct edit:** Both target files are under the framework self-referential boundary (CLAUDE.md Development Rules). No code files, no Developer/Codex calls. Precedent chain: Wave A, Wave B, Semantic Gate Wave (same day).
+
+**Commit count verification:** 1 non-merge commit on the Wave branch (`git log --oneline --no-merges c60f81e..HEAD | wc -l` = 1). Base `c60f81e` is the Semantic Gate Wave merge commit (PR #206) — this Wave's divergence base from main.
+
+**Why no Independent Reviewer at Wave boundary:** Same precedent chain as Wave A/B/Semantic Gate Wave — framework-self-referential work, narrow scope (one sub-bullet edit + one design-decisions row). Doc Engineer + Process Observer /end-working audit sufficient.
+
+**Why no BLOCKING marker for next session (under the NEW narrowed gate this Wave just codified):** This Wave did NOT modify `CLAUDE.md` — modifications were to `commands/end-working.md` (invocation-read via Skill tool at every /end-working call) and `docs/design-decisions.md` (Tier 2, not cached). Narrowed gate's trigger not met → skip BLOCKING. Stale-cache risk is structurally zero; session continuity preserved. The gate narrowing demonstrates its own value on its own introducing Wave — the Semantic Gate Wave emitted BLOCKING unnecessarily (false-positive predicted + recorded); this Wave, under the narrowed rule, emits none (true-negative). Retrospective validation of the narrowing.
+
+**Next step:** User decides — Wave C infrastructure hardening (v0.8 launch gate, independent milestone per Wave A close-out), v0.8 roadmap /plan, or other work. No session boundary required; next /start-working may continue in the same Claude Code session at user's discretion.
 
 ### 技术生态追踪（暂不执行）
 
