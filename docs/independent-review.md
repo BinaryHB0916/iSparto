@@ -582,3 +582,20 @@ The v0.7.5 Wave delivers every T1-T7 item against the corrected plan, resolves b
 
 Lead may proceed to Doc Engineer audit, Process Observer post-session audit, PR creation, merge to main, and branch cleanup per the standard `/end-working` sequence. The `🚨 BLOCKING: Next Wave requires NEW SESSION` marker should be written immediately after the v0.7.5 plan.md Wave entry per the user's explicit R2 decision, as already specified in T8.
 
+---
+
+## Wave v0.8.0 Review — 2026-04-18
+
+**Scope:** Wave Boundary review for v0.8.0 (model-config upgrade + Independent Reviewer migration to OpenAI Codex CLI), focused on whether Tier 1/2 documentation now correctly and consistently describes the IR runtime and the cross-provider isolation property.
+
+| # | Product Intent | Implementation | Aligned? | Severity | Detail |
+|---|---------------|----------------|----------|----------|--------|
+| 1 | IR runs independently from Lead and no longer as a Claude sub-agent | `agents/independent-reviewer.md` frontmatter is migrated to `runtime: codex-cli` + `invocation: "codex exec"`; Tier 1 command templates (`commands/init-project.md`, `commands/plan.md`, `commands/end-working.md`) and Tier 2 workflow docs (`docs/workflow.md`, `docs/collaboration-mode.md`, `docs/roles.md`) now use the fixed `codex exec` spawn path | Y | — | Runtime migration is implemented end-to-end across the operational docs that define how IR is invoked. |
+| 2 | Independence is two-layer after this Wave: zero-context + cross-provider isolation | Tier 1/2 role descriptions in `CLAUDE.md`, `CLAUDE-TEMPLATE.md`, `agents/independent-reviewer.md`, `docs/collaboration-mode.md`, `docs/workflow.md`, `docs/concepts.md`, `docs/roles.md`, `docs/repo-structure.md`, and `docs/configuration.md` explicitly describe cross-provider isolation (OpenAI IR vs Claude Lead) layered on top of zero inherited context | Y | — | The new property is broadly and explicitly documented in primary role-definition surfaces. |
+| 3 | Tier 2 model/config reference should use the same runtime description as the rest of the framework | `docs/configuration.md` Token Budget table still says IR "Spawns as Teammate with zero inherited context" | N | MAJOR | This is stale pre-migration wording and conflicts with the new Codex CLI runtime definition used elsewhere. |
+| 4 | Design-decision log should not present conflicting current-state IR runtime labels | `docs/design-decisions.md` row 66 says "Independent Reviewer role \| Teammate (tmux) rather than sub-agent", while row 70 defines v0.8.0 as Codex CLI runtime | N | MINOR | The rationale is still valid (isolation vs sub-agent inheritance), but the wording is now ambiguous/conflicting. Mark row 66 as superseded or reword to runtime-agnostic phrasing. |
+| 5 | v0.8.0 claim that old model rows were replaced should match implementation | `CHANGELOG.md` says old model rows were superseded; `docs/design-decisions.md` does replace old IR/Developer model rows with v0.8.0 rows | Y | — | The model-row replacement itself is correctly applied; residual drift is limited to non-model wording (finding #4). |
+
+## Recommendation
+
+**PROCEED** with two pre-merge documentation fixes: (1) update `docs/configuration.md` Token Budget IR note to Codex CLI runtime wording, and (2) resolve the row-66 ambiguity in `docs/design-decisions.md` (superseded marker or neutral rewording). No CRITICAL misalignment found.

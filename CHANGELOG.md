@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-04-XX
+
+> Date stamp resolved at release time to the merge day's CST (Asia/Shanghai), aligning with the iSparto commit-count Rule 2 timing convention.
+
+### Changed
+
+- **Role-model upgrade — Claude roles to Opus 4.7, Developer to GPT-5.4** — Lead, Teammate, and Doc Engineer migrate from `claude-opus-4-6` to `claude-opus-4-7` (Lead at effort=max, Teammate/Doc Engineer at effort=xhigh). Developer's implementation tier moves from `gpt-5.3-codex` to `gpt-5.4` (effort=xhigh); QA/quick-fix tier remains `gpt-5.4-mini` (effort=high). Process Observer Audit stays on `claude-sonnet-4-6` per its checklist-verification scope; Process Observer Hooks stay shell-only. `~/.codex/config.toml` adds `service_tier = "fast"` so Fast Mode applies uniformly across MCP and `codex exec` invocations without per-call overrides. Acknowledged trade-off: Opus 4.7's literal-instruction-following profile differs from 4.6 — risk-mitigated via the 5-Wave observation tracker in `docs/plan.md`. `docs/configuration.md` Role-Model Mapping Table, Developer Tiered Model Strategy, Configuration Points, Switching Models, and the new Fast Mode Configuration subsection updated end-to-end.
+- **Independent Reviewer migrated from Claude Code sub-agent to OpenAI Codex CLI in tmux pane** — IR's frontmatter changes from `model: opus` to `runtime: codex-cli` + `invocation: "codex exec" in a tmux pane, NOT Claude Code sub-agent`. Spawn shape moves from the Task tool's `subagent_type` invocation to the fixed one-liner `codex exec "You are the Independent Reviewer. Read agents/independent-reviewer.md and execute. Write your findings to docs/independent-review.md."` (Wave Boundary mode appends `This is a Wave Boundary Review.`). Cross-provider training-distribution independence (GPT-5.4 vs Lead's Claude) is now layered on top of the existing zero-context-inheritance property — two structural blind-review properties replace one. Spawn references updated across `commands/end-working.md`, `commands/init-project.md`, `commands/plan.md`, `docs/workflow.md`, `docs/collaboration-mode.md`, `docs/concepts.md`, `docs/roles.md`. `docs/repo-structure.md` adds a Runtime note flagging IR as the only Codex-CLI-runtime agent in `agents/`; the only other agent (`process-observer-audit.md`) remains a Claude Code sub-agent.
+- **`docs/concepts.md` tmux teammate mode definition rewritten** — Teammate concept clarified as **context isolation, not concurrency workaround**: each Teammate runs its own tmux Claude Code session carrying full branch context (scoped codebase reading, Developer prompt assembly, output review), while Lead's main session stays pure governance. Codex MCP natively supports concurrent threadId-scoped sessions, so Teammates exist for the context-isolation property — not because parallelism requires them. Aligns with the IR migration's same context-isolation rationale.
+- **`docs/design-decisions.md` model rows superseded by v0.8.0 entries** — Three rows updated: Independent Reviewer model + runtime (added cross-provider rationale + Codex CLI migration path), Developer two-tier model (gpt-5.3-codex → gpt-5.4 with Fast Mode note), and a new IR migration risk-mitigation row documenting the per-role partial-revert protocol. Old rows that named gpt-5.3-codex as Developer default are replaced rather than appended-to so the file reflects current state.
+
+### Unchanged
+
+- 6-role + 1-hook architecture (Lead / Teammate / Developer / Doc Engineer / Process Observer Hooks + Audit / Independent Reviewer)
+- Solo + Codex vs Agent Team mode-selection logic (file ownership + workload thresholds in `docs/collaboration-mode.md` §Mode Selection)
+- All Developer prompt templates (Architecture pre-review / Implementation / QA smoke testing) — only the model field changes; prompt structure preserved
+- Mode Selection Checkpoint enforcement in `commands/start-working.md` and `commands/end-working.md`
+- Doc Engineer's 10-item audit checklist (item 9 `language-check.sh` + item 10 `policy-lint.sh` both unchanged)
+- Information Layering Policy (A/B/C-layer classification) and A-layer Peer Review trigger conditions
+
+### Migration Notes
+
+- **External pre-validation gates (run before adopting v0.8.0):** (1) confirm `mcp__codex-dev__codex` accepts `model: gpt-5.4` (ChatGPT Plus account); (2) verify `~/.codex/config.toml` contains `service_tier = "fast"` (or skip and accept the default tier — IR/Developer still work); (3) verify `codex exec "..."` in a tmux pane can read `agents/` and write `docs/`. If gate 3 fails, downgrade IR to v0.8.1 timing and stay on the v0.7.8 IR Claude sub-agent path for this Wave; per-role partial revert protocol is documented in `docs/design-decisions.md`.
+- **Avoiding default model downgrades:** Opus 4.7 may downgrade to Sonnet under default `claude` invocations. To pin Opus 4.7 across all sessions, launch with `claude --effort max` and explicitly disable adaptive thinking when starting a Lead session. Each `/start-working` should verify Lead's model context.
+- **Observation period:** First 5 Waves post-upgrade are observation period. Track per-Wave in `docs/plan.md` v0.8.0 升级观察期 Tracker — fields are DocEng over-strictness, Lead escalation anomalies, Teammate literal-instruction-following symptoms. ≥ 2 same-field anomalies trigger the partial-revert path (revert affected Claude roles only; preserve IR Codex CLI migration).
+
 ## [0.7.8] - 2026-04-17
 
 ### Added
