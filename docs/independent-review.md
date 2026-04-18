@@ -599,3 +599,20 @@ Lead may proceed to Doc Engineer audit, Process Observer post-session audit, PR 
 ## Recommendation
 
 **PROCEED** with two pre-merge documentation fixes: (1) update `docs/configuration.md` Token Budget IR note to Codex CLI runtime wording, and (2) resolve the row-66 ambiguity in `docs/design-decisions.md` (superseded marker or neutral rewording). No CRITICAL misalignment found.
+
+---
+
+## Wave 0 Review — 2026-04-18
+
+**Scope:** Wave Boundary review for the v0.8.0 observation-tracker correction in `docs/plan.md` F8b only (Wave 0 row relabeling + scope-caveat note), with source verification against `/tmp/de-audit-observation-wave0-47.md`.
+
+| # | Product Intent | Implementation | Aligned? | Severity | Detail |
+|---|---------------|----------------|----------|----------|--------|
+| 1 | Wave 0 tracker row must describe what was actually observed, not the originally planned baseline | The first row is relabeled to `Wave 0 (v0.8.0 升级 itself)` and explicitly describes Opus 4.7 data from the v0.8.0 working tree | Y | — | This corrects the prior ambiguity where the row position implied a pre-upgrade baseline. |
+| 2 | Tracker notes must disclose scope limitations that affect interpretation of trend data | F8b now adds a caveat paragraph stating the intended v0.7.8 baseline was not captured, explains why, states the impact (no pre/post comparison, only Wave 0→1/2/3/4 internal comparison), and records the no-backfill decision | Y | — | The caveat is explicit enough for later reviewers to avoid over-claiming model-regression conclusions. |
+| 3 | Row metrics should be traceable to the underlying audit artifact | The row references `/tmp/de-audit-observation-wave0-47.md` and the reported values (`10/10 PASS`, `8 实质 PASS + 2 N/A`, scope clarification behavior) match the audit content | Y | — | The row now reflects the correct dataset characteristics for this Wave. |
+| 4 | Observation evidence should remain reproducible across later Waves/sessions | Evidence link points only to `/tmp/de-audit-observation-wave0-47.md` | N | MINOR | `/tmp` is host/session-ephemeral; if the file is cleaned, later Wave reviewers lose the raw evidence chain. Consider copying this audit into a repo-tracked artifact path. |
+
+## Recommendation
+
+**PROCEED.** The Wave 0 labeling + caveat correction is product-aligned and resolves the interpretation risk in F8b. One non-blocking follow-up remains: persist the Wave 0 audit artifact outside `/tmp` for long-horizon reproducibility.

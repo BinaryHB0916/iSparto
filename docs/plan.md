@@ -920,7 +920,8 @@ Branch: `feat/v0.8.0-model-upgrade`. Mode: Solo + Lead direct edit (all target f
 - [x] Wave Boundary IR via `codex exec` (新路径自验证) — PROCEED, MAJOR + MINOR findings resolved in-session (configuration.md token-budget table + design-decisions.md row 66 superseded marker)
 - [x] Process Observer audit — 14/14 PASS
 - [x] **Change G — tmux hard-dependency surfaced in pre-validation (5 files):** install.sh tmux pre-flight check, commands/migrate.md mirrored check, docs/user-guide.md Prerequisites section (new), CLAUDE.md Platform line, CHANGELOG.md Migration Notes breaking-dependency entry
-- [ ] PR + merge (in progress)
+- [x] PR + merge (PR #215 merged 2026-04-18, merge commit `f378219`; 2 non-merge commits `46334bc` core + `d976981` change G)
+- [x] **Polish follow-up — Wave 0 observation data populated + IR MINOR resolved (separate PR on `docs/observation-tracker-wave0`):** F8b tracker first row relabeled to "Wave 0" with actual data; meta paragraph updated to document the v0.7.8 baseline-loss caveat (independent observation session conflated with main Wave repo); audit artifact persisted from `/tmp` to `docs/observation-period/wave0-de-audit.md` (`scripts/language-check.sh` `TIER2_EXCLUDED_DIRS` extended for the new directory) per Wave Boundary IR MINOR finding
 
 **Mode Selection Checkpoint.** Grouping: initial 14 framework files (CLAUDE.md, CLAUDE-TEMPLATE.md, agents/independent-reviewer.md, commands/{end-working,init-project,plan}.md, docs/{configuration,collaboration-mode,concepts,roles,workflow,repo-structure,design-decisions,plan}.md, CHANGELOG.md) + change G adds 4 more files (install.sh, commands/migrate.md, docs/user-guide.md — CLAUDE.md and CHANGELOG.md already in scope). Total ≈ 17 framework files in commit 1 + ~5 in commit 2. Decomposable? 文件之间存在 cross-references (IR spawn 引用 + 模型映射 + tmux dependency narrative), 顺序敏感. Volume? 都是 narrative + table + small bash check, 无 Tier 1 logic 改动. Decision: **Solo + Lead direct edit**. Precedent chain: Wave A/B/C, v0.7.8 Polish.
 
@@ -942,13 +943,13 @@ Branch: `feat/v0.8.0-model-upgrade`. Mode: Solo + Lead direct edit (all target f
 
 | Wave 名 | DocEng 是否过严 | Lead escalation 是否异常 | Teammate 字面化是否出现 | 备注 |
 |---------|----------------|--------------------------|------------------------|------|
-| v0.8.0 (本 Wave) | (待填) | (待填) | (待填) | (待填) |
+| Wave 0 (v0.8.0 升级 itself) | 否 — context-aware, 主动做 scope clarification (audit 用户问"v0.7.8 release 状态"时主动指出 working tree 在 v0.8.0 分支), 无机械套死 | N/A — 本审计为 DE solo run, 无 Lead escalation 触发 | N/A — 无 Teammate 参与 (Solo + Lead direct edit 全程) | DE audit 输出归档: `docs/observation-period/wave0-de-audit.md` (Opus 4.7 max, 10/10 PASS — 8 实质 PASS + 2 项目类型 N/A; 原 `/tmp` 路径已迁移至 repo-tracked 路径以解决 IR MINOR finding). Scope caveat 见下方说明段 |
 | (待填) | - | - | - | - |
 | (待填) | - | - | - | - |
 | (待填) | - | - | - | - |
 | (待填) | - | - | - | - |
 
-观察期 baseline：升级前已通过 Opus 4.6 时期的 session-log 历史条目作为对照（commit `9e4f82c` — 2026-04-17 TODO Consolidation close-out / commit `9d1ea53` — v0.7.8 release close-out 的 Doc Engineer 审计输出特征作为 4.6-era baseline reference）。本 Wave 升级后首次 DE 审计输出与该 baseline 对比，结果填入上表第一行。
+观察期 Wave 0 数据 (替代原计划 baseline): 原方案的"升级前 Opus 4.6 max DE 审计 baseline"在执行时因独立采集会话与主 Wave 共用 repo 串流, 实际采集到的是 Opus 4.7 max on v0.8.0 working tree 的数据 (归档于 `/tmp/de-audit-observation-wave0-47.md`, 2026-04-18 13:18 CST). 性质调整: 这是观察期 Wave 0 首行数据, 不是升级前 baseline. 后果: 观察期失去"升级前后对比"能力, 但保留"Wave 0 → Wave 1/2/3/4 内部对比"能力 — 4.7 在 iSparto structured prompt 环境下的退化趋势仍可机械观察. Wave 0 数据质量良好 (context-aware, 主动做 scope clarification, 无机械套死), 作为后续 Wave 的参照点适用. v0.7.8 baseline 缺失记入 Backlog 作为本观察期的已知 caveat, 不再补采 (补采 4.6 max 需要 downgrade Lead 模型 + 重新进入 v0.7.8 working tree 状态, 成本超过收益; 直接进入 Wave 1 收数据更高效).
 
 以下项目受外部生态演进驱动，iSparto 只追踪不行动，满足触发条件时再评估：
 

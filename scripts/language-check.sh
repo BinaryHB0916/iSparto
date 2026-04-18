@@ -128,6 +128,11 @@ TIER2_EXCLUDED_PREFIXES = ()
 # Tier 2 exclusions — directory prefixes (anything below is excluded)
 TIER2_EXCLUDED_DIRS = (
     'docs/zh/',
+    # Observation period audit artifacts (v0.8.0 5-Wave horizon).
+    # Each wave's DE audit output is preserved verbatim in the maintainer's
+    # working language as Tier 4 historical evidence — never modified
+    # retroactively. See docs/plan.md observation-period tracker section.
+    'docs/observation-period/',
 )
 
 
