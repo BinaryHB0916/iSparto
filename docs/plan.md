@@ -892,9 +892,9 @@ Source: Lead ran a verification pass against an 8-point external diagnosis of th
 
 **Next step:** User decides in the next session — v0.8 roadmap /plan (external-user validation milestone), further framework polish, or external work (Heddle dogfooding / commercialization / etc.).
 
-### v0.8.0 — 模型配置升级 + IR 异源化 (2026-04-18) — In Progress
+### v0.8.0 — 模型配置升级 + IR 异源化 (2026-04-18) — Merged-Not-Released
 
-Branch: `feat/v0.8.0-model-upgrade`. Mode: Solo + Lead direct edit (all target files under the framework self-referential boundary).
+Branch: `feat/v0.8.0-model-upgrade` (主 Wave) + `docs/observation-tracker-wave0` (polish 1) + `docs/v0.8.0-merged-not-released` (polish 2,本段). Mode: Solo + Lead direct edit (all target files under the framework self-referential boundary).
 
 **Goal.** 同步两件事：(a) iSparto 6 角色模型升级 — Lead/Teammate/Doc Engineer claude-opus-4-6 → claude-opus-4-7；Developer gpt-5.3-codex → gpt-5.4 (impl) + gpt-5.4-mini (QA, unchanged)；PO Audit 保持 Sonnet 4.6。(b) Independent Reviewer 架构迁移 — 从 Claude Code sub-agent (`Task(subagent_type=...)`) 迁移到 OpenAI Codex CLI in tmux pane (`codex exec`)，把 cross-provider training distribution independence 叠加在 zero context inheritance 之上。
 
@@ -932,6 +932,28 @@ Branch: `feat/v0.8.0-model-upgrade`. Mode: Solo + Lead direct edit (all target f
 **BLOCKING marker rationale for next session (under the narrowed gate codified in PR #207):** This Wave 修改了 `CLAUDE.md` (Module Boundaries 表的 IR 行) — 触发 BLOCKING 默认值. Decision aid: (a) Behavior change? Yes — IR 调用路径变化 (Task tool → codex exec). (b) New identifier? Yes — `runtime: codex-cli` frontmatter key. (c) Contract/interface change? Yes — IR spawn one-liner shape 改变. 三项 yes → **emit BLOCKING marker**.
 
 **Commit count verification (Rule 2 cadence):** Projected 2 non-merge commits on the Wave branch at `/end-working` time. Commit 1 (`46334bc`) ships the 17-file core upgrade. Commit 2 ships change G (5 files: install.sh, commands/migrate.md, docs/user-guide.md, CLAUDE.md, CHANGELOG.md) — surfaced after commit 1 was already pushed when the user noticed tmux was a hard dependency requiring documentation. Splitting was the cleanest path (no force-push / amend on a published commit). Re-verification command: `git log --oneline --no-merges bb5a983..HEAD | wc -l` — base `bb5a983` 是 v0.7.8 final merge commit (本 Wave divergence base from main); expected output: `2`.
+
+**Status: MERGED-NOT-RELEASED (since 2026-04-18)**
+
+本 Wave 的全部文件改动已 merge 到 main (PR #215 v0.8.0 核心 + change G; PR #216 Wave 0 polish), 但 v0.8.0 故意不进入 release 流程:
+
+- VERSION 文件保持 `0.7.8` (不 bump 到 `0.8.0`)
+- CHANGELOG `[0.8.0] - 2026-04-XX` 占位符不替换
+- 不创建 `v0.8.0` git tag
+- 不触发 GitHub Release
+- `scripts/release.sh` 不运行
+
+**Why merged-not-released:** 升级 scope 过大 (模型替换 + IR 架构迁移 + tmux hard-dep), 需要观察期内验证再发版, 降低用户被未充分验证升级波及的风险. main 分支上的代码是"事实上已就绪"的下一版本, 但 release 元数据 (tag / CHANGELOG date / VERSION bump) 等观察期通过后再统一刷新. 这是"merge ≠ release"的显式分离 — main 永远跟着最新代码走, release tag 跟着可信任度走.
+
+**Release gate (三条件, 全部满足后才跑 `/release patch`):**
+
+1. **5-Wave 观察期完成** — F8b tracker 第 1-5 行 (Wave 0 已填, Wave 1-4 待填) 全部记录, 且累计同字段异常 < 2 行. 如触发 ≥ 2 行同字段异常 (DocEng 过严 / Lead escalation 异常 / Teammate 字面化), 先按 docs/design-decisions.md per-role partial revert 路径处置, 处置完成后 reset 观察期重新起算 (Wave 0 数据保留作为历史参考, 但 Wave 1-4 行清空重计).
+2. **新 IR 路径稳定性证据** — Wave Boundary IR 在 Wave 1/2/3 至少 3 次成功执行 (`codex exec` in tmux 无 infrastructure 故障 — Codex CLI 升级、GPT-5.4 quota 撞限、tmux pane cross-context bug 等均算 infrastructure 故障). 任何一次 infrastructure 失败需要 root cause 分析后才能继续计数; 故障前的成功次数保留, 故障 Wave 不计入但也不清空已有计数.
+3. **观察期内无 emergency revert** — 5 Wave 期间未对任何角色应用 partial revert. 如发生 partial revert (例如 DocEng 回退 4.6 max), release version 必须反映实际 ship 的角色集合: 要么命名为 `v0.8.0-mixed` 显式标注混搭, 要么直接跳过 v0.8.0 tag 推迟到 v0.8.1 ship 完整 4.7 + IR 异源组合 (推荐后者, 避免 mixed 版本带来的 support 复杂度).
+
+**Release 触发 (三条件满足后):** 在新 session 跑 `/release patch` 触发 `scripts/release.sh` (自动 bump VERSION 0.7.8 → 0.8.0、替换 CHANGELOG date 占位符为 release 当日 CST 日期、创建 `v0.8.0` git tag、推 GitHub Release). 不要绕过 `/release` 手动 tag — release.sh 包含一致性检查不容易手动复刻.
+
+**Status 段维护规则:** Wave 1-4 完成后每次更新 F8b tracker 的同时 review 本段三条件; 全部满足时把本段标记从 `MERGED-NOT-RELEASED` 改为 `RELEASED — v0.8.0 (YYYY-MM-DD CST)` 并保留段落作为历史 (不删除); 触发 partial revert 时把本段标记改为 `MERGED-NOT-RELEASED — REVERT IN PROGRESS` 并新增子段说明 revert 范围 + 重置后的观察期起点.
 
 🚨 BLOCKING: Next Wave requires NEW SESSION
 
