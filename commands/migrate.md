@@ -6,6 +6,8 @@ Your job: scan the current project, report what exists and what's missing, propo
 
 **Dry-run mode:** If the user passes `--dry-run` (e.g., `/migrate --dry-run`), complete steps 1–2 (scan + propose plan) and then STOP. Do not ask for confirmation, do not execute anything. End by clearly informing the user (in user's language) that this was a dry-run and no changes were made. This lets the user safely preview the migration plan before committing to it.
 
+**Pre-flight environment check (required since v0.8.0):** Before step 1, verify tmux is installed via `command -v tmux`. If missing, halt the migration and inform the user (in user's language) that tmux is required since iSparto v0.8.0 — the Independent Reviewer is invoked via `codex exec` in a tmux pane. Suggest `brew install tmux` (macOS) and ask the user to re-run `/migrate` after installing. Do not proceed.
+
 1. Scan the current project:
    - Read CLAUDE.md (does it exist? what sections does it have?)
    - Read .claude/settings.json (does it exist? what settings are already configured?)

@@ -29,8 +29,8 @@ Your responsibility: Ensure all changes and decisions from this session are capt
 3. Wave Boundary Review (conditional):
    - Trigger: Step 2 marked the current Wave status as completed
    - If triggered:
-     a. Spawn Independent Reviewer as Teammate (tmux mode) with the following fixed prompt — do NOT add any context, framing, or explanation:
-        "You are the Independent Reviewer. Read agents/independent-reviewer.md and execute. This is a Wave Boundary Review."
+     a. Spawn Independent Reviewer in a tmux pane via `codex exec` with the following fixed one-liner — do NOT add any context, framing, or explanation:
+        `codex exec "You are the Independent Reviewer. Read agents/independent-reviewer.md and execute. Write your findings to docs/independent-review.md. This is a Wave Boundary Review."`
      b. Wait for the reviewer to complete and append findings to docs/independent-review.md
      c. If CRITICAL finding: **A-layer (Policy trigger type e — critical intercept).** Emit one A-layer interrupt using the standard wording rule: the Wave Boundary Review found CRITICAL issues, the Lead is NOT blocking the commit/push (code is already written and blocking would lose work), and the next session must resolve the CRITICAL findings before starting the next Wave. Add a next-session to-do entry naming the CRITICAL findings. The A-layer interrupt is emitted BEFORE the final B-layer closing briefing; the closing briefing then references the CRITICAL as the "what Codex caught" slot.
      d. If no CRITICAL findings (PROCEED): **C-layer.** Do not emit a passing-Independent-Review announcement — a passing review is the expected state and does not change any user decision. The Wave-completion fact still surfaces in the B-layer closing briefing's what-shipped-today sentence; the IR pass is implicit in the framework having reached the close-out.

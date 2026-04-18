@@ -892,12 +892,70 @@ Source: Lead ran a verification pass against an 8-point external diagnosis of th
 
 **Next step:** User decides in the next session — v0.8 roadmap /plan (external-user validation milestone), further framework polish, or external work (Heddle dogfooding / commercialization / etc.).
 
+### v0.8.0 — 模型配置升级 + IR 异源化 (2026-04-18) — In Progress
+
+Branch: `feat/v0.8.0-model-upgrade`. Mode: Solo + Lead direct edit (all target files under the framework self-referential boundary).
+
+**Goal.** 同步两件事：(a) iSparto 6 角色模型升级 — Lead/Teammate/Doc Engineer claude-opus-4-6 → claude-opus-4-7；Developer gpt-5.3-codex → gpt-5.4 (impl) + gpt-5.4-mini (QA, unchanged)；PO Audit 保持 Sonnet 4.6。(b) Independent Reviewer 架构迁移 — 从 Claude Code sub-agent (`Task(subagent_type=...)`) 迁移到 OpenAI Codex CLI in tmux pane (`codex exec`)，把 cross-provider training distribution independence 叠加在 zero context inheritance 之上。
+
+**Why bundle (a) + (b) into one Wave.** 两件事都是 framework-internal config + 叙事更新，没有结构性代码改动；分两个 Wave 会产生两次 DE/PO/IR audit 开销而无收益。Section 9 回滚粒度说明保证两类 failure mode 独立 revert，不会因 Claude 4.7 退化误伤 IR 迁移成果。
+
+**外部预验证 Gate (开工前已过):**
+- [x] 验证 1: GPT-5.4 通过 mcp__codex-dev__codex 可调
+- [x] 验证 2: Fast mode `service_tier = "fast"` 配置生效 (mechanical path b — `~/.codex/config.toml` 已含)
+- [x] 验证 3: `codex exec` 在 tmux pane 内可读 `agents/` + 写 `docs/`
+
+**Acceptance:**
+- [x] docs/configuration.md 改动 A–E 落地
+- [x] docs/collaboration-mode.md F2a + F2b 落地
+- [x] docs/concepts.md F3a + F3b 落地
+- [x] agents/independent-reviewer.md frontmatter 改 F4 (model: opus → runtime: codex-cli)
+- [x] docs/roles.md IR 章节改 F5
+- [x] commands/ + docs/workflow.md IR spawn 引用全量更新 (F6) + CLAUDE.md/CLAUDE-TEMPLATE.md 同步
+- [x] docs/repo-structure.md 加 IR runtime 说明 (F7)
+- [x] docs/plan.md 加观察期 tracker (本 entry 下方, F8b)
+- [x] docs/design-decisions.md superseded rows 替换为 v0.8.0 决策行
+- [x] CHANGELOG.md v0.8.0 entry
+- [x] Doc Engineer 10 项审计全过 (含 item 9 + item 10) — PASS, 1 expected WARNING (pre-commit `[ ]` flip)
+- [x] Wave Boundary IR via `codex exec` (新路径自验证) — PROCEED, MAJOR + MINOR findings resolved in-session (configuration.md token-budget table + design-decisions.md row 66 superseded marker)
+- [x] Process Observer audit — 14/14 PASS
+- [x] **Change G — tmux hard-dependency surfaced in pre-validation (5 files):** install.sh tmux pre-flight check, commands/migrate.md mirrored check, docs/user-guide.md Prerequisites section (new), CLAUDE.md Platform line, CHANGELOG.md Migration Notes breaking-dependency entry
+- [ ] PR + merge (in progress)
+
+**Mode Selection Checkpoint.** Grouping: initial 14 framework files (CLAUDE.md, CLAUDE-TEMPLATE.md, agents/independent-reviewer.md, commands/{end-working,init-project,plan}.md, docs/{configuration,collaboration-mode,concepts,roles,workflow,repo-structure,design-decisions,plan}.md, CHANGELOG.md) + change G adds 4 more files (install.sh, commands/migrate.md, docs/user-guide.md — CLAUDE.md and CHANGELOG.md already in scope). Total ≈ 17 framework files in commit 1 + ~5 in commit 2. Decomposable? 文件之间存在 cross-references (IR spawn 引用 + 模型映射 + tmux dependency narrative), 顺序敏感. Volume? 都是 narrative + table + small bash check, 无 Tier 1 logic 改动. Decision: **Solo + Lead direct edit**. Precedent chain: Wave A/B/C, v0.7.8 Polish.
+
+**Why Lead direct edit:** All target files under framework self-referential boundary (CLAUDE.md Development Rules). 无 Developer/Codex calls required.
+
+**Why Independent Reviewer at Wave boundary (despite framework-internal):** 本 Wave 改变了 IR 执行路径本身 (sub-agent → Codex CLI). Wave Boundary IR 必须真实跑一次确认新路径工作 — 这次 IR 的价值在 "验证迁移成功" 而非 "验证 alignment". 如外部验证 3 在 Wave 中失败, 本 Wave 降级为不含 IR 的 v0.8.0 (按 Backlog FR-19 三条件 carve-out 正当 skip), IR 部分推迟到 v0.8.1.
+
+**BLOCKING marker rationale for next session (under the narrowed gate codified in PR #207):** This Wave 修改了 `CLAUDE.md` (Module Boundaries 表的 IR 行) — 触发 BLOCKING 默认值. Decision aid: (a) Behavior change? Yes — IR 调用路径变化 (Task tool → codex exec). (b) New identifier? Yes — `runtime: codex-cli` frontmatter key. (c) Contract/interface change? Yes — IR spawn one-liner shape 改变. 三项 yes → **emit BLOCKING marker**.
+
+**Commit count verification (Rule 2 cadence):** Projected 2 non-merge commits on the Wave branch at `/end-working` time. Commit 1 (`46334bc`) ships the 17-file core upgrade. Commit 2 ships change G (5 files: install.sh, commands/migrate.md, docs/user-guide.md, CLAUDE.md, CHANGELOG.md) — surfaced after commit 1 was already pushed when the user noticed tmux was a hard dependency requiring documentation. Splitting was the cleanest path (no force-push / amend on a published commit). Re-verification command: `git log --oneline --no-merges bb5a983..HEAD | wc -l` — base `bb5a983` 是 v0.7.8 final merge commit (本 Wave divergence base from main); expected output: `2`.
+
+🚨 BLOCKING: Next Wave requires NEW SESSION
+
+> Rationale (per the narrowed gate codified in PR #207): This Wave modified `CLAUDE.md` (Module Boundaries IR row). Decision aid all three "yes": (a) Behavior change — IR invocation runtime moved from Claude Code Task tool to OpenAI Codex CLI; (b) New identifier — `runtime: codex-cli` frontmatter key; (c) Contract/interface change — IR spawn one-liner shape changed (`codex exec "..."` instead of `Task(subagent_type=...)`). Marker emitted to force fresh session for Lead's `# claudeMd` cache to pick up the new IR row + the model upgrade context.
+
+### v0.8.0 升级观察期 Tracker
+
+升级后前 5 个 Wave 为观察期。每完成一个 Wave，在下表添加一行，mechanical 收集而非凭印象。如累计出现 ≥ 2 行同字段标记 "异常"，触发"风险与回滚"中风险 3 处置路径（轻度/中度/重度退化分级）。
+
+| Wave 名 | DocEng 是否过严 | Lead escalation 是否异常 | Teammate 字面化是否出现 | 备注 |
+|---------|----------------|--------------------------|------------------------|------|
+| v0.8.0 (本 Wave) | (待填) | (待填) | (待填) | (待填) |
+| (待填) | - | - | - | - |
+| (待填) | - | - | - | - |
+| (待填) | - | - | - | - |
+| (待填) | - | - | - | - |
+
+观察期 baseline：升级前已通过 Opus 4.6 时期的 session-log 历史条目作为对照（commit `9e4f82c` — 2026-04-17 TODO Consolidation close-out / commit `9d1ea53` — v0.7.8 release close-out 的 Doc Engineer 审计输出特征作为 4.6-era baseline reference）。本 Wave 升级后首次 DE 审计输出与该 baseline 对比，结果填入上表第一行。
+
 以下项目受外部生态演进驱动，iSparto 只追踪不行动，满足触发条件时再评估：
 
 | 追踪项 | 触发条件 | 影响评估 | 预估时间 |
 |--------|---------|---------|---------|
-| GPT-5.3-codex 退役 | OpenAI 官方宣布退役日期（参考 5.2 Thinking 2026-06-05 退役先例） | Developer 被动升级 5.4，需验证所有 prompt template 兼容性 + 重新评估 Tier-模型映射 | 2026 Q3-Q4 |
-| gpt-5.3-codex-spark 支持 | OpenAI 宣布 spark 在 ChatGPT Plus 上可用，或 API key 认证方式可绕过限制 | 引入第三档 Developer 模型（快速修复专用），从双档升级为三档 | 取决于 OpenAI |
+| GPT-5.4 退役 / GPT-6 发布 | OpenAI 官方宣布 5.4 退役日期 OR 发布下一代 Codex 模型 | Developer 被动升级新一代，需验证所有 prompt template 兼容性 + 重新评估 Tier-模型映射；本次 v0.8.0 已主动升级 5.3-codex → 5.4 | 取决于 OpenAI |
+| Fast Mode 在 Codex CLI 进一步演进 | OpenAI Codex 推出 per-call service tier override（当前是 config-level） | IR / Developer 可按场景细化 Fast Mode 触发条件，例如 IR 默认 standard 而 Developer Tier 1 默认 fast | 取决于 OpenAI |
 | codex-plugin-cc 集成 | v0.8 阶段，codex-plugin-cc 稳定且 MCP/Plugin 职责边界验证完毕 | MCP 核心实现路径 + Plugin 补充审查/委派 | v0.8 |
 | 跨 session 自动化 | v1.x 阶段，且 Codex Triggers + Claude Code /loop 均稳定 | 从 session 级框架扩展到 event-driven 自动化（GitHub issue → 自动修复 → 自动 PR） | v1.x |
 | Process Observer 覆盖 Plugin 调用 | Claude Code 的 hook 机制支持拦截 plugin slash command（目前不支持） | 统一 MCP 和 Plugin 通道的 hooks 覆盖，简化双通道架构 | 取决于 Claude Code 演进 |

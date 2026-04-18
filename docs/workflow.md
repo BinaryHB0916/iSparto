@@ -31,7 +31,7 @@ Developer (Codex) reviews technical architecture (Team Lead invokes via MCP, bas
   - Potential performance bottlenecks and security issues
   - Whether tech choices match requirements
     |
-Independent Reviewer (Teammate — zero inherited context; most token-intensive role per invocation; reads product-spec then tech-spec independently):
+Independent Reviewer (Codex CLI in tmux pane — GPT-5.4, cross-provider isolation on top of zero inherited context; most token-intensive role per invocation; reads product-spec then tech-spec independently):
   - Product-technical alignment: does tech-spec implement what product-spec describes?
   - Implicit assumptions check: any simplifications that change user-facing behavior?
   - Requirement coverage: any product requirements with no technical approach?
@@ -115,8 +115,8 @@ Lead assembles QA prompt → calls Developer for smoke testing (using acceptance
   - **Carve-out (trivial CLI acceptance):** When the plan.md acceptance script consists of ≤5 deterministic bash commands whose verdict is determined solely by exit code (e.g., `bash scripts/language-check.sh --self-test`), Lead may execute them directly and record each command + exit code in plan.md as acceptance evidence, skipping the Developer QA wrapper. Requires: no build step, no runtime app verification, no output-parsing. Does NOT apply to multi-step scripts, scripts needing log interpretation, or any step tagged [build]/[runtime].
     |
 (If Phase 0, or Wave completed)
-Independent Reviewer (Teammate — zero inherited context):
-  - Spawned with fixed prompt: "You are the Independent Reviewer. Read agents/independent-reviewer.md and execute."
+Independent Reviewer (Codex CLI in tmux pane — GPT-5.4, cross-provider isolation on top of zero inherited context):
+  - Spawned with fixed one-liner: `codex exec "You are the Independent Reviewer. Read agents/independent-reviewer.md and execute. Write your findings to docs/independent-review.md."`
   - Verifies product-spec ↔ implementation alignment for this Wave's scope
   - CRITICAL finding → stop, resolve alignment before proceeding; after fix, re-trigger reviewer
   - Report written to docs/independent-review.md (Phase 0: overwrite; Wave boundary: append with date header)
@@ -167,8 +167,8 @@ Lead assembles QA prompt → calls Developer for smoke testing (using acceptance
   - **Carve-out (trivial CLI acceptance):** When the plan.md acceptance script consists of ≤5 deterministic bash commands whose verdict is determined solely by exit code (e.g., `bash scripts/language-check.sh --self-test`), Lead may execute them directly and record each command + exit code in plan.md as acceptance evidence, skipping the Developer QA wrapper. Requires: no build step, no runtime app verification, no output-parsing. Does NOT apply to multi-step scripts, scripts needing log interpretation, or any step tagged [build]/[runtime].
     |
 (If Phase 0, or Wave completed)
-Independent Reviewer (Teammate — zero inherited context):
-  - Spawned with fixed prompt: "You are the Independent Reviewer. Read agents/independent-reviewer.md and execute."
+Independent Reviewer (Codex CLI in tmux pane — GPT-5.4, cross-provider isolation on top of zero inherited context):
+  - Spawned with fixed one-liner: `codex exec "You are the Independent Reviewer. Read agents/independent-reviewer.md and execute. Write your findings to docs/independent-review.md."`
   - Verifies product-spec ↔ implementation alignment for this Wave's scope
   - CRITICAL finding → stop, resolve alignment before proceeding; after fix, re-trigger reviewer
   - Report written to docs/independent-review.md (Phase 0: overwrite; Wave boundary: append with date header)
@@ -212,7 +212,7 @@ All code changes trigger both implementation and QA unless they fall entirely wi
 | Permissions / security | Entitlements, Info.plist, credentials handling, encryption |
 | Infrastructure | CI/CD pipelines, deployment config, install/upgrade scripts |
 
-> **Model selection:** Tier 1 implementation steps use the Developer default model (gpt-5.3-codex, xhigh); QA steps and Tier 2 use gpt-5.4-mini (high). See docs/configuration.md "Developer tiered model strategy" for details.
+> **Model selection:** Tier 1 implementation steps use the Developer default model (gpt-5.4, xhigh); QA steps and Tier 2 use gpt-5.4-mini (high). See docs/configuration.md "Developer tiered model strategy" for details.
 
 ### Tier 2: Partial review
 

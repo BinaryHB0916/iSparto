@@ -42,6 +42,16 @@ if [ "$(uname)" != "Darwin" ]; then
     printf "  Solo + Codex mode may work but is untested on this platform.\n"
 fi
 
+# ── tmux required since v0.8.0 ─────────────────────────────
+# IR (Independent Reviewer) runtime moved from Claude Code sub-agent to
+# `codex exec` invoked inside a tmux pane. tmux is now a hard dependency.
+if ! command -v tmux >/dev/null 2>&1; then
+    printf "${RED}Error:${NC} tmux is required since iSparto v0.8.0.\n" >&2
+    printf "  The Independent Reviewer is invoked via 'codex exec' in a tmux pane.\n" >&2
+    printf "  Install on macOS:  ${BLUE}brew install tmux${NC}\n" >&2
+    exit 1
+fi
+
 ISPARTO_HOME="$HOME/.isparto"
 REPO="BinaryHB0916/iSparto"
 

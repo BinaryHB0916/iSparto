@@ -6,7 +6,7 @@ iSparto is an AI Agent Team workflow framework that turns single-agent Claude Co
 ## Tech Stack
 - Language: Shell (Bash), Markdown
 - Framework: None (pure configuration project, driven by Claude Code slash commands + MCP)
-- Platform: macOS (iTerm2 + tmux)
+- Platform: macOS (iTerm2 + tmux 3.x — tmux required since v0.8.0 for Independent Reviewer's `codex exec` invocation in a tmux pane)
 - Build: No build step
 - Other: Codex MCP Server (npx codex-mcp-server)
 
@@ -66,7 +66,7 @@ See [docs/collaboration-mode.md](docs/collaboration-mode.md) for the full collab
 | Release Script | scripts/release.sh | Automated release (bump version → changelog → tag → gh release) |
 | Assets | assets/*.svg | SVG images used by the README |
 | Process Observer | hooks/process-observer/, agents/process-observer-audit.md | Real-time interception (hook scripts + dangerous-operations list) + post-session audit |
-| Independent Reviewer | agents/independent-reviewer.md | Product-technical alignment blind review (Teammate mode, zero inherited context) |
+| Independent Reviewer | agents/independent-reviewer.md | Product-technical alignment blind review (Codex CLI in tmux pane — GPT-5.4, cross-provider isolation on top of zero inherited context) |
 | READMEs | README.md, README.zh-CN.md | Bilingual README |
 
 ## Operational Guardrails

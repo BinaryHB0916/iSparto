@@ -40,9 +40,8 @@ iSparto/
 │   ├── security-audit.md      ← Milestone-level full security audit
 │   └── release.md             ← Release flow (wraps scripts/release.sh)
 ├── agents/
-│   ├── independent-reviewer.md       ← Product-technical alignment blind reviewer
-│   ├── process-observer-audit.md     ← Post-session compliance audit role
-│   └── doc-engineer.md               ← Documentation audit role
+│   ├── independent-reviewer.md       ← Product-technical alignment blind reviewer (Codex CLI runtime — see note below)
+│   └── process-observer-audit.md     ← Post-session compliance audit role (Claude Code sub-agent)
 ├── templates/
 │   ├── product-spec-template.md
 │   ├── tech-spec-template.md
@@ -82,5 +81,9 @@ iSparto/
 - **Tier 2 (Reference Documentation, English-only):** All files under `docs/` except Tier 4 artifacts and `docs/zh/`.
 - **Tier 3 (User-facing entry, bilingual):** `README.md`, `README.zh-CN.md`, `docs/zh/quick-start.md`, `CONTRIBUTING.md`.
 - **Tier 4 (Historical artifacts, frozen):** `docs/session-log.md`, `docs/plan.md`, `docs/dogfood-log.md`, and historical entries in `CHANGELOG.md`. (The `docs/framework-feedback-*.md` pattern was retired 2026-04-17 per the Single TODO source rule; see `CLAUDE.md` Development Rules.)
+
+## Runtime note for `agents/`
+
+`independent-reviewer.md` is the only agent invoked via OpenAI Codex CLI (`codex exec`) in a tmux pane — its frontmatter uses `runtime: codex-cli` instead of `model:`. The other agent (`process-observer-audit.md`) is a Claude Code sub-agent spawned via the Task tool. This runtime split is intentional: IR's value depends on cross-provider training-distribution independence from Lead's Claude — see [configuration.md](configuration.md#agent-model-configuration) for rationale.
 
 See `CLAUDE.md > Documentation Language Convention` for the full rationale and the language-check guardian behavior.
