@@ -6,7 +6,7 @@ iSparto is an AI Agent Team workflow framework that turns single-agent Claude Co
 ## Tech Stack
 - Language: Shell (Bash), Markdown
 - Framework: None (pure configuration project, driven by Claude Code slash commands + MCP)
-- Platform: macOS (iTerm2 + tmux)
+- Platform: macOS (iTerm2 + tmux 3.x — tmux required since v0.8.0 for Independent Reviewer's `codex exec` invocation in a tmux pane)
 - Build: No build step
 - Other: Codex MCP Server (npx codex-mcp-server)
 

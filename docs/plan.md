@@ -919,9 +919,10 @@ Branch: `feat/v0.8.0-model-upgrade`. Mode: Solo + Lead direct edit (all target f
 - [x] Doc Engineer 10 项审计全过 (含 item 9 + item 10) — PASS, 1 expected WARNING (pre-commit `[ ]` flip)
 - [x] Wave Boundary IR via `codex exec` (新路径自验证) — PROCEED, MAJOR + MINOR findings resolved in-session (configuration.md token-budget table + design-decisions.md row 66 superseded marker)
 - [x] Process Observer audit — 14/14 PASS
+- [x] **Change G — tmux hard-dependency surfaced in pre-validation (5 files):** install.sh tmux pre-flight check, commands/migrate.md mirrored check, docs/user-guide.md Prerequisites section (new), CLAUDE.md Platform line, CHANGELOG.md Migration Notes breaking-dependency entry
 - [ ] PR + merge (in progress)
 
-**Mode Selection Checkpoint.** Grouping: 14 framework files (CLAUDE.md, CLAUDE-TEMPLATE.md, agents/independent-reviewer.md, commands/{end-working,init-project,plan}.md, docs/{configuration,collaboration-mode,concepts,roles,workflow,repo-structure,design-decisions,plan}.md, CHANGELOG.md). Decomposable? 文件之间存在 cross-references (IR spawn 引用 + 模型映射), 顺序敏感. Volume? 都是 narrative + table 编辑, 无 Tier 1 logic 改动. Decision: **Solo + Lead direct edit**. Precedent chain: Wave A/B/C, v0.7.8 Polish.
+**Mode Selection Checkpoint.** Grouping: initial 14 framework files (CLAUDE.md, CLAUDE-TEMPLATE.md, agents/independent-reviewer.md, commands/{end-working,init-project,plan}.md, docs/{configuration,collaboration-mode,concepts,roles,workflow,repo-structure,design-decisions,plan}.md, CHANGELOG.md) + change G adds 4 more files (install.sh, commands/migrate.md, docs/user-guide.md — CLAUDE.md and CHANGELOG.md already in scope). Total ≈ 17 framework files in commit 1 + ~5 in commit 2. Decomposable? 文件之间存在 cross-references (IR spawn 引用 + 模型映射 + tmux dependency narrative), 顺序敏感. Volume? 都是 narrative + table + small bash check, 无 Tier 1 logic 改动. Decision: **Solo + Lead direct edit**. Precedent chain: Wave A/B/C, v0.7.8 Polish.
 
 **Why Lead direct edit:** All target files under framework self-referential boundary (CLAUDE.md Development Rules). 无 Developer/Codex calls required.
 
@@ -929,7 +930,7 @@ Branch: `feat/v0.8.0-model-upgrade`. Mode: Solo + Lead direct edit (all target f
 
 **BLOCKING marker rationale for next session (under the narrowed gate codified in PR #207):** This Wave 修改了 `CLAUDE.md` (Module Boundaries 表的 IR 行) — 触发 BLOCKING 默认值. Decision aid: (a) Behavior change? Yes — IR 调用路径变化 (Task tool → codex exec). (b) New identifier? Yes — `runtime: codex-cli` frontmatter key. (c) Contract/interface change? Yes — IR spawn one-liner shape 改变. 三项 yes → **emit BLOCKING marker**.
 
-**Commit count verification (Rule 2 cadence):** Projected 1 non-merge commit on the Wave branch at `/end-working` time (single atomic Wave-close commit). Re-verification command: `git log --oneline --no-merges bb5a983..HEAD | wc -l` — base `bb5a983` 是 v0.7.8 final merge commit (本 Wave divergence base from main).
+**Commit count verification (Rule 2 cadence):** Projected 2 non-merge commits on the Wave branch at `/end-working` time. Commit 1 (`46334bc`) ships the 17-file core upgrade. Commit 2 ships change G (5 files: install.sh, commands/migrate.md, docs/user-guide.md, CLAUDE.md, CHANGELOG.md) — surfaced after commit 1 was already pushed when the user noticed tmux was a hard dependency requiring documentation. Splitting was the cleanest path (no force-push / amend on a published commit). Re-verification command: `git log --oneline --no-merges bb5a983..HEAD | wc -l` — base `bb5a983` 是 v0.7.8 final merge commit (本 Wave divergence base from main); expected output: `2`.
 
 🚨 BLOCKING: Next Wave requires NEW SESSION
 

@@ -2,6 +2,18 @@
 
 > As a user, you only need to focus on the following interaction points when collaborating with the Agent Team.
 
+## Prerequisites
+
+iSparto requires the following on your machine:
+
+- **macOS** with **iTerm2** terminal (Agent Team mode dependency)
+- **tmux 3.x** — **required since v0.8.0**. The Independent Reviewer is invoked via `codex exec` in a tmux pane (cross-provider blind review). Earlier versions treated tmux as recommended; v0.8.0+ treats it as a hard dependency. Install on macOS with `brew install tmux`. `install.sh` and `/migrate` exit early if tmux is missing.
+- **Claude Code** with a [Claude Max](https://claude.ai) subscription
+- **Codex CLI** with a [ChatGPT Plus](https://chatgpt.com) subscription
+- **Node.js 18+**
+
+Run `/env-nogo` at any time to verify your environment.
+
 ## What You Initiate (8 Commands)
 
 | Command | When | What You Do |
