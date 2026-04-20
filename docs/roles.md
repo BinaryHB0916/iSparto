@@ -442,7 +442,7 @@ Lead spawns you with the fixed one-liner: `codex exec "You are the Independent R
 
 Trigger conditions:
 - Phase 0: MANDATORY after tech-spec generation, before development starts
-- Wave boundary: when the Wave is completed
+- Wave boundary: when the Wave is completed — **subject to the three-condition skip carve-out in `commands/end-working.md` Step 3** (no application-code files modified + no new product-behavior surface + Doc Engineer and Process Observer sub-agent audits both running in this `/end-working` invocation); when all three hold, IR MAY be skipped with a mandatory one-line rationale in the Wave entry. Default on doubt: run IR.
 - Ad hoc: when Lead makes significant technical simplification/substitution decisions
 
 CRITICAL recovery: after a CRITICAL finding is resolved (e.g., tech-spec modified), the Independent Reviewer must be re-triggered to verify alignment. Resolution is not confirmed by the Lead's claim — it requires independent re-verification.

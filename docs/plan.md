@@ -956,6 +956,7 @@ Branch: `feat/v0.8.0-model-upgrade` (主 Wave) + `docs/observation-tracker-wave0
 **Status 段维护规则:** Wave 1-4 完成后每次更新 F8b tracker 的同时 review 本段三条件; 全部满足时把本段标记从 `MERGED-NOT-RELEASED` 改为 `RELEASED — v0.8.0 (YYYY-MM-DD CST)` 并保留段落作为历史 (不删除); 触发 partial revert 时把本段标记改为 `MERGED-NOT-RELEASED — REVERT IN PROGRESS` 并新增子段说明 revert 范围 + 重置后的观察期起点.
 
 🚨 BLOCKING: Next Wave requires NEW SESSION
+> ✅ Session boundary acknowledged 2026-04-18 by /start-working
 
 > Rationale (per the narrowed gate codified in PR #207): This Wave modified `CLAUDE.md` (Module Boundaries IR row). Decision aid all three "yes": (a) Behavior change — IR invocation runtime moved from Claude Code Task tool to OpenAI Codex CLI; (b) New identifier — `runtime: codex-cli` frontmatter key; (c) Contract/interface change — IR spawn one-liner shape changed (`codex exec "..."` instead of `Task(subagent_type=...)`). Marker emitted to force fresh session for Lead's `# claudeMd` cache to pick up the new IR row + the model upgrade context.
 
@@ -966,7 +967,7 @@ Branch: `feat/v0.8.0-model-upgrade` (主 Wave) + `docs/observation-tracker-wave0
 | Wave 名 | DocEng 是否过严 | Lead escalation 是否异常 | Teammate 字面化是否出现 | 备注 |
 |---------|----------------|--------------------------|------------------------|------|
 | Wave 0 (v0.8.0 升级 itself) | 否 — context-aware, 主动做 scope clarification (audit 用户问"v0.7.8 release 状态"时主动指出 working tree 在 v0.8.0 分支), 无机械套死 | N/A — 本审计为 DE solo run, 无 Lead escalation 触发 | N/A — 无 Teammate 参与 (Solo + Lead direct edit 全程) | DE audit 输出归档: `docs/observation-period/wave0-de-audit.md` (Opus 4.7 max, 10/10 PASS — 8 实质 PASS + 2 项目类型 N/A; 原 `/tmp` 路径已迁移至 repo-tracked 路径以解决 IR MINOR finding). Scope caveat 见下方说明段 |
-| (待填) | - | - | - | - |
+| Wave 1 (FR-19 IR skip carve-out codification) | 否 — DE pre-merge audit 精准捕获 plan.md 声明 / 实际状态不一致 (Wave 1 entry task list 第 9 项 + Files-modified 子弹点声称 tracker Wave 1 row 已填, 实际仍为"待填"), 以及 "(below)" vs "(above)" 方向性措辞错误; 两处均为真实 FAIL, 无 over-strictness / 无误报 | 否 — Lead 按 `docs/roles.md` Doc Engineer audit-fix separation rule 正常进入 re-audit loop, 无异常 A-layer escalation; DE FAIL 报告→Lead 直接修复→re-audit 是标准路径 | N/A — Solo + Lead direct edit, 无 Teammate 参与 | PO + DE 独立均捕获同一 plan.md 不一致 (证据: PO E2 FAIL + DE item 6 FAIL 两报告内容 byte-level 一致). Lead 在 commit 前修复. FR-19 three-condition carve-out 首次 dogfood 验证通过: PO E5 PASS (三条件 independently satisfied), F1 PASS (carve-out skip IR at Wave boundary) |
 | (待填) | - | - | - | - |
 | (待填) | - | - | - | - |
 | (待填) | - | - | - | - |
@@ -983,6 +984,62 @@ Branch: `feat/v0.8.0-model-upgrade` (主 Wave) + `docs/observation-tracker-wave0
 | 跨 session 自动化 | v1.x 阶段，且 Codex Triggers + Claude Code /loop 均稳定 | 从 session 级框架扩展到 event-driven 自动化（GitHub issue → 自动修复 → 自动 PR） | v1.x |
 | Process Observer 覆盖 Plugin 调用 | Claude Code 的 hook 机制支持拦截 plugin slash command（目前不支持） | 统一 MCP 和 Plugin 通道的 hooks 覆盖，简化双通道架构 | 取决于 Claude Code 演进 |
 | 多 agent runtime 互操作标准 | MCP 跨 provider 标准成熟（当前各厂商各自为政） | 统一 Codex/Claude/Gemini 调用接口，简化框架层抽象 | 2026-2027 |
+
+### Wave 1 — FR-19 IR Skip Carve-out Codification (2026-04-18) — Complete
+
+Branch: `feat/fr-19-ir-skip-carveout`. Mode: Solo + Lead direct edit (all target files under the framework self-referential boundary).
+
+Context: 本 Wave 是 v0.8.0 升级观察期的第 2 个 Wave (Wave 0 = v0.8.0 升级本身, Wave 1 = 本 Wave). 双目的合一: (a) 落地 Backlog FR-19 — IR skip at Wave boundary 需要显式 exit criteria, (b) 为 observation period tracker 产第 2 行数据.
+
+**Goal:** codify 6-Wave precedent of Independent Reviewer skip-for-self-referential-polish into `commands/end-working.md` Step 3 as a three-condition carve-out (no application-code files / no new product-behavior surface / DE+PO sub-agent audits both run in same invocation). Without codification, each Wave 的 IR decision 需要 Lead re-justify from scratch, 造成跨 Wave 的 audit trail 不一致.
+
+**Task list:**
+
+- [x] **T1 — `commands/end-working.md` Step 3 carve-out block.** 在 "Trigger:" 行后、"If triggered:" 行前插入 skip carve-out 段落: 三条件各自独立 (缺一 revert default "run IR"), 条件 (i) 列举全部 system-prompt-layer + build/tooling-config + project-docs 路径清单, 条件 (ii) 要求无新 command/role/skill/marker/convention 命名, 条件 (iii) 要求 DE + PO 都以 sub-agent fresh-spawn 形式在本 invocation 内完成; 给出 plan.md 中 skip rationale 的 exact wording; 明示 "Default on doubt: run IR".
+- [x] **T2 — `docs/workflow.md` IR blocks x2 cross-reference.** 两处 IR mermaid/prose 段落 (lines ~117-122 + ~169-174) 在 "Report written to docs/independent-review.md" 之后加 sub-bullet 指向 end-working.md Step 3 carve-out.
+- [x] **T3 — `docs/collaboration-mode.md` step 3.5 lines x2.** Solo 变体 (line 51) 和 Agent Team 变体 (line 64) 的 step 3.5 各自加 carve-out 指针 (两变体 tail 文本不同, 所以分两次 edit).
+- [x] **T4 — `docs/roles.md` IR trigger conditions.** Line 445 的 "Wave boundary" 条件扩写: "subject to the three-condition skip carve-out in commands/end-working.md Step 3", 列出三条件, 指明 mandatory rationale.
+- [x] **T5 — `docs/design-decisions.md` new decision row.** 新增一行: Decision = 三条件 carve-out; Rationale = codify 6-Wave precedent, 消除跨 Wave audit trail 不一致; Rejected alternatives = (a) binary trigger (IR 总是跑) — 对 framework polish 是纯成本, (b) file-list whitelist — 白名单维护成本 + 新文件类型盲区. Origin = FR-19. Precedent = plan.md v0.7.5 line 884 "Why no Independent Reviewer" 表述.
+- [x] **T6 — `CHANGELOG.md` [Unreleased] ### Changed** entry for FR-19 codification.
+- [x] **T7 — `commands/end-working.md` Step 9 PR template line 116.** Independent Reviewer 行 bracket 内选项扩展为 `[Wave boundary PROCEED ✅ / carve-out skip — short reason / not triggered — reason]`, 让 carve-out skip 在 PR metadata 中有显式标签.
+
+**Acceptance (5 commands, mixed [code] + [build] — trivial-CLI carve-out eligible):**
+
+| # | Tag | Command | Expected | Actual |
+|---|-----|---------|----------|--------|
+| A1 | [code] | `grep -c "Skip carve-out (self-referential polish Wave)" commands/end-working.md` | 1 | 1 — PASS |
+| A2 | [code] | `grep -c "Wave-boundary skip carve-out" docs/workflow.md` | 2 | 2 — PASS |
+| A3 | [code] | `grep -c "three-condition skip carve-out" docs/roles.md` | ≥ 1 | 1 — PASS |
+| A4 | [build] | `bash scripts/language-check.sh` | exit 0 | TBD (run in DE audit) |
+| A5 | [build] | `bash scripts/policy-lint.sh` | exit 0 | TBD (run in DE audit item 10) |
+
+**Files modified (7 + this plan.md entry):**
+- `CHANGELOG.md` ([Unreleased] ### Changed)
+- `commands/end-working.md` (Step 3 carve-out block + Step 9 PR template line)
+- `docs/collaboration-mode.md` (step 3.5 Solo + Agent Team variants)
+- `docs/design-decisions.md` (new row with rejected alternatives)
+- `docs/plan.md` (this entry + tracker Wave 1 row + FR-19 Backlog removal)
+- `docs/roles.md` (IR trigger condition expansion)
+- `docs/workflow.md` (two IR block cross-references)
+
+**Mode Selection Checkpoint.** Grouping: 5 Tier 1 framework files + 2 Tier 4 files (plan.md, CHANGELOG.md). Decomposable? 文件之间 cross-reference dependency 显著 — end-working.md Step 3 是 authoritative source, 其他 5 处都是 pointer, 顺序敏感. Volume? 小量 narrative + 1 new row in design-decisions table + 1 CHANGELOG 条目. Teammate coordination overhead (tmux spawn + prompt + wait + merge) strictly exceeds serial Edit cost. Decision: **Solo + Lead direct edit**. Precedent chain: v0.7.8 Polish, Wave A/B/C.
+
+**Why Lead direct edit:** All target files under framework self-referential boundary (CLAUDE.md Development Rules). 无 Developer/Codex calls required.
+
+**Why no Independent Reviewer at Wave boundary (dogfood of new carve-out):** 本 Wave 第一次 apply the new FR-19 carve-out, 同时也是其首次自验证. 三条件 check:
+- (i) **No application-code files modified** ✓ — all 7 files 都在 Tier 1 (`commands/`, `docs/`) 或 Tier 4 (`plan.md`, `CHANGELOG.md`) 范围内, 无 app-code / hooks/ / scripts/*.sh / install.sh 等 runtime-sensitive 文件.
+- (ii) **No new product-behavior surface** ✓ — carve-out codifies existing 6-Wave practice. 无新 command / role / skill / marker / convention name 引入. FR-19 只是把隐式规则显式化.
+- (iii) **DE + PO sub-agent audits both run in this `/end-working` invocation** ✓ — 本次 /end-working 的 Step 5 PO audit + Step 9 pre-merge DE audit 两者都以 fresh sub-agent spawn 形式在本 invocation 内完成.
+
+三条件全部满足 → carve-out applies → skip IR (sub-steps a–d of Step 3). **Why no IR at Wave boundary:** self-referential polish, no new product surface, DE+PO coverage sufficient — per commands/end-working.md Step 3 carve-out.
+
+**BLOCKING marker rationale for next session (under the narrowed gate codified in PR #207):** This Wave did NOT modify `CLAUDE.md`. Target files: `commands/end-working.md`, `docs/{workflow,collaboration-mode,roles,design-decisions,plan}.md`, `CHANGELOG.md` — all Skill-invoked / on-demand-read, stale-cache risk structurally zero. Narrowed-gate trigger not met → **skip BLOCKING**. Next Wave may start in the same session if desired.
+
+**Commit count verification (Rule 2 cadence):** Projected 1 non-merge commit on the Wave branch at `/end-working` time. Re-verification command: `git log --oneline --no-merges 567c325..HEAD | wc -l` — expected output: `1`. Base `567c325` is PR #218 merge commit (v0.8.0 session log close-out — this Wave's divergence base from main).
+
+**Observation data entry:** see tracker Wave 1 row (above, in the v0.8.0 升级观察期 Tracker section).
+
+**Next step:** 进入 Wave 2 继续收观察期数据. 候选 candidates: FR-20 (BLOCKING marker acknowledgement path) 或 FR-21 (/end-working Step 4 Notes mechanical Wave-count), 都是 framework polish, 预估 1-2 小时.
 
 ## 产品路线图
 
@@ -1079,7 +1136,6 @@ Open framework rule refinement candidates surfaced by Process Observer audits ac
 | FR-16 | CLAUDE.md Branch Protocol cleanup step does not specify local-vs-remote deletion ordering; manual `git push origin --delete` from main gets intercepted by hook | CLAUDE.md Branch Protocol step 6 — add one sentence on remote deletion ordering | low | feedback-0409-d F1 |
 | FR-17 | Doc Engineer ad-hoc fix exception and emergency hotfix exception do not cover automated `release/` branch commits — strict reading would require audit for every release | CLAUDE.md Solo/Agent Team workflow step 4 — add third sub-bullet for automated release exception; mirror in CLAUDE-TEMPLATE.md, `docs/workflow.md` Hotfix section, and `agents/process-observer-audit.md` C1 check | medium-low | feedback-0409-d F2 |
 | FR-18 | BLOCKING sentinel and rationale lack an explicit "same edit" write-together rule — pre-commit interim state (rationale present, sentinel not yet appended) misclassified as WARN in PO audit | `commands/end-working.md` Step 2 BLOCKING decision — add atomic-write requirement | medium | feedback-0417 Rule 3 |
-| FR-19 | Independent Reviewer skip at Wave boundary lacks explicit exit criteria; 6-Wave precedent of skipping for self-referential polish Waves is not reflected in the command spec | `commands/end-working.md` Step 3 — add three-condition carve-out for IR skip (all self-referential files, no new product-behavior surface, DE+PO audits complete in same session) | low-to-medium | feedback-0417 Rule 4 |
 | FR-20 | BLOCKING marker boundary acknowledgement path undefined for the case where CLAUDE.md was modified mid-session and surfaced to Lead via system-reminder injection | `commands/start-working.md` Step 0 — add sentence documenting the non-standard acknowledgement path | low | feedback-0417 Rule 5 |
 | FR-21 | `/end-working` Step 4 Notes-section authoring guidance does not require mechanical computation of aggregate Wave count via `git log` before writing prose (parallels FR-7's commit-count verification) | `commands/end-working.md` Step 4 Notes guidance — add sub-bullet requiring mechanical Wave-count verification | low | feedback-0417 Rule 6 |
 | FR-22 | BLOCKING marker semantic gate in `commands/end-working.md` Step 2 is scoped to Wave-completion entries only ("Wave-completion entries only; skip for mid-Wave updates") and is silent on non-Wave sessions that modify CLAUDE.md with behavioral rule changes — such sessions can add behavior rules without emitting BLOCKING or a skip rationale | `commands/end-working.md` Step 2 BLOCKING decision preamble — remove "Wave-completion entries only" qualifier and apply the semantic gate to any session touching CLAUDE.md, with unconditional skip-rationale requirement | medium | PO audit of 2026-04-17 TODO Consolidation session — E4 WARN |

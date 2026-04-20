@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Independent Reviewer Wave-boundary skip carve-out codified (FR-19)** — `commands/end-working.md` Step 3 gains a three-condition skip carve-out (no application-code files modified + no new product-behavior surface + Doc Engineer and Process Observer sub-agent audits both running in the same `/end-working` invocation). Codifies the ~6-Wave precedent of ad-hoc skip-rationale prose into an explicit rule with mandatory one-line rationale in the Wave entry. Default on doubt remains "run IR". Mirrored in `docs/workflow.md`, `docs/collaboration-mode.md`, `docs/roles.md`, and `docs/design-decisions.md`. Step 9 PR template's Independent Reviewer line gains a `carve-out skip — <short reason>` bucket alongside the existing PROCEED / not triggered options. Part of v0.8.0 observation-period Wave 1.
+
 ## [0.8.0] - 2026-04-XX
 
 > Date stamp resolved at release time to the merge day's CST (Asia/Shanghai), aligning with the iSparto commit-count Rule 2 timing convention.

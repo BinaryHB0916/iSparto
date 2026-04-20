@@ -120,6 +120,7 @@ Independent Reviewer (Codex CLI in tmux pane — GPT-5.4, cross-provider isolati
   - Verifies product-spec ↔ implementation alignment for this Wave's scope
   - CRITICAL finding → stop, resolve alignment before proceeding; after fix, re-trigger reviewer
   - Report written to docs/independent-review.md (Phase 0: overwrite; Wave boundary: append with date header)
+  - **Wave-boundary skip carve-out:** at Wave boundary only (not Phase 0), the IR invocation may be skipped under the three-condition carve-out in `commands/end-working.md` Step 3 — no application-code files modified, no new product-behavior surface, Doc Engineer + Process Observer sub-agent audits both running in this `/end-working` invocation. Skip requires a one-line rationale in the Wave entry. Default on doubt: run IR.
     |
 Team Lead runs Doc Engineer audit (as sub-agent)
   - Same checklist as Agent Team mode (see Doc Engineer role in roles.md)
@@ -172,6 +173,7 @@ Independent Reviewer (Codex CLI in tmux pane — GPT-5.4, cross-provider isolati
   - Verifies product-spec ↔ implementation alignment for this Wave's scope
   - CRITICAL finding → stop, resolve alignment before proceeding; after fix, re-trigger reviewer
   - Report written to docs/independent-review.md (Phase 0: overwrite; Wave boundary: append with date header)
+  - **Wave-boundary skip carve-out:** at Wave boundary only (not Phase 0), the IR invocation may be skipped under the three-condition carve-out in `commands/end-working.md` Step 3 — no application-code files modified, no new product-behavior surface, Doc Engineer + Process Observer sub-agent audits both running in this `/end-working` invocation. Skip requires a one-line rationale in the Wave entry. Default on doubt: run IR.
     |
 Team Lead spawns Doc Engineer (sub-agent) for documentation audit (placed last to ensure QA-fixed code is also audited)
   - Code vs product-spec.md consistency
