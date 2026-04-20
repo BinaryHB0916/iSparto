@@ -703,3 +703,43 @@ No CRITICAL misalignment found in this re-check, but the remaining MAJOR affects
 ## Recommendation
 
 **PROCEED** with one non-blocking follow-up: replace the remaining Wave 3 "pending" placeholders in plan/session logs after DE/PO outputs are finalized. No CRITICAL or MAJOR product-implementation misalignment found.
+
+---
+
+## Wave 4 Review — 2026-04-20
+
+**Scope:** FR-13 gh account mid-session drift guard + FR-24 Process Observer canonical 18-row checklist codification on branch `feat/wave-4`. Reviewed `scripts/gh-account-guard.sh`, `commands/end-working.md`, `agents/process-observer-audit.md`, the Wave 4 entry in `docs/plan.md`, and `CHANGELOG.md`.
+
+| # | Product Intent | Implementation | Aligned? | Severity | Detail |
+|---|---------------|----------------|----------|----------|--------|
+| 1 | FR-13 must close the Step 8 → `gh pr create` drift window (if gh account flips mid-session, PR creation must be guarded) | `commands/end-working.md` Step 9 now invokes `bash scripts/gh-account-guard.sh` immediately before `gh pr create`, with explicit exit-0 proceed and exit-2 halt branches. | Y | — | Integration point is correct: the guard is placed after the Doc Engineer re-audit loop and right before PR creation, which is exactly where drift risk exists. |
+| 2 | FR-13 guard behavior must be deterministic and testable | `scripts/gh-account-guard.sh` implements `--help`, `--self-test`, unknown-arg exit 2, and mismatch auto-switch recovery logic. Local verification: self-test `3/3` PASS; unknown arg exits `2`; script is executable. | Y | — | Implementation matches the Wave acceptance contract for normal path + error path. |
+| 3 | FR-24 must replace inferred checklist scope with explicit canonical scope | `agents/process-observer-audit.md` now declares canonical coverage as 18 rows across A-F categories and enumerates all rows explicitly (A1-A3/B1-B2/C1-C2/D1-D4/E1-E6/F1). | Y | — | This resolves the prior "5 explicit rows + placeholder" ambiguity that caused cross-invocation row-count drift. |
+| 4 | FR-24 internal consistency: status model and summary count-check must be mechanically coherent | Multiple rows allow `N/A` status (e.g., B1/B2/D1-D4/E1/E2/E4/E5/E6/F1), but summary/count-check only defines four buckets and enforces `X + Y + Z + W == 18`. | N | MAJOR | With legitimate `N/A` outcomes, the enforced equation is under-specified and can force false meta-failures or inconsistent counting behavior. The Wave's own stated focus included internal consistency of the 18-row model; this gap leaves that goal partially implemented. |
+| 5 | Product-facing references should stay synchronized with the canonical audit model change | Canonical template is now 18 rows, but `docs/product-spec.md` still says "14-item checklist" and `docs/roles.md` still says "14 checks total"; `docs/process-observer.md` still shows the older checklist structure. | N | MINOR | This drift is already recognized in plan backlog as follow-up (`FR-32`), but it remains visible inconsistency for readers cross-checking product/role docs against the canonical template. |
+
+## Recommendation
+
+**BLOCK** until finding #4 is fixed.
+
+Required fix (minimal): make the summary/count-check state model match the declared row status set in `agents/process-observer-audit.md` (either add an explicit `N/A` bucket and include it in the total equation, or remove `N/A` from row state sets and redefine those paths consistently).
+
+After #4 is corrected, this Wave can proceed. Finding #5 is non-blocking for this Wave because it is already tracked as deferred documentation sync work (`FR-32`).
+
+---
+
+## Wave 4 Review (Re-check) — 2026-04-20
+
+**Scope:** Re-check of the previously blocked Wave 4 items on branch `feat/wave-4`, focused on FR-24 summary/count-model coherence after the latest `agents/process-observer-audit.md` update, while re-validating FR-13 guard behavior and Wave 4 acceptance evidence.
+
+| # | Product Intent | Implementation | Aligned? | Severity | Detail |
+|---|---------------|----------------|----------|----------|--------|
+| 1 | FR-24 summary/count model must be mechanically coherent with the row status model (including `N/A`) | `agents/process-observer-audit.md` now defines summary as `X passed, Y in-progress, Z warnings, W failures, V not-applicable` with total equation `X+Y+Z+W+V = 18`; the FR-24 count-check prose explicitly treats `N/A` as first-class and included in total | Y | — | This resolves the prior MAJOR misalignment where `N/A` statuses existed but were excluded from the enforced total equation. |
+| 2 | FR-24 canonical coverage must remain explicit and complete (18 rows, A1-A3/B1-B2/C1-C2/D1-D4/E1-E6/F1) | Canonical mapping table remains present; explicit row enumeration count is 18 (`grep -cE "^\| [A-F][0-9]+ \|"` returns `18`), and required anchor rows A1/E6/F1 each remain unique | Y | — | The codified checklist remains complete after the summary-model fix. |
+| 3 | FR-13 must guard `gh pr create` against mid-session account drift | `commands/end-working.md` Step 9 still invokes `bash scripts/gh-account-guard.sh` immediately before `gh pr create`, with exit-0 silent proceed and exit-2 A-layer halt semantics | Y | — | Integration point and stop/go behavior still match the intended drift-window closure. |
+| 4 | FR-13 guard must be deterministic and testable via acceptance commands | `bash scripts/gh-account-guard.sh --self-test` passes `3/3`; `--help` exits `0` with Usage/Exit-codes sections; unknown arg exits `2`; script is executable; guardians `language-check.sh` and `policy-lint.sh` pass | Y | — | Wave acceptance evidence is reproducible in current workspace state. |
+| 5 | Product-facing docs should stay synchronized with the canonical checklist model | `docs/product-spec.md` still says "14-item checklist"; `docs/roles.md` still says "14 checks total"; canonical template is now 18 rows | N | MINOR | This remains a known deferred sync gap (`FR-32`) and is non-blocking for this Wave re-check. |
+
+## Recommendation
+
+**PROCEED.** The previously blocking MAJOR issue is fixed, and no CRITICAL/MAJOR misalignment remains in this Wave's implementation. Keep `FR-32` as the non-blocking follow-up to align product/reference docs with the 18-row canonical checklist wording.
