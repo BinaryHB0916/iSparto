@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-04-20
+
 > Date stamp resolved at release time to the merge day's CST (Asia/Shanghai), aligning with the iSparto commit-count Rule 2 timing convention.
 
 ### Added
