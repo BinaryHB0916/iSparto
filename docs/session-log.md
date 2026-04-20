@@ -1,5 +1,41 @@
 # Session Log
 
+## 2026-04-20 Session — Governance Maintenance: plan.md contract codify + historical Wave migration (pre-v0.8.0)
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | Not a Wave — governance maintenance session, pre-v0.8.0 release. Triggered after `/Users/duanshao/diagnostic-report-2026-04-20.md` (20-item audit: 0 Blocker / 5 Major / 7 Minor) surfaced plan.md bloat (~1153 lines, ~84% historical). Goal: codify a contract preventing re-bloat + clean existing violations + fix Guardian Script inventory. Three parallel tracks in Agent Team mode after an 8-point Lead review questions pass accepted by user. |
+| Tasks completed | **(Track 1 — commit `ca24df2`, Teammate A)** Codified plan.md/session-log.md/CHANGELOG authoring + transition contract in `commands/end-working.md` Step 4 (Part A authoring rule with three-question placement test; Part B transition rule with six-step migration protocol each /end-working runs; Part C enforcement via script + DE item 11). Added `docs/roles.md` DE audit item 11 "plan.md / session-log.md / CHANGELOG separation check" (mechanical gate + semantic verification). Added `agents/process-observer-audit.md` E7 "plan.md contract shape respected for maintenance / Wave PRs" (canonical 18 → 19; scope mapping + summary count-check rule synced). `docs/configuration.md` Boundaries table extended with Enforcement column (and CHANGELOG row the table was missing). Created `scripts/plan-md-contract-check.sh` (335 lines, three rules: [DONE] annotation detection + completed-Wave retrospective heading detection outside index block + cross-file SHA1 duplicate detection, optional `--diff-base` transition check). Negative calibration PASS against 3-violation fixture (exit 1 with all three rules firing). **(Track 3a — co-shipped into `ca24df2` by Teammate A)** Added CLAUDE.md Module Boundaries "Guardian Scripts" row enumerating 5 scripts (language-check, policy-lint, gh-account-guard, session-health, plan-md-contract-check) with invocation points. Teammate C left 3a unstaged per Lead instruction; Teammate A's commit picked it up. **(Track 2 — commit `4046a6a`, Teammate B)** Pre-flight sampled 3 representative Waves (early/mid/late), verdict 3/3 complete (no enrichment needed). Migrated 27 v0.7.x historical Wave entries + Wave 0-4 v0.8.0 observation Wave entries from docs/plan.md — session-log already carried complete entries, so migration was delete-and-index. Added "已完成 Wave 索引" table, 25 rows reverse-chronological with session-log anchors (all grep-verified). Retained v0.8.0 升级观察期 F8b Tracker with status line "三 Release Gate 条件判定:全 MET". Backlog FR-13/FR-24 deleted (FR-19/FR-26/FR-27 verified never-in-Backlog — closed in-session during their Wave). Release gate condition 1 rewritten (removed "Wave 1-4 待填" phrasing). Cross-file reference sweep: one stale pointer in Wave 0 narrative rewritten ("按 Backlog FR-19 carve-out" → "按 IR 三条件 carve-out — 自 Wave 1 起 codified"); other FR citations are rule-provenance and correctly preserved. CHANGELOG [Unreleased] pre-flight found already Keep-a-Changelog structured — reorg was a no-op. plan.md 1366 → 350 lines (−1016). `scripts/plan-md-contract-check.sh` exit 0 against cleaned plan.md. **(Track 3b — commit `ecb551c`, Teammate C)** Synced `docs/process-observer.md` Audit Checklist 15 → canonical 19 (aligned to `agents/process-observer-audit.md` as authoritative source post-Track-1). Deviation Report Template synchronized. Cross-reference grep PASS: N=19 consistent across three files (agents/process-observer-audit.md + docs/process-observer.md:179,267 + docs/roles.md:438). **(Commit 4 — this entry)** Session-log entry authored by Lead per revised commit structure. |
+| Key decisions | (1) **plan.md contract is strict-absolute** — "Where we are now" only. Completed Waves, [DONE] annotations, retrospectives banned with no exceptions (pre-release / observation-period / audit-trail retention all rejected). Fuzzy exceptions would hollow out the contract. Enforcement: `scripts/plan-md-contract-check.sh` blocks commit on violation + DE audit item 11 provides semantic backstop. (2) **Backlog completed FRs deleted, not annotated.** FR-13 / FR-24 removed with zero tombstone. Zero-information-loss guaranteed via session-log enrichment verification, not via retained rows. (3) **v0.8.0 observation Waves migrated uniformly** regardless of release proximity — contract applies regardless of "temporary" framing. (4) **F8b Tracker retained; post-release cleanup routed.** Tracker is current "now" navigation driving /release decision, so retained through release. **Known limitation:** tracker cleanup after /release is not yet codified. Per revision-point-4 decision, routed to A5 release.sh preview session for design; this session's scope intentionally excludes it. (5) **CHANGELOG [Unreleased] unchanged.** Pre-flight found structure already matched Keep a Changelog. Deviation from brief (which assumed 7 unordered items); Teammate B verified and preserved. (6) **Track 3a co-shipped with Track 1.** Teammate A's commit picked up Teammate C's unstaged CLAUDE.md change. Deviates from planned 4-commit structure (3a was originally planned for commit 3) but does not break contract. Commit 3 (ecb551c) ended up Track 3b only. (7) **process-observer.md pre-sync canonical was 15, not 18.** Teammate C found the doc was stale pre-Track-1 and aligned directly to post-Track-1 canonical N=19, skipping an intermediate. (8) **Self-audit dogfood.** DE audit item 11 and `plan-md-contract-check.sh`, both introduced in commit 1, are applied to commits 2/3/4 of the same session — first run of the new rule is the session that wrote it. Negative calibration in commit 1 de-risked the self-audit. (9) **Script-based calibration, not manual.** Per revision-point-1: calibration uses `scripts/plan-md-contract-check.sh` against a fixture. Script is long-term enforcement asset, not a one-off. (10) **Not a Wave — governance maintenance session type.** Branch → parallel Teammate dispatch → DE audit → PR → merge. No IR, no F8b tracker row, no plan.md Wave entry (which would itself violate the new contract). (11) **Step 4 contract adds Transition rule alongside Authoring rule.** Revision-point-8 addition: transition rule makes the six-step at-completion behavior a hard requirement of /end-working, not a one-off cleanup this session did. Prevents re-bloat structurally rather than relying on Lead judgment each session. |
+
+### Pre-flight scope verdict
+3/3 Complete — no session-log enrichment needed. Track 2 proceeded at normal pace (2-3h path).
+
+### Acceptance verification
+- Negative calibration: PASS (fixture with 3 violations → script exit 1, all three rules fired)
+- `scripts/plan-md-contract-check.sh` against real plan.md post-cleanup: exit 0
+- `scripts/language-check.sh`: PASS (Tier 1 + Tier 2 CJK-clean, Principle 1 clean)
+- `scripts/policy-lint.sh`: PASS
+- Cross-file canonical N=19 consistency verified: `agents/process-observer-audit.md` + `docs/process-observer.md` + `docs/roles.md` (grep-verified)
+- Commit structure: `ca24df2` (Track 1 + 3a co-ship) → `4046a6a` (Track 2) → `ecb551c` (Track 3b) → this commit (session-log entry)
+- Branch: `chore/plan-md-reshape-pre-v080` (no main commits, no force-push, no --no-verify)
+
+### Files Changed (commits 1-3; commit 4 touches this file only)
+```
+ CLAUDE.md                         |    1 +
+ agents/process-observer-audit.md  |   15 +-
+ commands/end-working.md           |   19 +
+ docs/configuration.md             |   15 +-
+ docs/plan.md                      | 1090 ++-----------------------------------
+ docs/process-observer.md          |   79 +--
+ docs/roles.md                     |   22 +-
+ scripts/plan-md-contract-check.sh |  335 ++++++++++++
+ 8 files changed, 475 insertions(+), 1101 deletions(-)
+```
+
+---
+
 ## 2026-04-17 Session — TODO Consolidation (framework-feedback-*.md channel retired)
 
 | Metric | Value |
