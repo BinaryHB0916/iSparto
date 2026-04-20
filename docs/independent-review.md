@@ -616,3 +616,70 @@ Lead may proceed to Doc Engineer audit, Process Observer post-session audit, PR 
 ## Recommendation
 
 **PROCEED.** The Wave 0 labeling + caveat correction is product-aligned and resolves the interpretation risk in F8b. One non-blocking follow-up remains: persist the Wave 0 audit artifact outside `/tmp` for long-horizon reproducibility.
+
+---
+
+## Wave 2 Review — 2026-04-20
+
+**Scope:** Wave 2 `/doctor` feature (`scripts/doctor-check.sh`, `commands/doctor.md`, `docs/user-guide.md`, `CLAUDE.md`, `CHANGELOG.md`, and the Wave 2 `docs/plan.md` entry). Product-intent baseline: v0.x remains a slash-command-driven developer tool, documentation stays synchronized with behavior, and the new `/doctor` command is local-only, read-only, and reliable for environment readiness checks.
+
+| # | Product Intent | Implementation | Aligned? | Severity | Detail |
+|---|---------------|----------------|----------|----------|--------|
+| 1 | `/doctor` should emit seven deterministic per-check lines in the declared format `[PASS|WARN|FAIL] D<n>: <name> — <result>` so Setup Assistant can parse and relay cleanly | Real run currently emits an extra raw line in D2 (`codex-cli 0.121.0 at ...`) because multiline `codex --version` output is injected directly into the detail field | N | MAJOR | This breaks the one-line-per-check contract stated in both Wave plan acceptance and `commands/doctor.md`. Evidence from live run: output has 9 lines (7 checks + 1 stray line + summary) instead of 8. |
+| 2 | D2/D3 must verify tool health by detecting when `codex --version` / `claude --version` fail | Bash wrapper captures RC via `CODEX_VERSION_RAW="$(codex --version 2>&1 || true)"; CODEX_VERSION_RC=$?` and the same pattern for Claude | N | MAJOR | `|| true` forces `$?` to `0`, so non-zero version-command failures are masked. This can produce false PASS/WARN outcomes and weakens the core readiness signal. |
+| 3 | `/doctor` is local-only and offline (no network probes) | Script behavior is local path/version/config inspection; no runtime curl/wget/ping/API calls in execution path | Y | — | Matches the Wave goal and `commands/doctor.md` scope exclusions. |
+| 4 | `/doctor` remains read-only with explicit exit semantics (0 no FAIL, 1 any FAIL, 2 internal error) | `--self-test` passes (3/3 fixtures), real run exits 0 with 7 PASS, unknown arg exits 2 | Y | — | Exit-code contract is implemented and testable. |
+| 5 | New user-facing behavior should be documented in framework/user docs | `/doctor` added to `docs/user-guide.md`, `commands/doctor.md`, `CLAUDE.md` Module Boundaries, and `CHANGELOG.md` | Y | — | Documentation synchronization for this Wave is largely complete. |
+| 6 | D4 description should match actual enforcement scope | `commands/doctor.md` describes D4 as checking every hook path in `~/.claude/settings.json`, while implementation validates only paths resolving under `~/.isparto/` | N | MINOR | Behavior is defensible for iSparto integrity, but wording is broader than implementation and can mislead users. |
+| 7 | Product-spec should remain coherent with shipped command surface | `docs/product-spec.md` still lists “8 slash commands” and omits `/doctor` | N | MINOR | This is a product-doc drift introduced by shipping `/doctor` without updating the spec-level command inventory. |
+
+## Recommendation
+
+**BLOCK** until the two MAJOR items are fixed in this Wave branch:
+1. Sanitize D2/D3 detail text to single-line output before formatting (preserve machine-parseable one-line contract per check).
+2. Fix D2/D3 RC capture so non-zero `--version` exits are not masked.
+
+No CRITICAL misalignment was found, but these MAJOR issues directly affect the primary `/doctor` reliability promise and should be resolved before merge.
+
+---
+
+## Wave 2 Review (Re-check) — 2026-04-20
+
+**Scope:** Wave 2 `/doctor` feature re-check on branch `feat/doctor-command` after the earlier BLOCK report in this same file. Re-verified runtime behavior of `scripts/doctor-check.sh`, related docs (`commands/doctor.md`, `docs/user-guide.md`, `docs/product-spec.md`), and installer-path alignment.
+
+| # | Product Intent | Implementation | Aligned? | Severity | Detail |
+|---|---------------|----------------|----------|----------|--------|
+| 1 | `/doctor` should emit one deterministic line per check in `[PASS|WARN|FAIL] D<n>: <name> — <result>` format | `bash scripts/doctor-check.sh` now emits exactly 7 check lines + 1 summary; D2/D3 are single-line formatted (no stray multiline version line) | Y | — | Prior MAJOR output-shape break is resolved. |
+| 2 | D2/D3 should detect `--version` failures (non-zero RC must not be masked) | Shell wrapper now captures RC without `|| true` masking for `codex --version` and `claude --version`; Python check logic consumes the RCs | Y | — | Prior MAJOR false-green risk is resolved. |
+| 3 | D4 wording in `/doctor` docs should match actual check scope | `commands/doctor.md` D4 row now states iSparto hook paths under `~/.isparto/` in `~/.claude/settings.json`, matching script behavior | Y | — | Prior MINOR wording mismatch is resolved. |
+| 4 | Product-spec command inventory should include shipped `/doctor` command | `docs/product-spec.md` Core Features now lists 9 commands including `/doctor` | Y | — | Prior MINOR product-doc drift is resolved. |
+| 5 | `/doctor` should work in the documented fallback mode outside repo-local `scripts/` path | `commands/doctor.md` says fallback is `$HOME/.isparto/scripts/doctor-check.sh` (line 21), but installer flow in `install.sh` does not install `scripts/doctor-check.sh` into `~/.isparto/scripts/` (no copy step for this file; local environment confirms missing path) | N | MAJOR | This breaks the documented execution path for non-repo contexts (new machine / post-upgrade checks outside iSparto repo). User-facing behavior does not fully match what `/doctor` promises. |
+
+## Recommendation
+
+**BLOCK** until the fallback-path mismatch is resolved in this Wave branch.
+
+Required resolution (choose one and keep docs/code consistent):
+
+1. Preferred: update `install.sh` to deploy `scripts/doctor-check.sh` to `~/.isparto/scripts/doctor-check.sh` (executable), so the documented fallback path is real.
+2. Alternative: if fallback is intentionally unsupported, remove that claim from `commands/doctor.md` (and any related user docs) and constrain `/doctor` to repo-local execution only.
+
+No CRITICAL misalignment found in this re-check, but the remaining MAJOR affects real user execution flow and should be fixed before merge.
+
+---
+
+## Wave 2 Review (Third pass) — 2026-04-20
+
+**Scope:** Wave 2 `/doctor` feature third-pass Wave Boundary review on branch `feat/doctor-command`, focused on re-verifying the fallback-path fix requested by the second BLOCK report (`$HOME/.isparto/scripts/doctor-check.sh`).
+
+| # | Product Intent | Implementation | Aligned? | Severity | Detail |
+|---|---------------|----------------|----------|----------|--------|
+| 1 | The documented fallback path must be real after install/upgrade | `commands/doctor.md` still documents fallback execution at `$HOME/.isparto/scripts/doctor-check.sh`; `install.sh` now creates `$ISPARTO_HOME/scripts`, copies `scripts/doctor-check.sh`, and applies `chmod +x` | Y | — | The previous MAJOR mismatch (doc claim without installer deployment) is resolved in code. |
+| 2 | Installed fallback payload should be present and consistent with the repo version | Local installed file exists at `~/.isparto/scripts/doctor-check.sh` and is executable; byte-compare against repo `scripts/doctor-check.sh` matches | Y | — | Confirms the deployed fallback script is not stale/drifted in this environment. |
+| 3 | Fallback invocation should work outside repo-local `scripts/` path | Running `bash ~/.isparto/scripts/doctor-check.sh` from `/tmp` succeeds and returns deterministic D1-D7 output plus summary (exit 0) | Y | — | Outside repo context, expected WARNs are D5 (not inside iSparto repo) and D7 (no VERSION file); this matches script design and does not indicate fallback-path failure. |
+| 4 | Earlier Wave 2 MAJOR fixes must remain intact after fallback-path changes | Re-ran `bash scripts/doctor-check.sh --self-test` and real run from repo root: one-line-per-check output contract intact; D2/D3 RC-capture behavior remains unmasked | Y | — | No regression introduced while fixing installer fallback deployment. |
+| 5 | Uninstall path should clean newly introduced fallback artifacts | `isparto.sh --uninstall` now removes `$ISPARTO_HOME/scripts` alongside existing `bin/lib/hooks` cleanup | Y | — | Keeps install/uninstall symmetry for the new fallback script location. |
+
+## Recommendation
+
+**PROCEED.** The second BLOCK report's remaining MAJOR finding (fallback-path mismatch) is resolved: docs, installer behavior, and runtime execution now align for `/doctor` fallback mode.

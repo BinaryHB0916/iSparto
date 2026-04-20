@@ -14,7 +14,7 @@ iSparto requires the following on your machine:
 
 Run `/env-nogo` at any time to verify your environment.
 
-## What You Initiate (8 Commands)
+## What You Initiate (9 Commands)
 
 | Command | When | What You Do |
 |---------|------|-------------|
@@ -24,6 +24,7 @@ Run `/env-nogo` at any time to verify your environment.
 | `/end-working` | End of each work session | Receive session briefing (fully autonomous — commit, PR merge, and push are automatic) |
 | `/plan xxx` | When there's a new requirement | Describe the requirement, review the Team Lead's proposal |
 | `/env-nogo` | When there are environment concerns | Review check results, fix items marked with a cross |
+| `/doctor` | Before starting on a new machine, after upgrade, or when suspecting environment rot | Review the 7-check health report; address any FAIL before continuing, WARN items are informational |
 | `/restore` | When you want to undo a migration or init | Review snapshot details, confirm restore to roll back all changes |
 | `/security-audit` | Before a release or milestone | Receive the full audit report (code + .gitignore + git history + dependencies); fix any CRITICAL/HIGH items before proceeding |
 
@@ -54,6 +55,22 @@ Run `/env-nogo` at any time to verify your environment.
 - **Remaining issues in plan.md** — shown each time with /start-working, make sure nothing is missed
 - **Product direction decisions** — /plan proposals, /migrate migration plans, /restore actions still require your confirmation
 - **Compliance audit reports** — shown in /end-working session briefing; review any FAIL or WARNING items, and decide whether to adopt the suggested corrections next session
+
+## /doctor — Environment Health Check
+
+`/doctor` is a local-only, offline diagnosis for the iSparto installation. It runs in under a second and emits seven check lines (D1–D7) plus a summary.
+
+**When to run it:**
+- First time on a new machine (or after an iCloud sync lands a stale `~/.isparto/`)
+- Immediately after `~/.isparto/install.sh --upgrade`
+- When something feels off — hooks not firing, Codex MCP timing out, tmux commands failing
+
+**What each line means:**
+- `[PASS]` — check satisfied, no action needed
+- `[WARN]` — non-blocking; typically a "state is acceptable but not optimal" (e.g., Codex config absent and defaults will apply, or VERSION ahead of the latest git tag because of a merged-not-released window)
+- `[FAIL]` — blocking; the follow-up `(fix: ...)` hint names the concrete remediation (e.g., `brew install tmux`)
+
+**What it does NOT do:** no auto-fix, no network probes (does not ping Claude API or handshake Codex MCP), no coupling into `/start-working` or `/end-working` (those stay fast by not invoking `/doctor` implicitly). Run it when you want it; ignore it when you don't.
 
 ## Token Budget Awareness
 
