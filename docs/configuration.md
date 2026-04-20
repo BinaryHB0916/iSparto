@@ -171,13 +171,14 @@ All spec documents use the uniform `-spec` suffix: product-spec, tech-spec, desi
 
 ### Document Responsibility Boundaries
 
-| File | What It Covers | One-liner |
-|------|----------------|-----------|
-| product-spec.md | Pages, interaction flows, feature boundaries, copy | **What the product does** |
-| tech-spec.md | Architecture, data models, API contracts, state management, infrastructure, third-party integrations | **How to build it technically** |
-| design-spec.md | Colors, typography, spacing, animations, atmosphere elements | **How it looks visually** |
-| plan.md | Wave orchestration, task status, remaining issues, manual intervention points | **Where we are now** |
-| session-log.md | Tasks completed, developers spawned, Codex reviews, files changed, key decisions | **Auto-generated session metrics** |
+| File | What It Covers | One-liner | Enforcement |
+|------|----------------|-----------|-------------|
+| product-spec.md | Pages, interaction flows, feature boundaries, copy | **What the product does** | Doc Engineer audit item 1 |
+| tech-spec.md | Architecture, data models, API contracts, state management, infrastructure, third-party integrations | **How to build it technically** | Doc Engineer audit item 2 |
+| design-spec.md | Colors, typography, spacing, animations, atmosphere elements | **How it looks visually** | Doc Engineer audit item 4 |
+| plan.md | Current actionable + in-progress Wave tasks + navigation context (roadmap, release gate, observation-period tracker, decision framework). Completed Wave narratives / completed FR entries / `[DONE]` annotations are forbidden — they live in session-log.md | **Where we are now** | Enforced by [commands/end-working.md](../commands/end-working.md) Step 4 authoring + transition contract, [docs/roles.md](roles.md) Doc Engineer audit item 11, and [scripts/plan-md-contract-check.sh](../scripts/plan-md-contract-check.sh) |
+| session-log.md | Per-session empirical execution record — Wave completions, FR completions, governance-maintenance completions, tasks completed, key decisions, files changed | **Auto-generated session metrics** | Enforced by [commands/end-working.md](../commands/end-working.md) Step 4 authoring + transition contract |
+| CHANGELOG.md | User-facing release notes in Keep-a-Changelog format; `[Unreleased]` collects pre-release content, `scripts/release.sh` migrates it to `[X.Y.Z]` at `/release` time | **User-facing release notes** | Enforced by [commands/end-working.md](../commands/end-working.md) Step 4 authoring + transition contract |
 
 ---
 
