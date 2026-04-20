@@ -683,3 +683,23 @@ No CRITICAL misalignment found in this re-check, but the remaining MAJOR affects
 ## Recommendation
 
 **PROCEED.** The second BLOCK report's remaining MAJOR finding (fallback-path mismatch) is resolved: docs, installer behavior, and runtime execution now align for `/doctor` fallback mode.
+
+---
+
+## Wave 3 Review — 2026-04-20
+
+**Scope:** Wave 3 `/start-working` Session Health Preview + FR-26 (Doc Engineer acceptance re-execution) + FR-27 (Process Observer observation-tracker-row check) on branch `feat/wave-3`. Reviewed `scripts/session-health.sh`, `commands/start-working.md`, `docs/roles.md`, `commands/end-working.md`, `agents/process-observer-audit.md`, and the corresponding `docs/plan.md` / `CHANGELOG.md` updates.
+
+| # | Product Intent | Implementation | Aligned? | Severity | Detail |
+|---|---------------|----------------|----------|----------|--------|
+| 1 | `/start-working` should preserve cross-session recovery context without forcing manual reconstruction | Step 9 now keeps the fixed 3-sentence briefing and appends a fixed Session Health Preview structure with branch, last commit, uncommitted files, BLOCKING-marker state, and observation-period status | Y | — | This aligns with product-spec's cross-session state recovery intent and keeps Wave state visible at session start. |
+| 2 | The Session Health Preview should be mechanically derived, read-only, and reproducible | New `scripts/session-health.sh` is pure read-only (`git` + `docs/plan.md` parsing), has `--help`, and `--self-test` passes 3/3 fixtures; live run emits the declared 5-bullet block | Y | — | Behavior matches the Wave contract (mechanical extraction, no writes, deterministic output shape). |
+| 3 | Low-noise output policy should be preserved while adding state visibility | `commands/start-working.md` explicitly scopes the 3-sentence no-bullet rule and adds a narrow carve-out that authorizes structured Session Health content only in the new block | Y | — | This keeps B/C-layer boundaries explicit instead of reintroducing broad operational narration. |
+| 4 | Doc Engineer should independently verify acceptance assertions, not trust prose | `docs/roles.md` item 3 adds FR-26 re-execution requirements; `commands/end-working.md` Step 9 now points DE to this rule | Y | — | This directly addresses the Wave 2 A6 transcription-slip class of failures. |
+| 5 | Process Observer should enforce observation-period tracker data integrity at Wave close | `agents/process-observer-audit.md` adds E6 (PASS/IN-PROGRESS/FAIL/N/A) and explicit mid-flow vs post-commit resolution semantics; `docs/plan.md` adds FR-27 timing/irreversibility rules | Y | — | The check closes the previously undefined "placeholder left unresolved at commit time" gap. |
+| 6 | Documentation/audit trail should reflect new behavior in the same Wave | `CHANGELOG.md` has corresponding Added/Changed entries for Session Health Preview, FR-26, and FR-27 | Y | — | Traceability from behavior change to release notes is present. |
+| 7 | Wave-close records should be final before merge | Current Wave 3 tracker/session-log prose still contains "results pending" placeholders for DE/PO completion notes | N | MINOR | Non-blocking at review time, but should be finalized in `docs/plan.md` and `docs/session-log.md` before merge to keep the audit trail complete. |
+
+## Recommendation
+
+**PROCEED** with one non-blocking follow-up: replace the remaining Wave 3 "pending" placeholders in plan/session logs after DE/PO outputs are finalized. No CRITICAL or MAJOR product-implementation misalignment found.
