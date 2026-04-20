@@ -1845,3 +1845,38 @@ CHANGELOG.md                     |  13 ++++
 - **Backlog 新增 FR-31 + FR-32 (不 block 本 Wave, FR-32 延 v0.9 合并做).** FR-31: `gh api /user --jq .login` owner-extraction regex `sed -E 's#.+[:/]([^/]+)/[^/]+(\.git)?$#\1#'` 在 `commands/start-working.md` Step 6 + `commands/end-working.md` Step 8 + `scripts/gh-account-guard.sh` 三处 triplication, 抽 helper 到 `lib/` (priority low, origin Wave 4 FR-13). FR-32: `docs/roles.md` "14 checks total" + `docs/process-observer.md` 15-row enumeration 与 `agents/process-observer-audit.md` 的 canonical 18 row 数字 stale (priority medium, origin Wave 4 FR-24, 显式标注 "延 v0.9 与 plan.md 膨胀治理 session 合并做 — 两处都是 docs 大批量 refactor 场景, 零额外成本").
 - **Wave 5 = 观察期最后 Wave, Release Gate 3 条件状态 (Wave 4 结束时).** 条件 1 (5-Wave tracker 同字段 anomaly < 2): 当前 4 Wave 无同字段 anomaly (Wave 2 A6 WARN 为单次 transcription slip, Wave 3 / 4 零 WARN zero FAIL), 预期 Wave 5 仍零异常即条件 1 达成. 条件 2 (3 real IR runs): **已达成 3/3** (Wave 2 IR = 1, Wave 3 IR = 2, Wave 4 IR = 3, 本 Wave 结束即 hit). 条件 3 (no emergency revert): 观察期至今零 revert. Wave 5 内容: 继续观察 + 最后一 Wave 闭环 + v0.8.0 launch 前最后一次 framework-internal sweep.
 
+## 2026-04-20 Session (v0.8.0 release — dedicated release session, post-Wave 4 observation-period close-out)
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | 非 Wave — 专用 release session. Prior Wave 4 (2026-04-20 earlier) closed 观察期 with Release Gate 三条件全部 MET; this session's sole scope is 触发 `/release minor` to ship v0.8.0. |
+| Tasks completed | T1 Session boundary ack — `docs/plan.md` 第 172 行新增今日 ack (随后作为 Path 2 cleanup 的一部分被 `git checkout --` 丢弃, 因与第 171 行重复零额外信号); T2 `/release minor` 触发 `scripts/release.sh 0.8.0` — VERSION 0.7.8 → 0.8.0, CHANGELOG `[Unreleased]` → `[0.8.0] - 2026-04-20`, 创建 release/v0.8.0 分支, PR #225 merged to main (merge commit `a2907a0`, squash commit `8f45fa3`), tag `v0.8.0` 通过 GitHub API 创建, GitHub Release published at https://github.com/BinaryHB0916/iSparto/releases/tag/v0.8.0 with `install.sh` + `checksums.sha256` assets; T3 `docs/plan.md` Status 段 MERGED-NOT-RELEASED → RELEASED — v0.8.0 (2026-04-20 CST) 并附 closure paragraph 说明 `/release minor` actual command + flag 第 157/163 行 `/release patch` 为 Tier 4 frozen authoring error (不追溯编辑); T4 本 session-log entry. |
+| Key decisions | (1) **Release bump type = `minor` not `patch`** — user caught Lead 初次按 plan.md 第 163 行字面误读为 `/release patch`. Semver 规则 0.7.8 → 0.8.0 是 minor bump (patch 会得到 0.7.9). Plan.md 第 157/163 行的 `/release patch` 字样是 v0.8.0 Wave entry 成文时的 authoring error, 按 Tier 4 "不追溯编辑" 规则冻结, closure paragraph 显式标注. (2) **Cleanup 采用 Path 2** (`git checkout main` + `git checkout -- docs/plan.md` 丢掉重复 ack + 跑 release.sh) 而非 Path 1 stash 或 Path 3 formal docs/ PR — 理由: ack 与 line 171 同日重复零信息价值, 丢弃无损; Path 2 副作用最小 (只丢一行重复 ack, 零 commit/PR 开销). (3) **feat/wip-0420 分支保留不清理** — 用户明确 "留着不管, 下次 session 清理", 避免本 release session scope creep. (4) **release.sh precondition check 作为 mechanical guardrail** — 初次 invocation 在 feat/wip-0420 上被 `Must be on main branch` 拒绝, 是脚本 preconditions (scripts/release.sh:39-49) 的 positive intervention, Lead 按用户指示把 error 贴回用户后再按 user-chosen path 执行. 这是 "跑下去看会不会挂" 而非 "预判挂不挂" 的 cost-optimal path — 用户的 "跑" directive 有效把 Lead 从过度预防中拉回. (5) **Wave 4 BLOCKING marker 被本会话正确 honor** — BLOCKING marker 在 plan.md 第 169 行由 Wave 4 (更早的 2026-04-20 session) 写入, 用于强制新会话跑 /release; 本会话作为 "the fresh session" 通过 Step 0 ack + 跑 /release minor 完成了 marker 的完整生命周期. 三条 2026-04-18 / 2026-04-20 / 2026-04-20 ack 行 demonstrate cross-session boundary handling 工作正常. |
+
+### Files Changed
+
+```
+ docs/plan.md        |  5 ++++-
+ docs/session-log.md | 36 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 40 insertions(+), 1 deletion(-)
+```
+
+Note: 本 commit (docs/session-log-0420 分支) 只含 plan.md Status flip + closure paragraph + FR-33 Backlog 行 + session-log 追加. VERSION + CHANGELOG.md 改动通过 release.sh auto-generated release/v0.8.0 分支 (PR #225 commit `8f45fa3`) 独立合并, 不在本 commit 范围.
+
+### Notes
+
+- **Release session 的特殊形态 — 非 Wave.** 本 session 是 dedicated release session, 不属于任何 Wave, 不触发 Wave Boundary IR (`commands/end-working.md` Step 3 不适用 — release 是 versioning automation 非 development task). Step 3 skip 理由: (a) 无 Wave-completion trigger (本 session 未完成 Wave, 只 ship 之前已 merge 的 Wave); (b) `/release` 命令本身 spec 明确 "This is NOT a development task — do NOT spawn Codex"; (c) 无 application-code 改动 (release.sh auto-generated commits + plan.md Status flip + session-log 均属 framework 自指边界内). Step 3 skip 在本 entry 按惯例 documented, 非按 carve-out 路径 (carve-out 针对 self-referential polish Wave, 本 session 连 Wave 都不是).
+
+- **Release 触发的首 invocation 失败 + 用户指令序列 是本 session 最高价值观察点.** Lead 在 feat/wip-0420 上跑 release.sh → script 的 `Must be on main branch` check 正确拒绝 → Lead 按用户指示 "如果 release.sh 真的拒绝跑,再告诉我怎么处理" 把错误原文贴回用户 → 用户选择 Path 2 并给出精确步骤序列 (`git checkout main` + `git checkout -- docs/plan.md` + verify HEAD = 2c6ac2e + 跑 release.sh) → Lead 严格按步骤执行. 这是 "用户-Lead 协同精细化" 的 positive pattern: 用户不仅说 "清理然后发版" (level-up instruction), 而是精确到每一个 git 命令 (level-down instruction), 符合 memory `feedback_discuss_before_execute.md` + `feedback_response_brevity.md` 的 terse + precise 偏好. Lead 需要做的只是 mechanical 执行 + 每步 verify.
+
+- **Plan.md `/release patch` authoring error 的 Tier 4 处置范式.** Plan.md 第 157 行 (Release gate 三条件 preamble) 和第 163 行 (Release 触发说明) 均写 `/release patch`, 但正确是 `/release minor`. 按 CLAUDE.md Documentation Language Convention Tier 4 "不追溯编辑" 规则, 两行字样保持冻结, 不追溯改写. 新增的 closure paragraph (第 147-148 行) 在 status flip 同时显式标注 "actual command 是 `/release minor`" + 把 157/163 行标为 "frozen authoring errors". 这是 Tier 4 historical artifact 处理 authoring error 的正确形态: 不改写 + 用新增 paragraph/metadata 显式纠偏, 让未来读者能看清历史 vs 正确解读. 这个范式对未来类似场景 (Wave entry 写入后发现的 factual error) 可参考.
+
+- **Release 自动化全链路 green path.** scripts/release.sh 按预期 16 秒内完成: 创建 release/v0.8.0 分支 → 改 VERSION + CHANGELOG → commit → push → `gh pr create` → `gh pr merge --merge` → 切回 main → pull → 删本地 release 分支 → 生成 checksums.sha256 → `gh release create` (含 install.sh + checksums 两个 asset, 使用 GitHub API 创建 tag). 结果: PR #225 merged `a2907a0`, tag `v0.8.0` 本地可见, `gh release view v0.8.0` 返回 isDraft=false/isPrerelease=false. 全链路零人工干预, 验证 CLAUDE.md "Releases must use the `/release` command" 规则的自动化承诺兑现.
+
+- **feat/wip-0420 分支保留 — 下次 session 清理候选.** 本 session Step 0.5 branch guard 从 main auto-create 的 `feat/wip-0420` 在用户明确指示下保留, 未 merge 未删除. 分支 HEAD 等于 main HEAD (在 start-working 后我加的 ack 未 commit 就被 Path 2 丢掉, 即此分支无独立 commit). 下次 /start-working 可用 `git branch -d feat/wip-0420` 清理 (分支为空, 删除无风险). 这是 user-directed branch 保留的先例, 下次 session 不必再 prompt 用户确认.
+
+- **PO audit 结果 (fresh spawn, canonical 18-row).** 17 PASS + 0 IN-PROGRESS + 0 WARN + 0 FAIL + 1 N/A = 18 total (F1 Wave Boundary IR 结构性 N/A — release session 非 Wave). 所有 A/B/C/D/E series PASS. 无 user-side rule deviation. 新增 Backlog FR-33 (framework-side rule polish 候选): `agents/process-observer-audit.md` B1 Mode Selection check 缺 "dedicated release session / governance-maintenance session" 的 N/A 分支, PO auditor 需从 first principles 推理而非读 spec — priority low, 已 append 进 Backlog Framework Rule Polish 表, 下次 framework-polish session 处理. FR-32 slot 仍空 (Wave 4 session-log 声称 FR-32 已 add, 但实际 Backlog 表只到 FR-31; 本 session skip FR-32, 按 Wave 4 intent 占位, 由下次清理该 carry-over).
+
+- **Release session 的 PO audit canonical 18-row 压力测试 positive case.** Wave 4 刚把 PO canonical checklist codify 到 18 行 (A1-A3/B1-B2/C1-C2/D1-D4/E1-E6/F1), 本 session 的 PO spawn 是 Wave 4 template 对 "非 Wave session" (release session) 的首次验证. 结果: template 足够 robust 处理 release session 形态 (F1 结构性 N/A + B1 经 reasoning 判定 N/A 但 auditor 给出 PASS 含 rationale). 本会话 surface 的 FR-33 gap 不是 template 失败, 是 spec 精度可提升的小幅 polish — positive result for Wave 4 的 canonical 18-row codification 决策.
+
