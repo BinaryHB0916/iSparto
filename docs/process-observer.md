@@ -176,45 +176,56 @@ In the /end-working flow, executed after the Doc Engineer documentation audit an
 
 ### Audit Checklist
 
+**Canonical coverage: 19 checks across 6 categories (A-F).** The enumeration below mirrors the authoritative table in `agents/process-observer-audit.md` (A1-A3 / B1-B2 / C1-C2 / D1-D4 / E1-E7 / F1). That file is the source of truth; this section is a reader-facing reference — when the two drift, `agents/process-observer-audit.md` wins.
+
 #### Checklist A: Branch Rules
 
 | # | Check | Criterion | Deviation Level |
 |---|-------|-----------|----------------|
-| A1 | Whether the current branch is feat/, fix/, hotfix/, docs/, or release/ | Branch name prefix matches | P1 |
-| A2 | Whether there are any direct commits to main | git log compared with the main HEAD at session start | P1 |
-| A3 | Whether the branch name follows the convention | feat/xxx, fix/xxx, hotfix/xxx, docs/xxx, release/vX.Y.Z format | P2 |
+| A1 | Whether the current branch is feat/, fix/, hotfix/, docs/, or release/ | Branch name prefix matches one of the approved five | P1 |
+| A2 | Whether there are any direct commits to main | git log compared with the main HEAD at session start; PR-merge commits on main are PASS | P1 |
+| A3 | Whether the branch guard precedes the first modifying tool call | Branch switched off main before first Edit/Write/Bash modifying call; WARN (not FAIL) if ordering broke but work still merged cleanly | P2 |
 
-#### Checklist B: Codex Review Compliance
-
-| # | Check | Criterion | Deviation Level |
-|---|-------|-----------|----------------|
-| B1 | Whether code changes triggered Codex code review | Should trigger by default; only Tier 2 (purely visual, non-security config values) and Tier 3 (pure documentation / pure formatting) may skip code review. Decide against the trigger-condition table in workflow.md | P1 |
-| B2 | Whether QA smoke testing was triggered | Should trigger by default; only pure documentation / pure formatting changes may be skipped. Decide against the trigger-condition table in workflow.md | P1 |
-| B3 | Whether issues found by Codex were resolved | Whether the catches output by Codex review have corresponding fix commits | P1 |
-| B4 | Whether the Wave-level fallback review was executed | Every Wave must include at least one batch Codex review, regardless of how individual changes are classified | P1 |
-
-#### Checklist C: Doc Engineer Compliance
+#### Checklist B: Codex Review and Doc Engineer Spawn Compliance
 
 | # | Check | Criterion | Deviation Level |
 |---|-------|-----------|----------------|
-| C1 | Whether Doc Engineer ran | A Doc Engineer spawn record exists in the session | P1 |
-| C2 | Whether code changes have corresponding documentation updates | Correspondence between .md file changes and code changes in the diff | P2 |
-| C3 | Whether plan.md was updated | plan.md has a diff record in the session | P1 |
-| C4 | Whether plan.md unchecked items match the actual state | For items marked `[ ]` in plan.md, check whether the corresponding files/features already exist in the codebase. Items that are implemented but not marked complete count as deviations | P1 |
+| B1 | Whether code changes triggered Codex code review | Per-change iteration against the trigger-condition table in workflow.md; only Tier 2 (purely visual, non-security config values) and Tier 3 (pure documentation / pure formatting) may skip | P1 |
+| B2 | Whether Doc Engineer sub-agent was spawned when required | /end-working Step 9 pre-merge gate either spawned a fresh DE sub-agent or recorded an explicit Lead-self-assessed exception citing the ad-hoc-fix / emergency-hotfix clause | P1 |
+
+#### Checklist C: Doc Engineer Execution Compliance
+
+| # | Check | Criterion | Deviation Level |
+|---|-------|-----------|----------------|
+| C1 | Whether Doc Engineer executed at least once in the session | A Doc Engineer spawn record exists in the session — either the /end-working Step 9 gate or an earlier Lead-initiated mid-session spawn | P1 |
+| C2 | Whether code changes have corresponding documentation updates | Correspondence between code-layer diffs and docs/ , README*, command/agent/template header comments, or CHANGELOG entries in the same session | P2 |
 
 #### Checklist D: PR Flow Compliance
 
 | # | Check | Criterion | Deviation Level |
 |---|-------|-----------|----------------|
-| D1 | Whether merged into main via PR | gh pr list record; new commits on main come from a PR merge | P1 |
-| D2 | Whether the branch was cleaned up after merging | The merged feat/fix/hotfix branch does not appear in the remote branch list | P3 |
+| D1 | Whether merged into main via PR | gh pr list record; new commits on main come from `gh pr merge --merge` (not `--squash` or `--rebase`, and not direct push) | P1 |
+| D2 | Whether the branch was cleaned up after merging | The merged feat/fix/hotfix/docs/release branch does not appear in the remote branch list | P3 |
+| D3 | Whether the PR body template was populated per /end-working Step 9 | PR body contains Summary, Mode Selection, Test plan, and Workflow audits sections with the standard audit-annotation vocabulary | P1 |
+| D4 | Whether gh account alignment was executed when repo owner differs from authenticated user | When `REPO_OWNER` ≠ `GH_USER`, a `gh auth switch --user $REPO_OWNER` invocation occurred before `gh pr create` | P1 |
 
-#### Checklist E: Out-of-Scope Operations
+#### Checklist E: Out-of-Scope Operations and plan.md Integrity
 
 | # | Check | Criterion | Deviation Level |
 |---|-------|-----------|----------------|
-| E1 | Whether Developer modified files outside its ownership | git log --name-only file list vs the file ownership assigned by Team Lead | P1 |
-| E2 | Whether uncertain product decisions were escalated to the user | Whether the conversation context contains a record of confirming with the user | P2 |
+| E1 | Whether Developer / Teammate modified files outside its ownership | git log --name-only file list vs the file ownership assigned by Team Lead in the spawn prompt | P1 |
+| E2 | Whether uncertain product decisions were escalated to the user | Product-direction signals (new command / role / file-format / UX copy) appeared as an A-layer interrupt with an explicit question, not as a unilateral Lead decision | P2 |
+| E3 | Whether plan.md unchecked items match the actual codebase state | For items marked `[ ]` in plan.md, re-execute each acceptance assertion (grep / wc / self-test) and cross-check — items fully implemented but not flipped to `[x]` are FAIL; partial presence is WARN | P1 |
+| E4 | Whether BLOCKING-marker decision was applied to CLAUDE.md-touching sessions | Per /end-working Step 2 (FR-22 expansion), any session that modifies CLAUDE.md must either emit the BLOCKING marker requiring a new session for the next Wave OR append a one-sentence skip rationale | P1 |
+| E5 | Whether verification counts on Wave-completion entries are mechanically accurate | Per CLAUDE.md "plan.md verification-count accuracy" rule, any Wave-completion entry citing a commit count must match `git log --oneline --no-merges <wave-base>..HEAD \| wc -l` | P1 |
+| E6 | Whether the observation-period tracker row is filled for a completed Wave | When /end-working is marking a Wave complete within the v0.8.0 observation window (Waves 0-4), the tracker row's four observation columns must contain non-placeholder, non-dash content (unfilled-placeholder or `-` is FAIL post-commit, IN-PROGRESS mid-flow) | P1 |
+| E7 | Whether plan.md contract shape is respected for maintenance / Wave PRs | Per /end-working Step 4 "plan.md, session-log.md and CHANGELOG authoring + transition contract" (parts A authoring + B transition + C enforcement), diffs must not add `[DONE in Wave N]` annotations, full Wave retrospective blocks outside the completed-Wave index, or retained completed-FR lines; if `scripts/plan-md-contract-check.sh` is present, exit 1 is an automatic FAIL | P1 |
+
+#### Checklist F: Independent Reviewer Execution
+
+| # | Check | Criterion | Deviation Level |
+|---|-------|-----------|----------------|
+| F1 | Whether Independent Review ran at the Wave boundary | If a Wave was marked completed this session, IR was spawned (either Lead-initiated mid-session or /end-working Step 3 auto-spawn) and the report was appended to `docs/independent-review.md`; IN-PROGRESS if scheduled but not yet executed at audit time | P1 |
 
 ### Deviation Level Definitions
 
@@ -233,23 +244,27 @@ In the /end-working flow, executed after the Doc Engineer documentation audit an
 
 | # | Check | Status | Detail |
 |---|-------|--------|--------|
-| A1 | Branch is feat/fix/hotfix | PASS/FAIL | Current branch: feat/xxx |
+| A1 | Branch is feat/fix/hotfix/docs/release | PASS/FAIL | Current branch: feat/xxx |
 | A2 | No direct commits to main | PASS/FAIL | ... |
-| A3 | Branch naming convention | PASS/FAIL | ... |
+| A3 | Branch guard precedes first modifying tool call | PASS/WARN | ... |
 | B1 | Codex code review triggered for code changes | PASS/FAIL/N/A | ... |
-| B2 | QA smoke testing triggered | PASS/FAIL/N/A | ... |
-| B3 | Codex catches resolved | PASS/FAIL/N/A | ... |
-| B4 | Wave-level batch review executed | PASS/FAIL/N/A | ... |
-| C1 | Doc Engineer executed | PASS/FAIL | ... |
-| C2 | Code changes have doc updates | PASS/FAIL | ... |
-| C3 | plan.md updated | PASS/FAIL | ... |
-| C4 | plan.md unchecked items match actual state | PASS/FAIL | ... |
-| D1 | Merged to main via PR | PASS/FAIL/N/A | ... |
-| D2 | Branch cleaned up after merge | PASS/FAIL/N/A | ... |
+| B2 | Doc Engineer sub-agent spawned when required | PASS/IN-PROGRESS/FAIL/N/A | ... |
+| C1 | Doc Engineer executed at least once in the session | PASS/IN-PROGRESS/FAIL | ... |
+| C2 | Code changes have doc updates | PASS/FAIL/N/A | ... |
+| D1 | Merged to main via PR | PASS/IN-PROGRESS/FAIL/N/A | ... |
+| D2 | Branch cleaned up after merge | PASS/IN-PROGRESS/FAIL/N/A | ... |
+| D3 | PR body template populated per end-working Step 9 | PASS/IN-PROGRESS/FAIL/N/A | ... |
+| D4 | gh account alignment when owner ≠ authenticated user | PASS/FAIL/N/A | ... |
 | E1 | No out-of-scope file modifications | PASS/FAIL/N/A | ... |
-| E2 | Uncertain decisions escalated to user | PASS/FAIL/N/A | ... |
+| E2 | Uncertain decisions escalated to user | PASS/WARN/N/A | ... |
+| E3 | plan.md unchecked items match codebase state | PASS/WARN/FAIL | ... |
+| E4 | BLOCKING marker decision applied to CLAUDE.md-touching sessions | PASS/WARN/FAIL/N/A | ... |
+| E5 | Verification-count accuracy for Wave-completion entries | PASS/FAIL/N/A | ... |
+| E6 | Observation-period tracker row filled for completed Wave | PASS/IN-PROGRESS/FAIL/N/A | ... |
+| E7 | plan.md contract shape respected for maintenance / Wave PRs | PASS/FAIL/N/A | ... |
+| F1 | Independent Review at Wave boundary | PASS/IN-PROGRESS/FAIL/N/A | ... |
 
-**Summary:** X passed, Y warnings, Z failures
+**Summary:** X passed, Y in-progress, Z warnings, W failures, V not-applicable (Total: X+Y+Z+W+V = 19)
 
 **Rule Corrections Suggested:**
 - [Specific suggestions for fixing failures and improving warnings]
