@@ -328,7 +328,7 @@ Hook configuration and the dangerous-operations list are documented in [docs/pro
 
 ### Post-hoc audit trigger
 
-During the /end-working flow, **after the Doc Engineer documentation audit and before pushing the branch / creating the PR**, the Team Lead spawns a Process Observer sub-agent to run a compliance audit. The audit produces a deviation report against 5 checklists (14 checks total).
+During the /end-working flow, **after the Doc Engineer documentation audit and before pushing the branch / creating the PR**, the Team Lead spawns a Process Observer sub-agent to run a compliance audit. The audit produces a deviation report against 6 checklists (19 checks total — see `agents/process-observer-audit.md` for the canonical A1-A3 / B1-B2 / C1-C2 / D1-D4 / E1-E7 / F1 enumeration).
 
 The audit report is written to the session briefing and does not modify files automatically. On the next /start-working, the Lead reminds the user about the previous session's deviations in the briefing.
 
