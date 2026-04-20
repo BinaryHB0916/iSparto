@@ -1,5 +1,37 @@
 # Session Log
 
+## 2026-04-20 Session — Governance Maintenance: CHANGELOG v0.8.0 consolidation (pre-release)
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | Not a Wave — governance-maintenance session, pre-v0.8.0 release. Second pre-release session of the day (after plan.md contract codify in branch `chore/plan-md-reshape-pre-v080`, already merged). Goal: merge the existing `[Unreleased]` block (Wave 1-4 polish + governance contract = 3 Added + 5 Changed bullets) with the `[0.8.0] - 2026-04-XX` placeholder block (Wave 0 core = 4 Changed bullets + 6 Unchanged + 4 Migration Notes) into a single `[Unreleased]` block, chronologically ordered Wave 0 → 1 → 2 → 3 → 4. Unblocks `scripts/release.sh 0.8.0` in the next session by eliminating the dual-`[0.8.0]` collision that release.sh's line-85 sed would otherwise create. |
+| Tasks completed | (1) **CHANGELOG.md consolidation** — four sequential Edit operations on branch `docs/changelog-v0.8.0-consolidate`: (a) insert 4 Wave 0 foundation Changed bullets before the 5 Wave 1-4 polish Changed bullets in `[Unreleased] ### Changed`; (b) delete `## [0.8.0] - 2026-04-XX` header + its date note + its duplicate `### Changed` subsection + 4 duplicate bullets, leaving `### Unchanged` and `### Migration Notes` attached to `[Unreleased]`; (c) add release-time date-stamp note under `## [Unreleased]`; (d) apply Option A wording on the DE checklist bullet in `### Unchanged` (`Doc Engineer's 10-item audit checklist (item 9 language-check.sh + item 10 policy-lint.sh both unchanged)` → `Doc Engineer's language-check.sh (item 9) + policy-lint.sh (item 10) audit items both unchanged`). Net diff: CHANGELOG.md 12 insertions / 12 deletions (consolidation, not content creation). (2) **Four guardians preflight** — all PASS (exit 0): `scripts/plan-md-contract-check.sh`, `scripts/language-check.sh`, `scripts/policy-lint.sh`, `$HOME/.isparto/hooks/process-observer/scripts/pre-commit-security.sh`. (3) **Session boundary acknowledgement line for 2026-04-20** added to `docs/plan.md` Release Gate block by /start-working Step 0 at session open (single-line plan.md change, staged into this commit). |
+| Key decisions | (1) **Minor bump 0.8.0, not patch.** plan.md originally said `/release patch` — user confirmed that as a typo; Session 3 will run `scripts/release.sh 0.8.0` (minor). (2) **release.sh sed incompatibility drove the manual-consolidation path.** Line 85 substitutes `## [Unreleased]` with `## [Unreleased]\n\n## [$NEW_VERSION] - $TODAY`, not recognizing the pre-existing `## [0.8.0] - 2026-04-XX` placeholder. Running as-is would produce two `[0.8.0]` headers, and line-98 release-notes extraction (`sed -n "/^## \[$NEW_VERSION\]/,/^## \[/p"`) would capture only the first one, silently dropping the Wave 0 core content. Resolution: manually consolidate into `[Unreleased]` first, then let the script's sed produce a single clean `[0.8.0]` section at release time. (3) **Option A on DE checklist conflict.** `[Unreleased]` Changed described Doc Engineer protocol expanding to 11 audit items (governance contract); `[0.8.0]` Unchanged previously asserted "10-item audit checklist" — a literal count conflict post-merge. Three options considered — (A) drop the `10-item` prefix, keep item 9/item 10 unchanged assertion; (B) delete the bullet entirely; (C) rewrite to "items 9 and 10 specifically unchanged despite checklist expansion". User chose A — preserves the v0.7.x upgrader's concrete integration-point stability signal (their language-check.sh / policy-lint.sh integrations did not move) without contradicting the governance contract bullet's `11 audit items` language. (4) **Three-session boundary structure.** User enforced hard boundaries — Session 1 (prior, already merged): /end-working wrap-up of Waves 1-4 + governance work; Session 2 (this): CHANGELOG consolidation via full /end-working flow; Session 3 (future, separate window): `scripts/release.sh 0.8.0`. Each session runs full /end-working. Rationale: clean audit trail per phase, plus avoids mixing CHANGELOG-authoring context with release-execution context. (5) **Full /end-working flow, not bare PR.** User explicitly classified CHANGELOG consolidation as governance-maintenance level: branch → DE audit → PR → merge, not a casual docs commit. Matches the governance-maintenance session type codified in the earlier 2026-04-20 session. (6) **Stop conditions respected.** User set four stop conditions (guardian non-zero, DE WARN/FAIL, merge-order chronological hesitation, unexpected `[Unreleased]`/`[0.8.0]` content). Option A branch-point (stop #4) triggered and Lead stopped to ask; user chose A and Lead resumed. Remaining stops did not fire; guardians all green, merge order preserved chronologically. |
+
+### Acceptance verification
+- CHANGELOG.md structure post-consolidation: `[Unreleased]` header + release-time date note + `### Added` (3 bullets) + `### Changed` (9 bullets, Wave 0 → Wave 4 chronological) + `### Unchanged` (6 bullets, Option A applied) + `### Migration Notes` (4 bullets); no duplicate `[0.8.0]` header
+- `scripts/plan-md-contract-check.sh`: exit 0
+- `scripts/language-check.sh`: exit 0 (Tier 1/Tier 2 CJK-clean, Principle 1 clean)
+- `scripts/policy-lint.sh`: exit 0
+- `$HOME/.isparto/hooks/process-observer/scripts/pre-commit-security.sh`: exit 0 (no BLOCK, no WARNING)
+- Branch: `docs/changelog-v0.8.0-consolidate` (no direct main work, no force-push, no --no-verify)
+
+### Files Changed
+```
+ CHANGELOG.md | 23 +++++++++++------------
+ docs/plan.md |  1 +
+ 2 files changed, 12 insertions(+), 12 deletions(-)
+```
+
+### Notes
+
+- **Session 3 handoff.** Next step is a fresh Claude Code session + `/release minor` (which translates to `scripts/release.sh 0.8.0`). Preconditions release.sh verifies — on main, clean tree, no existing `v0.8.0` tag, `[Unreleased]` present in CHANGELOG — all satisfied after this session's PR merges. The line-85 sed will then cleanly insert a new `[0.8.0] - <today's date>` header above the current `[Unreleased]` content, producing the final CHANGELOG structure the line-98 release-notes extraction can read correctly.
+- **Not a Wave entry.** Governance-maintenance session per the Wave-vs-maintenance distinction codified in the earlier 2026-04-20 session. No new plan.md Wave entry, no F8b tracker row, no IR (not a Wave boundary). Full PO audit runs per governance-maintenance contract.
+- **BLOCKING marker decision.** Session touched `CHANGELOG.md` (Tier 4 historical artifact — not injected into Claude Code session-start system prompt) and `docs/plan.md` (single acknowledgement line; no rule / behavior / identifier / contract change). `CLAUDE.md` unchanged. Under the Tier 1 BLOCKING gate: no CLAUDE.md touch → no marker needed. Cross-session risk nil.
+
+---
+
 ## 2026-04-20 Session — Governance Maintenance: plan.md contract codify + historical Wave migration (pre-v0.8.0)
 
 | Metric | Value |
