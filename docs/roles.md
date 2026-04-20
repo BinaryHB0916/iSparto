@@ -371,6 +371,20 @@ Audit checklist:
    - On exit code 2: ⚠️ environment error (Python 3 missing, repo root unresolved) — surface in the report as a warning, do not block (degraded mode)
    - If the script does not exist (e.g., the project has not adopted iSparto's Policy linter): skip silently, do not include in the report
 
+11. plan.md / session-log.md / CHANGELOG separation check
+   - Enforces the authoring + transition contract codified in `commands/end-working.md` Step 4 (the contract's three parts: A authoring rule, B transition rule, C enforcement)
+   - Mechanical gate: run `bash scripts/plan-md-contract-check.sh` if the script exists in the project
+     - Exit code 0: ✅ mechanical pass — proceed to the semantic checks below
+     - Exit code 1: ❌ FAIL — copy the `[R1]` / `[R2]` / `[R3]` / `[R4]` violation lines and the summary count into the audit report; hard FAIL, blocks Lead from proceeding to push/PR
+     - Exit code 2: ⚠️ environment error — surface as a warning, do not block (degraded mode)
+     - If the script does not exist: skip the mechanical gate silently and proceed to the semantic checks only
+   - Semantic verification (Doc Engineer runs these over the latest commit's diff regardless of script presence — they catch what the grep-based rules cannot):
+     - Scan the latest commit's diff on `docs/plan.md`. Every new line the diff adds must survive the three-question placement test defined in `commands/end-working.md` Step 4's authoring rule. Completed FR or completed Wave narrative appearing as a plan.md addition → **FAIL** (should have gone to `docs/session-log.md`)
+     - Same fact appearing in both `docs/plan.md` and `docs/session-log.md` as non-link prose (i.e., copied paragraphs rather than a markdown link from one to the other) → **FAIL**
+     - plan.md content duplicating `CHANGELOG.md` user-facing release notes → **FAIL**
+     - Transition incompleteness: the diff deletes an entry from `docs/plan.md` but the same commit set has no corresponding addition in `docs/session-log.md` (the narrative was lost, not migrated) → **FAIL**
+   - Result aggregation: all sub-checks pass (mechanical + semantic) → **PASS**; any sub-check fails → **FAIL**, report the specific failing conditions with file + line evidence
+
 Output format (the following is the report template from Doc Engineer to the Team Lead, not a section of this document):
 
 === Documentation Audit Report ===
@@ -384,6 +398,7 @@ Output format (the following is the report template from Doc Engineer to the Tea
 | ... | ... | ... |
 | Language convention | [pass / fail with violation count] | [Updated / FAIL: see violation list below] |
 | Policy compliance | [pass / fail with violation count] | [Updated / FAIL: see violation list below] |
+| plan.md / session-log / CHANGELOG separation | [pass / fail with violation count] | [Updated / FAIL: see violation list below] |
 
 --- No Updates Needed ---
 [List documents checked but not requiring changes, with reasons]
@@ -397,11 +412,14 @@ Output format (the following is the report template from Doc Engineer to the Tea
 --- Policy Compliance Violations (item 10) ---
 [paste raw `bash scripts/policy-lint.sh` output here, only when item 10 FAILs; omit this section entirely on PASS]
 
+--- plan.md / session-log / CHANGELOG Separation Violations (item 11) ---
+[paste raw `bash scripts/plan-md-contract-check.sh` output AND/OR the semantic-check findings here, only when item 11 FAILs; omit this section entirely on PASS]
+
 Key principles:
 - Directly update all documents that need changes — do not wait for manual confirmation
 - Mark changes involving product decisions with "Warning: product decision change" in the report, so the user can focus on them during post-review
 - Report coverage honestly — do not skip any checklist items
-- If any audit item FAILs (including item 8 mechanical security scan, item 9 mechanical language check, or item 10 mechanical policy compliance check): the Doc Engineer reports FAIL with the specific failing items in its output, then **stops** — does NOT attempt to fix the violations itself. The Lead — not the Doc Engineer — performs the fix, then **spawns a fresh Doc Engineer sub-agent** (zero inherited context) for a full re-audit. This audit-fix separation prevents the agent that found a problem from also being the agent that fixes it (avoids motivated reasoning and incomplete patches). Bound the loop at 3 iterations. If the third re-audit still FAILs, execute the **6-step blocked recovery path** (do NOT leave recovery to Lead's discretion):
+- If any audit item FAILs (including item 8 mechanical security scan, item 9 mechanical language check, item 10 mechanical policy compliance check, or item 11 plan.md / session-log / CHANGELOG separation check): the Doc Engineer reports FAIL with the specific failing items in its output, then **stops** — does NOT attempt to fix the violations itself. The Lead — not the Doc Engineer — performs the fix, then **spawns a fresh Doc Engineer sub-agent** (zero inherited context) for a full re-audit. This audit-fix separation prevents the agent that found a problem from also being the agent that fixes it (avoids motivated reasoning and incomplete patches). Bound the loop at 3 iterations. If the third re-audit still FAILs, execute the **6-step blocked recovery path** (do NOT leave recovery to Lead's discretion):
   1. **Stop the loop** — do not attempt a 4th audit.
   2. **Generate a blocked-audit report** — capture the final FAIL state (which items failed, the violation list, what fixes were attempted across the 3 iterations).
   3. **Write a blocked-audit entry to `docs/plan.md`** — append a dated entry under a "Blocked audits" section (create the section if it doesn't exist) describing what was blocked and why; this is a Tier 4 historical artifact.
@@ -417,7 +435,7 @@ Key principles:
 Process Observer is the team's compliance oversight role, ensuring the development workflow follows CLAUDE.md and the workflow specification. It consists of two parts at different priorities:
 
 - **Real-time Interception (Hooks) — Core layer:** Uses the Claude Code PreToolUse hook to intercept catastrophic operations and branch violations before command execution (git push --force, direct commit/merge/push on main, leaking sensitive files, etc.). A hard guarantee that cannot be bypassed and has no model dependency.
-- **Post-hoc audit (Audit sub-agent) — Advisory layer:** Uses the Sonnet 4.6 model (not Opus) to reduce token consumption. During the /end-working flow, runs after the Doc Engineer and produces a deviation report against 5 checklists (14 checks total). Quality is backstopped by the Hooks core layer — critical compliance checks are already covered at the Hooks layer, and the value of the audit is to surface process improvement opportunities.
+- **Post-hoc audit (Audit sub-agent) — Advisory layer:** Uses the Sonnet 4.6 model (not Opus) to reduce token consumption. During the /end-working flow, runs after the Doc Engineer and produces a deviation report against 6 checklists (19 checks total — see `agents/process-observer-audit.md` for the canonical A1-A3 / B1-B2 / C1-C2 / D1-D4 / E1-E7 / F1 enumeration). Quality is backstopped by the Hooks core layer — critical compliance checks are already covered at the Hooks layer, and the value of the audit is to surface process improvement opportunities.
 
 Process Observer does not participate in development decisions; it only oversees process compliance. Audit reports are written to the session briefing and do not modify files automatically.
 

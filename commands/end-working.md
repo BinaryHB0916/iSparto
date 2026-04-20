@@ -67,6 +67,25 @@ Your responsibility: Ensure all changes and decisions from this session are capt
      ```
 
    - This file will be committed together with the other changes in the next step
+   - **plan.md, session-log.md and CHANGELOG authoring + transition contract.** Before committing, the Lead applies this contract to every file touched by this `/end-working`. The contract has three parts:
+     - **A. Authoring rule (content ownership).**
+       - `docs/plan.md` — positioning: **"Where we are now."** Admissible content: only current actionable items, in-progress Wave tasks, navigation context (roadmap pointers, release gate, observation-period tracker, decision framework). Forbidden content, with no exceptions (no "pre-release temporary retention" carve-out, no "observation-period Wave temporary retention" carve-out): completed FR entries, completed Wave full narratives, `[DONE]` annotations, retrospectives, "previously done" historical narratives.
+       - `docs/session-log.md` — positioning: **per-session empirical execution record.** Wave completions, FR completions, and governance-maintenance-session completions all land here as session entries.
+       - `CHANGELOG.md` — positioning: **user-facing release notes in Keep-a-Changelog format.** `[Unreleased]` collects pre-release content; `scripts/release.sh` sed-migrates `[Unreleased]` to `[X.Y.Z]` at `/release` time. Only user-facing changes land here — internal refactors that produce no user-observable delta do not.
+       - **Three-question placement test — Lead applies at completion time for every fact that could land in plan.md:**
+         1. Does the next session / next Lead need to read this to make decisions? If yes → `plan.md`; if no → `session-log.md`.
+         2. Does this describe a user-facing change? If yes → `CHANGELOG.md` in addition.
+         3. Can this be reconstructed from `git log` / PR body / audit report / `session-log.md`? If yes → do NOT write to `plan.md` (recording it there would duplicate reconstructible facts).
+       - **Governance-maintenance session definition.** A non-Wave maintenance session — doc cleanup, stale number fixes, Backlog hygiene, CHANGELOG reorg, Module Boundaries updates, etc. Flow: branch → edit → DE audit → PR → merge. No IR, no full PO audit, no F8b tracker row, no new plan.md Wave entry. Narrative goes to the `docs/session-log.md` session entry only.
+       - **Enforcement principle.** Each fact is written once. Cross-file references use markdown links, not copied prose. No duplicates.
+     - **B. Transition rule (the behavioural fix that each `/end-working` must run).** At each `/end-working` triggered by a Wave / FR / governance-maintenance completion:
+       1. Identify the corresponding in-progress entry in `docs/plan.md` (if any).
+       2. Migrate the narrative to the `docs/session-log.md` session entry. Enrich the session-log entry with any detail plan.md carried that session-log lacked.
+       3. Delete the entry from `docs/plan.md`. Do NOT annotate `[DONE]`, `[DONE in Wave N]`, or any equivalent completion marker.
+       4. Update the plan.md completed-Wave index section (a level-2 heading — `## Completed Wave Index` in English projects, or the equivalent heading in the maintainer's working language — whose body is a table of markdown links into `docs/session-log.md` entries, never a `[DONE]`-annotated copy of the Wave narrative) if this was a Wave completion.
+       5. Sync user-facing changes to `CHANGELOG.md` `[Unreleased]`.
+       6. Verify steps 1–5 via the Doc Engineer audit — item 11 "plan.md / session-log.md / CHANGELOG separation check" (see `docs/roles.md`).
+     - **C. Enforcement.** Each `/end-working` runs `bash scripts/plan-md-contract-check.sh` before the commit lands. Non-zero exit blocks the commit. The Doc Engineer audit item 11 then does semantic verification beyond what the script catches mechanically (transition-completeness, link-vs-copy, narrative-home correctness).
 5. Spawn the "Process Observer Audit" agent (Sonnet model) to audit this session:
    - Audit scope: review the session against CLAUDE.md behavioral guidelines — branching conventions, Codex review triggers, Doc Engineer execution, PR workflow, unauthorized operations, plan.md accuracy
    - Input: `git log` (commits in this session), `git diff --stat` (file changes), current branch name, plan.md (check unchecked items against actual codebase state)
