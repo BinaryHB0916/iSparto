@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **`/doctor` slash command for local environment health check** — new `commands/doctor.md` + `scripts/doctor-check.sh` (7 checks: tmux availability, Codex CLI availability, Claude Code version, hook-file integrity, iSparto repo markers + BLOCKING acknowledgement state, Codex `config.toml` sanity, VERSION ↔ git-tag consistency). Offline and network-free — runs in under a second; `--self-test` validates the output-format pipeline with synthetic fixtures. Per-check lines emit `[PASS|WARN|FAIL] D<n>: <name> — <result>` with a `(fix: <hint>)` suffix on WARN/FAIL; exit 0 = no FAIL, 1 = one or more FAIL, 2 = internal error. Mirrors `scripts/language-check.sh` / `scripts/policy-lint.sh` style (bash wrapper + python3 heredoc + color output + `--self-test`). `install.sh` deploys the script to `~/.isparto/scripts/doctor-check.sh` (executable) so `/doctor` works from any working directory; `isparto.sh --uninstall` cleans up the new `$ISPARTO_HOME/scripts/` tree. `docs/user-guide.md` adds a `/doctor` section; `CLAUDE.md` Module Boundaries gains a Doctor row. Explicitly excluded: no `--fix` auto-remediation, no network probes, no coupling into `/start-working` or other commands. Part of v0.8.0 observation-period Wave 2.
+
 ### Changed
 
 - **Independent Reviewer Wave-boundary skip carve-out codified (FR-19)** — `commands/end-working.md` Step 3 gains a three-condition skip carve-out (no application-code files modified + no new product-behavior surface + Doc Engineer and Process Observer sub-agent audits both running in the same `/end-working` invocation). Codifies the ~6-Wave precedent of ad-hoc skip-rationale prose into an explicit rule with mandatory one-line rationale in the Wave entry. Default on doubt remains "run IR". Mirrored in `docs/workflow.md`, `docs/collaboration-mode.md`, `docs/roles.md`, and `docs/design-decisions.md`. Step 9 PR template's Independent Reviewer line gains a `carve-out skip — <short reason>` bucket alongside the existing PROCEED / not triggered options. Part of v0.8.0 observation-period Wave 1.

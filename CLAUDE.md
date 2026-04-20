@@ -58,7 +58,8 @@ See [docs/collaboration-mode.md](docs/collaboration-mode.md) for the full collab
 | Bootstrap | bootstrap.sh | Thin bootstrap entry (parses version, verifies checksum, fetches install.sh) |
 | Installer | install.sh, isparto.sh | Install/upgrade/uninstall; isparto.sh is the local stub |
 | Snapshot Engine | lib/snapshot.sh | Snapshot/restore engine |
-| Slash Commands | commands/*.md | 9 behavior definitions (system prompts driving Agent behavior; changes handled per Tier 2b) |
+| Slash Commands | commands/*.md | 10 behavior definitions (system prompts driving Agent behavior; changes handled per Tier 2b) |
+| Doctor | commands/doctor.md, scripts/doctor-check.sh | `/doctor` slash command + the 7-check bash/python3 script it invokes (local-only environment health: tmux / codex CLI / claude CLI / hook integrity / repo markers / codex config / VERSION ↔ git tag) |
 | Doc Templates | templates/*.md | 5 structural templates (blueprints that /init-project generates docs from; changes handled per Tier 2b) |
 | Project Template | CLAUDE-TEMPLATE.md | Template used to generate CLAUDE.md for new projects |
 | Framework Docs | docs/ (concepts, roles, workflow, configuration, user-guide, troubleshooting, design-decisions, security) | User-facing framework documentation |

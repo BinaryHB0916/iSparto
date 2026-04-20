@@ -249,6 +249,14 @@ if ! $DRY_RUN; then
        "$ISPARTO_HOME/hooks/process-observer/rules/security-patterns.json"
 fi
 
+# ── Install scripts/ (doctor-check.sh, etc.) ─────────────
+
+if ! $DRY_RUN; then
+    mkdir -p "$ISPARTO_HOME/scripts"
+    cp "$SCRIPT_DIR/scripts/doctor-check.sh" "$ISPARTO_HOME/scripts/doctor-check.sh"
+    chmod +x "$ISPARTO_HOME/scripts/doctor-check.sh"
+fi
+
 # ── Install local stub (isparto.sh) ──────────────────────
 
 if ! $DRY_RUN; then
