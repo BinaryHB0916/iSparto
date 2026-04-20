@@ -168,6 +168,7 @@ Branch: `feat/v0.8.0-model-upgrade` (主 Wave) + `docs/observation-tracker-wave0
 
 🚨 BLOCKING: Next Wave requires NEW SESSION
 > ✅ Session boundary acknowledged 2026-04-18 by /start-working
+> ✅ Session boundary acknowledged 2026-04-20 by /start-working
 
 > Rationale (per the narrowed gate codified in PR #207): This Wave modified `CLAUDE.md` (Module Boundaries IR row). Decision aid all three "yes": (a) Behavior change — IR invocation runtime moved from Claude Code Task tool to OpenAI Codex CLI; (b) New identifier — `runtime: codex-cli` frontmatter key; (c) Contract/interface change — IR spawn one-liner shape changed (`codex exec "..."` instead of `Task(subagent_type=...)`). Marker emitted to force fresh session for Lead's `# claudeMd` cache to pick up the new IR row + the model upgrade context.
 
