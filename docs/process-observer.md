@@ -172,7 +172,7 @@ The post-hoc audit uses the Sonnet 4.6 model (defined via `~/.claude/agents/proc
 
 ### Trigger Timing
 
-In the /end-working flow, executed after the Doc Engineer documentation audit and before pushing the branch / opening the PR.
+In the /end-working flow, executed at **Step 5 (before the security scan, commit, and the Doc Engineer Step 9 pre-merge gate before PR creation/merge)**. (PO = Step 5 in commands/end-working.md; DE = Step 9 pre-merge gate.)
 
 ### Audit Checklist
 

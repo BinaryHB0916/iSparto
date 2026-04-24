@@ -14,7 +14,7 @@ iSparto requires the following on your machine:
 
 Run `/env-nogo` at any time to verify your environment.
 
-## What You Initiate (9 Commands)
+## What You Initiate (10 Commands)
 
 | Command | When | What You Do |
 |---------|------|-------------|
@@ -27,6 +27,7 @@ Run `/env-nogo` at any time to verify your environment.
 | `/doctor` | Before starting on a new machine, after upgrade, or when suspecting environment rot | Review the 7-check health report; address any FAIL before continuing, WARN items are informational |
 | `/restore` | When you want to undo a migration or init | Review snapshot details, confirm restore to roll back all changes |
 | `/security-audit` | Before a release or milestone | Receive the full audit report (code + .gitignore + git history + dependencies); fix any CRITICAL/HIGH items before proceeding |
+| `/release` | Ready to publish a new version (replaces manual `git tag` / `git push origin <tag>` — forbidden per CLAUDE.md release rules) | Choose the bump type by running `/release`, `/release minor`, or `/release major`; receive the published GitHub Release URL |
 
 **Upgrading iSparto:** Run `~/.isparto/install.sh --upgrade` to pull the latest version and see what's new.
 

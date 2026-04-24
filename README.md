@@ -31,15 +31,15 @@ iSparto's central move is to turn that single agent into an Agent Team. One comm
 
 Solopreneurs shipping software on macOS who want to run a full agent team on top of Claude Code. Requires Claude Max and ChatGPT subscriptions.
 
-> **Platform: macOS only.** Parallel-execution mode relies on iTerm2's built-in tmux integration. Single-session mode may work on other platforms but is untested.
+> **Platform: macOS only.** Requires **tmux 3.x** as a hard dependency since v0.8.0 — the Independent Reviewer is spawned via `codex exec` in a tmux pane (cross-provider blind review on top of zero inherited context). Install with `brew install tmux`. Single-session mode may work on other platforms but is untested.
 
 | Item | Requirement | Notes |
 |---|---|---|
 | Claude Max subscription | $100/month | Runs Claude Code and the lead/teammate/doc-engineer roles |
-| ChatGPT subscription | $20/month | Runs the Codex CLI used by the developer role |
+| ChatGPT subscription | $20/month | Runs the Codex CLI used by two roles: Developer (implementation + QA) and Independent Reviewer (`codex exec` in tmux pane, cross-provider blind review) |
 | Node.js | 18+ | Runs Claude Code, Codex CLI, and the MCP Server |
 | Git | Any version | Version control |
-| Terminal | iTerm2 (macOS) | Parallel-execution mode uses iTerm2's built-in tmux integration; no separate tmux install |
+| Terminal | iTerm2 (macOS) + tmux 3.x | tmux required since v0.8.0 (Independent Reviewer runs `codex exec` in a tmux pane); install with `brew install tmux` |
 
 **Total cost: $120/month** — two top-tier models, no extra API fees.
 
@@ -47,7 +47,7 @@ Solopreneurs shipping software on macOS who want to run a full agent team on top
 
 ## Installation
 
-**Prerequisites:** [Claude Max](https://claude.ai) ($100/mo) + [ChatGPT Plus](https://chatgpt.com) ($20/mo). iSparto runs on Claude Code as the runtime and uses the Codex CLI for the developer role.
+**Prerequisites:** [Claude Max](https://claude.ai) ($100/mo) + [ChatGPT Plus](https://chatgpt.com) ($20/mo). iSparto runs on Claude Code as the runtime and uses the Codex CLI for both the Developer role (implementation + QA) and the Independent Reviewer (`codex exec` in tmux pane).
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/bootstrap.sh | bash
@@ -64,7 +64,7 @@ curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/bootstrap
 **Install a specific version:**
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/bootstrap.sh | bash -s -- --version=0.6.18
+curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/bootstrap.sh | bash -s -- --version=0.8.0
 ```
 
 **Upgrade:**
@@ -183,6 +183,7 @@ The full repository layout, annotated per file, is maintained in [docs/repo-stru
 
 - [ ] Claude Max + ChatGPT subscriptions active
 - [ ] Terminal is iTerm2 (macOS, required for parallel-execution split panes)
+- [ ] tmux 3.x installed (required since v0.8.0; `brew install tmux`)
 - [ ] `./install.sh` completed (Claude Code, Codex CLI, config files, MCP)
 - [ ] Multi-device sync configured if using multiple computers (see [configuration.md](docs/configuration.md#multi-device-sync-optional))
 

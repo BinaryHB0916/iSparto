@@ -31,15 +31,15 @@ iSparto 的核心动作是把这一个 Agent 变成一支 Agent Team。一条命
 
 在 macOS 上用 Claude Code 开发软件的 solopreneur。需要 Claude Max 和 ChatGPT 订阅。
 
-> **平台:仅支持 macOS。** 并行执行模式依赖 iTerm2 内置的 tmux 集成。单会话模式在其他平台上可能可用,但未经测试。
+> **平台:仅支持 macOS。** 自 v0.8.0 起,**tmux 3.x 为硬性依赖** —— Independent Reviewer 通过 `codex exec` 在 tmux pane 内启动(在零上下文继承之上叠加跨厂商盲审)。用 `brew install tmux` 安装。单会话模式在其他平台上可能可用,但未经测试。
 
 | 项目 | 要求 | 说明 |
 |---|---|---|
 | Claude Max 订阅 | $100/月 | 运行 Claude Code 以及 Lead / Teammate / Doc Engineer 角色 |
-| ChatGPT 订阅 | $20/月 | 运行 Developer 角色所用的 Codex CLI |
+| ChatGPT 订阅 | $20/月 | 运行两个角色的 Codex CLI:Developer(实现 + QA)和 Independent Reviewer(`codex exec` 在 tmux pane 内,跨厂商盲审) |
 | Node.js | 18+ | 运行 Claude Code、Codex CLI 和 MCP Server |
 | Git | 任意版本 | 版本控制 |
-| 终端 | iTerm2(macOS) | 并行执行模式用 iTerm2 内置 tmux,无需单独安装 |
+| 终端 | iTerm2(macOS)+ tmux 3.x | 自 v0.8.0 起 tmux 为硬性依赖(Independent Reviewer 在 tmux pane 内跑 `codex exec`);`brew install tmux` 安装 |
 
 **总成本:$120/月**,两个顶级模型,无额外 API 费用。
 
@@ -47,7 +47,7 @@ iSparto 的核心动作是把这一个 Agent 变成一支 Agent Team。一条命
 
 ## 安装
 
-**前置条件:** [Claude Max](https://claude.ai)($100/月)+ [ChatGPT Plus](https://chatgpt.com)($20/月)。iSparto 以 Claude Code 为运行时,以 Codex CLI 作为 Developer 角色。
+**前置条件:** [Claude Max](https://claude.ai)($100/月)+ [ChatGPT Plus](https://chatgpt.com)($20/月)。iSparto 以 Claude Code 为运行时,Codex CLI 同时给两个角色用:Developer(实现 + QA)和 Independent Reviewer(`codex exec` 在 tmux pane 内)。
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/bootstrap.sh | bash
@@ -64,7 +64,7 @@ curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/bootstrap
 **安装指定版本:**
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/bootstrap.sh | bash -s -- --version=0.6.18
+curl -fsSL https://raw.githubusercontent.com/BinaryHB0916/iSparto/main/bootstrap.sh | bash -s -- --version=0.8.0
 ```
 
 **升级:**
@@ -157,7 +157,7 @@ Agent Team 有六个角色:
 - **Independent Reviewer** —— 在审查时刻以零上下文启动,不会对自己参与过的决定盖章放行。
 - **Developer** —— 实现角色,通过 MCP 调用(Codex)。从 Team Lead 接到规格,返回代码。
 - **Doc Engineer** —— 在每个 Wave 边界审计文档。
-- **Process Observer** —— 一个 PreToolUse hook(shell,无模型),防止仪式步骤被跳过。
+- **Process Observer** —— 一个 PreToolUse hook(shell,无模型),防止仪式步骤被跳过;外加一层 Sonnet 4.6 顾问审计层(每次 /end-working 运行合规审查)。
 
 完整的模型分配和推理等级见 [docs/configuration.md](docs/configuration.md#agent-model-configuration)。安全监督(Write/Edit 扫描、commit 前 secret/PII 扫描、`/security-audit` 里程碑审计)见 [docs/security.md](docs/security.md)。
 
@@ -183,6 +183,7 @@ iSparto 自举开发——框架用自己的工作流开发自己。端到端的
 
 - [ ] Claude Max + ChatGPT 订阅已开通
 - [ ] 终端使用 iTerm2(macOS,并行分屏依赖)
+- [ ] 安装了 tmux 3.x(自 v0.8.0 起必需;`brew install tmux`)
 - [ ] `./install.sh` 已执行(Claude Code、Codex CLI、配置文件、MCP)
 - [ ] 多设备同步已配置(如有多台电脑,见 [configuration.md](docs/configuration.md#multi-device-sync-optional))
 

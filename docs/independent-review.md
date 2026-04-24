@@ -743,3 +743,55 @@ After #4 is corrected, this Wave can proceed. Finding #5 is non-blocking for thi
 ## Recommendation
 
 **PROCEED.** The previously blocking MAJOR issue is fixed, and no CRITICAL/MAJOR misalignment remains in this Wave's implementation. Keep `FR-32` as the non-blocking follow-up to align product/reference docs with the 18-row canonical checklist wording.
+
+---
+
+## Wave v0.8.0 Doc Alignment Phase 1 Review — 2026-04-24
+
+**Scope:** v0.8.0 documentation alignment Phase 1 factual corrections on branch `docs/v0.8.0-doc-alignment`: READMEs, `docs/product-spec.md`, `docs/user-guide.md`, `docs/workflow.md`, `docs/collaboration-mode.md`, `docs/roles.md`, `CLAUDE-TEMPLATE.md`, `CHANGELOG.md`, `docs/plan.md`, and the new `docs/session-log.md` entry. Reviewed the Wave entry in `docs/session-log.md`, the `docs/plan.md` index/backlog additions, relevant product-spec core features / technical constraints, `commands/end-working.md` Step 3 / Step 5 / Step 9, `commands/release.md`, the actual git diff, and acceptance commands.
+
+| # | Product Intent | Implementation | Aligned? | Severity | Detail |
+|---|---------------|----------------|----------|----------|--------|
+| 1 | User-facing and reference command inventories should reflect the actual 10 slash commands, including `/release` | `docs/product-spec.md` now says "10 slash commands" and includes `/release`; `docs/user-guide.md` says "What You Initiate (10 Commands)" and adds `/release`; `docs/workflow.md` Custom Commands table adds `/doctor`, `/security-audit`, and `/release`; `ls commands/*.md | wc -l` returns `10` | Y | — | This resolves the stale 9-command inventory for the files in this Wave. |
+| 2 | The `/release` user-guide row must preserve the zero-confirmation contract from `commands/release.md` | `commands/release.md` says release execution is fully automatic with "No confirmations, no pauses"; `docs/user-guide.md` tells users to choose the bump type and receive the GitHub Release URL, without asking them to review or confirm generated release artifacts | Y | — | The row describes what the user initiates, not intermediate manual release steps. |
+| 3 | Entry docs should surface v0.8.0's tmux 3.x hard dependency and Codex's second consumer role (Independent Reviewer) | `README.md` and `README.zh-CN.md` now describe tmux 3.x as required since v0.8.0, explain IR via `codex exec` in a tmux pane, and update ChatGPT/Codex wording from Developer-only to Developer + Independent Reviewer. `install.sh` and `commands/migrate.md` already enforce/check tmux. | Y | — | The primary install entry points now match the v0.8.0 runtime reality. |
+| 4 | DE/PO ordering corrections should remove stale "PO runs after Doc Engineer / before push" documentation across the reference surface | `docs/workflow.md`, `docs/roles.md`, `docs/collaboration-mode.md`, and `CLAUDE-TEMPLATE.md` were corrected to PO Step 5 before security/commit and DE Step 9 pre-merge fallback. However `docs/process-observer.md:175` still says the post-hoc audit is "executed after the Doc Engineer documentation audit and before pushing the branch / opening the PR." | N | MAJOR | This is the dedicated Process Observer reference page, so leaving it stale materially weakens the Wave's audit-ordering correction. A reader following that doc gets the old sequence, directly contradicting `commands/end-working.md` and the newly updated workflow/roles docs. |
+| 5 | Workflow diagrams should avoid drifting inline PO checklist enumerations and point to the canonical checklist instead | `docs/workflow.md` now points to `agents/process-observer-audit.md` for the canonical 19-row A1-A3 / B1-B2 / C1-C2 / D1-D4 / E1-E7 / F1 checklist in the Solo diagram, Agent Team diagram, and PO integration section; `agents/process-observer-audit.md` contains the 19-row enforcement text | Y | — | The old B1-B4/C1-C4/D1-D2/E1-E2 enumeration is removed from the updated workflow diagrams. |
+| 6 | Wave-boundary IR invocation docs should include the `/end-working` context tag | `docs/workflow.md` now documents that Wave Boundary triggering appends `This is a Wave Boundary Review.`, and `commands/end-working.md` Step 3a contains the canonical one-liner with that exact sentence | Y | — | This matches the actual invocation used for this review. |
+| 7 | The Wave audit trail should preserve accurate completion evidence | `docs/session-log.md` adds a detailed Wave entry and acceptance evidence, and `docs/plan.md` links to it from the completed-Wave index. The session-log "Files Changed" block is stale relative to current `git diff --stat`: it reports 10 files / 82 insertions and `docs/plan.md` 26 insertions, while the current diff is 11 files / 109 insertions and `docs/plan.md` 4 insertions, with `docs/session-log.md` itself modified. | N | MINOR | This does not change product behavior, but it weakens the empirical audit record that future sessions use for reconstruction. |
+| 8 | Deferred Phase 2 / Phase 3 documentation work should be homed in the single Backlog source instead of left as loose TODOs | `docs/plan.md` Backlog adds FR-35 for `docs/zh/quick-start.md` v0.8.0 rewrite, FR-36 for README What's New / Wave definition, and FR-37 for new-mechanism discoverability | Y | — | The known out-of-scope follow-ups are discoverable in the canonical Backlog. |
+
+## Uncovered Product Intent
+
+- `docs/process-observer.md` was not included in the DE/PO ordering correction, despite being the dedicated reference doc for the stale behavior. This is the blocking gap in finding #4.
+- The tmux/Codex-second-consumer alignment is strong in README/User Guide entry points, but weaker in source/reference material: `docs/product-spec.md` Technical Constraints still says only "Depends on the Codex CLI" and "Depends on iTerm2's tmux integration"; `docs/design-decisions.md` still describes iTerm2 built-in tmux integration. This is non-blocking because the user-facing install docs and enforcement path are correct, and the Chinese quick-start rewrite is already tracked as FR-35.
+
+## Unjustified Technical Work
+
+None. The changelog entry, plan index update, session-log entry, and FR-35/FR-36/FR-37 backlog rows all trace back to the Wave's documentation-alignment scope.
+
+## Recommendation
+
+**BLOCK** until finding #4 is fixed.
+
+Required fix: update `docs/process-observer.md` Trigger Timing (and any adjacent mechanism wording if needed) to match `commands/end-working.md`: Process Observer runs at Step 5 before security scan / commit; Doc Engineer fallback runs at Step 9 before PR creation/merge. After that fix, re-run this Wave Boundary review or request a focused re-check. Finding #7 is non-blocking cleanup.
+
+---
+
+## Wave v0.8.0 Doc Alignment Phase 1 Review (Re-check) — 2026-04-24
+
+**Scope:** Focused re-check of the prior BLOCK finding for v0.8.0 documentation alignment Phase 1, with a regression scan over the same Wave scope: READMEs, `docs/product-spec.md`, `docs/user-guide.md`, `docs/workflow.md`, `docs/collaboration-mode.md`, `docs/roles.md`, `docs/process-observer.md`, `CLAUDE-TEMPLATE.md`, `CHANGELOG.md`, `docs/plan.md`, and `docs/session-log.md`.
+
+| # | Product Intent | Implementation | Aligned? | Severity | Detail |
+|---|---------------|----------------|----------|----------|--------|
+| 1 | The Process Observer reference page must match the canonical `/end-working` order after the Wave's DE/PO ordering correction | `docs/process-observer.md` Trigger Timing now says the audit runs at Step 5 before security scan / commit and before the Doc Engineer Step 9 pre-merge gate; this matches `commands/end-working.md` Step 5 and Step 9 | Y | — | Prior MAJOR finding #4 is resolved. The dedicated Process Observer doc no longer describes the old "after Doc Engineer / before PR" sequence. |
+| 2 | The Wave's command inventory correction should remain intact after the re-check fix | `docs/product-spec.md` and `docs/user-guide.md` both state 10 commands; `docs/workflow.md` includes `/doctor`, `/security-audit`, and `/release`; `ls commands/*.md \| wc -l` returns `10`; no residual `9 slash commands` / `9 Commands` hits in the reviewed docs | Y | — | No regression in the slash-command inventory. |
+| 3 | `/release` documentation should preserve the fully automatic, no-confirmation contract | `docs/user-guide.md` describes choosing `/release`, `/release minor`, or `/release major` and receiving the GitHub Release URL; no forbidden "confirm/review generated CHANGELOG" wording remains | Y | — | This remains aligned with `commands/release.md`. |
+| 4 | v0.8.0 tmux hard-dependency and Codex second-consumer framing should be visible at entry points | README, README.zh-CN, and `docs/user-guide.md` describe tmux 3.x as required since v0.8.0 and explain that Codex CLI serves both Developer and Independent Reviewer | Y | — | User-facing install/readiness docs now match the runtime reality. `docs/product-spec.md` Technical Constraints remain more generic, but they do not contradict the stricter entry docs. |
+| 5 | PO checklist references should point to the canonical 19-row source instead of stale inline enumerations | `docs/workflow.md`, `docs/roles.md`, and `docs/process-observer.md` point to `agents/process-observer-audit.md` for the A1-A3 / B1-B2 / C1-C2 / D1-D4 / E1-E7 / F1 canonical 19-row checklist; stale `B1-B4/C1-C4/D1-D2/E1-E2`, `14 checks total`, and `14-item checklist` references are absent from the reviewed docs | Y | — | The prior FR-32-style count drift is resolved for this Wave's touched reference surface. |
+| 6 | Product wording for Process Observer should not overstate when the Step 5 audit runs | Product-spec still calls the model audit "post-hoc" and says it checks the "full session"; the operational docs now correctly say Step 5, before commit / DE Step 9 / PR creation | N | MINOR | This is a wording ambiguity, not a blocker for this doc-alignment Wave: the changed reference docs now match the actual command flow. If "full session" is meant to include the later closeout/PR actions, the product-spec wording or the audit timing needs a future clarification. |
+| 7 | The Wave audit trail should keep empirical stats reproducible | `docs/session-log.md` now records the round-1 BLOCK and the intended re-check, but its `Files Changed` block is still self-referentially stale relative to live `git diff --stat` and will change again when this re-check is appended | N | MINOR | Non-blocking. This affects audit-record precision, not user-facing behavior or the Wave's factual doc corrections. |
+
+## Recommendation
+
+**PROCEED.** The previously blocking Process Observer reference-page mismatch is fixed, and no CRITICAL or MAJOR product-implementation misalignment remains for this Wave. Two non-blocking follow-ups remain: tighten the product-spec Process Observer wording if "full session" is intended literally, and refresh or de-emphasize self-referential `Files Changed` stats in `docs/session-log.md`.
