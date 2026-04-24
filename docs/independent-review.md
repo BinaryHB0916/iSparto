@@ -795,3 +795,42 @@ Required fix: update `docs/process-observer.md` Trigger Timing (and any adjacent
 ## Recommendation
 
 **PROCEED.** The previously blocking Process Observer reference-page mismatch is fixed, and no CRITICAL or MAJOR product-implementation misalignment remains for this Wave. Two non-blocking follow-ups remain: tighten the product-spec Process Observer wording if "full session" is intended literally, and refresh or de-emphasize self-referential `Files Changed` stats in `docs/session-log.md`.
+
+---
+
+## Wave v0.8.0 Doc Alignment Phase 2 Review — 2026-04-24
+
+**Scope:** Chinese quick-start sync + Process Observer E6 pointer fix on branch `docs/v0.8.0-doc-alignment-phase2`. Reviewed the active Wave entry in `docs/plan.md`, relevant product-spec core features / constraints, `docs/zh/quick-start.md`, `agents/process-observer-audit.md`, `commands/env-nogo.md`, `commands/doctor.md`, `commands/end-working.md`, `docs/user-guide.md`, `CHANGELOG.md`, and the current git diff.
+
+| # | Product Intent | Implementation | Aligned? | Severity | Detail |
+|---|---------------|----------------|----------|----------|--------|
+| 1 | The Chinese quick-start should surface v0.8.0's actual runtime prerequisites, especially tmux 3.x and Codex's second-consumer role for Independent Reviewer | `docs/zh/quick-start.md` now has a dedicated tmux row, says tmux is a hard dependency since v0.8.0, explains IR via `codex exec` in a tmux pane, and expands the ChatGPT/Codex row to cover Developer + Independent Reviewer | Y | — | This aligns the Chinese entry doc with the current v0.8.0 runtime reality described in the English entry docs. |
+| 2 | First-use environment guidance should tell users which checks to run without misrepresenting whether those checks are read-only | The new quick-start preamble recommends `/env-nogo` + `/doctor`, but ends with "两个命令都不改任何文件" ("both commands do not modify files"). `/doctor` is read-only, but `commands/env-nogo.md` still says auto-fixable items should be fixed and reported as `auto-fixed`. | N | MAJOR | A Chinese user can reasonably rely on the new safety claim before running `/env-nogo`; the command spec allows mutation. Minimal fix: narrow the no-write claim to `/doctor` only, or say `/env-nogo` may auto-fix some items while `/doctor` is read-only. |
+| 3 | Daily workflow wording should match the canonical `/end-working` order after Phase 1's DE/PO ordering correction | The quick-start now describes PO at Step 5, then security scan, commit/push, then Doc Engineer Step 9 before PR creation/merge | Y | — | This matches `commands/end-working.md` and removes the old DE-before-PO / push-before-audit phrasing from this Tier 3 doc. |
+| 4 | The Chinese onramp should expose the current command surface without becoming a full manual | The quick-start adds `/plan`, `/env-nogo`, and `/doctor` in the first-use/daily-flow sections, and links to `docs/user-guide.md` for `/security-audit` and `/release` | Y | — | This covers the Wave's intended command discoverability gap while keeping the quick-start focused. |
+| 5 | Chinese users should be pointed at the canonical TODO/current-state source instead of historical logs or loose notes | The quick-start now says `docs/plan.md` Backlog is the home for TODOs / deferred work / rule corrections and distinguishes it from `docs/session-log.md` history | Y | — | This matches the single-TODO-source direction in the Wave plan and `/end-working` transition contract. |
+| 6 | Process Observer E6 should use a stable tracker-heading precondition instead of a stale line-number pointer | `agents/process-observer-audit.md` E6 now requires a level-3 heading that starts with `### v0.8.0` and contains the ASCII substring `Tracker`; the old "plan.md around line 963" pointer is gone | Y | — | This fixes the stale navigation aid while preserving the intended heading-text detection and disambiguation from the other `### v0.8.0` heading. |
+| 7 | User-facing release notes should record the Phase 2 documentation alignment work | `CHANGELOG.md` adds an `[Unreleased]` entry covering the Chinese quick-start update and the E6 pointer correction | Y | — | The changelog entry traces directly to FR-35 and FR-38; no unjustified scope detected. |
+| 8 | Mechanical documentation guardians should remain clean after the Wave's Tier 3/Tier 1 edits | `bash scripts/language-check.sh`, `bash scripts/language-check.sh --self-test`, and `bash scripts/plan-md-contract-check.sh` all pass in the current workspace | Y | — | These checks do not catch finding #2 because it is a semantic behavior claim, not a language or plan-shape violation. |
+
+## Recommendation
+
+**PROCEED** with one pre-merge correction for finding #2. No CRITICAL misalignment found, so the Wave does not need to block under the IR recovery protocol; however the `/env-nogo` read-only claim should be fixed before merge because it changes a user's expectation about whether a recommended first-use command may modify the environment.
+
+---
+
+## Wave v0.8.0 Doc Alignment Phase 2 Review (Re-check) — 2026-04-24
+
+**Scope:** Focused re-check of the prior Phase 2 finding against the current `docs/v0.8.0-doc-alignment-phase2` workspace, plus regression scan over the Chinese quick-start sync and Process Observer E6 pointer fix. Reviewed `docs/plan.md`, relevant product-spec core features / constraints, `docs/zh/quick-start.md`, `commands/env-nogo.md`, `commands/doctor.md`, `commands/end-working.md`, `agents/process-observer-audit.md`, `CHANGELOG.md`, and the current git diff.
+
+| # | Product Intent | Implementation | Aligned? | Severity | Detail |
+|---|---------------|----------------|----------|----------|--------|
+| 1 | First-use environment guidance should not claim a command is read-only when its spec allows auto-fixes | `docs/zh/quick-start.md` now says `/env-nogo` may attempt automatic fixes and report them as `auto-fixed`, while `/doctor` is the command described as offline / non-mutating. This matches `commands/env-nogo.md` and `commands/doctor.md`. | Y | — | Prior MAJOR finding #2 is resolved; the Chinese quick-start no longer tells users that both recommended checks are no-write operations. |
+| 2 | The Chinese quick-start should surface v0.8.0 runtime prerequisites and Codex's second-consumer role for Independent Reviewer | The quick-start keeps the tmux 3.x hard-dependency row, separates tmux installation from iTerm2, and describes Codex CLI as serving both Developer and Independent Reviewer via `codex exec` in a tmux pane. | Y | — | This remains aligned with the Wave's FR-35 Section 1 intent and the current v0.8.0 runtime architecture. |
+| 3 | Daily workflow wording should match canonical `/end-working` audit ordering | The quick-start describes Process Observer at Step 5, then security scan, commit/push, Doc Engineer Step 9 pre-merge gate, PR creation/merge, and final briefing. | Y | — | This matches `commands/end-working.md` and preserves the Phase 1 DE/PO ordering correction. |
+| 4 | Process Observer E6 should avoid stale line-number navigation and use stable tracker-heading detection | `agents/process-observer-audit.md` E6 now anchors on a level-3 heading that starts with `### v0.8.0` and contains ASCII `Tracker`; the stale "plan.md around line 963" reference is absent. | Y | — | FR-38 is implemented without changing the row's user-facing audit behavior. |
+| 5 | User-facing release notes and mechanical documentation guards should support the Wave changes | `CHANGELOG.md` has the Phase 2 entry; `bash scripts/language-check.sh`, `bash scripts/language-check.sh --self-test`, and `bash scripts/plan-md-contract-check.sh` pass. | Y | — | No regression found in the checked documentation guards. |
+
+## Recommendation
+
+**PROCEED.** The prior MAJOR wording issue is fixed, and no CRITICAL or MAJOR product-implementation misalignment remains for this Wave.
