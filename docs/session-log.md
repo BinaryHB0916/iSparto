@@ -1,5 +1,56 @@
 # Session Log
 
+## 2026-04-24 Session C — Wave v0.8.0 Doc Alignment — Phase 3 (README v0.8.0 Discoverability + New-Concept Quick Reference)
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | v0.8.0 Doc Alignment — Phase 3 (README v0.8.0 Discoverability + New-Concept Quick Reference). Branch: `docs/v0.8.0-doc-alignment-phase3`. Mode: **Solo + Lead direct edit** (single module group = both READMEs + `docs/concepts.md` Quick Reference table extension; markdown-only within framework self-referential boundary; Developer exempt per `docs/workflow.md` Wave-level safety-net exception). Plan: `~/.claude/plans/joyful-hatching-sky.md`. Closes the v0.8.0 Doc Alignment arc (Phase 1 = PR #229 English reference docs; Phase 2 = PR #230 Chinese quick-start + PO E6 pointer; Phase 3 = this). |
+| Tasks completed | **FR-36(a)** — added single-sentence v0.8.0 pointer after the bilingual-strategy block quote in both `README.md` and `README.zh-CN.md` (L17 in each): "v0.8.0 (released 2026-04-20) changed two runtime expectations" followed by tmux 3.x hard-dep + Codex CLI serving both Developer and Independent Reviewer, with a file-level `CHANGELOG.md` link (no anchor — anchor fragility is the drift pattern Phase 1 + Phase 2 spent two Waves fixing). **FR-36(b)** — rewrote the L30 `Documentation sync` comparison-table row in both READMEs to embed a Wave definition at first use: "Audited by the Doc Engineer at each Wave boundary (a Wave is a batch of decoupled tasks; see [docs/concepts.md](docs/concepts.md#wave-parallelism))" + Chinese mirror. L159/L176/L203 role-description/narrative-aside/origin-of-name occurrences stay as-is (no ceremonial redefinition; L30 first-use is sufficient). **FR-37** — appended three new rows to `docs/concepts.md` Quick Reference table (after Runtime Output Layering, L54-L56): A-layer Peer Review (protocol for IR validating Lead's A/B/C-layer classification before emit), Guardian Scripts (5 scripts with factually-accurate split — `language-check.sh` / `policy-lint.sh` / `plan-md-contract-check.sh` block commits; `gh-account-guard.sh` guards PR attribution; `session-health.sh` renders `/start-working` preview), and Observation-period Tracker (5-row Waves-0-4 window + Release Gate condition 2). Table row count 16 → 19. **CHANGELOG.md `[Unreleased] ### Fixed`** — appended Phase 3 bullet summarizing FR-36 + FR-37. |
+| Key decisions | (1) **Declared as Wave, not governance-maintenance.** Spans Tier 3 user-entry docs (READMEs) + Tier 2 reference doc (concepts.md) + CHANGELOG + plan.md — warranted Wave entry + IR at boundary. (2) **Surgical, not narrative.** Rejected top-of-README "What's New" banner block (would duplicate CHANGELOG, second maintenance surface) and rejected new `docs/v0.8.0-mechanisms.md` file (would fragment the single-source concepts.md Quick Reference). Chose 1-sentence pointer + 1-clause parenthetical + 3 table rows — all additive to existing structures. (3) **File-level `CHANGELOG.md` link, not anchor-level deep-link.** GitHub's heading slug for the v0.8.0 Keep-a-Changelog header strips brackets and dots, producing a fragile auto-generated anchor that any future reformat would silently break — exactly the drift pattern Phase 1 + Phase 2 spent two Waves fixing. File-level link is zero-maintenance. (4) **Wave definition at L30 (first use), not L159 (role description).** "Wave" appears 4 times in README (L30 table cell, L159 role bullet, L176 narrative aside, L203 Origin story). Defining at L30 first-use means L159/L176/L203 all read with the definition already in hand; defining at L159 would leave the L30 reader without context. L159 stays as-is — no ceremonial second definition. (5) **Run IR at Wave boundary** because READMEs are Tier 3 user-entry docs and the Wave-definition edit changes user-observed narrative of a core workflow concept. Default-on-doubt applies. (6) **Guardian Scripts Row 2 corrected pre-ExitPlan for factual accuracy** — reviewer caught that the initial draft claimed all 5 scripts "block the commit on rule violations"; in reality only 3 do (language-check + policy-lint + plan-md-contract-check), while gh-account-guard is pre-PR and session-health is `/start-working` preview. Replacement row splits the 5 by actual role. (7) **"CJK-free" not "pure ASCII"** in Utilities Reuse wording — reviewer caught that language-check.sh only forbids CJK (not all non-ASCII); em dash and en dash are fine and already exist in concepts.md rows. (8) **v0.8.0 Doc Alignment arc closed.** After this merges, the only remaining v0.8.0-era Backlog items (FR-34 plan.md reshape; FR-28 language-check.sh code-fence exemption; FR-30 CLAUDE.md Scripts band) are independent concerns not tied to the alignment campaign. |
+
+### Acceptance verification
+
+- FR-36 content checks (all via `rg`, language-agnostic tokens since English + Chinese are free-prose mirrors):
+  - `v0\.8\.0` — 5 hits in README.md / 5 hits in README.zh-CN.md (new L17 pointer + existing L36/L44/L188/L41-ish)
+  - `tmux 3\.x` — 4 hits per file (L17 pointer + existing L36/L44/L188)
+  - `Independent Reviewer` — 7 hits in README.md / 7 in README.zh-CN.md (L17 + existing L23/L36/L41/L44/L52/L159)
+  - `CHANGELOG\.md` — 1 hit per file (new L17 pointer)
+  - `docs/concepts\.md#wave-parallelism` — 1 hit per file (new L30 Wave-definition link)
+  - `2026-04-20` — 1 hit per file (new L17 date stamp — did not exist in either README pre-Phase-3; positively confirms the pointer landed)
+- FR-37 content checks:
+  - `A-layer Peer Review` at docs/concepts.md:54 ✓
+  - `Guardian Scripts` at docs/concepts.md:55 ✓
+  - `Observation-period Tracker` at docs/concepts.md:56 ✓
+  - `awk 'flag && /^\| \*\*/{n++} /^## Concept Quick Reference/{flag=1} END{print n}' docs/concepts.md` = **19** ✓ (was 16 pre-Phase-3; +3)
+- `bash scripts/language-check.sh` → PASSED (Tier 1/Tier 2 CJK-clean + Principle 1 clean)
+- `bash scripts/plan-md-contract-check.sh` → exit 0
+- `bash scripts/policy-lint.sh` → PASSED
+- `bash $HOME/.isparto/hooks/process-observer/scripts/pre-commit-security.sh` → passed
+- `CHANGELOG.md [Unreleased]` → populated with Phase 3 bullet
+- Commit count: `git log --oneline --no-merges main..HEAD | wc -l` projected = 1 (re-verify post-commit)
+
+### Files Changed
+
+```
+ CHANGELOG.md               |  2 ++
+ README.md                  |  4 +++-
+ README.zh-CN.md            |  4 +++-
+ docs/concepts.md           |  3 +++
+ docs/independent-review.md | 19 +++++++++++++++++++
+ docs/plan.md               |  6 +++---
+ docs/session-log.md        | 48 ++++++++++++++++++++++++++++++++++++++++++++++
+ 7 files changed, 82 insertions(+), 4 deletions(-)
+```
+(Stats pre-commit projection; post-commit will drift by O(1) lines as this session-log entry + plan.md transition edits settle.)
+
+### Notes
+
+- **BLOCKING marker decision: skip.** Wave does NOT modify `CLAUDE.md`. `docs/concepts.md` is a Tier 2 reference doc, not injected into Claude Code's session-start system prompt; `agents/process-observer-audit.md` was not touched this Wave (Phase 2 handled the E6 row). Stale-cache risk structurally zero. Per `commands/end-working.md` Step 2, no BLOCKING marker needed. A one-line rationale is recommended for significant framework-behavior changes but this Wave is a discoverability-additive edit, not a behavior change — rationale filled by this Note.
+- **Independent Reviewer round-1 PROCEED with 1 non-blocking MINOR.** IR flagged that `docs/plan.md` still had FR-36 / FR-37 tasks unchecked and Backlog rows present at review time. Correctly identified as the structural pre-close-out state (Wave entry Close-out plan explicitly says `/end-working` Step 4 handles this) — non-blocking because the cleanup lands in this same `/end-working` commit. No round-2 re-run required. This is the first Wave in the v0.8.0 Doc Alignment arc where IR returned clean round-1 PROCEED without any in-session fix (Phase 1: round-1 BLOCK on process-observer.md stale ordering; Phase 2: round-1 BLOCK on /env-nogo read-only overclaim; Phase 3: round-1 PROCEED with structural MINOR only).
+- **FR-36 and FR-37 removed from plan.md Backlog in the same commit as this session's close-out**, per the Wave Declaration close-out clause. This closes the v0.8.0 Doc Alignment arc's Backlog footprint: FR-35 / FR-36 / FR-37 / FR-38 all migrated to session-log narrative — all four issued 2026-04-24 by the Phase-1 audit, all four addressed 2026-04-24 across three Waves in sequence.
+- **Commit count verification (pre-commit projection per CLAUDE.md plan.md verification-count accuracy rule).** Projected 1 non-merge commit. Re-verification: `git log --oneline --no-merges main..HEAD | wc -l` — expected `1`. Will re-verify post-commit; if mismatch, amend the 已完成 Wave 索引 row before push.
+
 ## 2026-04-24 Session B — Wave v0.8.0 Doc Alignment — Phase 2 (Chinese Quick-Start Sync + PO Audit E6 Pointer Fix)
 
 | Metric | Value |

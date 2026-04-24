@@ -14,6 +14,8 @@
 >
 > iSparto 采用双语策略:用户入口(双语 README + 中文 quick-start + CONTRIBUTING)平行维护;框架指令和参考文档单一英文来源,保证 AI 指令跟随的稳定性,同时让不懂中文的开源贡献者能参与审查。详情见 [CLAUDE.md > Documentation Language Convention](CLAUDE.md#documentation-language-convention)。
 
+> **v0.8.0(2026-04-20 发布)有两处运行时变化。** 自 v0.8.0 起 tmux 3.x 为硬性依赖(Independent Reviewer 通过 `codex exec` 在独立 tmux pane 内启动,不再走 Claude Code sub-agent),同时 Codex CLI 同时服务两个角色(Developer 负责实现 + QA,Independent Reviewer 负责跨厂商盲审)。完整 release notes 见 [CHANGELOG.md](CHANGELOG.md)。
+
 ### 核心差异 — 一条命令,整支团队
 
 现有的 AI 编程工具(Cursor、Windsurf、Copilot、单会话的 Claude Code)都让你和一个 Agent 反复交换消息——每一个决策、每一份文件、每一次 commit,整个开发循环都跑在同一个对话窗口里。
@@ -25,7 +27,7 @@ iSparto 的核心动作是把这一个 Agent 变成一支 Agent Team。一条命
 | 你看到什么 | Agent 刚读到的所有事实,用散文复述一遍 | 你现在必须知道的那一句,其余留在 `docs/` 里 |
 | 什么时候打断你 | 只要 Agent 有话想说 | 只在真正需要决策的时刻 |
 | 跨会话状态 | 会丢,每次都得重新解释上下文 | `/start-working` 从 `docs/plan.md` 自动恢复 |
-| 文档同步 | 手动 | 每个 Wave 由 Doc Engineer 审计 |
+| 文档同步 | 手动 | 每个 Wave 边界由 Doc Engineer 审计(Wave 是一组解耦任务的工作批次;详见 [docs/concepts.md](docs/concepts.md#wave-parallelism)) |
 
 ### 适合谁用
 
