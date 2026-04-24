@@ -43,7 +43,7 @@ Users describe business requirements in natural language; the team translates th
 
 - **Agent Team role separation**: Team Lead assembles prompts and coordinates, Developer (Codex) implements code, Teammates run in parallel, Doc Engineer keeps documentation in sync
 - **Wave-based parallel development**: multiple Developers run in parallel within a single Wave, with tmux split panes for visualization
-- **9 slash commands**: /init-project, /migrate, /start-working, /end-working, /plan, /env-nogo, /doctor, /restore, /security-audit
+- **10 slash commands**: /init-project, /migrate, /start-working, /end-working, /plan, /env-nogo, /doctor, /restore, /security-audit, /release
 - **Cross-session state recovery**: driven by plan.md, with /start-working automatically restoring context
 - **Cross-model quality gate**: Lead reviews Developer (Codex) output, covering each model's blind spots
 - **Automatic documentation sync**: Doc Engineer audits code/documentation consistency every Wave
