@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.1] - 2026-04-24
+
 ### Fixed
 
 - **v0.8.0 documentation alignment — READMEs, reference docs, CLAUDE-TEMPLATE.md** — Back-propagate the 10-command slash command inventory to user-facing and reference docs (`/release` shipped in v0.6.17 but was missing from `docs/user-guide.md`, `docs/product-spec.md`, and `docs/workflow.md` Custom Commands). Correct DE/PO audit ordering across `docs/workflow.md`, `docs/roles.md`, `docs/collaboration-mode.md`, and `CLAUDE-TEMPLATE.md` to match `commands/end-working.md` Step 5 (PO) / Step 9 (DE pre-merge gate); remove the "cannot be deferred to /end-working" over-constraint that conflicted with Step 9's fallback design, normalize the Agent Team "(last step, ensures QA fixes are also audited)" parenthetical to "(as sub-agent)", and replace the step-5 "can run in parallel with Doc Engineer" wording with the Step-order-aligned form. Sync `README.md` + `README.zh-CN.md` for tmux hard-dependency (since v0.8.0) and Codex-second-consumer (Independent Reviewer via `codex exec` in tmux pane) framing; bilingual divergence on the Sonnet advisory audit layer also closed. Fix `--version=0.6.18` → `--version=0.8.0` in both README install examples. Add Wave-Boundary IR one-liner context-tag reminder to `docs/workflow.md` matching `commands/end-working.md` Step 3a canonical form. Replace stale PO inline bullet enumeration in `docs/workflow.md` diagrams with a single pointer to `agents/process-observer-audit.md`'s canonical 19-row checklist. No functional changes.
