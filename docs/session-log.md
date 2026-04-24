@@ -1,5 +1,47 @@
 # Session Log
 
+## 2026-04-24 Session B — Wave v0.8.0 Doc Alignment — Phase 2 (Chinese Quick-Start Sync + PO Audit E6 Pointer Fix)
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | v0.8.0 Doc Alignment — Phase 2 (Chinese Quick-Start Sync + PO Audit E6 Pointer Fix). Branch: `docs/v0.8.0-doc-alignment-phase2`. Mode: **Solo + Lead direct edit** (single module group = Chinese onboarding doc + one agent-definition row; markdown-only within framework self-referential boundary; Developer exempt per `docs/workflow.md` Wave-level safety-net exception). Plan: `~/.claude/plans/joyful-hatching-sky.md`. Distinct from Phase 1 (merged earlier today via PR #229): Phase 1 covered 13 drift locations in the English reference surface; Phase 2 covers two previously-untouched surfaces — `docs/zh/quick-start.md` (Tier 3, no English mirror, silent drift) and `agents/process-observer-audit.md` E6 row preconditions (Tier 1, stale line-number navigation aid masked by correct grep behavior). |
+| Tasks completed | **FR-35** — `docs/zh/quick-start.md` v0.8.0 sync across 4 sections. (a) 系统要求 table: rewrote 平台 row + inserted new tmux row (3.x hard dep since v0.8.0) + rewrote ChatGPT row (Codex now covers both Developer and Independent Reviewer) + rewrote 终端 row (tmux separate install, not iTerm2-built-in). (b) 第一次使用: added `/env-nogo` + `/doctor` recommended-preamble block with accurate write-semantics wording (`/env-nogo` may auto-fix, `/doctor` is read-only — IR round-1 caught the initial "both don't modify files" overclaim and Lead fixed pre-merge). (c) 日常工作流: rewrote the `/end-working` summary paragraph to use the canonical Step-5 PO / Step-9 DE pre-merge gate ordering matching `commands/end-working.md` (replaces prior "commit + push + Doc Engineer + Process Observer" DE-before-PO phrasing, same drift family Phase 1 just fixed in 5 locations across workflow.md / roles.md / collaboration-mode.md / process-observer.md / CLAUDE-TEMPLATE.md); added `/plan` and `/doctor` callout paragraph. (d) 深入文档: added two bullets — plan.md Backlog as single TODO source pointer, and explicit link-out to `docs/user-guide.md` for `/security-audit` and `/release` (the two commands the onboarding doc intentionally does not duplicate). **FR-38** — `agents/process-observer-audit.md` E6 row preconditions clause: dropped "plan.md around line 963" stale line-number reference; added ASCII-only disambiguation anchor requiring the observation-period tracker heading title to both start with `### v0.8.0` AND contain the ASCII substring `Tracker`. Disambiguates against the coexisting `### v0.8.0 — 模型配置升级 + IR 异源化` Wave-entry heading at plan.md L105 that shares the `### v0.8.0` prefix; anchor stays pure ASCII per Tier 1 language convention (FR-28 note: `scripts/language-check.sh` has no code-fence exemption so even backtick-wrapped CJK trips the Tier 1 CJK guardian). **CHANGELOG.md [Unreleased] ### Fixed** — appended Phase 2 bullet summarizing both FR-35 and FR-38 changes. |
+| Key decisions | (1) **Declared as Wave, not governance-maintenance.** Spans Tier 3 user-entry doc + Tier 1 agent-definition + CHANGELOG + plan.md — warranted Wave entry + IR at boundary, not a hygiene session. (2) **Run IR at Wave boundary.** `docs/zh/quick-start.md` is a Tier 3 user-entry doc; IR's product-technical alignment check is directly valuable there. IR round-1 validated this decision by catching the `/env-nogo` read-only overclaim that mechanical guardians (language-check / plan-md-contract-check) cannot detect. (3) **FR-38 anchor must be ASCII-only.** Target file `agents/process-observer-audit.md` is Tier 1; per FR-28 Backlog note, backtick-wrapped CJK still trips the language guardian. Rejected alternative of using the Chinese tracker-name substring; chose ASCII `Tracker` substring instead. (4) **Chinese quick-start keeps core onboarding command coverage, no fixed count in rationale.** `/security-audit` and `/release` live in `docs/user-guide.md`; link-out bullet names them explicitly. Avoiding a fixed count in the Why rationale itself prevents re-drift on future command additions. (5) **Pre-merge IR fix loop.** Round-1 BLOCK-equivalent MAJOR (read-only overclaim) → Lead rewrote `/env-nogo` description to distinguish auto-fix from read-only → Round-2 PROCEED. 1st MAJOR finding, 0 CRITICAL, 0 residual after fix. |
+
+### Acceptance verification
+
+- FR-35 content checks (all via `rg`): stale tmux strings = 0 hits; `tmux 3.x` ≥ 1 (L11, L12); `Independent Reviewer` ≥ 1 (L12, L14, plus historical L113); `/plan` + `/doctor` + `/env-nogo` all present (L51, L91, L124); Backlog pointer present (L124); L84 `commit \+ push \+ Doc Engineer` drift = 0 hits (replaced with Step-5-PO / Step-9-DE form); link-out present (L125)
+- FR-38 content checks: `plan\.md around line 963` = 0 hits; ASCII anchor `ASCII substring.*Tracker` = 1 hit (L61); CJK `升级观察期` = 0 hits (Tier 1 stays CJK-free)
+- `bash scripts/language-check.sh` → PASSED (Tier 1/Tier 2 CJK-clean + Principle 1 clean)
+- `bash scripts/language-check.sh --self-test` → PASSED
+- `bash scripts/plan-md-contract-check.sh` → exit 0
+- `bash scripts/policy-lint.sh` → PASSED
+- `bash $HOME/.isparto/hooks/process-observer/scripts/pre-commit-security.sh` → passed
+- `CHANGELOG.md [Unreleased]` → populated with Phase 2 bullet
+- Commit count: `git log --oneline --no-merges main..HEAD | wc -l` projected = 1 (re-verify post-commit)
+
+### Files Changed
+
+```
+ CHANGELOG.md                     |  2 ++
+ agents/process-observer-audit.md |  2 +-
+ docs/independent-review.md       | 39 +++++++++++++++++++++++++++++++++++++++
+ docs/plan.md                     | 20 ++++++++++++++++++++
+ docs/session-log.md              | 44 ++++++++++++++++++++++++++++++++++++++++
+ docs/zh/quick-start.md           | 18 ++++++++++++++----
+ 6 files changed, 120 insertions(+), 5 deletions(-)
+```
+(Stats captured post-IR-round-2, pre-commit; includes session-log.md self-referential additions — acknowledged self-referential staleness per prior IR non-blocking MINOR pattern, not a correctness defect.)
+
+### Notes
+
+- **BLOCKING marker decision: skip.** Wave did NOT modify `CLAUDE.md`. `agents/process-observer-audit.md` is Tier 1 but read on-demand via Agent tool, not injected into Claude Code's session-start system prompt — stale-cache risk structurally zero. Per `commands/end-working.md` Step 2, no BLOCKING marker required. The E6 row edit is a navigation-aid clarification that does not change grep detection logic or audit behavior; a one-line rationale is recommended for significant framework-behavior changes but this edit does not meet that bar.
+- **Independent Reviewer round-1 BLOCK-equivalent MAJOR (finding #2) → in-session fix → round-2 PROCEED.** Round-1 flagged the preamble phrase "两个命令都不改任何文件" as inaccurate because `commands/env-nogo.md:22` allows auto-fix of items like missing npm packages (reported as `auto-fixed`), while `/doctor` is genuinely read-only. Lead rewrote the preamble to distinguish the two commands: `/env-nogo` may auto-fix with `auto-fixed` report items; `/doctor` stays offline read-only. Round-2 returned PROCEED with zero residual findings. This counts as the 2nd real Wave Boundary IR run outside the v0.8.0 observation-period window (after Phase 1 earlier today — same 2026-04-24 pattern of "IR catches semantic mismatch the mechanical guardians miss").
+- **IR coverage complement to mechanical guards.** IR's round-1 finding is the exact case language-check / plan-md-contract-check cannot detect: the wording was syntactically clean + policy-compliant, but semantically misaligned with the `/env-nogo` command spec. Validates the "run IR at Wave boundary" default-on-doubt decision from the plan.
+- **FR-35 and FR-38 removed from plan.md Backlog in the same commit as this session's close-out**, per the Wave Declaration close-out clause and `commands/end-working.md` Step 4 authoring rule (plan.md = "where we are now"; completed FRs live in session-log.md only).
+- **Commit count verification (pre-commit projection per CLAUDE.md plan.md verification-count accuracy rule).** Projected 1 non-merge commit on `docs/v0.8.0-doc-alignment-phase2` branch at this `/end-working` close-out. Re-verification command: `git log --oneline --no-merges main..HEAD | wc -l` — expected `1`. Will re-verify post-commit; if mismatch, amend the 已完成 Wave 索引 row before push.
+
 ## 2026-04-24 Session — Wave v0.8.0 Doc Alignment — Phase 1 Factual Corrections
 
 | Metric | Value |
