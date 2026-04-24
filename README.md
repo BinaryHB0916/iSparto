@@ -14,6 +14,8 @@
 >
 > iSparto uses a deliberate bilingual strategy: user-facing entries (both READMEs + the Chinese quick-start + `CONTRIBUTING.md`) are maintained in parallel; framework instructions and reference documentation are English-only as a single source of truth, so AI instruction-following stays stable and non-Chinese-speaking contributors can review the framework. See [CLAUDE.md > Documentation Language Convention](CLAUDE.md#documentation-language-convention) for the full rationale.
 
+> **v0.8.0 (released 2026-04-20) changed two runtime expectations.** tmux 3.x is now a hard dependency (Independent Reviewer runs via `codex exec` in a dedicated tmux pane, not a Claude Code sub-agent), and the Codex CLI now serves two roles (Developer for implementation + QA, and Independent Reviewer for cross-provider blind review). Full release notes in [CHANGELOG.md](CHANGELOG.md).
+
 ### The core idea — one command, the whole team
 
 Every existing AI coding tool — Cursor, Windsurf, Copilot, Claude Code on its own — puts you in a loop with a single agent. You and it trade messages for every decision, every file, every commit. The whole development cycle runs through one conversation window.
@@ -25,7 +27,7 @@ iSparto's central move is to turn that single agent into an Agent Team. One comm
 | What you see | Everything the agent just read, reconstructed in prose | The one line the Team Lead decides you need; the rest lives in `docs/` |
 | When you are interrupted | Whenever the agent has something to say | Only at genuine decision points |
 | Cross-session state | Lost — you re-explain context every time | Restored automatically from `docs/plan.md` at session start |
-| Documentation sync | Manual | Audited every Wave by the Doc Engineer |
+| Documentation sync | Manual | Audited by the Doc Engineer at each Wave boundary (a Wave is a batch of decoupled tasks; see [docs/concepts.md](docs/concepts.md#wave-parallelism)) |
 
 ### Who this is for
 

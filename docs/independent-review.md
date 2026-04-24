@@ -834,3 +834,22 @@ Required fix: update `docs/process-observer.md` Trigger Timing (and any adjacent
 ## Recommendation
 
 **PROCEED.** The prior MAJOR wording issue is fixed, and no CRITICAL or MAJOR product-implementation misalignment remains for this Wave.
+
+---
+
+## Wave v0.8.0 Doc Alignment Phase 3 Review — 2026-04-24
+
+**Scope:** README v0.8.0 discoverability + new-concept Quick Reference on branch `docs/v0.8.0-doc-alignment-phase3`. Reviewed the active Wave entry in `docs/plan.md`, relevant product-spec core features / technical constraints, `README.md`, `README.zh-CN.md`, `docs/concepts.md`, `CHANGELOG.md`, `CLAUDE.md` Module Boundaries, the Information Layering / A-layer Peer Review docs, and the current git diff.
+
+| # | Product Intent | Implementation | Aligned? | Severity | Detail |
+|---|---------------|----------------|----------|----------|--------|
+| 1 | README entry points should surface v0.8.0 runtime expectation changes, especially tmux 3.x as a hard dependency and Codex CLI serving both Developer and Independent Reviewer | Both READMEs add a v0.8.0 note immediately after the bilingual-strategy block quote. The note says tmux 3.x is now required, identifies IR as `codex exec` in a dedicated tmux pane, and explains that Codex CLI now serves Developer + Independent Reviewer, with a file-level `CHANGELOG.md` link. | Y | — | This matches the product-spec technical constraints (Codex CLI + iTerm2/tmux dependency) and the role-separation product story. It also aligns with the existing prerequisite rows already present lower in both READMEs. |
+| 2 | The first README use of "Wave" should define the term and link to the canonical concept so new users can understand the documentation-sync claim | The Documentation sync comparison row in both READMEs now says a Wave is "a batch of decoupled tasks" / "一组解耦任务的工作批次" and links to `docs/concepts.md#wave-parallelism`. The target heading `## Wave Parallelism` exists. | Y | — | The inline definition is consistent with the Quick Reference row in `docs/concepts.md` and the product-spec feature "Wave-based parallel development." |
+| 3 | `docs/concepts.md` Quick Reference should expose A-layer Peer Review, Guardian Scripts, and the v0.8.0 Observation-period Tracker without creating a new mechanism document | Three rows were appended after Runtime Output Layering: A-layer Peer Review, Guardian Scripts, and Observation-period Tracker. The A-layer row matches `docs/design-principles/a-layer-peer-review.md`; the Guardian Scripts row lists the five scripts enumerated in `CLAUDE.md`; the tracker row describes the v0.8.0 five-Wave observation window and Release Gate condition 2. | Y | — | This implements FR-37 in the requested existing structure and avoids the larger standalone-mechanisms-doc scope that the Wave plan explicitly rejected. |
+| 4 | User-facing release notes should record the Phase 3 documentation alignment work under `[Unreleased]` / `### Fixed` | `CHANGELOG.md` adds a Phase 3 bullet covering both README discoverability / Wave definition and the three new Quick Reference rows, and states there are no functional changes. | Y | — | The changelog entry traces directly to FR-36 and FR-37. |
+| 5 | Mechanical documentation guards should remain clean after the README / concepts / plan edits | `bash scripts/language-check.sh`, `bash scripts/plan-md-contract-check.sh`, and `git diff --check` pass in the reviewed workspace. | Y | — | No Tier 1/Tier 2 language, plan-contract, or whitespace regression detected. |
+| 6 | Completed FRs should not remain advertised as open after this Wave lands, because `docs/plan.md` is the cross-session recovery source | At review time, the active Wave tasks in `docs/plan.md` are still unchecked and Backlog rows FR-36 / FR-37 still remain. The Wave entry's Close-out plan says `/end-working` Step 4 will migrate the entry and remove those rows, but that cleanup is not present in the reviewed diff. | N | MINOR | Non-blocking if this review is occurring before normal `/end-working` close-out. If merged as-is, future sessions would incorrectly reconstruct FR-36 / FR-37 as still open despite the implementation being present. Verify close-out removes or marks these before final merge. |
+
+## Recommendation
+
+**PROCEED** with the normal close-out cleanup for finding #6. No CRITICAL or MAJOR product-implementation misalignment was found, and the README / concepts / changelog changes match the Wave's product intent. No re-trigger is needed unless the README or `docs/concepts.md` content changes materially during close-out.
