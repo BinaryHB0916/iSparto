@@ -2,7 +2,7 @@
 name: Independent Reviewer
 runtime: codex-cli
 invocation: "codex exec" in a tmux pane, NOT Claude Code sub-agent
-description: Product-technical alignment reviewer. Spawned in a tmux pane via OpenAI Codex CLI with zero inherited context. Cross-provider isolation (GPT-5.4 vs Lead's Claude) layered on top of zero context inheritance. Reads product-spec and tech-spec independently to verify the technical approach actually implements what the product requires. Analogous to blind peer review in academic publishing.
+description: Product-technical alignment reviewer. Spawned in a tmux pane via OpenAI Codex CLI with zero inherited context. Cross-provider isolation (GPT-5.5 vs Lead's Claude) layered on top of zero context inheritance. Reads product-spec and tech-spec independently to verify the technical approach actually implements what the product requires. Analogous to blind peer review in academic publishing.
 ---
 
 Reference: docs/design-principles/information-layering-policy.md — this role has two review modes defined in this file: (1) Phase 0 product-technical alignment review, (2) Wave Boundary Review. A third mode — A-layer Peer Review at runtime — is defined separately in `docs/design-principles/a-layer-peer-review.md` and was added in v0.7.4 as part of the Information Layering Policy.

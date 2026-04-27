@@ -68,7 +68,7 @@ See [docs/collaboration-mode.md](docs/collaboration-mode.md) for the full collab
 | Guardian Scripts | scripts/language-check.sh, scripts/policy-lint.sh, scripts/gh-account-guard.sh, scripts/session-health.sh, scripts/plan-md-contract-check.sh | Workflow guardrails invoked by slash commands: language-check.sh (Tier 1/2 CJK + Principle 1 guard, called by /end-working DE audit item 9); policy-lint.sh (policy lint, called by /end-working DE audit item 10); gh-account-guard.sh (gh account mid-session guard, called by /end-working Step 9); session-health.sh (session health preview, called by /start-working Step 9); plan-md-contract-check.sh (mechanical plan.md contract detector, called by /end-working Step 4 contract enforcement and DE audit item 11) |
 | Assets | assets/*.svg | SVG images used by the README |
 | Process Observer | hooks/process-observer/, agents/process-observer-audit.md | Real-time interception (hook scripts + dangerous-operations list) + post-session audit |
-| Independent Reviewer | agents/independent-reviewer.md | Product-technical alignment blind review (Codex CLI in tmux pane — GPT-5.4, cross-provider isolation on top of zero inherited context) |
+| Independent Reviewer | agents/independent-reviewer.md | Product-technical alignment blind review (Codex CLI in tmux pane — GPT-5.5, cross-provider isolation on top of zero inherited context) |
 | READMEs | README.md, README.zh-CN.md | Bilingual README |
 
 ## Operational Guardrails

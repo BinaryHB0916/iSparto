@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Spec sync: gpt-5.4 → gpt-5.5 for Developer + Independent Reviewer model references** — OpenAI released gpt-5.5 (and gpt-5.5-mini) since the v0.8.0 model-upgrade Wave (2026-04-18) wrote gpt-5.4 / gpt-5.4-mini into the spec, and the Codex CLI's `[notice.model_migrations]` mechanism plus user runtime config (`~/.codex/config.toml` `model = "gpt-5.5"`) have already moved actual usage forward. This release brings the iSparto spec into alignment with what the Codex runtime is already serving. Replaced both lowercase `gpt-5.4` / `gpt-5.4-mini` (model names in code-fenced contexts and prose) and uppercase `GPT-5.4` (Independent Reviewer narrative descriptions of the cross-provider blind-review model) across nine active-scope files: `CLAUDE.md`, `CLAUDE-TEMPLATE.md`, `agents/independent-reviewer.md`, `docs/concepts.md`, `docs/collaboration-mode.md`, `docs/configuration.md`, `docs/design-decisions.md`, `docs/roles.md`, `docs/workflow.md`. Tier 4 historical artifacts (`docs/session-log.md`, `docs/independent-review.md`, `docs/observation-period/wave0-de-audit.md`, `CHANGELOG.md` previously-released entries, and historical Wave entries inside `docs/plan.md`) intentionally NOT modified — those entries are frozen historical records of what was true at write time. Two-tier mapping unchanged (implementation = full model at xhigh; QA / quick fix = mini variant at high). Cost unchanged (ChatGPT Plus covers both). Fast Mode (`service_tier = "fast"`) still applies uniformly. No functional behavior change — Lead/Teammate Codex prompts already default to whatever Codex CLI dispatches; this commit just makes the docs say what is actually happening.
+
 ## [0.8.3] - 2026-04-27
 
 ### Fixed
