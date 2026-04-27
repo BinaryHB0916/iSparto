@@ -1,5 +1,39 @@
 # Session Log
 
+## 2026-04-27 Session B — Hotfix v0.8.3: Codex-driven follow-up to v0.8.2 (3 fixes via canonical Implementation Protocol)
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | NOT a Wave — hotfix follow-up to v0.8.2 (commit `e1ababf`). Branch: `hotfix/install-additional-set-e-fixes`. **Workflow correction**: v0.8.2 was implemented by Lead direct-edit on a Tier 1 shell script, which the user correctly flagged as a workflow violation (markdown-only carve-out for self-referential boundary does NOT cover Tier 1 logic changes — workflow.md Wave-level safety-net + Hotfix Workflow both require Codex review for shell logic). v0.8.3 explicitly invokes the canonical Implementation Protocol: **Codex implements, Lead reviews**. The post-v0.8.2 retroactive Codex review (via `codex exec`, MCP unavailable in this session) surfaced one additional silent-exit bug at L136 + two minor quality issues; all three were handed to Codex via an Implementation prompt for in-place edits, Lead reviewed the resulting diff against three explicit criteria (set -e safety, color-variable consistency, comment accuracy). |
+| Tasks completed | (1) **Codex review of v0.8.2 (commit `e1ababf`)** via `codex exec` — confirmed L458 fix correct + L460 if-add safe; flagged L136 same-class silent-exit bug (`tar -xzf 2>/dev/null` in dry-run preview path), L458 over-suppression (`|| true` swallows non-contention failures), L453 comment over-claim (asserted mechanism unproven by patch). Sweep over all 14 `2>/dev/null` / `>/dev/null 2>&1` matches in install.sh confirmed L136 was the only other vulnerable site. (2) **Codex implementation** via `codex exec` Implementation prompt on branch `hotfix/install-additional-set-e-fixes` — applied all three fixes: L136 wrapped in `if ! tar ...; then printf warning; exit 0; fi`; L460 replaced `|| true` with `if ! claude mcp remove ...; then printf warning; fi` (visible advisory); L456 comment softened from mechanism-certainty to "active sessions or other user-settings write contention". (3) **Lead review** of Codex's diff — verified all three fixes use `if !` to consume exit code under set -e, YELLOW + NC color variables consistent with surrounding style, comment accuracy improved. Syntax check `bash -n install.sh` passed. (4) **CHANGELOG `[Unreleased] ### Fixed`** entry added describing all three fixes and the Codex-implements-Lead-reviews workflow. |
+| Key decisions | (1) **Workflow correction explicitly enacted.** v0.8.2 was Lead direct-edit on Tier 1 shell — workflow violation (workflow.md Wave-level safety-net carve-out is markdown/data only, not Tier 1 logic). v0.8.3 follows the canonical Implementation Protocol: Lead writes Implementation prompt with structured `## ` headings, Codex modifies install.sh, Lead reviews the diff with explicit pass/fail criteria. This is the correction the user surfaced when asking "why didn't I see you call MCP" — Codex review caught the L136 bug Lead missed, validating the rule. (2) **Three fixes in one hotfix, not split** — same file, same bug class, same review pass; splitting into v0.8.3 + v0.8.4 would be ceremony without value. (3) **Emergency hotfix substitute path retained** for DE — same justification as v0.8.2 (≤3 files, Tier 1 shell + Tier 4, follow-up to actively shipped fix). DE substituted with `bash scripts/language-check.sh` clean run + manual inline review + this session-log entry. (4) **MCP unavailable, fallback to `codex exec`** for both review and implementation. Cross-provider isolation preserved (GPT-5.4 via Codex CLI vs Claude via Lead). First time in iSparto history that `codex exec` was used for the **Implementation** role rather than only IR — works fine, future sessions can use this path when MCP server is disconnected. |
+
+### Acceptance verification
+
+- `bash -n install.sh` → OK
+- `bash scripts/language-check.sh` → PASSED (Tier 1/Tier 2 CJK-clean + Principle 1 clean)
+- `bash $HOME/.isparto/hooks/process-observer/scripts/pre-commit-security.sh` → passed
+- Lead review against three explicit criteria (set -e safety / color-variable consistency / comment accuracy) — all three fixes pass
+- Codex sweep over all 14 `2>/dev/null` / `>/dev/null 2>&1` matches in install.sh — confirmed L136 was the only other vulnerable site (the rest are consumed by `if` / `elif` / `&&` / `||` / `!`)
+
+### Files Changed
+
+```
+ CHANGELOG.md         |  4 ++++
+ docs/session-log.md  | 18 ++++++++++++++++++
+ install.sh           | 18 +++++++++++-------
+ 3 files changed, 33 insertions(+), 7 deletions(-)
+```
+
+### Notes
+
+- **No Wave entry in plan.md.** Hotfix, not a Wave. Per CLAUDE.md plan.md update cadence.
+- **No IR.** Hotfix scope; no Wave boundary.
+- **No PO sub-agent audit.** Lead self-assessed under emergency hotfix substitute path consistent with v0.8.2.
+- **Implementation Protocol corrected.** v0.8.2 used Lead direct-edit (now flagged retroactively); v0.8.3 uses Codex implementation + Lead review. Future Tier 1 shell hotfixes should follow the v0.8.3 pattern, not v0.8.2's.
+- **Post-hotfix release.** `/release patch` runs immediately after merge to ship v0.8.3.
+
 ## 2026-04-27 Session — Emergency Hotfix v0.8.2: install.sh `--upgrade` silent-exit at MCP migration
 
 | Metric | Value |

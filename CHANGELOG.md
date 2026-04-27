@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **`install.sh` follow-up to v0.8.2: same-class silent-exit at `tar` extraction + visible warning on stale-MCP-removal failure** — Codex review of the v0.8.2 hotfix (commit `e1ababf`) surfaced one additional latent silent-exit bug of the same class at L136 plus two minor quality issues. (1) **L136–139 (the bug)** — the dry-run preview path's `tar -xzf "$TMPDIR_RELEASE/release.tar.gz" -C "$TMPDIR_RELEASE" 2>/dev/null` had no fallback, so under `set -e` a tar extraction failure would silently kill the dry-run script with no user-visible message. Fixed by wrapping in `if ! tar ...; then printf warning; exit 0; fi` — same shape as the surrounding curl-failure handling. Failure path is now visible to the user. (2) **L460–462 (over-suppression)** — the v0.8.2 fix at `claude mcp remove codex-reviewer -s user 2>/dev/null || true` swallowed every remove failure silently. Replaced with `if ! claude mcp remove ...; then printf warning; fi` so the user sees a yellow advisory line and knows the stale `codex-reviewer` entry may remain in `~/.claude/settings.json`. (3) **L456–459 (comment tightening)** — the v0.8.2 explanatory comment asserted "the running Claude Code session has user-level settings.json open for write" as the cause of `mcp remove` failure, which is one plausible mechanism but not proven by the patch. Softened to "during active Claude Code sessions or other user-settings write contention" — same length, same structural purpose, no mechanism over-claim. Implemented by Codex (Developer) per the canonical Implementation Protocol; Lead reviewed the diff (set -e safety, color-variable consistency with surrounding style, comment accuracy) before merge. No functional change to the v0.8.2 happy path; failures now surface visibly instead of silently.
+
 ## [0.8.2] - 2026-04-27
 
 ### Fixed

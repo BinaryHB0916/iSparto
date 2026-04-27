@@ -133,7 +133,10 @@ if ! $_use_local_source; then
             TMPDIR_RELEASE=$(mktemp -d) || { printf "  ${RED}Error:${NC} Failed to create temp directory\n" >&2; exit 1; }
             trap 'rm -rf "$TMPDIR_RELEASE"' EXIT
             if curl -fsSL --connect-timeout 10 --max-time 60 "$TARBALL_URL" -o "$TMPDIR_RELEASE/release.tar.gz" 2>/dev/null; then
-                tar -xzf "$TMPDIR_RELEASE/release.tar.gz" -C "$TMPDIR_RELEASE" 2>/dev/null
+                if ! tar -xzf "$TMPDIR_RELEASE/release.tar.gz" -C "$TMPDIR_RELEASE" 2>/dev/null; then
+                    printf "  ${YELLOW}→${NC} Could not extract tarball for dry-run preview; skipping content listing.\n"
+                    exit 0
+                fi
                 SCRIPT_DIR="$TMPDIR_RELEASE/iSparto-${INSTALL_VERSION}"
             else
                 printf "  ${YELLOW}→${NC} Could not download tarball for dry-run preview.\n"
@@ -450,12 +453,13 @@ if $DRY_RUN; then
 else
     # Migrate old name if present
     if claude mcp get codex-reviewer >/dev/null 2>&1; then
-        # `|| true` is mandatory under `set -e` (line 7): if the running Claude
-        # Code session has user-level settings.json open for write, `mcp remove`
-        # exits non-zero with stderr suppressed by `2>/dev/null`, which under
-        # set -e silently kills the entire installer mid-upgrade (steps 14+
-        # never run, no error message to user). Treat the remove as advisory.
-        claude mcp remove codex-reviewer -s user 2>/dev/null || true
+        # `mcp remove` can fail during active Claude Code sessions or other
+        # user-settings write contention. Under `set -e`, that would silently
+        # kill the entire installer mid-upgrade (steps 14+ never run, no error
+        # message to user), so treat the remove as advisory but visible.
+        if ! claude mcp remove codex-reviewer -s user 2>/dev/null; then
+            printf "  ${YELLOW}→${NC} Could not remove old codex-reviewer MCP entry; continuing — may leave a stale entry in ~/.claude/settings.json\n"
+        fi
     fi
     if claude mcp add codex-dev -s user -- npx -y codex-mcp-server 2>/dev/null; then
         if [ -n "$OLD_VERSION" ]; then
