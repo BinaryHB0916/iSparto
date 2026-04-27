@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.2] - 2026-04-27
+
 ### Fixed
 
 - **`install.sh` `--upgrade` silently exits at MCP migration step (emergency hotfix)** — Line 453 `claude mcp remove codex-reviewer -s user 2>/dev/null` was missing the `|| true` fallback, so under the script's `set -e` strict mode (line 7) any non-zero exit from `claude mcp remove` would kill the installer mid-upgrade with no user-visible error message. The realistic failure path: when `--upgrade` runs from inside an active Claude Code session, the user-level `~/.claude/settings.json` is locked for write by that session, so `claude mcp remove` exits non-zero, `2>/dev/null` swallows the stderr, and `set -e` immediately terminates the script — silently skipping steps 14+ (MCP re-registration, Process Observer hook patch, VERSION write, completion banner). Affected upgrade paths from any version ≤ v0.8.1 where `codex-reviewer` MCP is still registered. Fix: add `|| true` to the `claude mcp remove` line, matching the advisory-remove pattern already used elsewhere in the script. Users who hit this on v0.8.1 should re-run `~/.isparto/install.sh --upgrade` after upgrading to v0.8.2.
