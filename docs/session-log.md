@@ -1,5 +1,29 @@
 # Session Log
 
+## 2026-04-27 Session E — Governance Maintenance: /start-working Step 0 Lead self-assess
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | NOT a Wave — governance-maintenance session. Branch: `fix/start-working-session-self-assess`. Triggered by user feedback during /start-working: Lead should self-judge whether this is a new session (BLOCKING marker check) instead of defaulting to ask user, since each Claude Code session has a fresh context window and Lead can inspect own conversation history for marker-authoring trace. |
+| Tasks completed | (1) `commands/start-working.md` Step 0 rewrite — old 3-branch (hard-stop + ask user + wait reply) replaced with new 4-branch: (a) Lead self-assesses by inspecting own conversation history for marker-authoring trace, (b) NEW SESSION → silent acknowledgement write, (c) SAME SESSION → halt + A-layer interrupt, (d) genuinely-ambiguous fallback → ask user (marked exceptional, not default). (2) `docs/plan.md` L177 acknowledgement row added per Step 0 (b) routine flow: `> ✅ Session boundary acknowledged 2026-04-27 by /start-working`. (3) Local `~/.codex/config.toml` reverted `model = "gpt-5.5-pro"` → `model = "gpt-5.5"` (OUTSIDE iSparto repo) — ChatGPT-tier subscription doesn't support Pro model (400 error from OpenAI verified in-session); backup retained at `~/.codex/config.toml.before-revert-pro`. |
+| Key decisions | (1) Step 0 self-assess pattern is canonical — asking-user path is exceptional fallback for genuinely ambiguous cases (post-compaction, conflicting signals), not the default. User direction explicit + framework spec updated. (2) `gpt-5.5-pro` re-confirmed local-only / NOT iSparto framework default — re-validates 04-27 Session D decision; ChatGPT-tier subscription doesn't have Pro model access. (3) Process retrospect for future Lead: small framework rule fixes that fit a single `commands/*.md` edit do NOT require `/plan` + plan mode + plan file escalation — Lead should just edit and move on. User direction this session: "加一个命令就好了，还要干嘛呢". Pattern matches 04-27 Session B/C/D governance-maintenance shape. |
+
+### Files Changed
+
+```
+ commands/start-working.md | 12 ++++--------
+ docs/plan.md              |  1 +
+ 2 files changed, 5 insertions(+), 8 deletions(-)
+```
+
+### Notes
+
+- No Wave entry in plan.md, no IR Wave Boundary, no /release. Governance maintenance.
+- DE pre-merge gate Lead self-assessed against 11-item checklist — `language-check.sh` / `policy-lint.sh` / `plan-md-contract-check.sh` / `pre-commit-security.sh` all PASSED. Scope is single-file framework markdown polish (12-line Step 0 rewrite) + 1 routine acknowledgement row. No behavioural rule extraction, no new identifier introduced, no contract/interface change.
+- No BLOCKING marker. CLAUDE.md not modified.
+- Process retrospect for future Lead — for 1-2 file framework markdown polish: edit and move on; do NOT escalate to /plan + plan mode + plan file; do NOT pre-recommend `/end-working` mid-session as if the polish itself were the session's work. The escalation was Lead's interpretation issue, not a missing rule (self-referential boundary already permits direct Lead edit on Tier 1 markdown).
+
 ## 2026-04-27 Session D — Governance Maintenance: post-v0.8.4 audit + 7 new Backlog FRs (no code change)
 
 | Metric | Value |
