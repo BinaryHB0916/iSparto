@@ -52,9 +52,9 @@ Swapping models is purely a configuration change — role definition files do no
 |------|-------------------|------------|------|-----------|-----------|
 | Lead | claude-opus-4-7 | Main session | Claude Max | max | SWE-bench Verified 87.6%, strongest at context understanding and task decomposition |
 | Teammate | claude-opus-4-7 | tmux session | Claude Max | xhigh | Inherits Lead's capabilities; xhigh keeps Teammate context-isolation cost bounded while preserving review quality |
-| Developer (implementation) | gpt-5.4 | MCP (codex tool) | ChatGPT Plus | xhigh | Successor to gpt-5.3-codex; lower latency and tighter token efficiency at equivalent coding strength |
-| Developer (QA / quick fix) | gpt-5.4-mini | MCP (codex tool, model param) | ChatGPT Plus | high | QA / quick fixes have simple structure; mini is sufficient and fast |
-| Independent Reviewer | gpt-5.4 | tmux pane via OpenAI Codex CLI (`codex exec`) | ChatGPT Plus | xhigh | Cross-provider blind review (OpenAI vs Anthropic) layered on top of zero context inheritance — training distribution and alignment direction differ structurally from Lead. Most token-intensive role per invocation (see [Token Budget Awareness](#token-budget-awareness)) |
+| Developer (implementation) | gpt-5.5 | MCP (codex tool) | ChatGPT Plus | xhigh | Successor to gpt-5.3-codex; lower latency and tighter token efficiency at equivalent coding strength |
+| Developer (QA / quick fix) | gpt-5.5-mini | MCP (codex tool, model param) | ChatGPT Plus | high | QA / quick fixes have simple structure; mini is sufficient and fast |
+| Independent Reviewer | gpt-5.5 | tmux pane via OpenAI Codex CLI (`codex exec`) | ChatGPT Plus | xhigh | Cross-provider blind review (OpenAI vs Anthropic) layered on top of zero context inheritance — training distribution and alignment direction differ structurally from Lead. Most token-intensive role per invocation (see [Token Budget Awareness](#token-budget-awareness)) |
 | Doc Engineer | claude-opus-4-7 | sub-agent (inherits Lead) | Claude Max | xhigh | Requires Lead's global context |
 | Process Observer (Hooks) | — | PreToolUse hook (shell script, no model) | — | — | Unbypassable structural safeguard |
 | Process Observer (Audit) | claude-sonnet-4-6 | sub-agent | Claude Max | — | Advisory layer, reduces token consumption |
@@ -65,7 +65,7 @@ iSparto runs on fixed-price subscriptions (Claude Max + ChatGPT Plus). No invoca
 
 | Role | Per-invocation cost | Typical invocations per Wave | Cumulative per Wave | Notes |
 |------|-------------------|------------------------------|---------------------|-------|
-| Independent Reviewer | Highest | 1-2 (1 Wave Boundary + 0-1 A-layer) | Medium | Spawns via `codex exec` (GPT-5.4) in a tmux pane with zero inherited context — cross-provider blind review, loads specs from scratch each time. Token cost is on the OpenAI/ChatGPT Plus side, not Claude session context |
+| Independent Reviewer | Highest | 1-2 (1 Wave Boundary + 0-1 A-layer) | Medium | Spawns via `codex exec` (GPT-5.5) in a tmux pane with zero inherited context — cross-provider blind review, loads specs from scratch each time. Token cost is on the OpenAI/ChatGPT Plus side, not Claude session context |
 | Developer | High | N (multi-round iteration) | Highest | Full structured prompt + code files per call; cumulative cost often exceeds IR |
 | Lead / Teammate | Moderate | Continuous | High | Context grows incrementally across the session |
 | Doc Engineer / PO Audit | Low | 1 each | Low | Focused scope; PO Audit intentionally uses Sonnet to reduce token consumption |
@@ -80,15 +80,15 @@ The Developer role automatically selects a model based on task type. When assemb
 
 | Trigger Table Tier | Developer Model | model Param Value | Rationale |
 |--------------------|-----------------|-------------------|-----------|
-| Tier 1 (implementation) | gpt-5.4 | unspecified (use default) | Implementation needs the strongest coding capability |
-| Tier 1 (QA) / Tier 2a (QA only) | gpt-5.4-mini | `gpt-5.4-mini` | QA prompts have simple structure; mini is sufficient and fast |
-| Tier 2b (Developer review) | gpt-5.4-mini | `gpt-5.4-mini` | Behavior template review, quick turnaround |
-| Quick fix (typo, formatting, single-line change) | gpt-5.4-mini | `gpt-5.4-mini` | Not worth waiting for xhigh reasoning |
+| Tier 1 (implementation) | gpt-5.5 | unspecified (use default) | Implementation needs the strongest coding capability |
+| Tier 1 (QA) / Tier 2a (QA only) | gpt-5.5-mini | `gpt-5.5-mini` | QA prompts have simple structure; mini is sufficient and fast |
+| Tier 2b (Developer review) | gpt-5.5-mini | `gpt-5.5-mini` | Behavior template review, quick turnaround |
+| Quick fix (typo, formatting, single-line change) | gpt-5.5-mini | `gpt-5.5-mini` | Not worth waiting for xhigh reasoning |
 
 **Invocation example** (when Lead assembles MCP):
 
-- Tier 1 implementation: `mcp__codex-dev__codex` — do not specify model (use default gpt-5.4)
-- Tier 1 QA / quick fix: `mcp__codex-dev__codex` — specify `model: "gpt-5.4-mini"`, `reasoningEffort: "high"`
+- Tier 1 implementation: `mcp__codex-dev__codex` — do not specify model (use default gpt-5.5)
+- Tier 1 QA / quick fix: `mcp__codex-dev__codex` — specify `model: "gpt-5.5-mini"`, `reasoningEffort: "high"`
 
 **Note:** Latency and throughput tuning is handled at the Codex runtime layer via `~/.codex/config.toml` `service_tier` — see [§Fast Mode Configuration](#fast-mode-configuration) below. iSparto prompt templates do not encode latency hints.
 
@@ -99,7 +99,7 @@ Models for different roles are controlled by different mechanisms:
 | Control Object | Affected Roles | Configuration Location | Notes |
 |----------------|----------------|------------------------|-------|
 | Claude Code model | Lead, Teammate, Doc Engineer | `~/.claude/settings.json` → `"model"` field, or CLI `--model` flag | Teammate / Doc Engineer inherit Lead's model setting |
-| Codex model | Developer | `model` parameter when calling `mcp__codex-dev__codex` | Defaults to gpt-5.4 for implementation; gpt-5.4-mini for QA / quick fix. See §Developer Tiered Model Strategy |
+| Codex model | Developer | `model` parameter when calling `mcp__codex-dev__codex` | Defaults to gpt-5.5 for implementation; gpt-5.5-mini for QA / quick fix. See §Developer Tiered Model Strategy |
 | Sub-agent model | Process Observer Audit | model field in the sub-agent definition file | Defaults to sonnet; can be reverted to opus |
 
 ### Fast Mode Configuration
@@ -139,14 +139,14 @@ Or specify on every launch: `claude --model opus --effort max`
 
 **2. The Developer model needs no extra configuration:**
 
-The Developer (Codex) model is specified through the `model` parameter on each MCP call. When Lead assembles a prompt and calls Codex, the default is `gpt-5.4`. To swap, simply specify the `model` parameter on the call.
+The Developer (Codex) model is specified through the `model` parameter on each MCP call. When Lead assembles a prompt and calls Codex, the default is `gpt-5.5`. To swap, simply specify the `model` parameter on the call.
 
 ### Switching Models Mid-Session
 
 | Scenario | Action |
 |----------|--------|
 | Switch the Lead model (e.g., opus → sonnet) | Modify the `"model"` field in `~/.claude/settings.json`; restart the session to take effect |
-| Switch the Developer model (e.g., gpt-5.4 → gpt-5.4-mini) | Specify the `model` parameter on the next Codex call (no restart needed) |
+| Switch the Developer model (e.g., gpt-5.5 → gpt-5.5-mini) | Specify the `model` parameter on the next Codex call (no restart needed) |
 | Temporarily switch the Lead model in-session | Use the `/model` command (note: may downgrade effortLevel — see the Warning above) |
 | Switch the Teammate model | Same as Lead — Teammate inherits the Claude Code model setting |
 | Switch the Process Observer Audit model | Modify the model field in `~/.claude/agents/process-observer-audit.md` |

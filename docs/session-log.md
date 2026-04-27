@@ -1,5 +1,47 @@
 # Session Log
 
+## 2026-04-27 Session C — Governance Maintenance: spec sync gpt-5.4 → gpt-5.5 across active-scope docs
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | NOT a Wave — governance-maintenance session per `commands/end-working.md` Step 4 contract definition: stale-number fix across multiple reference docs, no behavior change, no Wave plan.md entry, no IR, no full PO audit. Branch: `docs/spec-sync-gpt-5.5` (initially created as `chore/spec-sync-gpt-5.5` then renamed pre-PR to comply with CLAUDE.md Branch Protocol — only `feat/ fix/ hotfix/ docs/ release/` are approved prefixes; `chore/` is not. Documentation-only changes correctly land on `docs/`). Triggered by user observation that local Codex runtime config (`~/.codex/config.toml`) already says `model = "gpt-5.5"` while iSparto spec (written 2026-04-18 during v0.8.0 Wave) still says gpt-5.4 — Codex CLI's `[notice.model_migrations]` mechanism + OpenAI's gpt-5.5 release moved runtime forward 9 days ago, but the spec lagged. |
+| Tasks completed | (1) **Codex CLI version + Fast Mode + reasoning_effort tier check** confirmed via direct probe: `codex --version` = `codex-cli 0.124.0`; `~/.codex/config.toml` = `service_tier = "fast"` + `model = "gpt-5.5"` + `model_reasoning_effort = "xhigh"`. Reasoning-effort tier ladder probed via `codex -c "model_reasoning_effort=xxhigh"` which raised "unknown variant `xxhigh`, expected one of `none`, `minimal`, `low`, `medium`, `high`, `xhigh`" — confirms `xhigh` is the top tier in Codex CLI 0.124.0; no higher tier available. (2) **Spec sync edit pass** across nine active-scope files using two `Edit` calls per file (`gpt-5.4` → `gpt-5.5` lowercase; `GPT-5.4` → `GPT-5.5` uppercase, since some files use the model identifier as a code-fenced literal and others use it in narrative prose): `CLAUDE.md`, `CLAUDE-TEMPLATE.md`, `agents/independent-reviewer.md`, `docs/concepts.md`, `docs/collaboration-mode.md`, `docs/configuration.md`, `docs/design-decisions.md`, `docs/roles.md`, `docs/workflow.md`. Tier 4 historical artifacts (session-log.md, independent-review.md, observation-period/wave0-de-audit.md, CHANGELOG previously-released entries, plan.md historical Wave entries) intentionally skipped — those are frozen records of what was true at write time. (3) **CHANGELOG `[Unreleased] ### Changed`** entry added documenting the sync + scope + Tier 4 skip rationale. |
+| Key decisions | (1) **Governance-maintenance shape, not Wave or hotfix.** Spec drift, no behavior change, no actively-broken user path. Per `commands/end-working.md` Step 4 contract: branch → edit → DE audit → PR → merge. No IR, no full PO audit, no plan.md Wave entry, no F8b tracker row. Narrative goes only to this session-log entry. (2) **Skip Tier 4 historical files.** Per CLAUDE.md Documentation Language Convention: Tier 4 files are not modified retroactively. Historical Wave entries / session-log / IR audits are records of what was true at write time. The `docs/plan.md` Tech Ecosystem Tracking row at L205 ("GPT-5.4 退役 / GPT-6 发布") is forward-looking and its trigger condition has now technically fired (gpt-5.5 release) — defer that row's update to a separate decision (whether to update wording or remove the row). (3) **Reasoning-effort tier already maxed at `xhigh`** — Codex CLI 0.124.0 doesn't support a higher tier; documenting this in session-log so future questions can reference it. (4) **Ship as v0.8.4 patch** since model spec change is user-observable (anyone reading docs/configuration.md or docs/roles.md to set up their environment will now see the correct model name). |
+
+### Acceptance verification
+
+- Active-scope sweep: `rg -n "gpt-5\.4\|GPT-5\.4" CLAUDE.md CLAUDE-TEMPLATE.md agents/ docs/concepts.md docs/collaboration-mode.md docs/configuration.md docs/design-decisions.md docs/roles.md docs/workflow.md` → 0 hits
+- Tier 4 historical skip-respect: `git status -s docs/session-log.md docs/independent-review.md docs/observation-period/ CHANGELOG.md docs/plan.md` → only CHANGELOG.md and docs/session-log.md show as modified (this entry + the [Unreleased] entry); historical files untouched
+- `bash scripts/language-check.sh` → PASSED (Tier 1/Tier 2 CJK-clean, Principle 1 clean)
+- DE audit will run at `/end-working` Step 9 pre-merge gate per governance-maintenance flow
+- 11 files changed total (9 spec files + CHANGELOG + this session-log entry)
+
+### Files Changed
+
+```
+ CHANGELOG.md                   |  4 ++++
+ CLAUDE-TEMPLATE.md             |  4 ++--
+ CLAUDE.md                      |  2 +-
+ agents/independent-reviewer.md |  2 +-
+ docs/collaboration-mode.md     |  4 ++--
+ docs/concepts.md               |  2 +-
+ docs/configuration.md          | 28 ++++++++++++++--------------
+ docs/design-decisions.md       |  6 +++---
+ docs/roles.md                  |  2 +-
+ docs/session-log.md            | 25 +++++++++++++++++++++++++
+ docs/workflow.md               |  6 +++---
+ 11 files changed
+```
+
+### Notes
+
+- **No Wave entry in plan.md.** Governance-maintenance per `commands/end-working.md` Step 4 contract.
+- **No IR.** Governance-maintenance flow.
+- **No PO sub-agent audit.** Lead self-assessed under governance-maintenance flow. DE pre-merge gate still runs at Step 9.
+- **No BLOCKING marker.** CLAUDE.md was modified (one line: Module Boundaries IR row "GPT-5.4" → "GPT-5.5"), but the change is a literal name swap (no behavior change, no new identifier, no contract change). Per `commands/end-working.md` Step 2 BLOCKING decision aid all three "no" → skip BLOCKING with prose rationale.
+- **Forward-looking gap deferred to Backlog.** `docs/plan.md` L205 Tech Ecosystem Tracking row "GPT-5.4 退役 / GPT-6 发布" trigger has technically fired (gpt-5.5 release). Whether to update wording (track gpt-5.5 retirement / gpt-6 release) or remove the row entirely is a separate decision; deferred. Adding to Backlog as FR (next available identifier).
+
 ## 2026-04-27 Session B — Hotfix v0.8.3: Codex-driven follow-up to v0.8.2 (3 fixes via canonical Implementation Protocol)
 
 | Metric | Value |
