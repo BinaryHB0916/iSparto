@@ -1,5 +1,38 @@
 # Session Log
 
+## 2026-04-27 Session — Emergency Hotfix v0.8.2: install.sh `--upgrade` silent-exit at MCP migration
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | NOT a Wave — emergency hotfix session. Branch: `hotfix/install-mcp-migrate-set-e`. **Emergency hotfix substitute path explicitly invoked** per CLAUDE.md Solo/Agent Team workflow step 4 + `docs/workflow.md` Hotfix Workflow: ≤3 changed files (`install.sh` + `CHANGELOG.md` + this `docs/session-log.md` entry = 3 files), all Tier 1 shell scripts and/or `CHANGELOG.md`/Tier 4, and explicit emergency release window (v0.8.1 just shipped 2026-04-24 and `--upgrade` is silently failing for users who have `codex-reviewer` MCP still registered — every existing iSparto user upgrading from ≤ v0.8.0 hits this). Doc Engineer sub-agent audit substituted with three required items: (a) `bash scripts/language-check.sh` clean run, (b) manual inline review of each changed file, (c) this session-log entry naming the exception. |
+| Tasks completed | (1) **Root-cause confirmed** — `install.sh` L7 sets `set -e` strict mode; L453 `claude mcp remove codex-reviewer -s user 2>/dev/null` lacked `|| true` fallback. When `--upgrade` runs from inside an active Claude Code session whose user-level `~/.claude/settings.json` is locked for write, `claude mcp remove` exits non-zero, `2>/dev/null` swallows stderr, `set -e` immediately terminates the script silently. Steps 14+ (MCP re-registration, Process Observer hook patch, VERSION file write, completion banner) all skipped — installer appears to "stall" at the MCP migration step from the user's perspective. (2) **One-line fix** — appended `|| true` to the `claude mcp remove` line; added a 5-line comment block explaining the failure mode so future maintainers understand why the fallback is mandatory rather than cosmetic. The advisory-remove pattern matches what L455 `claude mcp add ... 2>/dev/null` already does (consumed by `if`, exit code never reaches `set -e`). (3) **CHANGELOG `[Unreleased]` `### Fixed` entry** added describing the failure path and the upgrade-recovery instruction for users on v0.8.1. |
+| Key decisions | (1) **Hotfix, not Wave.** Single behavior bug in shell script; no narrative work, no plan.md Wave entry needed. (2) **Emergency hotfix substitute path invoked** rather than full DE sub-agent audit — bug is actively blocking every user upgrading from ≤ v0.8.0, prompt fix > full ceremony. (3) **Add explanatory comment, not just `|| true`** — the bug pattern is subtle (silent failure under `set -e` + `2>/dev/null`) and non-obvious to future readers; without the comment the `|| true` looks cosmetic and risks being removed in a future cleanup. (4) **Ship as v0.8.2 patch immediately** — no value in batching this with anything else; users blocked on `--upgrade` need the fix today. |
+
+### Acceptance verification (emergency hotfix substitute path)
+
+- (a) `bash scripts/language-check.sh` → PASSED (Tier 1/Tier 2 CJK-clean, Principle 1 clean)
+- (b) Manual inline review of changed files: `install.sh` diff = exactly 1 line changed (L453 + 5-line explanatory comment block above it); `CHANGELOG.md` diff = `[Unreleased] ### Fixed` bullet describing the failure path; `docs/session-log.md` diff = this session entry naming the exception
+- (c) `bash -n install.sh` → syntax OK
+- (d) `bash $HOME/.isparto/hooks/process-observer/scripts/pre-commit-security.sh` → passed
+- 3 files, 14 insertions, 1 deletion — within the ≤3-files emergency hotfix limit
+
+### Files Changed
+
+```
+ CHANGELOG.md         | 4 ++++
+ docs/session-log.md  | 14 ++++++++++++++
+ install.sh           | 7 ++++++-
+ 3 files changed, 24 insertions(+), 1 deletion(-)
+```
+
+### Notes
+
+- **No Wave entry in plan.md.** This is a non-Wave hotfix per the CLAUDE.md plan.md update cadence rule ("If a fix session does not correspond to any plan.md entry (e.g., a bug fix not tied to any Wave), no plan.md update is required.").
+- **No IR.** Emergency hotfix substitute path; IR not required and not run.
+- **No PO sub-agent audit.** Lead self-assessed under emergency hotfix exception. Branch convention: `hotfix/` prefix per CLAUDE.md ✓; commit on hotfix branch, not main ✓; PR + merge via `gh` ✓ (planned in same flow).
+- **Post-hotfix release.** `/release patch` runs immediately after merge to ship v0.8.2. CHANGELOG `[Unreleased] ### Fixed` entry is the only content; `scripts/release.sh` will sed-migrate it to `[0.8.2] - 2026-04-27`.
+
 ## 2026-04-24 Session C — Wave v0.8.0 Doc Alignment — Phase 3 (README v0.8.0 Discoverability + New-Concept Quick Reference)
 
 | Metric | Value |
