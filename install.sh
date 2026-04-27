@@ -450,7 +450,12 @@ if $DRY_RUN; then
 else
     # Migrate old name if present
     if claude mcp get codex-reviewer >/dev/null 2>&1; then
-        claude mcp remove codex-reviewer -s user 2>/dev/null
+        # `|| true` is mandatory under `set -e` (line 7): if the running Claude
+        # Code session has user-level settings.json open for write, `mcp remove`
+        # exits non-zero with stderr suppressed by `2>/dev/null`, which under
+        # set -e silently kills the entire installer mid-upgrade (steps 14+
+        # never run, no error message to user). Treat the remove as advisory.
+        claude mcp remove codex-reviewer -s user 2>/dev/null || true
     fi
     if claude mcp add codex-dev -s user -- npx -y codex-mcp-server 2>/dev/null; then
         if [ -n "$OLD_VERSION" ]; then
