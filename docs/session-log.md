@@ -1,5 +1,40 @@
 # Session Log
 
+## 2026-04-27 Session D — Governance Maintenance: post-v0.8.4 audit + 7 new Backlog FRs (no code change)
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | NOT a Wave — governance-maintenance session per `commands/end-working.md` Step 4 contract. Branch: `docs/session-0427-backlog`. Captures architecture audit + ChatGPT Pro upgrade + MCP path clarification + 7 new Backlog FRs surfaced this session. No code change to iSparto repo (`~/.codex/config.toml` model = "gpt-5.5-pro" swap is OUTSIDE iSparto repo, on user's local machine config, intentionally not propagated to spec). |
+| Tasks completed | (1) **Three-agent architecture audit** (Explore subagent_type, parallel) covering: (a) role assignments + workflow loop closure vs. user mental model; (b) Codex invocation surface + Process Observer hook coverage + bypass possibilities; (c) legacy `codex-reviewer` MCP residue sweep. **Result**: user mental model 80% aligned (missing concept: A-layer Peer Review which user subsequently decided to remove); main loop closure is sound; MCP residue is clean. Two real framework rule polish candidates surfaced (FR-40 hook path-context gap, FR-44 DE pre-merge gate spec inconsistency). (2) **Codex independent double-check** of FR-40 via `codex exec` (gpt-5.5-pro) — CONFIRMED MAJOR with file:line evidence. (3) **A-layer Peer Review removal decision** — user direction explicit ("去掉，不是 wire 进去"). Lead initially recommended (A) wire it everywhere based on misreading v0.7.4 design intent as currently-held requirement; user corrected. Logged as FR-39, ready to execute as next-session Wave. (4) **ChatGPT Plus → Pro upgrade decision** — user upgraded to $100 Pro. Local `~/.codex/config.toml` swapped `model = "gpt-5.5"` → `model = "gpt-5.5-pro"` (Pro-only model verified available via `codex -c "model=gpt-5.5-pro" exec`). `service_tier = "fast"` retained (only options are `fast` / `flex`; Pro quota high enough that `fast` is correct choice). `model_reasoning_effort = "xhigh"` retained (top tier; no higher exists in Codex CLI 0.124.0). iSparto spec NOT updated — framework default stays at `gpt-5.5` for ChatGPT Plus user compatibility; Pro is opt-in via local config. (5) **MCP path clarification** — Codex MCP server `codex-dev` is healthy at OS level (`claude mcp list` confirms ✓ Connected); session-level disconnect this session forced fallback to `codex exec` foreground via Bash (no UI prompt). User to start fresh Claude Code session for MCP UI path to recover. (6) **7 new Backlog FRs** appended to plan.md Framework Rule Polish table (see Acceptance section). |
+| Key decisions | (1) **A-layer Peer Review removal direction confirmed** (FR-39, HIGH) — user explicit; v0.8.5 will ship the removal. (2) **`gpt-5.5-pro` is local-only, NOT iSparto framework default** — keeps Plus-tier user compatibility. (3) **MCP via `mcp__codex-dev__codex` is the canonical Codex invocation path for Developer role** — `codex exec in tmux pane` is canonical for IR (cross-provider isolation). `codex exec foreground via Bash` is fallback when MCP is session-level disconnected; user-visibility loss is acceptable cost for fallback. (4) **MCP session-level disconnect can only be recovered by starting a new Claude Code session** — MCP is session-bound; intra-session reattach is not supported by Claude Code. (5) **No iSparto repo code change this session** — pure documentation / Backlog hygiene; ship as docs/ branch governance-maintenance, no /release. |
+
+### Acceptance verification
+
+- 7 new FRs appended to plan.md `#### Framework Rule Polish` table after FR-34: FR-39 (A-layer Peer Review removal, high) / FR-40 (hook path-context gap, major) / FR-41 (Tech Ecosystem Tracking row update, low) / FR-42 (governance-maintenance branch prefix, low) / FR-43 (end-working.md cross-reference drift, low) / FR-44 (DE pre-merge gate spec inconsistency, major) / FR-45 (Wave-level safety-net carve-out wording, medium)
+- `bash scripts/language-check.sh` → PASSED
+- `bash scripts/policy-lint.sh` → PASSED
+- `bash scripts/plan-md-contract-check.sh` → exit 0
+- `bash $HOME/.isparto/hooks/process-observer/scripts/pre-commit-security.sh` → passed
+- No code change in iSparto repo; `~/.codex/config.toml` Pro-tier model swap is OUTSIDE repo
+
+### Files Changed
+
+```
+ docs/plan.md         | (7 new FR rows appended to Framework Rule Polish table)
+ docs/session-log.md  | (this entry)
+```
+
+### Notes
+
+- **No Wave entry in plan.md.** Governance-maintenance.
+- **No IR.** Governance-maintenance flow (no Wave boundary).
+- **No PO sub-agent audit.** Lead self-assessed under governance-maintenance flow. DE pre-merge gate at Step 9 will run Lead self-assessed (governance-maintenance, no code change).
+- **No BLOCKING marker.** CLAUDE.md not modified.
+- **No /release.** No code change, no user-observable behavior change in iSparto framework. Ship as docs/ branch PR + merge only.
+- **Codex calls in this session** all went via `codex exec` Bash fallback path (MCP disconnected mid-session). UI prompts absent — user surfaced this as transparency concern; Lead acknowledged + clarified the mechanism. New session opens with MCP UI path restored.
+- **Next-session continuation**: user opens new Claude Code session, runs `/start-working`, sees FR-39 at top of Backlog, executes A-layer Peer Review removal Wave.
+
 ## 2026-04-27 Session C — Governance Maintenance: spec sync gpt-5.4 → gpt-5.5 across active-scope docs
 
 | Metric | Value |
