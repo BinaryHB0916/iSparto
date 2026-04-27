@@ -10,14 +10,10 @@ Your responsibility: Run the setup sequence silently, then at Step 9 emit exactl
    - Read `docs/plan.md` and search for the literal marker line: `🚨 BLOCKING: Next Wave requires NEW SESSION` (this is a fixed system marker, not a user-facing string — match it as a literal)
    - If the marker is NOT present: skip this entire step and proceed to Step 0.5 (branch guard)
    - If the marker IS present:
-     a. Hard-stop the flow. Do NOT continue to Step 0.5 until this step resolves.
-     b. Ask the user (in user's language) to confirm whether this is a new session — i.e., a different Claude Code session from the one that originally wrote the BLOCKING marker. Wait for the user's reply.
-     c. If the user confirms this IS a new session:
-        - Write a session-boundary acknowledgement annotation immediately below the marker line in `docs/plan.md`. The annotation format is: `> ✅ Session boundary acknowledged YYYY-MM-DD by /start-working` (substitute today's date). This annotation is a literal because plan.md is Tier 4 and not user-facing.
-        - Proceed to Step 0.5 (branch guard).
-     d. If the user indicates this is the SAME session (i.e., the same session that wrote the marker):
-        - Halt. Do NOT proceed to Step 0.5. Do NOT mutate any state.
-        - Instruct the user (in user's language) to close this Claude Code session entirely and open a new one, then run `/start-working` again in the new session.
+     a. **Lead self-assesses — do NOT default to asking the user.** Each Claude Code session starts with a fresh context window (no cross-session continuation). Inspect your own conversation history: if there is no record in this turn-stream of having authored the BLOCKING marker (no prior tool call that wrote `🚨 BLOCKING: Next Wave requires NEW SESSION` into `docs/plan.md`, no Wave close-out commit executed earlier in this conversation), then by construction this is a NEW session relative to the marker's author. The typical `/start-working` invocation falls in this branch.
+     b. If self-assessment = NEW SESSION (typical case): silently write the session-boundary acknowledgement annotation immediately below the marker line in `docs/plan.md`. Annotation format: `> ✅ Session boundary acknowledged YYYY-MM-DD by /start-working` (substitute today's date). C-layer — do NOT narrate this in the Step 9 briefing; the user does not need to be told the boundary check ran cleanly. Proceed to Step 0.5 (branch guard).
+     c. If self-assessment = SAME SESSION (rare — your context shows you wrote the marker earlier in this conversation): halt. Do NOT proceed to Step 0.5. Do NOT mutate state. **A-layer (Policy trigger type e — critical intercept):** instruct the user (in user's language) to close this Claude Code session entirely and open a new one, then run `/start-working` again in the new session.
+     d. Fallback (only if self-assessment is genuinely ambiguous — e.g., context was recently compacted and the relevant authoring turn was dropped, or you encounter conflicting signals): ask the user (in user's language) to confirm whether this is a new session, then route to (b) or (c) based on the reply. **Do not use this fallback as a default** — the user has explicitly objected to being asked when Lead can self-judge (rule added in response to that feedback). The asking-user path historically created friction; only invoke it when self-assessment genuinely fails.
 
 0.5. Branch guard (before reading any files or doing any work):
    - Run `git branch --show-current`
