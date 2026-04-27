@@ -322,6 +322,7 @@ Open framework rule refinement candidates surfaced by Process Observer audits ac
 | FR-43 | `commands/end-working.md:34` cross-reference 指向 "CLAUDE.md Solo/Agent Team workflow step 4"，实际定义在 docs/collaboration-mode.md + docs/workflow.md | 修指针指向正确路径 | low | 2026-04-27 |
 | FR-44 | `commands/end-working.md` Step 9 与 PR template L148 关于 DE "Lead self-assessed" 路径条件不一致 | 二选一对齐：Step 9 cite emergency-hotfix substitute path，或 PR template 删选项 | major | 2026-04-27 |
 | FR-45 | `docs/workflow.md` Wave-level safety-net carve-out 措辞被 Lead 误读成 "Tier 1 shell 也算自指例外" (v0.8.2 hotfix 事件) | carve-out 段加显式排除 "shell logic changes still require Codex review" | medium | 2026-04-27 |
+| FR-46 | 所有 supervision 层（Process Observer hook + 19-row audit、DE 11-item、IR、guardian scripts、governance-maintenance carve-out）当前是 advisory / 允许 Lead self-assessed / 允许跳过，对逻辑无歧义的规则违反不强制 halt+escalate | 改为 strict halt-on-violation + user-escalation 模型：逻辑无歧义的规则违反一律叫停过程并上报用户决定，不允许任何绕过路径 (Lead self-assessed / governance-maintenance skip / emergency-hotfix substitute 等都需重审) | high | 2026-04-27 user direction |
 
 #### Deferred to v0.8+
 
