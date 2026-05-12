@@ -21,6 +21,78 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 RULES_FILE="$SCRIPT_DIR/../rules/dangerous-operations.json"
 WORKFLOW_RULES_FILE="$SCRIPT_DIR/../rules/workflow-rules.json"
 
+# ── Git-rule helpers ─────────────────────────────────────────
+# Returns 0 if pattern matches outside quotes, 1 otherwise.
+# Used by git rules to avoid false positives from text in arguments
+# (e.g., gh pr create --body "...git push origin main...").
+# Not applied to filesystem rules where quoted paths are real targets.
+matches_outside_quotes() {
+    local cmd="$1" pat="$2"
+    local stripped
+    stripped=$(printf '%s' "$cmd" | sed "s/\"[^\"]*\"//g; s/'[^']*'//g")
+    printf '%s' "$stripped" | grep -qE -- "$pat" 2>/dev/null
+}
+
+# Returns 0 if pattern matches a single shell command segment outside quotes.
+# This prevents a greedy git-push rule from spanning compound-command
+# boundaries, e.g. `git push origin feature && git checkout main`.
+matches_outside_quoted_command_segment() {
+    local cmd="$1" pat="$2"
+    local stripped
+    stripped=$(printf '%s' "$cmd" | sed "s/\"[^\"]*\"//g; s/'[^']*'//g")
+    printf '%s' "$stripped" | awk '{ gsub(/&&|\|\||;|\|/, "\n"); print }' | grep -qE -- "$pat" 2>/dev/null
+}
+
+run_self_test() {
+    local failures=0
+    local push_main_pattern='git[[:space:]]+push[[:space:]]+.*([[:space:]]|:|/)(main|master)([[:space:]]|$)|git[[:space:]]+push[[:space:]]+(main|master)([[:space:]]|$)'
+    local force_main_pattern='git[[:space:]]+push[[:space:]]+.*(-f|--force).*([[:space:]]|:|/)(main|master)([[:space:]]|$)'
+
+    expect_match() {
+        local label="$1" pattern="$2" command="$3"
+        if ! matches_outside_quoted_command_segment "$command" "$pattern"; then
+            printf 'FAIL: %s should match\n' "$label" >&2
+            failures=$((failures + 1))
+        fi
+    }
+
+    expect_no_match() {
+        local label="$1" pattern="$2" command="$3"
+        if matches_outside_quoted_command_segment "$command" "$pattern"; then
+            printf 'FAIL: %s should not match\n' "$label" >&2
+            failures=$((failures + 1))
+        fi
+    }
+
+    expect_no_match \
+        "feature push followed by checkout main" \
+        "$push_main_pattern" \
+        "git push -u origin docs/vnext-design-stash && git checkout main && git status --short"
+    expect_match "direct push to main" "$push_main_pattern" "git push -u origin main"
+    expect_match "direct push to HEAD:main" "$push_main_pattern" "git push origin HEAD:main"
+    expect_no_match \
+        "quoted PR body mention" \
+        "$push_main_pattern" \
+        'gh pr create --body "run git push origin main after review" && git status --short'
+    expect_match "force push to main" "$force_main_pattern" "git push --force origin main"
+    expect_no_match \
+        "force push feature followed by checkout main" \
+        "$force_main_pattern" \
+        "git push --force origin feature && git checkout main"
+
+    if [ "$failures" -gt 0 ]; then
+        printf 'FAILED: pre-tool-check.sh --self-test (%d failure(s))\n' "$failures" >&2
+        return 1
+    fi
+
+    printf 'PASSED: pre-tool-check.sh --self-test (6/6 fixtures OK)\n'
+}
+
+if [ "${1:-}" = "--self-test" ]; then
+    run_self_test
+    exit $?
+fi
+
 # ── Read JSON from stdin ─────────────────────────────────────
 INPUT=$(cat)
 
@@ -150,18 +222,6 @@ case "$TOOL_NAME" in
             exit 0
         fi
 
-        # ── Git-rule helper: check pattern outside quoted strings ───
-        # Returns 0 if pattern matches outside quotes, 1 otherwise.
-        # Used by git rules to avoid false positives from text in arguments
-        # (e.g., gh pr create --body "...git push origin main...").
-        # Not applied to filesystem rules where quoted paths are real targets.
-        matches_outside_quotes() {
-            local cmd="$1" pat="$2"
-            local stripped
-            stripped=$(printf '%s' "$cmd" | sed "s/\"[^\"]*\"//g; s/'[^']*'//g")
-            printf '%s' "$stripped" | grep -qE -- "$pat" 2>/dev/null
-        }
-
         # ── Check a single rule against COMMAND ──────────────────────
         check_rule() {
             local rule_id="$1"
@@ -210,11 +270,7 @@ case "$TOOL_NAME" in
                     return
                     ;;
                 git-push-main-direct|git-force-push-protected)
-                    if echo "$COMMAND" | grep -qE -- "$pattern" 2>/dev/null; then
-                        # Skip if pattern only appears inside quoted strings
-                        if ! matches_outside_quotes "$COMMAND" "$pattern"; then
-                            return
-                        fi
+                    if matches_outside_quoted_command_segment "$COMMAND" "$pattern"; then
                         # Bootstrap: allow when remote has no main/master yet (git-push-main-direct only)
                         if [ "$rule_id" = "git-push-main-direct" ]; then
                             if ! git rev-parse --verify origin/main >/dev/null 2>&1 && \
