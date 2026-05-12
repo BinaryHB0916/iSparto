@@ -6,7 +6,7 @@ Process Observer is the compliance oversight role of the iSparto team. It consis
 
 - **Real-time Interception (Hooks) — Core layer**: Monitors all tool calls (Bash / Edit / Write / Codex MCP) via Claude Code PreToolUse hook and intercepts non-compliant operations. This is an unbypassable hard guarantee.
 - **Content Security Scan (Hooks extension) — Core layer**: When the Edit/Write tools write content, scans for critical-level secret patterns in real time (API keys, private keys, etc.). This is an extension of the PreToolUse hook and shares the same script as operation interception.
-- **Post-Hoc Audit (Sub-agent) — Advisory layer**: At /end-working time, reviews the session execution process and outputs a compliance report and improvement suggestions. This layer depends on the Lead actively spawning it and is not guaranteed to run every time. Critical compliance checks are already covered by the Hooks layer; the value of the sub-agent is to discover process improvement opportunities, not to serve as the sole line of defense for compliance.
+- **Post-Hoc Audit (Sub-agent) — Advisory layer**: At /end-isparto time, reviews the session execution process and outputs a compliance report and improvement suggestions. This layer depends on the Lead actively spawning it and is not guaranteed to run every time. Critical compliance checks are already covered by the Hooks layer; the value of the sub-agent is to discover process improvement opportunities, not to serve as the sole line of defense for compliance.
 
 Process Observer does not participate in development decisions; it only monitors process compliance. It is on the same level as Doc Engineer; both are sub-agents of the Team Lead.
 
@@ -18,7 +18,7 @@ Process Observer does not participate in development decisions; it only monitors
 
 Implemented via Claude Code's PreToolUse hook. The hook is a shell script that is triggered before every tool call and checks whether the command matches the dangerous-operations list. If it matches, execution is blocked and a reason is printed.
 
-Hooks are registered at two levels: user-level `~/.claude/settings.json` holds Bash safety rules (managed by `install.sh`); project-level `.claude/settings.json` holds Edit/Write/Codex workflow rules (registered by `/init-project`, validated by `/start-working`).
+Hooks are registered at two levels: user-level `~/.claude/settings.json` holds Bash safety rules (managed by `install.sh`); project-level `.claude/settings.json` holds Edit/Write/Codex workflow rules (registered by `/init-isparto`, validated by `/start-isparto`).
 
 ### Trigger Conditions
 
@@ -136,7 +136,7 @@ The extension list is defined in `hooks/process-observer/rules/workflow-rules.js
 - Write tool: scan the `content` field
 - Edit tool: scan the `new_string` field
 - Only the `realtime_critical` subset is checked (5 critical-level patterns); no full scan is performed — the hook is on the hot path and performance comes first
-- A complete scan is covered by pre-commit-security.sh (before commit) and /security-audit (milestone)
+- A complete scan is covered by pre-commit-security.sh (before commit) and /security-isparto (milestone)
 - Pattern definitions: the `realtime_critical` field of `hooks/process-observer/rules/security-patterns.json`
 
 **Relationship with Layers 2/3:**
@@ -145,7 +145,7 @@ The extension list is defined in `hooks/process-observer/rules/workflow-rules.js
 |-------|--------|-------|------------------------|
 | PreToolUse content scan | Every Write/Edit | critical patterns only | High (hot path) |
 | pre-commit-security.sh | Every commit | All patterns | Medium |
-| /security-audit | Manually triggered | Full + history + dependencies | Low |
+| /security-isparto | Manually triggered | Full + history + dependencies | Low |
 
 ### Interception Behavior
 
@@ -166,13 +166,13 @@ Suggestion: Use `git push` (without --force) or `git push --force-with-lease` fo
 
 ### Mechanism
 
-Spawned by the Team Lead as a sub-agent during the /end-working flow, on the same level as Doc Engineer. It audits the execution of the current session and checks for behavior that violates workflow rules.
+Spawned by the Team Lead as a sub-agent during the /end-isparto flow, on the same level as Doc Engineer. It audits the execution of the current session and checks for behavior that violates workflow rules.
 
 The post-hoc audit uses the Sonnet 4.6 model (defined via `~/.claude/agents/process-observer-audit.md`) rather than the Lead's Opus model. This is a deliberate downgrade — auditing is a structured checklist comparison, Sonnet is more than capable, and critical compliance checks have already been moved to the Hooks layer.
 
 ### Trigger Timing
 
-In the /end-working flow, executed at **Step 5 (before the security scan, commit, and the Doc Engineer Step 9 pre-merge gate before PR creation/merge)**. (PO = Step 5 in commands/end-working.md; DE = Step 9 pre-merge gate.)
+In the /end-isparto flow, executed at **Step 5 (before the security scan, commit, and the Doc Engineer Step 9 pre-merge gate before PR creation/merge)**. (PO = Step 5 in commands/end-isparto.md; DE = Step 9 pre-merge gate.)
 
 ### Audit Checklist
 
@@ -191,13 +191,13 @@ In the /end-working flow, executed at **Step 5 (before the security scan, commit
 | # | Check | Criterion | Deviation Level |
 |---|-------|-----------|----------------|
 | B1 | Whether code changes triggered Codex code review | Per-change iteration against the trigger-condition table in workflow.md; only Tier 2 (purely visual, non-security config values) and Tier 3 (pure documentation / pure formatting) may skip | P1 |
-| B2 | Whether Doc Engineer sub-agent was spawned when required | /end-working Step 9 pre-merge gate either spawned a fresh DE sub-agent or recorded an explicit Lead-self-assessed exception citing the ad-hoc-fix / emergency-hotfix clause | P1 |
+| B2 | Whether Doc Engineer sub-agent was spawned when required | /end-isparto Step 9 pre-merge gate either spawned a fresh DE sub-agent or recorded an explicit Lead-self-assessed exception citing the ad-hoc-fix / emergency-hotfix clause | P1 |
 
 #### Checklist C: Doc Engineer Execution Compliance
 
 | # | Check | Criterion | Deviation Level |
 |---|-------|-----------|----------------|
-| C1 | Whether Doc Engineer executed at least once in the session | A Doc Engineer spawn record exists in the session — either the /end-working Step 9 gate or an earlier Lead-initiated mid-session spawn | P1 |
+| C1 | Whether Doc Engineer executed at least once in the session | A Doc Engineer spawn record exists in the session — either the /end-isparto Step 9 gate or an earlier Lead-initiated mid-session spawn | P1 |
 | C2 | Whether code changes have corresponding documentation updates | Correspondence between code-layer diffs and docs/ , README*, command/agent/template header comments, or CHANGELOG entries in the same session | P2 |
 
 #### Checklist D: PR Flow Compliance
@@ -206,7 +206,7 @@ In the /end-working flow, executed at **Step 5 (before the security scan, commit
 |---|-------|-----------|----------------|
 | D1 | Whether merged into main via PR | gh pr list record; new commits on main come from `gh pr merge --merge` (not `--squash` or `--rebase`, and not direct push) | P1 |
 | D2 | Whether the branch was cleaned up after merging | The merged feat/fix/hotfix/docs/release branch does not appear in the remote branch list | P3 |
-| D3 | Whether the PR body template was populated per /end-working Step 9 | PR body contains Summary, Mode Selection, Test plan, and Workflow audits sections with the standard audit-annotation vocabulary | P1 |
+| D3 | Whether the PR body template was populated per /end-isparto Step 9 | PR body contains Summary, Mode Selection, Test plan, and Workflow audits sections with the standard audit-annotation vocabulary | P1 |
 | D4 | Whether gh account alignment was executed when repo owner differs from authenticated user | When `REPO_OWNER` ≠ `GH_USER`, a `gh auth switch --user $REPO_OWNER` invocation occurred before `gh pr create` | P1 |
 
 #### Checklist E: Out-of-Scope Operations and plan.md Integrity
@@ -216,16 +216,16 @@ In the /end-working flow, executed at **Step 5 (before the security scan, commit
 | E1 | Whether Developer / Teammate modified files outside its ownership | git log --name-only file list vs the file ownership assigned by Team Lead in the spawn prompt | P1 |
 | E2 | Whether uncertain product decisions were escalated to the user | Product-direction signals (new command / role / file-format / UX copy) appeared as an A-layer interrupt with an explicit question, not as a unilateral Lead decision | P2 |
 | E3 | Whether plan.md unchecked items match the actual codebase state | For items marked `[ ]` in plan.md, re-execute each acceptance assertion (grep / wc / self-test) and cross-check — items fully implemented but not flipped to `[x]` are FAIL; partial presence is WARN | P1 |
-| E4 | Whether BLOCKING-marker decision was applied to CLAUDE.md-touching sessions | Per /end-working Step 2 (FR-22 expansion), any session that modifies CLAUDE.md must either emit the BLOCKING marker requiring a new session for the next Wave OR append a one-sentence skip rationale | P1 |
+| E4 | Whether BLOCKING-marker decision was applied to CLAUDE.md-touching sessions | Per /end-isparto Step 2 (FR-22 expansion), any session that modifies CLAUDE.md must either emit the BLOCKING marker requiring a new session for the next Wave OR append a one-sentence skip rationale | P1 |
 | E5 | Whether verification counts on Wave-completion entries are mechanically accurate | Per CLAUDE.md "plan.md verification-count accuracy" rule, any Wave-completion entry citing a commit count must match `git log --oneline --no-merges <wave-base>..HEAD \| wc -l` | P1 |
-| E6 | Whether the observation-period tracker row is filled for a completed Wave | When /end-working is marking a Wave complete within the v0.8.0 observation window (Waves 0-4), the tracker row's four observation columns must contain non-placeholder, non-dash content (unfilled-placeholder or `-` is FAIL post-commit, IN-PROGRESS mid-flow) | P1 |
-| E7 | Whether plan.md contract shape is respected for maintenance / Wave PRs | Per /end-working Step 4 "plan.md, session-log.md and CHANGELOG authoring + transition contract" (parts A authoring + B transition + C enforcement), diffs must not add `[DONE in Wave N]` annotations, full Wave retrospective blocks outside the completed-Wave index, or retained completed-FR lines; if `scripts/plan-md-contract-check.sh` is present, exit 1 is an automatic FAIL | P1 |
+| E6 | Whether the observation-period tracker row is filled for a completed Wave | When /end-isparto is marking a Wave complete within the v0.8.0 observation window (Waves 0-4), the tracker row's four observation columns must contain non-placeholder, non-dash content (unfilled-placeholder or `-` is FAIL post-commit, IN-PROGRESS mid-flow) | P1 |
+| E7 | Whether plan.md contract shape is respected for maintenance / Wave PRs | Per /end-isparto Step 4 "plan.md, session-log.md and CHANGELOG authoring + transition contract" (parts A authoring + B transition + C enforcement), diffs must not add `[DONE in Wave N]` annotations, full Wave retrospective blocks outside the completed-Wave index, or retained completed-FR lines; if `scripts/plan-md-contract-check.sh` is present, exit 1 is an automatic FAIL | P1 |
 
 #### Checklist F: Independent Reviewer Execution
 
 | # | Check | Criterion | Deviation Level |
 |---|-------|-----------|----------------|
-| F1 | Whether Independent Review ran at the Wave boundary | If a Wave was marked completed this session, IR was spawned (either Lead-initiated mid-session or /end-working Step 3 auto-spawn) and the report was appended to `docs/independent-review.md`; IN-PROGRESS if scheduled but not yet executed at audit time | P1 |
+| F1 | Whether Independent Review ran at the Wave boundary | If a Wave was marked completed this session, IR was spawned (either Lead-initiated mid-session or /end-isparto Step 3 auto-spawn) and the report was appended to `docs/independent-review.md`; IN-PROGRESS if scheduled but not yet executed at audit time | P1 |
 
 ### Deviation Level Definitions
 
@@ -289,6 +289,6 @@ Produce concrete correction suggestions, including:
 - For tool limitations: record as a known limitation and wait for the tooling to be upgraded
 
 ### 3. Execution Method
-- The audit report and correction suggestions are output to the /end-working session briefing
+- The audit report and correction suggestions are output to the /end-isparto session briefing
 - **No files are modified automatically** — correction suggestions are output as suggestions only
-- At the next /start-working, Lead reminds the user of the previous audit's deviations and suggestions in the briefing; the user decides whether to adopt them
+- At the next /start-isparto, Lead reminds the user of the previous audit's deviations and suggestions in the briefing; the user decides whether to adopt them

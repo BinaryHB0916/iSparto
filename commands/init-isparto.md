@@ -1,4 +1,4 @@
-You are the Team Lead. The user has run /init-project, asking you to initialize a new project.
+You are the Team Lead. The user has run /init-isparto, asking you to initialize a new project.
 
 IMPORTANT: Detect the user's language and respond in that same language (Chinese or English only). All generated documentation content must also be in the user's language.
 
@@ -10,8 +10,8 @@ Your responsibility: Based on the product description provided by the user, gene
      ```bash
      bash ~/.isparto/lib/snapshot.sh create init-project "$(pwd)" CLAUDE.md .claude/settings.json docs/plan.md docs/product-spec.md docs/tech-spec.md docs/design-spec.md
      ```
-   - Report the snapshot ID to the user (in user's language), noting they can restore to the pre-init state with `/restore <id>` at any time
-   - For a brand new project, most files will be recorded as "absent" — this is expected. The snapshot records what existed before so that `/restore` knows to remove files that were created.
+   - Report the snapshot ID to the user (in user's language), noting they can restore to the pre-init state with `/restore-isparto <id>` at any time
+   - For a brand new project, most files will be recorded as "absent" — this is expected. The snapshot records what existed before so that `/restore-isparto` knows to remove files that were created.
    - If the snapshot script is not found at `~/.isparto/lib/snapshot.sh`, warn the user (in user's language) that the snapshot script is missing and suggest running `~/.isparto/install.sh --upgrade` to update iSparto. Then proceed without a snapshot — do not block on this.
 3. Generate the project's CLAUDE.md based on ~/.claude/CLAUDE-TEMPLATE.md, including collaboration mode, module boundaries, and branching strategy
 4. Generate docs/ following the template structure in ~/.claude/templates/:
@@ -59,13 +59,13 @@ Your responsibility: Based on the product description provided by the user, gene
     Wait for the reviewer to complete and write docs/independent-review.md. Report findings to the user.
     - If CRITICAL misalignment found: flag to user, do NOT proceed to development until resolved. After resolution (e.g., tech-spec modified), re-trigger Independent Reviewer to verify alignment.
     - If no critical issues: proceed to step 12
-12. After the user confirms all documentation, architecture pre-review, AND independent review results, project initialization is complete and you may begin /start-working
+12. After the user confirms all documentation, architecture pre-review, AND independent review results, project initialization is complete and you may begin /start-isparto
 
-Note: If anything goes wrong during initialization, the user can run `/restore <snapshot_id>` to roll back all changes.
+Note: If anything goes wrong during initialization, the user can run `/restore-isparto <snapshot_id>` to roll back all changes.
 
 After initialization is complete, tell the user the next steps:
-- Run `/start-working` to begin your first development session
-- Run `/env-nogo` if you want to verify your environment setup first
-- Run `/plan` if you want to review or adjust the development plan before starting
+- Run `/start-isparto` to begin your first development session
+- Run `/env-isparto` if you want to verify your environment setup first
+- Run `/plan-isparto` if you want to review or adjust the development plan before starting
 
 $ARGUMENTS

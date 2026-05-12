@@ -325,7 +325,7 @@ Audit checklist:
    - Are remaining issues recorded
    - Are manual intervention points updated
    - Are rejected/rolled-back approaches from this Wave recorded in the "Rejected Approaches" table
-   - **Acceptance re-execution rule (FR-26).** When the Wave entry's Acceptance list contains assertions in the form `<command> — <expected output>` where `<command>` is a read-only, safely idempotent shell command (whitelist: `grep`, `wc`, `git log` with any `--` subcommands, `git diff --stat`, `bash <script> --self-test`, `bash <script> --help`), the Doc Engineer MUST independently re-execute each such assertion against the current repo state and paste both the actual exit code and any matched lines into the audit report. Do NOT rely on the Lead's prose claim "already verified PASS" — the whole point of a fresh-context DE audit is to catch transcription slips, late drift, or Lead-side optimism between when the acceptance line was written and when the commit lands. If the re-executed result differs from the recorded acceptance value (exit code mismatch, line count mismatch, or matched-line-content mismatch), report item 3 as FAIL and name the specific mismatch. Explicitly excluded (non-re-executable): state-mutating commands such as `git commit`, `git push`, `gh pr create`, or anything that writes to disk or remote state — for those, note "non-re-executable — verified by reading the committed artifact" instead of re-running. Motivating example: the Wave 2 A6 case recorded `grep -c "^| /doctor |" docs/user-guide.md — 1 PASS`, but live re-execution returned `0` because the table row actually quoted the command name with backticks (`` | `/doctor` | ``), a pattern-transcription slip that a trusting read of the prose would have missed.
+   - **Acceptance re-execution rule (FR-26).** When the Wave entry's Acceptance list contains assertions in the form `<command> — <expected output>` where `<command>` is a read-only, safely idempotent shell command (whitelist: `grep`, `wc`, `git log` with any `--` subcommands, `git diff --stat`, `bash <script> --self-test`, `bash <script> --help`), the Doc Engineer MUST independently re-execute each such assertion against the current repo state and paste both the actual exit code and any matched lines into the audit report. Do NOT rely on the Lead's prose claim "already verified PASS" — the whole point of a fresh-context DE audit is to catch transcription slips, late drift, or Lead-side optimism between when the acceptance line was written and when the commit lands. If the re-executed result differs from the recorded acceptance value (exit code mismatch, line count mismatch, or matched-line-content mismatch), report item 3 as FAIL and name the specific mismatch. Explicitly excluded (non-re-executable): state-mutating commands such as `git commit`, `git push`, `gh pr create`, or anything that writes to disk or remote state — for those, note "non-re-executable — verified by reading the committed artifact" instead of re-running. Motivating example: the Wave 2 A6 case recorded `grep -c "^| /doctor-isparto |" docs/user-guide.md — 1 PASS`, but live re-execution returned `0` because the table row actually quoted the command name with backticks (`` | `/doctor-isparto` | ``), a pattern-transcription slip that a trusting read of the prose would have missed.
 
 4. design-spec.md consistency (if UI is involved)
    - Visual parameters actually used in code vs documentation definitions
@@ -365,21 +365,21 @@ Audit checklist:
 
 10. Policy compliance check
    - If `scripts/policy-lint.sh` exists in the project: run `bash scripts/policy-lint.sh`
-   - This is a hard mechanical gate against Information Layering Policy C-layer forbidden wrappers — see `docs/design-principles/information-layering-policy.md` and the "C-layer items — NEVER emit in the closing briefing" list at the bottom of `commands/end-working.md`. Scope (v1): ceremonial wrapper detector only (5 forbidden phrases — `Session complete`, `Ready for next session`, `Doc Engineer audit passed`, `Process Observer audit passed`, `Security scan passed`) scanned against the most recent `docs/session-log.md` entry
+   - This is a hard mechanical gate against Information Layering Policy C-layer forbidden wrappers — see `docs/design-principles/information-layering-policy.md` and the "C-layer items — NEVER emit in the closing briefing" list at the bottom of `commands/end-isparto.md`. Scope (v1): ceremonial wrapper detector only (5 forbidden phrases — `Session complete`, `Ready for next session`, `Doc Engineer audit passed`, `Process Observer audit passed`, `Security scan passed`) scanned against the most recent `docs/session-log.md` entry
    - On exit code 0: ✅ pass
    - On exit code 1: ❌ FAIL — copy the per-line `[Policy C-layer]` violations and the summary line into the audit report; this is a hard FAIL, the report blocks Lead from proceeding to push/PR
    - On exit code 2: ⚠️ environment error (Python 3 missing, repo root unresolved) — surface in the report as a warning, do not block (degraded mode)
    - If the script does not exist (e.g., the project has not adopted iSparto's Policy linter): skip silently, do not include in the report
 
 11. plan.md / session-log.md / CHANGELOG separation check
-   - Enforces the authoring + transition contract codified in `commands/end-working.md` Step 4 (the contract's three parts: A authoring rule, B transition rule, C enforcement)
+   - Enforces the authoring + transition contract codified in `commands/end-isparto.md` Step 4 (the contract's three parts: A authoring rule, B transition rule, C enforcement)
    - Mechanical gate: run `bash scripts/plan-md-contract-check.sh` if the script exists in the project
      - Exit code 0: ✅ mechanical pass — proceed to the semantic checks below
      - Exit code 1: ❌ FAIL — copy the `[R1]` / `[R2]` / `[R3]` / `[R4]` violation lines and the summary count into the audit report; hard FAIL, blocks Lead from proceeding to push/PR
      - Exit code 2: ⚠️ environment error — surface as a warning, do not block (degraded mode)
      - If the script does not exist: skip the mechanical gate silently and proceed to the semantic checks only
    - Semantic verification (Doc Engineer runs these over the latest commit's diff regardless of script presence — they catch what the grep-based rules cannot):
-     - Scan the latest commit's diff on `docs/plan.md`. Every new line the diff adds must survive the three-question placement test defined in `commands/end-working.md` Step 4's authoring rule. Completed FR or completed Wave narrative appearing as a plan.md addition → **FAIL** (should have gone to `docs/session-log.md`)
+     - Scan the latest commit's diff on `docs/plan.md`. Every new line the diff adds must survive the three-question placement test defined in `commands/end-isparto.md` Step 4's authoring rule. Completed FR or completed Wave narrative appearing as a plan.md addition → **FAIL** (should have gone to `docs/session-log.md`)
      - Same fact appearing in both `docs/plan.md` and `docs/session-log.md` as non-link prose (i.e., copied paragraphs rather than a markdown link from one to the other) → **FAIL**
      - plan.md content duplicating `CHANGELOG.md` user-facing release notes → **FAIL**
      - Transition incompleteness: the diff deletes an entry from `docs/plan.md` but the same commit set has no corresponding addition in `docs/session-log.md` (the narrative was lost, not migrated) → **FAIL**
@@ -425,7 +425,7 @@ Key principles:
   3. **Write a blocked-audit entry to `docs/plan.md`** — append a dated entry under a "Blocked audits" section (create the section if it doesn't exist) describing what was blocked and why; this is a Tier 4 historical artifact.
   4. **Push the WIP branch** — `git push -u origin <current-branch>` to preserve all in-progress work; do NOT merge, do NOT delete the branch.
   5. **Report to the user** (in user's language) that Doc Engineer audit hit the loop bound, the 6-step recovery path was executed, the WIP branch is pushed, the blocked-audit report is in `docs/plan.md`, and manual intervention is required to resolve the FAIL.
-  6. **Exit `/end-working` without creating or merging a PR.** The session ends in a blocked state; the user resumes in a new session after manual fix.
+  6. **Exit `/end-isparto` without creating or merging a PR.** The session ends in a blocked state; the user resumes in a new session after manual fix.
 ```
 
 ---
@@ -435,7 +435,7 @@ Key principles:
 Process Observer is the team's compliance oversight role, ensuring the development workflow follows CLAUDE.md and the workflow specification. It consists of two parts at different priorities:
 
 - **Real-time Interception (Hooks) — Core layer:** Uses the Claude Code PreToolUse hook to intercept catastrophic operations and branch violations before command execution (git push --force, direct commit/merge/push on main, leaking sensitive files, etc.). A hard guarantee that cannot be bypassed and has no model dependency.
-- **Post-hoc audit (Audit sub-agent) — Advisory layer:** Uses the Sonnet 4.6 model (not Opus) to reduce token consumption. During the /end-working flow, runs at Step 5, before security scan / commit / Doc Engineer Step 9 pre-merge gate, and produces a deviation report against 6 checklists (19 checks total — see `agents/process-observer-audit.md` for the canonical A1-A3 / B1-B2 / C1-C2 / D1-D4 / E1-E7 / F1 enumeration). Quality is backstopped by the Hooks core layer — critical compliance checks are already covered at the Hooks layer, and the value of the audit is to surface process improvement opportunities. (PO = Step 5 in commands/end-working.md; DE = Step 9 pre-merge gate.)
+- **Post-hoc audit (Audit sub-agent) — Advisory layer:** Uses the Sonnet 4.6 model (not Opus) to reduce token consumption. During the /end-isparto flow, runs at Step 5, before security scan / commit / Doc Engineer Step 9 pre-merge gate, and produces a deviation report against 6 checklists (19 checks total — see `agents/process-observer-audit.md` for the canonical A1-A3 / B1-B2 / C1-C2 / D1-D4 / E1-E7 / F1 enumeration). Quality is backstopped by the Hooks core layer — critical compliance checks are already covered at the Hooks layer, and the value of the audit is to surface process improvement opportunities. (PO = Step 5 in commands/end-isparto.md; DE = Step 9 pre-merge gate.)
 
 Process Observer does not participate in development decisions; it only oversees process compliance. Audit reports are written to the session briefing and do not modify files automatically.
 
@@ -461,7 +461,7 @@ Lead spawns you with the fixed one-liner: `codex exec "You are the Independent R
 
 Trigger conditions:
 - Phase 0: MANDATORY after tech-spec generation, before development starts
-- Wave boundary: when the Wave is completed — **subject to the three-condition skip carve-out in `commands/end-working.md` Step 3** (no application-code files modified + no new product-behavior surface + Doc Engineer and Process Observer sub-agent audits both running in this `/end-working` invocation); when all three hold, IR MAY be skipped with a mandatory one-line rationale in the Wave entry. Default on doubt: run IR.
+- Wave boundary: when the Wave is completed — **subject to the three-condition skip carve-out in `commands/end-isparto.md` Step 3** (no application-code files modified + no new product-behavior surface + Doc Engineer and Process Observer sub-agent audits both running in this `/end-isparto` invocation); when all three hold, IR MAY be skipped with a mandatory one-line rationale in the Wave entry. Default on doubt: run IR.
 - Ad hoc: when Lead makes significant technical simplification/substitution decisions
 
 CRITICAL recovery: after a CRITICAL finding is resolved (e.g., tech-spec modified), the Independent Reviewer must be re-triggered to verify alignment. Resolution is not confirmed by the Lead's claim — it requires independent re-verification.

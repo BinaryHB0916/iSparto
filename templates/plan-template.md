@@ -134,7 +134,7 @@ Wave N ...
 ## Rejected Approaches
 
 > Approaches tried and rejected during development. Prevents AI from re-attempting disproven paths.
-> Lead records entries during /end-working; Lead surfaces relevant entries during /start-working.
+> Lead records entries during /end-isparto; Lead surfaces relevant entries during /start-isparto.
 
 | Date | Module/Feature | What was tried | Why rejected | Notes |
 |------|---------------|---------------|-------------|-------|

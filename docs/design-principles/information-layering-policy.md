@@ -22,9 +22,9 @@ A-layer output uses the standard wording rule defined in `docs/design-principles
 
 ### B-layer — decision preparation at natural pause points
 
-B-layer output is told to the user at **natural session pause points** (the opening briefing of `/start-working`, the closing briefing of `/end-working`, the proposal step of `/plan`). It does not block. It contains only the context the user needs to resume work, form a next-step intuition, or verify that the framework is on track.
+B-layer output is told to the user at **natural session pause points** (the opening briefing of `/start-isparto`, the closing briefing of `/end-isparto`, the proposal step of `/plan-isparto`). It does not block. It contains only the context the user needs to resume work, form a next-step intuition, or verify that the framework is on track.
 
-B-layer is where the **cross-session recovery surface** lives: current Wave status, remaining issues from the last session, next active task. These are **state variables**, not implementation noise — the user needs them to pick up where they left off, which is exactly the framework's value proposition at `/start-working`. The C-layer silence rules below must never touch these items.
+B-layer is where the **cross-session recovery surface** lives: current Wave status, remaining issues from the last session, next active task. These are **state variables**, not implementation noise — the user needs them to pick up where they left off, which is exactly the framework's value proposition at `/start-isparto`. The C-layer silence rules below must never touch these items.
 
 ### C-layer — silent archive
 
@@ -40,7 +40,7 @@ Before emitting any user-facing output, the Lead must classify it into exactly o
 
 **A-layer is triggered when and only when** one of the following 5 mechanically-identifiable conditions holds:
 
-1. **(a) Lead proposes a new plan requiring user confirmation.** Any new `/plan` output, any mid-session pivot that materially changes the task decomposition.
+1. **(a) Lead proposes a new plan requiring user confirmation.** Any new `/plan-isparto` output, any mid-session pivot that materially changes the task decomposition.
 2. **(b) Developer (Codex) surfaces P0 or P1 findings.** Security vulnerabilities, data loss paths, correctness bugs with user impact. P2/P3 findings are B-layer (included in the closing briefing) or C-layer (logged only).
 3. **(c) Irreversible operation imminent.** Destructive git (`reset --hard`, `push --force` to non-private branches, `branch -D`), database migrations, file deletions outside of a snapshot-covered boundary.
 4. **(d) Independent Reviewer requests script authorization (deep-IR gate).** IR's regular review is read-only; the deep-IR mode (running scripts, tests, or external queries) requires explicit user authorization because it crosses the read-only boundary.
@@ -50,11 +50,11 @@ If an output matches none of these 5 types, it is by construction **not A-layer*
 
 ### Principle 2 — B-layer is emitted only at natural pause points
 
-B-layer output is permitted only at three points in a session: the `/start-working` opening briefing, the `/end-working` closing briefing, and the `/plan` proposal-presentation step. Mid-session status updates, "I just did X" narration, and "here's what's still pending" lists are forbidden in B-layer because they create the same dump-of-facts pattern the Policy is designed to eliminate.
+B-layer output is permitted only at three points in a session: the `/start-isparto` opening briefing, the `/end-isparto` closing briefing, and the `/plan-isparto` proposal-presentation step. Mid-session status updates, "I just did X" narration, and "here's what's still pending" lists are forbidden in B-layer because they create the same dump-of-facts pattern the Policy is designed to eliminate.
 
 If the Lead needs to communicate mid-session, it must either escalate the item to A-layer (if it genuinely blocks a user decision) or log it to C-layer (if it does not).
 
-The three pause points are themselves **static and pre-defined**, not chosen by Lead at runtime. They are fixed at command-template load time by `commands/start-working.md`, `commands/end-working.md`, and `commands/plan.md`; Lead does not scan the session mid-flow asking "is now a good pause point?" — pause-point identity is a property of *which command is currently running*, not of Lead's judgment. This makes Principle 2's entry into B-layer symmetric with Principle 1's entry into A-layer: A-layer entry is bound statically by the 5 mechanical triggers enumerated in Principle 1, B-layer entry is bound statically by the 3 pause points enumerated here, and C-layer is the residual default. There is no fourth path where Lead dynamically decides that some arbitrary mid-session moment counts as a "B-layer opportunity" — by construction such a moment must be either escalated to A (via a Principle 1 trigger) or sunk to C. Principle 5 later restates this closure from the opposite direction (no dynamic layer re-classification is possible once the template structure is pinned); the overlap is deliberate because the Policy is a meta-document that should be readable by jumping into any single principle.
+The three pause points are themselves **static and pre-defined**, not chosen by Lead at runtime. They are fixed at command-template load time by `commands/start-isparto.md`, `commands/end-isparto.md`, and `commands/plan-isparto.md`; Lead does not scan the session mid-flow asking "is now a good pause point?" — pause-point identity is a property of *which command is currently running*, not of Lead's judgment. This makes Principle 2's entry into B-layer symmetric with Principle 1's entry into A-layer: A-layer entry is bound statically by the 5 mechanical triggers enumerated in Principle 1, B-layer entry is bound statically by the 3 pause points enumerated here, and C-layer is the residual default. There is no fourth path where Lead dynamically decides that some arbitrary mid-session moment counts as a "B-layer opportunity" — by construction such a moment must be either escalated to A (via a Principle 1 trigger) or sunk to C. Principle 5 later restates this closure from the opposite direction (no dynamic layer re-classification is possible once the template structure is pinned); the overlap is deliberate because the Policy is a meta-document that should be readable by jumping into any single principle.
 
 ### Principle 3 — IR only reviews A-layer judgments
 
@@ -66,17 +66,17 @@ When IR disagrees with Lead's A-layer framing, IR prevails (see Principle 6 belo
 
 ### Principle 4 — The cross-session recovery surface is protected B-layer
 
-Current Wave status, remaining issues from the last session, and next active task are **state variables** required for the user to resume work across sessions. They are not implementation noise. C-layer silence rules must not touch these items. Command templates (`/start-working`, `/end-working`) that restructure their B-layer briefing must explicitly carve out this surface.
+Current Wave status, remaining issues from the last session, and next active task are **state variables** required for the user to resume work across sessions. They are not implementation noise. C-layer silence rules must not touch these items. Command templates (`/start-isparto`, `/end-isparto`) that restructure their B-layer briefing must explicitly carve out this surface.
 
 This principle exists because the naive form of "silence everything except decisions" erases the very state the framework exists to preserve. The distinction is: **state variables survive; implementation facts do not**.
 
 ### Principle 5 — Word choice is Lead's dynamic judgment; structure is not
 
-Command templates (`commands/start-working.md`, `commands/end-working.md`, `commands/plan.md`) pin the B-layer briefing **structure** to a fixed shape. Lead's runtime judgment operates only at word-choice level inside that shape.
+Command templates (`commands/start-isparto.md`, `commands/end-isparto.md`, `commands/plan-isparto.md`) pin the B-layer briefing **structure** to a fixed shape. Lead's runtime judgment operates only at word-choice level inside that shape.
 
 This principle exists because dynamic judgment at the "say or not / which facts to include" level is exactly where the Lead's facts-dumping failure mode lives. Pinning structure to the template removes the failure surface; keeping word choice dynamic preserves adaptability to each session's actual content.
 
-This collapse is total: outside the three covered pause points (`/start-working` opening, `/end-working` closing, `/plan` proposal-presentation) there is no surface where Lead dynamically re-classifies an output's layer. Principle 1 has already allocated A-layer to 5 mechanical triggers; Principle 2 has already allocated B-layer to the three pause points; the residual default is C-layer. Lead's runtime judgment survives only for word choice inside pre-pinned structure — there is no "fourth path" where Lead decides a layer at runtime.
+This collapse is total: outside the three covered pause points (`/start-isparto` opening, `/end-isparto` closing, `/plan-isparto` proposal-presentation) there is no surface where Lead dynamically re-classifies an output's layer. Principle 1 has already allocated A-layer to 5 mechanical triggers; Principle 2 has already allocated B-layer to the three pause points; the residual default is C-layer. Lead's runtime judgment survives only for word choice inside pre-pinned structure — there is no "fourth path" where Lead decides a layer at runtime.
 
 ### Principle 6 — IR prevails on A-layer conflict, delivered single-voice
 
@@ -102,11 +102,11 @@ This principle exists to prevent layer drift. Every exception, every "this one t
 
 This Policy is enforced structurally, not by runtime self-discipline. The enforcement points are:
 
-- **Command templates** (`commands/start-working.md`, `commands/end-working.md`, `commands/plan.md`) pin the B-layer briefing shape and enumerate which facts belong in C-layer.
+- **Command templates** (`commands/start-isparto.md`, `commands/end-isparto.md`, `commands/plan-isparto.md`) pin the B-layer briefing shape and enumerate which facts belong in C-layer.
 - **Conversation style guide** (`docs/design-principles/conversation-style.md`) defines the A-layer wording rule and provides before-after samples.
 - **Agent role definitions** (`agents/independent-reviewer.md`) specify IR's A-layer peer-review trigger and the single-voice delivery rule.
-- **Doc Engineer audit** (part of `/end-working`) verifies that any new command template or agent role definition carries a `Reference: docs/design-principles/information-layering-policy.md` line.
-- **Mechanical guardian** (`scripts/policy-lint.sh`, invoked by Doc Engineer audit item 10 — see `docs/roles.md`) scans the most recent `docs/session-log.md` entry for the 5 ceremonial wrapper phrases listed as C-layer forbidden in `commands/end-working.md` (`Session complete`, `Ready for next session`, `Doc Engineer audit passed`, `Process Observer audit passed`, `Security scan passed`). Hard failure on hit — the guardian blocks merge when the most recent session-log entry violates the rule. v1 scope is the ceremonial-wrapper detector only; bullet-stack and A-layer wording detectors are intentionally out of v1 to preserve signal purity.
+- **Doc Engineer audit** (part of `/end-isparto`) verifies that any new command template or agent role definition carries a `Reference: docs/design-principles/information-layering-policy.md` line.
+- **Mechanical guardian** (`scripts/policy-lint.sh`, invoked by Doc Engineer audit item 10 — see `docs/roles.md`) scans the most recent `docs/session-log.md` entry for the 5 ceremonial wrapper phrases listed as C-layer forbidden in `commands/end-isparto.md` (`Session complete`, `Ready for next session`, `Doc Engineer audit passed`, `Process Observer audit passed`, `Security scan passed`). Hard failure on hit — the guardian blocks merge when the most recent session-log entry violates the rule. v1 scope is the ceremonial-wrapper detector only; bullet-stack and A-layer wording detectors are intentionally out of v1 to preserve signal purity.
 
 A command template that does not reference this Policy is, by definition, not in scope for Policy enforcement. This is deliberate: the Policy governs user-facing output, and user-facing output happens through command templates. If a new command template is added, it must explicitly opt in.
 

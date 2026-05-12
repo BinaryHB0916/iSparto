@@ -7,27 +7,27 @@
 iSparto requires the following on your machine:
 
 - **macOS** with **iTerm2** terminal (Agent Team mode dependency)
-- **tmux 3.x** — **required since v0.8.0**. The Independent Reviewer is invoked via `codex exec` in a tmux pane (cross-provider blind review). Earlier versions treated tmux as recommended; v0.8.0+ treats it as a hard dependency. Install on macOS with `brew install tmux`. `install.sh` and `/migrate` exit early if tmux is missing.
+- **tmux 3.x** — **required since v0.8.0**. The Independent Reviewer is invoked via `codex exec` in a tmux pane (cross-provider blind review). Earlier versions treated tmux as recommended; v0.8.0+ treats it as a hard dependency. Install on macOS with `brew install tmux`. `install.sh` and `/migrate-isparto` exit early if tmux is missing.
 - **Claude Code** with a [Claude Max](https://claude.ai) subscription
 - **Codex CLI** with a [ChatGPT Plus](https://chatgpt.com) subscription
 - **Node.js 18+**
 
-Run `/env-nogo` at any time to verify your environment.
+Run `/env-isparto` at any time to verify your environment.
 
 ## What You Initiate (10 Commands)
 
 | Command | When | What You Do |
 |---------|------|-------------|
-| `/init-project` | New project kickoff, one-time | Provide product requirements description, review generated documents |
-| `/migrate` | Adopting iSparto in an existing project, one-time | Review the migration plan, confirm before execution. Use `--dry-run` to preview without executing |
-| `/start-working` | Start of each work session | Review the Team Lead's status briefing and next-step suggestion, respond naturally |
-| `/end-working` | End of each work session | Receive session briefing (fully autonomous — commit, PR merge, and push are automatic) |
-| `/plan xxx` | When there's a new requirement | Describe the requirement, review the Team Lead's proposal |
-| `/env-nogo` | When there are environment concerns | Review check results, fix items marked with a cross |
-| `/doctor` | Before starting on a new machine, after upgrade, or when suspecting environment rot | Review the 7-check health report; address any FAIL before continuing, WARN items are informational |
-| `/restore` | When you want to undo a migration or init | Review snapshot details, confirm restore to roll back all changes |
-| `/security-audit` | Before a release or milestone | Receive the full audit report (code + .gitignore + git history + dependencies); fix any CRITICAL/HIGH items before proceeding |
-| `/release` | Ready to publish a new version (replaces manual `git tag` / `git push origin <tag>` — forbidden per CLAUDE.md release rules) | Choose the bump type by running `/release`, `/release minor`, or `/release major`; receive the published GitHub Release URL |
+| `/init-isparto` | New project kickoff, one-time | Provide product requirements description, review generated documents |
+| `/migrate-isparto` | Adopting iSparto in an existing project, one-time | Review the migration plan, confirm before execution. Use `--dry-run` to preview without executing |
+| `/start-isparto` | Start of each work session | Review the Team Lead's status briefing and next-step suggestion, respond naturally |
+| `/end-isparto` | End of each work session | Receive session briefing (fully autonomous — commit, PR merge, and push are automatic) |
+| `/plan-isparto xxx` | When there's a new requirement | Describe the requirement, review the Team Lead's proposal |
+| `/env-isparto` | When there are environment concerns | Review check results, fix items marked with a cross |
+| `/doctor-isparto` | Before starting on a new machine, after upgrade, or when suspecting environment rot | Review the 7-check health report; address any FAIL before continuing, WARN items are informational |
+| `/restore-isparto` | When you want to undo a migration or init | Review snapshot details, confirm restore to roll back all changes |
+| `/security-isparto` | Before a release or milestone | Receive the full audit report (code + .gitignore + git history + dependencies); fix any CRITICAL/HIGH items before proceeding |
+| `/release-isparto` | Ready to publish a new version (replaces manual `git tag` / `git push origin <tag>` — forbidden per CLAUDE.md release rules) | Choose the bump type by running `/release-isparto`, `/release-isparto minor`, or `/release-isparto major`; receive the published GitHub Release URL |
 
 **Upgrading iSparto:** Run `~/.isparto/install.sh --upgrade` to pull the latest version and see what's new.
 
@@ -53,13 +53,13 @@ Run `/env-nogo` at any time to verify your environment.
 
 - **Wave completion briefings** — review change summaries, especially sections marked with a warning for product decision changes
 - **Decisions escalated by the Team Lead** — these are matters the Team Lead considers beyond their authority
-- **Remaining issues in plan.md** — shown each time with /start-working, make sure nothing is missed
-- **Product direction decisions** — /plan proposals, /migrate migration plans, /restore actions still require your confirmation
-- **Compliance audit reports** — shown in /end-working session briefing; review any FAIL or WARNING items, and decide whether to adopt the suggested corrections next session
+- **Remaining issues in plan.md** — shown each time with /start-isparto, make sure nothing is missed
+- **Product direction decisions** — /plan-isparto proposals, /migrate-isparto migration plans, /restore-isparto actions still require your confirmation
+- **Compliance audit reports** — shown in /end-isparto session briefing; review any FAIL or WARNING items, and decide whether to adopt the suggested corrections next session
 
-## /doctor — Environment Health Check
+## /doctor-isparto — Environment Health Check
 
-`/doctor` is a local-only, offline diagnosis for the iSparto installation. It runs in under a second and emits seven check lines (D1–D7) plus a summary.
+`/doctor-isparto` is a local-only, offline diagnosis for the iSparto installation. It runs in under a second and emits seven check lines (D1–D7) plus a summary.
 
 **When to run it:**
 - First time on a new machine (or after an iCloud sync lands a stale `~/.isparto/`)
@@ -71,13 +71,13 @@ Run `/env-nogo` at any time to verify your environment.
 - `[WARN]` — non-blocking; typically a "state is acceptable but not optimal" (e.g., Codex config absent and defaults will apply, or VERSION ahead of the latest git tag because of a merged-not-released window)
 - `[FAIL]` — blocking; the follow-up `(fix: ...)` hint names the concrete remediation (e.g., `brew install tmux`)
 
-**What it does NOT do:** no auto-fix, no network probes (does not ping Claude API or handshake Codex MCP), no coupling into `/start-working` or `/end-working` (those stay fast by not invoking `/doctor` implicitly). Run it when you want it; ignore it when you don't.
+**What it does NOT do:** no auto-fix, no network probes (does not ping Claude API or handshake Codex MCP), no coupling into `/start-isparto` or `/end-isparto` (those stay fast by not invoking `/doctor-isparto` implicitly). Run it when you want it; ignore it when you don't.
 
 ## Token Budget Awareness
 
 The Independent Reviewer appears at three points in the workflow: Phase 0 (full spec review at project initialization), Wave Boundary (scope-limited review at Wave completion), and A-layer interrupts (validating Lead's decision-interruption classification). For a visual timeline of when IR triggers and what it reads at each point, see the [IR trigger diagram in workflow.md](workflow.md#independent-reviewer--trigger-points-across-the-wave-lifecycle).
 
-iSparto runs on fixed-price subscriptions — no invocation increases your bill. The practical impact of token consumption is context window pressure: if you notice frequent `/compact` runs, consider running `/end-working` to start a fresh session. All state is preserved in plan.md — nothing is lost across sessions. For a detailed breakdown by role, see [Token Budget Awareness in configuration.md](configuration.md#token-budget-awareness).
+iSparto runs on fixed-price subscriptions — no invocation increases your bill. The practical impact of token consumption is context window pressure: if you notice frequent `/compact` runs, consider running `/end-isparto` to start a fresh session. All state is preserved in plan.md — nothing is lost across sessions. For a detailed breakdown by role, see [Token Budget Awareness in configuration.md](configuration.md#token-budget-awareness).
 
 ## Your Preferences and the Agent Team (User Preference Interface)
 

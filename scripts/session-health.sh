@@ -2,7 +2,7 @@
 # session-health.sh — iSparto cross-session recovery preview (v1).
 #
 # Emits a 5-bullet Markdown block summarising the session's starting state
-# so /start-working can paste it verbatim into its Step 9 B-layer briefing.
+# so /start-isparto can paste it verbatim into its Step 9 B-layer briefing.
 # The block answers the question "what context do I need to resume work?"
 # — branch, last commit, uncommitted files, BLOCKING marker state, and
 # observation-period progress. Pure read-only: no network, no writes.
@@ -227,7 +227,7 @@ def _is_standalone_blocking_line(line):
 def _extract_blocking_state(plan_text):
     """Return ('clear', None) if the LAST marker is acknowledged, otherwise
     ('present', <rationale excerpt>). Returns ('absent', None) when no
-    marker exists at all — /start-working treats this the same as clear
+    marker exists at all — /start-isparto treats this the same as clear
     but we preserve the distinction for self-test clarity.
     """
     lines = plan_text.splitlines()
@@ -382,7 +382,7 @@ def _row_is_filled(cells):
 # Codex CLI invocation or was skipped under the FR-19 carve-out. The
 # tracker has no dedicated "IR kind" column, so we grep the remark
 # content for the canonical 3-word substring "real Wave Boundary IR"
-# that Wave 2 established and /end-working Step 3 produces. Because
+# that Wave 2 established and /end-isparto Step 3 produces. Because
 # narrative cells may embed escaped pipes (e.g. `\|\|`) that inflate
 # the cell count past 5, we scan the JOINED post-name content — i.e.
 # everything from cells[1] onward — rather than assuming cells[4]
@@ -533,7 +533,7 @@ def _fixture_observation_tracker():
         '| (\u5f85\u586b) | - | - | - | - |\n\n'
         '### Next heading\n\n'
         '\U0001f6a8 BLOCKING: Next Wave requires NEW SESSION\n'
-        '> \u2705 Session boundary acknowledged 2026-04-20 by /start-working\n'
+        '> \u2705 Session boundary acknowledged 2026-04-20 by /start-isparto\n'
     )
     expected_substrings = [
         '- Branch: feat/wave-3',
@@ -601,7 +601,7 @@ Usage:
 
 Output: a 5-bullet Markdown block under the '## Session Health Preview'
 heading, covering branch, last commit, uncommitted files, BLOCKING
-marker state, and observation-period progress. /start-working Step 9
+marker state, and observation-period progress. /start-isparto Step 9
 pastes this block verbatim into its B-layer briefing.
 
 Exit codes:

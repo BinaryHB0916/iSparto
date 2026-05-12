@@ -4,7 +4,7 @@
 # Runs 7 fixed checks (D1..D7) against the current system + iSparto repo
 # and reports PASS/WARN/FAIL per check plus a summary line. Output is
 # deterministic, language-neutral (English), and machine-parseable so
-# commands/doctor.md can read stdout and re-render it in the user's
+# commands/doctor-isparto.md can read stdout and re-render it in the user's
 # language. No side effects: read-only checks, no network, no writes.
 #
 # Checks:
@@ -500,7 +500,7 @@ def _scan_unacknowledged_blocking(plan_md_path):
     BLOCKING marker in plan.md IF its next non-empty line is not a
     blockquote acknowledgement (starts with '> '); otherwise None.
 
-    Only the last (highest-line-number) marker is relevant — /start-working
+    Only the last (highest-line-number) marker is relevant — /start-isparto
     acknowledges one marker per session, so older markers that predate the
     Step 0 acknowledgement protocol are historical artifacts, not active
     state. D5's semantic question is "do I need a new session right now?"
@@ -558,7 +558,7 @@ def check_d5():
         return make_result(
             'WARN', 'D5',
             f'latest BLOCKING marker in docs/plan.md line {unacked[0]} is unacknowledged',
-            fix='run /start-working to acknowledge or start a new session',
+            fix='run /start-isparto to acknowledge or start a new session',
         )
 
     return make_result(
@@ -684,7 +684,7 @@ def check_d7():
         return make_result(
             'WARN', 'D7',
             f'VERSION={version_raw} ahead of highest tag {highest_tag} (merged-not-released)',
-            fix='release pending — run /release patch when observation period is complete',
+            fix='release pending — run /release-isparto patch when observation period is complete',
         )
     return make_result(
         'FAIL', 'D7',
@@ -738,13 +738,13 @@ def _fixture_two_warn():
         make_result(
             'WARN', 'D5',
             '1 unacknowledged BLOCKING marker(s) in docs/plan.md: line 748',
-            fix='run /start-working to acknowledge or start a new session',
+            fix='run /start-isparto to acknowledge or start a new session',
         ),
         make_result('PASS', 'D6', '~/.codex/config.toml OK (service_tier="fast")'),
         make_result(
             'WARN', 'D7',
             'VERSION=0.8.0 ahead of highest tag v0.7.8 (merged-not-released)',
-            fix='release pending — run /release patch when observation period is complete',
+            fix='release pending — run /release-isparto patch when observation period is complete',
         ),
     ]
 

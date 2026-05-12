@@ -6,7 +6,7 @@ iSparto uses two configuration layers. The installer does NOT modify your global
 
 ### Project-Level Configuration (.claude/settings.json)
 
-Created automatically by `/init-project` or `/migrate` in each project:
+Created automatically by `/init-isparto` or `/migrate-isparto` in each project:
 
 ```json
 {
@@ -70,7 +70,7 @@ iSparto runs on fixed-price subscriptions (Claude Max + ChatGPT Plus). No invoca
 | Lead / Teammate | Moderate | Continuous | High | Context grows incrementally across the session |
 | Doc Engineer / PO Audit | Low | 1 each | Low | Focused scope; PO Audit intentionally uses Sonnet to reduce token consumption |
 
-The main user-visible effect of high token consumption is increased frequency of `/compact` runs and a practical ceiling on how many Waves fit in a single session. If sessions frequently hit context limits, consider running `/end-working` more frequently to start fresh sessions — `plan.md` preserves all state across sessions.
+The main user-visible effect of high token consumption is increased frequency of `/compact` runs and a practical ceiling on how many Waves fit in a single session. If sessions frequently hit context limits, consider running `/end-isparto` more frequently to start fresh sessions — `plan.md` preserves all state across sessions.
 
 The Independent Reviewer's per-invocation cost is bounded by design: [Information Layering Policy Principle 3](design-principles/information-layering-policy.md) restricts IR to A-layer-only runtime review, preventing the "IR runs dozens of times per session" scenario that would make the cost prohibitive.
 
@@ -124,7 +124,7 @@ If none of the three confirms, the upgrade is not blocked — the setting is har
 
 ### First-Time Setup
 
-`/init-project` and `/migrate` create the project-level `.claude/settings.json` (the minimum configuration required for Agent Team mode). Model settings must be configured by the user:
+`/init-isparto` and `/migrate-isparto` create the project-level `.claude/settings.json` (the minimum configuration required for Agent Team mode). Model settings must be configured by the user:
 
 **1. Set the Lead model (affects Lead + Teammate + Doc Engineer):**
 
@@ -163,7 +163,7 @@ docs/
 ├── tech-spec.md        ← Tech spec (architecture, data models, API contracts, state management, infrastructure, third-party integrations)
 ├── design-spec.md      ← Design spec (colors, typography, spacing, atmosphere elements, component styles)
 ├── plan.md             ← Development plan (Wave orchestration, task status, manual intervention points)
-├── session-log.md      ← Auto-generated session metrics (created by /end-working)
+├── session-log.md      ← Auto-generated session metrics (created by /end-isparto)
 └── content/            ← Content assets (if applicable)
 ```
 
@@ -176,9 +176,9 @@ All spec documents use the uniform `-spec` suffix: product-spec, tech-spec, desi
 | product-spec.md | Pages, interaction flows, feature boundaries, copy | **What the product does** | Doc Engineer audit item 1 |
 | tech-spec.md | Architecture, data models, API contracts, state management, infrastructure, third-party integrations | **How to build it technically** | Doc Engineer audit item 2 |
 | design-spec.md | Colors, typography, spacing, animations, atmosphere elements | **How it looks visually** | Doc Engineer audit item 4 |
-| plan.md | Current actionable + in-progress Wave tasks + navigation context (roadmap, release gate, observation-period tracker, decision framework). Completed Wave narratives / completed FR entries / `[DONE]` annotations are forbidden — they live in session-log.md | **Where we are now** | Enforced by [commands/end-working.md](../commands/end-working.md) Step 4 authoring + transition contract, [docs/roles.md](roles.md) Doc Engineer audit item 11, and [scripts/plan-md-contract-check.sh](../scripts/plan-md-contract-check.sh) |
-| session-log.md | Per-session empirical execution record — Wave completions, FR completions, governance-maintenance completions, tasks completed, key decisions, files changed | **Auto-generated session metrics** | Enforced by [commands/end-working.md](../commands/end-working.md) Step 4 authoring + transition contract |
-| CHANGELOG.md | User-facing release notes in Keep-a-Changelog format; `[Unreleased]` collects pre-release content, `scripts/release.sh` migrates it to `[X.Y.Z]` at `/release` time | **User-facing release notes** | Enforced by [commands/end-working.md](../commands/end-working.md) Step 4 authoring + transition contract |
+| plan.md | Current actionable + in-progress Wave tasks + navigation context (roadmap, release gate, observation-period tracker, decision framework). Completed Wave narratives / completed FR entries / `[DONE]` annotations are forbidden — they live in session-log.md | **Where we are now** | Enforced by [commands/end-isparto.md](../commands/end-isparto.md) Step 4 authoring + transition contract, [docs/roles.md](roles.md) Doc Engineer audit item 11, and [scripts/plan-md-contract-check.sh](../scripts/plan-md-contract-check.sh) |
+| session-log.md | Per-session empirical execution record — Wave completions, FR completions, governance-maintenance completions, tasks completed, key decisions, files changed | **Auto-generated session metrics** | Enforced by [commands/end-isparto.md](../commands/end-isparto.md) Step 4 authoring + transition contract |
+| CHANGELOG.md | User-facing release notes in Keep-a-Changelog format; `[Unreleased]` collects pre-release content, `scripts/release.sh` migrates it to `[X.Y.Z]` at `/release-isparto` time | **User-facing release notes** | Enforced by [commands/end-isparto.md](../commands/end-isparto.md) Step 4 authoring + transition contract |
 
 ---
 
@@ -204,19 +204,19 @@ Template files used during project initialization:
 
 | Content | Description |
 |---------|-------------|
-| 7 slash commands | `/start-working`, `/end-working`, `/plan`, `/init-project`, `/env-nogo`, `/migrate`, `/restore` are universal for all projects |
+| 7 slash commands | `/start-isparto`, `/end-isparto`, `/plan-isparto`, `/init-isparto`, `/env-isparto`, `/migrate-isparto`, `/restore-isparto` are universal for all projects |
 | Role definitions | Responsibilities and rules for Team Lead, Teammate, Developer, Doc Engineer, Process Observer |
 | Trigger condition table | Trigger logic for code review + QA smoke testing |
 | Branching strategy | Branch model for main / feat / fix / hotfix |
 | Authorization & escalation mechanism | Team Lead's decision boundaries |
 | Documentation sync rules | Documentation must follow when code changes |
-| settings.example.json | Reference template — project-level config is created by `/init-project` or `/migrate` |
+| settings.example.json | Reference template — project-level config is created by `/init-isparto` or `/migrate-isparto` |
 
 ### Must Be Modified Per Project
 
 | Content | How to Modify |
 |---------|---------------|
-| Project overview in CLAUDE.md | Auto-generated during `/init-project` — fill in your product description |
+| Project overview in CLAUDE.md | Auto-generated during `/init-isparto` — fill in your product description |
 | Tech stack | Fill in your project's actual languages/frameworks/platforms |
 | Common commands | Replace with your build/run/test commands |
 | Module boundaries | Fill in based on your project's directory structure |
@@ -243,7 +243,7 @@ Process Observer's real-time interception is implemented through Claude Code Pre
 Hooks are registered at two layers:
 
 - **User-level** `~/.claude/settings.json`: `Bash` matcher (general safety rules — dangerous git operations, sensitive files, destructive deletions). Managed by `install.sh --upgrade`, takes effect globally with one install.
-- **Project-level** `.claude/settings.json`: `Edit`, `Write`, and `mcp__codex-dev__codex` matchers (iSparto workflow rules — direct-code-write interception, Codex prompt convention). Registered by `/init-project` and `/migrate`; `/start-working` auto-verifies and backfills.
+- **Project-level** `.claude/settings.json`: `Edit`, `Write`, and `mcp__codex-dev__codex` matchers (iSparto workflow rules — direct-code-write interception, Codex prompt convention). Registered by `/init-isparto` and `/migrate-isparto`; `/start-isparto` auto-verifies and backfills.
 
 This way, non-iSparto projects only carry the general Bash safety rules and are not intercepted by workflow rules.
 

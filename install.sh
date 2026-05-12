@@ -36,6 +36,137 @@ read_version_file() {
     return 0
 }
 
+# ── v0.9.0 command-rename migration helpers (B.2 + B.3 + B.4) ──────────────
+# These three helpers + the --self-test-migration short-circuit below
+# implement the v0.8.x -> v0.9.0 slash-command rename migration. The
+# cleanup is file-existence gated (idempotent), the self-test runs
+# offline (no network, no dependency checks, no $HOME mutation).
+
+# B.3: semver-aware "less than" comparator. Returns 0 (true) if $1 < $2.
+version_lt() {
+    [ "$1" = "$2" ] && return 1
+    [ "$(printf '%s\n%s\n' "$1" "$2" | sort -V | head -n 1)" = "$1" ]
+}
+
+# B.2 helper: print the rename mapping notice + 2-sentence migration guidance.
+print_v090_rename_notice() {
+    local count="${1:-0}"
+    printf "\n  ${YELLOW}Notice:${NC} v0.9.0 renames all 10 iSparto slash commands to a -isparto suffix.\n"
+    printf "  Removed %d pre-v0.9.0 command file(s) from ~/.claude/commands/. Mapping:\n\n" "$count"
+    printf "    /start-working       -> /start-isparto\n"
+    printf "    /end-working         -> /end-isparto\n"
+    printf "    /plan                -> /plan-isparto\n"
+    printf "    /doctor              -> /doctor-isparto\n"
+    printf "    /init-project        -> /init-isparto\n"
+    printf "    /migrate             -> /migrate-isparto\n"
+    printf "    /restore             -> /restore-isparto\n"
+    printf "    /release             -> /release-isparto\n"
+    printf "    /security-audit      -> /security-isparto\n"
+    printf "    /env-nogo            -> /env-isparto\n\n"
+    printf "  Use the new names after restarting Claude Code. The bare /doctor (etc.)\n"
+    printf "  will fall through to Claude Code's built-ins. See docs/troubleshooting.md\n"
+    printf "  \"Old commands not found after v0.9.0 rename\" if anything is unclear.\n\n"
+}
+
+# B.2: v0.9.0 stale-file cleanup — file-existence gated, idempotent.
+# Scans for the 10 pre-v0.9.0 iSparto command filenames in ~/.claude/commands/;
+# if any are found, snapshots them via lib/snapshot.sh (rollback preserved),
+# deletes them, and prints a one-time rename notice. Caller supplies the
+# iSparto home; defaults to $ISPARTO_HOME.
+run_v090_rename_cleanup() {
+    local isparto_home="${1:-$ISPARTO_HOME}"
+    local commands_dir="$HOME/.claude/commands"
+    local stale_names=(start-working end-working plan doctor init-project migrate restore release security-audit env-nogo)
+    local stale_found=()
+    local n
+    for n in "${stale_names[@]}"; do
+        [ -f "$commands_dir/$n.md" ] && stale_found+=("$commands_dir/$n.md")
+    done
+    if [ "${#stale_found[@]}" -eq 0 ]; then
+        return 0
+    fi
+    # Snapshot via existing lib/snapshot.sh API (mirrors install.sh:287 pattern).
+    local snapshot_id=""
+    if [ -x "$isparto_home/lib/snapshot.sh" ]; then
+        snapshot_id=$("$isparto_home/lib/snapshot.sh" create install global "${stale_found[@]}" 2>/dev/null || true)
+        if [ -n "$snapshot_id" ]; then
+            printf "  ${GREEN}✓${NC} Snapshot created: %s (pre-v0.9.0 command rename)\n" "$snapshot_id"
+        fi
+    fi
+    # Delete stale files
+    local f
+    for f in "${stale_found[@]}"; do
+        rm -f "$f"
+    done
+    # One-time rename notice
+    print_v090_rename_notice "${#stale_found[@]}"
+}
+
+# B.4: --self-test-migration entry. Must short-circuit BEFORE any network call,
+# dependency check, or $HOME mutation. Verifies version_lt invariants (incl. the
+# 0.10.x semver regression case) + B.2 stale-file detection against /tmp fixtures.
+run_migration_self_test() {
+    local failed=0
+    # B.3 fixtures
+    if ! version_lt "0.8.4" "0.9.0"; then
+        printf "  [FAIL] version_lt 0.8.4 0.9.0: expected true (0)\n" >&2
+        failed=1
+    fi
+    if version_lt "0.9.0" "0.9.0"; then
+        printf "  [FAIL] version_lt 0.9.0 0.9.0: expected false (1)\n" >&2
+        failed=1
+    fi
+    if version_lt "0.10.0" "0.9.0"; then
+        printf "  [FAIL] version_lt 0.10.0 0.9.0: expected false (1) — semver regression\n" >&2
+        failed=1
+    fi
+    # B.2 stale-file detection — dry-run against /tmp fixtures only.
+    local tmp_dir
+    tmp_dir=$(mktemp -d "/tmp/isparto-self-test-XXXXXX") || { printf "  [FAIL] cannot create tmp dir\n" >&2; return 1; }
+    local stale_names=(start-working end-working plan doctor init-project migrate restore release security-audit env-nogo)
+    # Fixture A: empty fixture dir — should detect 0 stale files
+    mkdir -p "$tmp_dir/case-a/commands"
+    local stale=()
+    local n
+    for n in "${stale_names[@]}"; do
+        [ -f "$tmp_dir/case-a/commands/$n.md" ] && stale+=("$n.md")
+    done
+    if [ "${#stale[@]}" -ne 0 ]; then
+        printf "  [FAIL] case-a empty fixture: expected 0 stale, got %d\n" "${#stale[@]}" >&2
+        failed=1
+    fi
+    # Fixture B: 3 stale files — should detect exactly 3
+    mkdir -p "$tmp_dir/case-b/commands"
+    touch "$tmp_dir/case-b/commands/start-working.md"
+    touch "$tmp_dir/case-b/commands/plan.md"
+    touch "$tmp_dir/case-b/commands/env-nogo.md"
+    stale=()
+    for n in "${stale_names[@]}"; do
+        [ -f "$tmp_dir/case-b/commands/$n.md" ] && stale+=("$n.md")
+    done
+    if [ "${#stale[@]}" -ne 3 ]; then
+        printf "  [FAIL] case-b 3-stale fixture: expected 3, got %d\n" "${#stale[@]}" >&2
+        failed=1
+    fi
+    rm -rf "$tmp_dir"
+    if [ "$failed" -eq 0 ]; then
+        printf "  ${GREEN}\xe2\x9c\x93${NC} --self-test-migration: all 5 fixtures PASS (3 version_lt + 2 stale-detection)\n"
+        return 0
+    else
+        printf "  ${RED}\xe2\x9c\x97${NC} --self-test-migration: FAIL\n" >&2
+        return 1
+    fi
+}
+
+# Early short-circuit for --self-test-migration: must run BEFORE any
+# platform check, dependency check, or $HOME mutation (B.4 invariant).
+for _arg in "$@"; do
+    if [ "$_arg" = "--self-test-migration" ]; then
+        run_migration_self_test
+        exit $?
+    fi
+done
+
 # ── Platform check ─────────────────────────────────────────
 if [ "$(uname)" != "Darwin" ]; then
     printf "${YELLOW}Warning:${NC} iSparto is designed for macOS. Agent Team mode requires iTerm2.\n"
@@ -76,6 +207,17 @@ for arg in "$@"; do
     esac
 done
 
+# ── v0.9.0 command-rename cleanup (B.2) ────────────────────
+# File-existence gated; runs only on --upgrade. Idempotent (no-op on
+# subsequent runs once the old files are gone). Inserted BEFORE the
+# "Already up to date" version-comparison short-circuit so that even
+# when the installed VERSION already matches v0.9.0+ (e.g. after a
+# failed/interrupted earlier upgrade), any remaining pre-v0.9.0
+# command files still get snapshotted + cleaned up.
+if $UPGRADE; then
+    run_v090_rename_cleanup "$ISPARTO_HOME"
+fi
+
 # ══════════════════════════════════════════════════════════════
 # Determine SCRIPT_DIR — where to find source files
 # ══════════════════════════════════════════════════════════════
@@ -83,7 +225,7 @@ done
 INSTALL_VERSION="${ISPARTO_INSTALL_VERSION:-}"
 
 _use_local_source=false
-if [ -f "$(dirname "$0")/commands/start-working.md" ] 2>/dev/null; then
+if [ -f "$(dirname "$0")/commands/start-isparto.md" ] 2>/dev/null; then
     _candidate_dir="$(cd "$(dirname "$0")" && pwd)"
     _isparto_resolved="$(cd "$ISPARTO_HOME" 2>/dev/null && pwd || echo "")"
     if [ "$_candidate_dir" != "$_isparto_resolved" ]; then
@@ -408,7 +550,7 @@ install_file() {
 
 if [ -z "$OLD_VERSION" ]; then
     echo "Installing global commands & templates to $HOME/.claude/ ..."
-    echo "  (project-level config will be created when you run /init-project or /migrate)"
+    echo "  (project-level config will be created when you run /init-isparto or /migrate-isparto)"
 fi
 
 install_file "$SCRIPT_DIR/CLAUDE-TEMPLATE.md" "$HOME/.claude/CLAUDE-TEMPLATE.md" "$HOME/.claude/CLAUDE-TEMPLATE.md"
@@ -479,7 +621,7 @@ fi
 # Register Process Observer Bash safety hook in user-level ~/.claude/settings.json.
 # Bash rules (git dangerous ops, sensitive files, destructive deletes) are universal
 # and benefit all projects. Workflow hooks (Edit/Write/Codex) are registered at
-# project level by /init-project and /migrate.
+# project level by /init-isparto and /migrate-isparto.
 
 _user_settings="$HOME/.claude/settings.json"
 if ! $DRY_RUN; then
@@ -562,8 +704,8 @@ else
         echo "Next step — launch Claude Code in your project directory:"
         echo ""
         echo "  claude --effort max"
-        echo "  /init-project <description>      # new project"
-        echo "  /migrate                         # existing project"
+        echo "  /init-isparto <description>      # new project"
+        echo "  /migrate-isparto                         # existing project"
     fi
 fi
 echo ""

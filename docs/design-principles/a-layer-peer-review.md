@@ -6,7 +6,7 @@ A-layer Peer Review is the structural guard against A-layer inflation. When Lead
 
 This document defines the principle side: judgment axes, verdict format, conflict-resolution rule, and scope. The invocation-side role definition lives in `agents/independent-reviewer.md` (Phase 0 and Wave Boundary review modes). A-layer Peer Review was added in v0.7.4 as part of the Information Layering Policy.
 
-Peer Review is intentionally scoped to A-layer outputs only. B-layer briefings (fixed pause points at `/start-working` open, `/end-working` close, `/plan` proposal) and C-layer silent operations (hook auto-repair, auto-switches, green status) are Lead-autonomous and never reach the reviewer.
+Peer Review is intentionally scoped to A-layer outputs only. B-layer briefings (fixed pause points at `/start-isparto` open, `/end-isparto` close, `/plan-isparto` proposal) and C-layer silent operations (hook auto-repair, auto-switches, green status) are Lead-autonomous and never reach the reviewer.
 
 ## Why This Exists
 
@@ -112,7 +112,7 @@ Default to regular Peer Review. Deep-IR is the narrow exception and requires the
 
 ## Out of Scope
 
-- B-layer briefings (`/start-working` open, `/end-working` close, `/plan` proposal) — these are Lead-autonomous and the reviewer is not invoked.
+- B-layer briefings (`/start-isparto` open, `/end-isparto` close, `/plan-isparto` proposal) — these are Lead-autonomous and the reviewer is not invoked.
 - C-layer silent operations (hook auto-repair, auto-switches, green status) — these never surface to the user at all.
 - Internal agent-to-agent messages (Lead → Developer prompts, Teammate → Developer prompts) — these are not user-facing output.
 - File content Lead writes to `docs/*.md` or `commands/*.md` during the Implementation Protocol — Doc Engineer handles that audit, not Peer Review.

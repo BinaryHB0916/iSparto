@@ -3,7 +3,7 @@
 #
 # Scans the most recent entry in docs/session-log.md for ceremonial wrapper
 # phrases that Step 9 / closing-briefing C-layer rules forbid. The
-# forbidden-phrase list is mirrored verbatim from commands/end-working.md
+# forbidden-phrase list is mirrored verbatim from commands/end-isparto.md
 # ("C-layer items — NEVER emit in the closing briefing").
 #
 # v1 scope: ceremonial wrapper detector only. Bullet-stack and A-layer
@@ -128,7 +128,7 @@ def main():
         print(v)
     print()
     print(f'\033[0;31mFAILED\033[0m: policy-lint.sh found {len(violations)} ceremonial-wrapper violation(s).')
-    print('See commands/end-working.md "C-layer items — NEVER emit in the closing briefing".')
+    print('See commands/end-isparto.md "C-layer items — NEVER emit in the closing briefing".')
     sys.exit(1)
 
 

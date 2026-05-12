@@ -30,21 +30,21 @@ A-layer output is a **proposal**, not a menu. The Lead always proposes one path,
 
 ## B-layer structural rule
 
-B-layer output is emitted only at the three natural pause points (`/start-working` open, `/end-working` close, `/plan` proposal presentation). Inside those pause points, the structure is pinned by the command template, not chosen at runtime.
+B-layer output is emitted only at the three natural pause points (`/start-isparto` open, `/end-isparto` close, `/plan-isparto` proposal presentation). Inside those pause points, the structure is pinned by the command template, not chosen at runtime.
 
-**`/start-working` opening briefing — fixed B-layer shape:**
+**`/start-isparto` opening briefing — fixed B-layer shape:**
 
 1. One sentence naming the current Wave status and the one next decision the user needs to make (this is the cross-session recovery surface — protected B-layer, Policy Principle 4).
 2. One sentence (or one short paragraph) flagging any items from the last session that affect that decision: remaining issues, rejected approaches relevant to the current Wave, runtime health failures.
 3. One sentence naming the Lead's proposed next action (which becomes an A-layer item if and only if it triggers one of the 5 A-layer conditions).
 
-**`/end-working` closing briefing — fixed B-layer shape (3-5 sentences total):**
+**`/end-isparto` closing briefing — fixed B-layer shape (3-5 sentences total):**
 
 1. What shipped today, referencing Wave completion if applicable.
 2. What Codex (Developer) caught, if anything. Only mention if non-zero findings; if zero, do not emit a "no findings" line (that is C-layer).
 3. What's next — one-line pointer to the next active task or the fact that the Wave is complete and awaiting user direction.
 
-**`/plan` proposal presentation — fixed B-layer shape:**
+**`/plan-isparto` proposal presentation — fixed B-layer shape:**
 
 1. The recommended plan, stated as a proposal (use the A-layer wording rule even though the overall plan step is B-layer — the embedded proposal is A-layer).
 2. One alternative, named concretely.
@@ -62,7 +62,7 @@ B-layer output is emitted only at the three natural pause points (`/start-workin
 
 Each sample shows the old facts-dumping pattern alongside the Policy-compliant version. The "after" column is what the rewritten command templates in v0.7.4 should produce.
 
-### Sample 1 — `/start-working` opening briefing
+### Sample 1 — `/start-isparto` opening briefing
 
 **Before (facts-dump pattern):**
 
@@ -78,7 +78,7 @@ Each sample shows the old facts-dumping pattern alongside the Policy-compliant v
 
 > The cross-session recovery surface (Wave status, next task) is preserved. The hooks/gh/health/Process Observer facts are silenced — they live in session-log.md and will surface only if they break.
 
-### Sample 2 — `/plan` proposal presentation
+### Sample 2 — `/plan-isparto` proposal presentation
 
 **Before (menu-delegation pattern):**
 
@@ -98,17 +98,17 @@ Each sample shows the old facts-dumping pattern alongside the Policy-compliant v
 
 > I plan to **rewrite all 3 command templates (start-working, end-working, plan) to fixed B-layer shapes**, backed by a new Policy doc in `docs/design-principles/`. This works because it enforces the Policy structurally — Lead's runtime judgment narrows to word choice, which is where Lead is reliable; structural decisions ("say or not / which facts to include") move to the template where they cannot drift.
 >
-> If you disagree, the viable alternative is a **Policy-only delivery** (write the doc, skip the template rewrites, rely on Lead discipline). It ships faster but the facts-dumping pattern will crawl back through the gap within a few sessions — we already have evidence of that from the `/start-working` briefing earlier today.
+> If you disagree, the viable alternative is a **Policy-only delivery** (write the doc, skip the template rewrites, rely on Lead discipline). It ships faster but the facts-dumping pattern will crawl back through the gap within a few sessions — we already have evidence of that from the `/start-isparto` briefing earlier today.
 >
 > Key risks: (1) template rewrites break the cross-session recovery surface if "Wave" gets over-silenced — mitigated by explicit B-layer carve-out; (2) A-layer trigger ambiguity — mitigated by 5 mechanical types in Principle 1. Full acceptance script (5 CLI commands, trivial-CLI carve-out) in the plan.md entry.
 >
 > Continue with the structural rewrite path?
 
-### Sample 3 — `/end-working` closing briefing
+### Sample 3 — `/end-isparto` closing briefing
 
 **Before (narrative dump pattern):**
 
-> Today we started the v0.7.4 work. First, I ran /start-working and completed all the setup tasks (branch guard, hook verification, gh switch, health check, Process Observer auto-repair). Then we reviewed your v2 simplification proposal together — I raised 5 concerns and you decided on all 5. After that, we entered /plan, and I produced a plan with T1-T6 tasks and a 5-command acceptance script. You approved the plan with 4 responses. I spawned the Independent Reviewer, got back a PROCEED verdict with 3 actionable items (MAJOR #4 Wave terminology, MINOR #3 cross-session surface, MINOR #5 single-voice). You resolved all 3. I updated plan.md with the resolutions, then created docs/design-principles/ and wrote both the Policy doc (T1) and the conversation-style guide (T2). That's where we are now. Commits so far: the plan.md edits are uncommitted. Next steps would be T3 (command template rewrites), T4 (IR role extension), T5 (CLAUDE.md + CLAUDE-TEMPLATE.md + CHANGELOG + concepts.md + design-decisions.md sync).
+> Today we started the v0.7.4 work. First, I ran /start-isparto and completed all the setup tasks (branch guard, hook verification, gh switch, health check, Process Observer auto-repair). Then we reviewed your v2 simplification proposal together — I raised 5 concerns and you decided on all 5. After that, we entered /plan-isparto, and I produced a plan with T1-T6 tasks and a 5-command acceptance script. You approved the plan with 4 responses. I spawned the Independent Reviewer, got back a PROCEED verdict with 3 actionable items (MAJOR #4 Wave terminology, MINOR #3 cross-session surface, MINOR #5 single-voice). You resolved all 3. I updated plan.md with the resolutions, then created docs/design-principles/ and wrote both the Policy doc (T1) and the conversation-style guide (T2). That's where we are now. Commits so far: the plan.md edits are uncommitted. Next steps would be T3 (command template rewrites), T4 (IR role extension), T5 (CLAUDE.md + CLAUDE-TEMPLATE.md + CHANGELOG + concepts.md + design-decisions.md sync).
 
 > This is a play-by-play narrative. The user sat through all of it; they do not need it replayed.
 

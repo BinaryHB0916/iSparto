@@ -2,7 +2,7 @@
 # plan-md-contract-check.sh — iSparto plan.md authoring + transition contract guardian
 #
 # Mechanically enforces the separation-of-concerns contract codified in
-# commands/end-working.md Step 4 "plan.md, session-log.md and CHANGELOG
+# commands/end-isparto.md Step 4 "plan.md, session-log.md and CHANGELOG
 # authoring + transition contract". plan.md is "where we are now"
 # (current actionable + in-progress + navigation); completed Wave
 # retrospectives, completed FR narratives, and [DONE] annotations belong
@@ -50,7 +50,7 @@
 #   1 — one or more violations detected
 #   2 — environment error (bad arguments, repo-root unresolved, etc.)
 #
-# Integrated into commands/end-working.md Step 4 enforcement block + the
+# Integrated into commands/end-isparto.md Step 4 enforcement block + the
 # Doc Engineer audit item 11 semantic check (see docs/roles.md).
 
 set -euo pipefail

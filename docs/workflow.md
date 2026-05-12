@@ -80,7 +80,7 @@ After plan approval and before starting the first implementation step, the Team 
 
 **Shared across both modes** (no difference):
 - Developer invocation / QA → triggered per the Developer Trigger Conditions table below
-- Doc Engineer documentation audit → Step 9 pre-merge gate (may run earlier in-session; Step 9 is the fallback before PR/merge — PO = Step 5 in commands/end-working.md; DE = Step 9)
+- Doc Engineer documentation audit → Step 9 pre-merge gate (may run earlier in-session; Step 9 is the fallback before PR/merge — PO = Step 5 in commands/end-isparto.md; DE = Step 9)
 - Branching → feat/fix/hotfix branches, never develop on main
 - Merge → after full workflow, Lead auto-creates PR and merges to main (no manual user review needed — Codex review during development is the quality gate)
 
@@ -117,22 +117,22 @@ Lead assembles QA prompt → calls Developer for smoke testing (using acceptance
 (If Phase 0, or Wave completed)
 Independent Reviewer (Codex CLI in tmux pane — GPT-5.5, cross-provider isolation on top of zero inherited context):
   - Spawned with fixed one-liner: `codex exec "You are the Independent Reviewer. Read agents/independent-reviewer.md and execute. Write your findings to docs/independent-review.md."`
-  - For Wave Boundary triggering via /end-working, the prompt appends `This is a Wave Boundary Review.` context tag — see `commands/end-working.md` Step 3a for the canonical form.
+  - For Wave Boundary triggering via /end-isparto, the prompt appends `This is a Wave Boundary Review.` context tag — see `commands/end-isparto.md` Step 3a for the canonical form.
   - Verifies product-spec ↔ implementation alignment for this Wave's scope
   - CRITICAL finding → stop, resolve alignment before proceeding; after fix, re-trigger reviewer
   - Report written to docs/independent-review.md (Phase 0: overwrite; Wave boundary: append with date header)
-  - **Wave-boundary skip carve-out:** at Wave boundary only (not Phase 0), the IR invocation may be skipped under the three-condition carve-out in `commands/end-working.md` Step 3 — no application-code files modified, no new product-behavior surface, Doc Engineer + Process Observer sub-agent audits both running in this `/end-working` invocation. Skip requires a one-line rationale in the Wave entry. Default on doubt: run IR.
+  - **Wave-boundary skip carve-out:** at Wave boundary only (not Phase 0), the IR invocation may be skipped under the three-condition carve-out in `commands/end-isparto.md` Step 3 — no application-code files modified, no new product-behavior surface, Doc Engineer + Process Observer sub-agent audits both running in this `/end-isparto` invocation. Skip requires a one-line rationale in the Wave entry. Default on doubt: run IR.
     |
 Process Observer compliance audit (as sub-agent, Step 5)
   - See agents/process-observer-audit.md for the canonical 19-row checklist (A1-A3 / B1-B2 / C1-C2 / D1-D4 / E1-E7 / F1).
   - Outputs deviation report to session briefing
-  - (PO = Step 5 in commands/end-working.md; DE = Step 9 pre-merge gate)
+  - (PO = Step 5 in commands/end-isparto.md; DE = Step 9 pre-merge gate)
     |
 Team Lead commits + pushes branch
     |
 Team Lead runs Doc Engineer audit (Step 9 pre-merge gate, as sub-agent)
   - Same checklist as Agent Team mode (see Doc Engineer role in roles.md)
-  - (PO = Step 5 in commands/end-working.md; DE = Step 9 pre-merge gate)
+  - (PO = Step 5 in commands/end-isparto.md; DE = Step 9 pre-merge gate)
     |
 Team Lead creates PR -> merges to main -> cleans up branch
 ```
@@ -171,16 +171,16 @@ Lead assembles QA prompt → calls Developer for smoke testing (using acceptance
 (If Phase 0, or Wave completed)
 Independent Reviewer (Codex CLI in tmux pane — GPT-5.5, cross-provider isolation on top of zero inherited context):
   - Spawned with fixed one-liner: `codex exec "You are the Independent Reviewer. Read agents/independent-reviewer.md and execute. Write your findings to docs/independent-review.md."`
-  - For Wave Boundary triggering via /end-working, the prompt appends `This is a Wave Boundary Review.` context tag — see `commands/end-working.md` Step 3a for the canonical form.
+  - For Wave Boundary triggering via /end-isparto, the prompt appends `This is a Wave Boundary Review.` context tag — see `commands/end-isparto.md` Step 3a for the canonical form.
   - Verifies product-spec ↔ implementation alignment for this Wave's scope
   - CRITICAL finding → stop, resolve alignment before proceeding; after fix, re-trigger reviewer
   - Report written to docs/independent-review.md (Phase 0: overwrite; Wave boundary: append with date header)
-  - **Wave-boundary skip carve-out:** at Wave boundary only (not Phase 0), the IR invocation may be skipped under the three-condition carve-out in `commands/end-working.md` Step 3 — no application-code files modified, no new product-behavior surface, Doc Engineer + Process Observer sub-agent audits both running in this `/end-working` invocation. Skip requires a one-line rationale in the Wave entry. Default on doubt: run IR.
+  - **Wave-boundary skip carve-out:** at Wave boundary only (not Phase 0), the IR invocation may be skipped under the three-condition carve-out in `commands/end-isparto.md` Step 3 — no application-code files modified, no new product-behavior surface, Doc Engineer + Process Observer sub-agent audits both running in this `/end-isparto` invocation. Skip requires a one-line rationale in the Wave entry. Default on doubt: run IR.
     |
 Process Observer compliance audit (as sub-agent, Step 5)
   - See agents/process-observer-audit.md for the canonical 19-row checklist (A1-A3 / B1-B2 / C1-C2 / D1-D4 / E1-E7 / F1).
   - Outputs deviation report to session briefing
-  - (PO = Step 5 in commands/end-working.md; DE = Step 9 pre-merge gate)
+  - (PO = Step 5 in commands/end-isparto.md; DE = Step 9 pre-merge gate)
     |
 Team Lead commits + pushes branch
     |
@@ -192,7 +192,7 @@ Team Lead spawns Doc Engineer (Step 9 pre-merge gate, as sub-agent) for document
   - Whether CLAUDE.md module boundaries need updating
   - Product terminology consistency across all docs (command counts, feature names match, no internal API terms in user-facing docs)
   - Product narrative integration: do new features fit coherently into the overall product story (README, product-spec, Quick Start, troubleshooting) — audit from the user's perspective, not just the changed files
-  - (PO = Step 5 in commands/end-working.md; DE = Step 9 pre-merge gate)
+  - (PO = Step 5 in commands/end-isparto.md; DE = Step 9 pre-merge gate)
     |
 Team Lead creates PR -> merges to main -> cleans up branch
 ```
@@ -254,16 +254,16 @@ Each Wave must include at least one batch Developer review before completion, re
 
 | Command | Source File | Execution Role | Responsibility |
 |---------|-------------|----------------|----------------|
-| `/start-working` | [commands/start-working.md](../commands/start-working.md) | Team Lead | Report current status (Wave progress, remaining issues, session history), suggest next step; user reviews briefing and responds naturally |
-| `/end-working` | [commands/end-working.md](../commands/end-working.md) | Team Lead | Ensure all changes are persisted, update plan.md, generate session report, auto commit + PR merge, output session briefing |
-| `/plan` | [commands/plan.md](../commands/plan.md) | Team Lead | Review product direction, output implementation plan (with decoupling analysis), wait for user confirmation before writing to plan.md |
-| `/init-project` | [commands/init-project.md](../commands/init-project.md) | Team Lead | Generate project skeleton and documentation system (CLAUDE.md + docs/), Codex architecture pre-review, prepare for Wave development |
-| `/env-nogo` | [commands/env-nogo.md](../commands/env-nogo.md) | Setup Assistant* | Check whether global and project environments meet iSparto runtime requirements |
-| `/migrate` | [commands/migrate.md](../commands/migrate.md) | Setup Assistant* | Migrate an existing project to iSparto workflow — scan, propose, execute after confirmation. Supports `--dry-run` to preview only |
-| `/restore` | [commands/restore.md](../commands/restore.md) | Setup Assistant* | Restore project to a previous snapshot — list snapshots, preview changes, execute after confirmation |
-| `/doctor` | [commands/doctor.md](../commands/doctor.md) | Setup Assistant* | Local-only environment health check — 7-check report (tmux / codex CLI / claude CLI / hook integrity / repo markers / codex config / VERSION ↔ git tag); offline, no auto-fix |
-| `/security-audit` | [commands/security-audit.md](../commands/security-audit.md) | Setup Assistant* | Milestone-level full security audit (code + .gitignore + git history + dependencies); emits CRITICAL/HIGH findings for pre-release gating |
-| `/release` | [commands/release.md](../commands/release.md) | Team Lead | Publish a new version fully automatically (bump VERSION, migrate CHANGELOG `[Unreleased]` → `[X.Y.Z]`, tag, `gh release create`) — no confirmations, no pauses |
+| `/start-isparto` | [commands/start-isparto.md](../commands/start-isparto.md) | Team Lead | Report current status (Wave progress, remaining issues, session history), suggest next step; user reviews briefing and responds naturally |
+| `/end-isparto` | [commands/end-isparto.md](../commands/end-isparto.md) | Team Lead | Ensure all changes are persisted, update plan.md, generate session report, auto commit + PR merge, output session briefing |
+| `/plan-isparto` | [commands/plan-isparto.md](../commands/plan-isparto.md) | Team Lead | Review product direction, output implementation plan (with decoupling analysis), wait for user confirmation before writing to plan.md |
+| `/init-isparto` | [commands/init-isparto.md](../commands/init-isparto.md) | Team Lead | Generate project skeleton and documentation system (CLAUDE.md + docs/), Codex architecture pre-review, prepare for Wave development |
+| `/env-isparto` | [commands/env-isparto.md](../commands/env-isparto.md) | Setup Assistant* | Check whether global and project environments meet iSparto runtime requirements |
+| `/migrate-isparto` | [commands/migrate-isparto.md](../commands/migrate-isparto.md) | Setup Assistant* | Migrate an existing project to iSparto workflow — scan, propose, execute after confirmation. Supports `--dry-run` to preview only |
+| `/restore-isparto` | [commands/restore-isparto.md](../commands/restore-isparto.md) | Setup Assistant* | Restore project to a previous snapshot — list snapshots, preview changes, execute after confirmation |
+| `/doctor-isparto` | [commands/doctor-isparto.md](../commands/doctor-isparto.md) | Setup Assistant* | Local-only environment health check — 7-check report (tmux / codex CLI / claude CLI / hook integrity / repo markers / codex config / VERSION ↔ git tag); offline, no auto-fix |
+| `/security-isparto` | [commands/security-isparto.md](../commands/security-isparto.md) | Setup Assistant* | Milestone-level full security audit (code + .gitignore + git history + dependencies); emits CRITICAL/HIGH findings for pre-release gating |
+| `/release-isparto` | [commands/release-isparto.md](../commands/release-isparto.md) | Team Lead | Publish a new version fully automatically (bump VERSION, migrate CHANGELOG `[Unreleased]` → `[X.Y.Z]`, tag, `gh release create`) — no confirmations, no pauses |
 
 \* **Setup Assistant** is not a separate role — it is the Team Lead acting in a setup/maintenance capacity. These commands use a distinct persona to clearly separate setup operations from development workflow.
 
@@ -333,8 +333,8 @@ Hook configuration and the dangerous-operations list are documented in [docs/pro
 
 ### Post-hoc audit trigger
 
-During the /end-working flow at **Step 5 (before the security scan, commit, and the Doc Engineer pre-merge gate at Step 9)**, the Team Lead spawns a Process Observer sub-agent to run a compliance audit. (PO = Step 5 in commands/end-working.md; DE = Step 9 pre-merge gate.) The audit produces a deviation report against 6 checklists (19 checks total — see `agents/process-observer-audit.md` for the canonical A1-A3 / B1-B2 / C1-C2 / D1-D4 / E1-E7 / F1 enumeration).
+During the /end-isparto flow at **Step 5 (before the security scan, commit, and the Doc Engineer pre-merge gate at Step 9)**, the Team Lead spawns a Process Observer sub-agent to run a compliance audit. (PO = Step 5 in commands/end-isparto.md; DE = Step 9 pre-merge gate.) The audit produces a deviation report against 6 checklists (19 checks total — see `agents/process-observer-audit.md` for the canonical A1-A3 / B1-B2 / C1-C2 / D1-D4 / E1-E7 / F1 enumeration).
 
-The audit report is written to the session briefing and does not modify files automatically. On the next /start-working, the Lead reminds the user about the previous session's deviations in the briefing.
+The audit report is written to the session briefing and does not modify files automatically. On the next /start-isparto, the Lead reminds the user about the previous session's deviations in the briefing.
 
 The full audit checklists and deviation report template are documented in [docs/process-observer.md -> Post-Hoc Audit](process-observer.md#post-hoc-audit-sub-agent).

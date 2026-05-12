@@ -157,7 +157,7 @@ do_uninstall() {
         echo "  To manually clean up:"
         echo "    rm -rf ~/.isparto"
         echo "    rm -f ~/.claude/CLAUDE-TEMPLATE.md"
-        echo "    rm -f ~/.claude/commands/{start-working,end-working,plan,init-project,env-nogo,migrate,restore}.md"
+        echo "    rm -f ~/.claude/commands/{start-isparto,end-isparto,plan-isparto,doctor-isparto,init-isparto,migrate-isparto,restore-isparto,release-isparto,security-isparto,env-isparto}.md"
         echo "    rm -f ~/.claude/templates/{product-spec,tech-spec,design-spec,plan}-template.md"
         echo "    claude mcp remove codex-dev -s user"
         echo ""

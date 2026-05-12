@@ -33,7 +33,7 @@
 #
 # Status:
 #   Wave 1 — warning mode, manual invocation only.
-#   Wave 4 — promoted to a blocking gate inside /end-working Doc Engineer audit.
+#   Wave 4 — promoted to a blocking gate inside /end-isparto Doc Engineer audit.
 #   Principle 1 detector — mechanical first-line guard for command/agent layer.
 #
 # Self-test:

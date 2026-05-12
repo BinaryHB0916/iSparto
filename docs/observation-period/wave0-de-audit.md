@@ -14,7 +14,7 @@
 
 === Documentation Audit Report ===
 
-**Audit scope clarification:** 用户问"v0.7.8 release 状态",但 repo 当前在 `feat/v0.8.0-model-upgrade` 分支,2 commits ahead of main(`46334bc` v0.8.0 核心 + `d976981` Change G tmux hard-dep)。VERSION 文件仍是 `0.7.8`(将在 `/release` 时由 `scripts/release.sh` 自动 bump);CHANGELOG `[0.8.0] - 2026-04-XX` 为 CST 占位符。本审计针对**当前 working tree(= main + 2 commits 待合并)**的状态。
+**Audit scope clarification:** 用户问"v0.7.8 release 状态",但 repo 当前在 `feat/v0.8.0-model-upgrade` 分支,2 commits ahead of main(`46334bc` v0.8.0 核心 + `d976981` Change G tmux hard-dep)。VERSION 文件仍是 `0.7.8`(将在 `/release-isparto` 时由 `scripts/release.sh` 自动 bump);CHANGELOG `[0.8.0] - 2026-04-XX` 为 CST 占位符。本审计针对**当前 working tree(= main + 2 commits 待合并)**的状态。
 
 --- Documents Requiring Updates ---
 
@@ -54,6 +54,6 @@
 **Overall: 10/10 PASS(其中 item 2 / item 4 因项目类型 N/A,8 项实质 PASS)**
 
 **Observations(非 FAIL,供 Lead 参考):**
-- v0.8.0 branch 2 commits 待 PR/merge(未阻塞 audit;`/end-working` 第 9 步会处理)
-- CHANGELOG date stamp `[0.8.0] - 2026-04-XX` 待 `/release` 替换 — `scripts/release.sh` 自动处理
-- VERSION `0.7.8` 待 `/release` 自动 bump 到 `0.8.0`
+- v0.8.0 branch 2 commits 待 PR/merge(未阻塞 audit;`/end-isparto` 第 9 步会处理)
+- CHANGELOG date stamp `[0.8.0] - 2026-04-XX` 待 `/release-isparto` 替换 — `scripts/release.sh` 自动处理
+- VERSION `0.7.8` 待 `/release-isparto` 自动 bump 到 `0.8.0`

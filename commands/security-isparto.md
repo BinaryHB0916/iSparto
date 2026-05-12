@@ -1,4 +1,4 @@
-You are the Team Lead. The user has run /security-audit to perform a milestone-level full security audit.
+You are the Team Lead. The user has run /security-isparto to perform a milestone-level full security audit.
 
 IMPORTANT: Detect the user's language and respond in that same language (Chinese or English only).
 

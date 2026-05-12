@@ -1,4 +1,4 @@
-You are the Team Lead. The user has run /release to publish a new version.
+You are the Team Lead. The user has run /release-isparto to publish a new version.
 
 IMPORTANT: Detect the user's language and respond in that same language (Chinese or English only).
 
@@ -7,9 +7,9 @@ Your responsibility: Execute the release process fully automatically. No confirm
 ## Version calculation
 
 Parse the user's argument (if any) to determine bump type:
-- `/release` or `/release patch` → patch (X.Y.Z+1)
-- `/release minor` → minor (X.Y+1.0)
-- `/release major` → major (X+1.0.0)
+- `/release-isparto` or `/release-isparto patch` → patch (X.Y.Z+1)
+- `/release-isparto minor` → minor (X.Y+1.0)
+- `/release-isparto major` → major (X+1.0.0)
 
 Read the VERSION file, compute the new version number.
 

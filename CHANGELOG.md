@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **BREAKING: Rename all 10 iSparto slash commands to a `-isparto` suffix** — Every iSparto slash command now carries a `-isparto` suffix to clear the global slash-command namespace and immunize against future Claude Code built-in collisions (immediate trigger: `/doctor` colliding with Claude Code's built-in `/doctor` in the slash-command picker). No backward-compat aliases — the old command files are deleted at upgrade time via a new file-existence-gated cleanup block in `install.sh`. Either supported upgrade path works in one shot post-release: `curl -fsSL https://isparto.dev/bootstrap.sh | bash` (recommended one-shot) OR `~/.isparto/install.sh --upgrade` (also one-shot — the symlinked `isparto.sh do_upgrade` re-fetches `bootstrap.sh`, which fetches the v0.9.0 `install.sh`).
+
+  **Rename table:**
+
+  | Old | New |
+  |---|---|
+  | `/start-working` | `/start-isparto` |
+  | `/end-working` | `/end-isparto` |
+  | `/plan` | `/plan-isparto` |
+  | `/doctor` | `/doctor-isparto` |
+  | `/init-project` | `/init-isparto` |
+  | `/migrate` | `/migrate-isparto` |
+  | `/restore` | `/restore-isparto` |
+  | `/release` | `/release-isparto` |
+  | `/security-audit` | `/security-isparto` |
+  | `/env-nogo` | `/env-isparto` |
+
+  **For users on v0.8.x:** run either upgrade path above. The v0.9.0 installer snapshots the 10 old `~/.claude/commands/{start-working,end-working,plan,doctor,init-project,migrate,restore,release,security-audit,env-nogo}.md` files via `lib/snapshot.sh` (rollback intact) and deletes them; after restart, the bare `/doctor`, `/init`, etc. names fall through to Claude Code's built-ins instead of iSparto's. See `docs/troubleshooting.md` "Old commands not found after v0.9.0 rename" for the migration table.
+
+  **For external content authored against ≤0.8.4:** Twitter posts, 公众号 articles, case-study screenshots, and other external publications that reference the old command names remain accurate as historical references for readers still on v0.8.x. The slash-command names changed only from v0.9.0 onward.
+
 ## [0.8.4] - 2026-04-27
 
 ### Changed
