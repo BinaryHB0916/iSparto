@@ -1,5 +1,27 @@
 # Session Log
 
+## 2026-05-12 Session B — v0.9.0 Release (governance-maintenance + release-session)
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | NOT a Wave — release session immediately following the v0.9.0 Command Rename Wave (same Claude Code session, post-merge). Branch: `release/v0.9.0` (auto-created by `scripts/release.sh`, auto-cleaned post-merge). |
+| Tasks completed | (1) `/release minor` invoked via the OLD `/release` slash name (correctly resolved because this session never ran `~/.isparto/install.sh --upgrade`, so `~/.claude/commands/release.md` remained as v0.8.4 state). `scripts/release.sh 0.9.0` ran end-to-end: `release/v0.9.0` branch created from main → `VERSION` 0.8.4 → 0.9.0 written → `CHANGELOG.md [Unreleased]` migrated to `[0.9.0] - 2026-05-12` via the BSD-compatible `sed -i ''` invocation → commit `d47df6b` + push → PR #246 created + auto-merged via `gh pr merge --merge` (commit `801b009` on main) → local `release/v0.9.0` branch deleted → `checksums.sha256` generated → GitHub Release published at https://github.com/BinaryHB0916/iSparto/releases/tag/v0.9.0 via `gh release create`. (2) Post-release verification: `gh release view v0.9.0` returned a populated record with `tagName=v0.9.0`, `publishedAt=2026-05-12T06:48:18Z`; `git fetch --tags && git tag -l v0.9.0` returned `v0.9.0`. |
+| Key decisions | (1) **Release executed in same Claude Code session as feature PR merge — accepted deviation from Plan Rev 3 R2-style separate-session design.** User direction in-session: "然后发布 0.9.0 版本". Per-plan rationale for separation was "avoid commands files race when `install.sh --upgrade` deletes the OLD `/end-working`"; that risk does NOT apply to `/release` itself because `/release` only invokes `scripts/release.sh` (a shell script, not a `~/.claude/commands/`-resolved skill — though /release IS itself a slash command, the underlying release pipeline is shell-only and does not depend on the OLD command files). Post-merge R3-R5 (local install of v0.9.0 + Claude Code restart + 5-assertion runtime acceptance + `/end-isparto` new-name close) still require a fresh Claude Code session and are NOT executed in this session. (2) **Release session is governance-maintenance shaped per `commands/end-isparto.md` Step 4 contract.** No new plan.md Wave entry; no IR (release is mechanical, no product↔technical alignment surface); PO + DE audits Lead self-assessed (ad-hoc-fix + emergency-release exceptions apply to release sessions per CLAUDE.md Solo/Agent Team workflow step 4 automated release exception); narrative lands in this session-log entry only. |
+
+### Files Changed
+
+```
+ docs/session-log.md | (this entry)
+```
+
+### Notes
+
+- **Release pipeline self-contained per `commands/release-isparto.md`.** `/release` skill explicitly states "This is NOT a development task — do NOT create a feature branch, do NOT spawn Codex, do NOT run Doc Engineer audit. The release script is self-contained." `scripts/release.sh` invariants L77 (`echo "$NEW_VERSION" > VERSION`) + L85-89 (CHANGELOG sed migration) executed cleanly; no manual VERSION write, no manual CHANGELOG edit, no manual `git tag` in this session (those were correctly deferred to the release script per `commands/end-isparto.md` Step 9 Forbidden block).
+- **Post-merge R3-R5 explicitly NOT executed in this session.** R3 (`curl -fsSL https://isparto.dev/bootstrap.sh | bash` OR `~/.isparto/install.sh --upgrade` to install v0.9.0 locally), R4 (5 runtime assertions: `ls $HOME/.claude/commands/*-isparto.md \| wc -l = 10`, `ls $HOME/.claude/commands/{start-working,end-working,plan,doctor,init-project,migrate,restore,release,security-audit,env-nogo}.md 2>/dev/null` empty, Claude Code restart, `/doctor-isparto` lists iSparto's doctor + `/doctor` falls through to CC built-in with no shadow, `/end-isparto` callable), R5 (close via `/end-isparto` new name, or open `fix/v0.9.0-rename-hotfix` if any R4 fail) all require a fresh Claude Code session and are user's next action.
+- **Parallel session collision noted.** Mid-flow `git checkout` operations occasionally surfaced an unrelated `fix/bash-hook-compound-push-parser` branch as the active branch (from a separate Claude Code session the user was running concurrently to fix a pre-tool-check.sh compound-command parser bug). No actual conflict — both sessions worked on separate branches; recovery was just `git checkout` back to the intended branch. The parallel work landed on main as commit `37eaac9` before my release flow's `git pull` step, so origin/main fast-forwarded cleanly to the post-release `801b009` after `scripts/release.sh` did its work.
+- **Two follow-up Backlog rows added in PR #245 same-session.** FR-50 (recover IR audit history pre-merge via `git show bf97fd9:docs/independent-review.md`) + FR-51 (`install.sh` `version_lt` `sort -V` BSD portability) — both surfaced by Codex post-merge review of PR #244 (rename Wave) and recorded per the Single TODO source rule.
+
 ## 2026-05-12 Session — Wave v0.9.0 Command Rename to -isparto Suffix
 
 | Metric | Value |
