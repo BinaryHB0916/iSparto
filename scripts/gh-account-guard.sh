@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # gh-account-guard.sh — iSparto mid-session gh account alignment guard (FR-13).
 #
-# Purpose: close the gap between /start-working Step 6 and /end-working Step 8.
+# Purpose: close the gap between /start-isparto Step 6 and /end-isparto Step 8.
 # Both existing steps perform gh account alignment at session boundaries, but a
 # user can run `gh auth switch --user <other>` mid-session and flip the active
 # account silently. The subsequent `gh pr create` would then post under the
 # wrong identity (fork-attribution errors, or PR creation failing entirely).
 # This guard is designed to be invoked immediately before `gh pr create` in
-# /end-working Step 9 so any mid-session drift is caught and either
+# /end-isparto Step 9 so any mid-session drift is caught and either
 # auto-realigned or reported as an unrecoverable mismatch before the PR call.
 #
 # Behaviour:
@@ -25,7 +25,7 @@
 #      `gh api /user --jq .login`:
 #        - Re-verify succeeds (post-switch GH_USER == REPO_OWNER): exit 0.
 #        - Re-verify still mismatches: emit a second ERROR line to stderr and
-#          exit 2 so the caller (/end-working) can halt before `gh pr create`.
+#          exit 2 so the caller (/end-isparto) can halt before `gh pr create`.
 #
 # Invocation:
 #   bash scripts/gh-account-guard.sh             run the guard (normal mode)
@@ -53,7 +53,7 @@
 # Style mirror: scripts/session-health.sh (bash wrapper + python3 heredoc,
 # same option parsing, same shell-collected inputs, same exit-code
 # discipline). No colour in the guard itself — it is invoked from inside
-# /end-working and its stderr is read by Lead, not the terminal.
+# /end-isparto and its stderr is read by Lead, not the terminal.
 
 set -uo pipefail
 
@@ -105,7 +105,7 @@ if [ "$MODE" = "run" ]; then
         ORIGIN_URL="$(git remote get-url origin 2>/dev/null || true)"
         # Accept either `git@github.com:owner/repo.git` or
         # `https://github.com/owner/repo(.git)?` shapes. The regex mirrors
-        # the one embedded in /start-working Step 6 and /end-working Step 8
+        # the one embedded in /start-isparto Step 6 and /end-isparto Step 8
         # (single source of truth — see FR-13 gap statement). Non-GitHub
         # remotes (GitLab, Bitbucket) fall through to empty REPO_OWNER.
         REPO_OWNER="$(printf '%s' "$ORIGIN_URL" \
@@ -174,7 +174,7 @@ Exit codes:
   2 \u2014 mismatch persists after auto-switch, --self-test failure, or
        internal error (python3 missing, bad argument)
 
-Integration: called from commands/end-working.md Step 9 immediately before
+Integration: called from commands/end-isparto.md Step 9 immediately before
 `gh pr create`. When exit == 2, the caller halts via an A-layer interrupt.
 """
 
@@ -198,7 +198,7 @@ def run_guard():
     post_switch_gh_user = os.environ.get('POST_SWITCH_GH_USER', '').strip()
 
     # Skip silently when either probe yielded no data. This matches the
-    # existing /start-working Step 6 and /end-working Step 8 behaviour
+    # existing /start-isparto Step 6 and /end-isparto Step 8 behaviour
     # ("If gh is not installed, not authenticated, or only one account
     # exists: skip silently").
     if not repo_owner or not gh_user:

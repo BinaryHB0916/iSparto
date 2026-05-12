@@ -6,15 +6,15 @@ v0.7.5 starts this file with a single case — the Session Log self-bootstrappin
 
 ## Case 1 — Session Log (self-bootstrapping, Wave 5)
 
-iSparto used its own Agent Team workflow to build the "Session Log" feature — automatic session metrics collection in `/end-working` and `/start-working`. This was the first complete dogfooding run of the framework on itself.
+iSparto used its own Agent Team workflow to build the "Session Log" feature — automatic session metrics collection in `/end-isparto` and `/start-isparto`. This was the first complete dogfooding run of the framework on itself.
 
 ### Flow
 
-1. **`/start-working`** — Lead read `plan.md`, reported Wave 5 status, identified the session log feature as the next task.
+1. **`/start-isparto`** — Lead read `plan.md`, reported Wave 5 status, identified the session log feature as the next task.
 2. **Branch** — Lead created `feat/session-log`.
 3. **Task breakdown** — Lead assigned file ownership:
-   - Developer A: `commands/end-working.md` (add session report generation)
-   - Developer B: `commands/start-working.md` (add session log reading)
+   - Developer A: `commands/end-isparto.md` (add session report generation)
+   - Developer B: `commands/start-isparto.md` (add session log reading)
 4. **Parallel development** — Both Developers ran simultaneously and completed their tasks.
 5. **Codex Review** — Found 2 P2 issues:
    - `git diff --stat` misses staged/untracked files. Fixed to `git diff HEAD --stat`.

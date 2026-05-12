@@ -21,7 +21,7 @@ Free (open-source):
 - [ ] install.sh (installation/upgrade)
 - [ ] Command templates (commands/*.md)
 - [ ] Document templates (templates/*.md)
-- [ ] Snapshot/restore (lib/snapshot.sh)
+- [ ] Snapshot/restore-isparto (lib/snapshot.sh)
 - [ ] Session log / metrics
 - [ ] Documentation (docs/, README)
 

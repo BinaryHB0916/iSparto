@@ -20,7 +20,7 @@
 
 Every existing AI coding tool — Cursor, Windsurf, Copilot, Claude Code on its own — puts you in a loop with a single agent. You and it trade messages for every decision, every file, every commit. The whole development cycle runs through one conversation window.
 
-iSparto's central move is to turn that single agent into an Agent Team. One command (`/init-project` or `/start-working`) spins up the whole agent team — six roles in parallel: Team Lead plans and coordinates, Teammate writes code prompts in parallel, Independent Reviewer audits with fresh context, Developer implements via Codex, Doc Engineer keeps documentation synced, Process Observer guards the workflow. You direct the team through the Team Lead; the rest stays out of your way until a decision is actually needed.
+iSparto's central move is to turn that single agent into an Agent Team. One command (`/init-isparto` or `/start-isparto`) spins up the whole agent team — six roles in parallel: Team Lead plans and coordinates, Teammate writes code prompts in parallel, Independent Reviewer audits with fresh context, Developer implements via Codex, Doc Engineer keeps documentation synced, Process Observer guards the workflow. You direct the team through the Team Lead; the rest stays out of your way until a decision is actually needed.
 
 |  | Single-agent tools | iSparto |
 |--|---|---|
@@ -103,27 +103,27 @@ cd iSparto && ./install.sh              # or: ./install.sh --dry-run
 ```bash
 mkdir my-app && cd my-app
 claude --effort max
-/env-nogo                              # optional environment check
-/init-project I want to build an xxx   # generates CLAUDE.md + docs/ + architecture pre-review
+/env-isparto                              # optional environment check
+/init-isparto I want to build an xxx   # generates CLAUDE.md + docs/ + architecture pre-review
 ```
 
-A snapshot is taken before any files are created. If anything goes wrong, run `/restore` to roll back.
+A snapshot is taken before any files are created. If anything goes wrong, run `/restore-isparto` to roll back.
 
 ### Migrate an existing project
 
 ```bash
 cd existing-project/
 claude --effort max
-/migrate --dry-run        # preview migration plan without executing (recommended first run)
-/migrate                  # scans project, proposes migration plan, preserves existing content
+/migrate-isparto --dry-run        # preview migration plan without executing (recommended first run)
+/migrate-isparto                  # scans project, proposes migration plan, preserves existing content
 ```
 
-A snapshot is taken before any changes. Run `/restore` at any time to roll back.
+A snapshot is taken before any changes. Run `/restore-isparto` at any time to roll back.
 
 ### Daily work cycle
 
 ```
-/start-working
+/start-isparto
     → Lead reads plan.md, reports current status and remaining work
     → You confirm "go ahead"
         ↓
@@ -132,14 +132,14 @@ The team runs on its own — you do not need to watch
         ↓
 The lead only comes back to you at genuine decision points
         ↓
-/end-working
+/end-isparto
     → Sync docs → update plan.md → commit → push
 ```
 
 ### When you have new requirements
 
 ```
-/plan I want to add an xxx feature
+/plan-isparto I want to add an xxx feature
     → Lead reviews product direction, produces one proposal
     → After you confirm, Lead writes it into plan.md and begins work
 ```
@@ -161,7 +161,7 @@ The agent team has six roles:
 - **Doc Engineer** — audits documentation at every Wave boundary.
 - **Process Observer** — a PreToolUse hook (shell, no model) that blocks ceremonial steps from being skipped, plus an advisory Sonnet audit layer.
 
-Full model assignments and reasoning levels live in [docs/configuration.md](docs/configuration.md#agent-model-configuration). Security oversight (Write/Edit scanning, pre-commit secret/PII checks, `/security-audit`) is documented in [docs/security.md](docs/security.md).
+Full model assignments and reasoning levels live in [docs/configuration.md](docs/configuration.md#agent-model-configuration). Security oversight (Write/Edit scanning, pre-commit secret/PII checks, `/security-isparto`) is documented in [docs/security.md](docs/security.md).
 
 ---
 
@@ -189,11 +189,11 @@ The full repository layout, annotated per file, is maintained in [docs/repo-stru
 - [ ] `./install.sh` completed (Claude Code, Codex CLI, config files, MCP)
 - [ ] Multi-device sync configured if using multiple computers (see [configuration.md](docs/configuration.md#multi-device-sync-optional))
 
-**Each new project (`/init-project` handles this automatically):**
+**Each new project (`/init-isparto` handles this automatically):**
 
 - [ ] Launch with `claude --effort max`
-- [ ] `/env-nogo` check passed (optional)
-- [ ] `/init-project` has generated CLAUDE.md + docs/
+- [ ] `/env-isparto` check passed (optional)
+- [ ] `/init-isparto` has generated CLAUDE.md + docs/
 - [ ] Project-level `.claude/settings.json` configured with platform-specific plugins (optional)
 
 ---
@@ -202,7 +202,7 @@ The full repository layout, annotated per file, is maintained in [docs/repo-stru
 
 In Greek mythology, the hero Cadmus slew a dragon and sowed its teeth into the earth. A host of fully armed warriors sprang from the ground — they were called **Spartoi** (Σπαρτοί), meaning "the sown ones."
 
-This is the same story as iSparto's workflow: you sow your product requirements into `/init-project`, and a whole team assembles itself — lead breaks down tasks, developer writes code, reviews land in the same Wave, documentation stays in sync — a complete team grown from a single seed.
+This is the same story as iSparto's workflow: you sow your product requirements into `/init-isparto`, and a whole team assembles itself — lead breaks down tasks, developer writes code, reviews land in the same Wave, documentation stays in sync — a complete team grown from a single seed.
 
 The **i** was moved from the end of Spartoi to the front. Lowercase i = I = me, one person.
 

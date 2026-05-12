@@ -54,7 +54,7 @@ iSparto/
     ├── product-spec.md        ← Product spec (iSparto's own, for self-bootstrapping)
     ├── plan.md                ← Development plan by Wave
     ├── roadmap.md             ← Long-range v1.x / v2.x product roadmap
-    ├── session-log.md         ← Auto-generated session metrics (created by /end-working)
+    ├── session-log.md         ← Auto-generated session metrics (created by /end-isparto)
     ├── case-studies.md        ← End-to-end dogfooding case collection
     ├── repo-structure.md      ← This file
     ├── dogfood-log.md         ← Subjective dogfooding experience log

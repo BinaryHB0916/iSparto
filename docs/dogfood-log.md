@@ -16,15 +16,15 @@ README 负责 pitch——「一支会克制的 AI 开发团队」。这份文档
 
 v0.7.4 之前,Information Layering Policy 已经有 A/B/C 三层和 7 条原则,但 Lead 在运行时仍然要做「这条信息算 A 层还是 B 层」的动态判断,这个判断空间就是 facts-dumping 老毛病的残留接口。Principle 5 total-collapse 把这件事堵死:A 层入口被 Principle 1 的 5 条机械触发静态绑定,B 层入口被 Principle 2 的三个 pause point 静态绑定,C 层是默认兜底,Lead 没有运行时动态决定「层次」的第四条路,只在「同一个 pause point 的既定结构里,具体用什么词」这一层还有判断权。
 
-落地那一刻的 session 体感:**Lead 在 `/start-working` 和 `/end-working` 以外的时间几乎不主动说话了**。Mid-session 进度汇报、「我刚做完 X」的叙述、「下面还剩 Y」的清单——这三件事 v0.7.4 之前经常出现,v0.7.4 之后几乎绝迹。原因不是 Lead 在「忍着不说」,而是 Policy 从入口侧就没给 mid-session 输出留任何合法的 layer:它既不匹配 A 层的 5 条机械触发,也不在 B 层的三个 pause point 上,于是自动落入 C 层的沉默。
+落地那一刻的 session 体感:**Lead 在 `/start-isparto` 和 `/end-isparto` 以外的时间几乎不主动说话了**。Mid-session 进度汇报、「我刚做完 X」的叙述、「下面还剩 Y」的清单——这三件事 v0.7.4 之前经常出现,v0.7.4 之后几乎绝迹。原因不是 Lead 在「忍着不说」,而是 Policy 从入口侧就没给 mid-session 输出留任何合法的 layer:它既不匹配 A 层的 5 条机械触发,也不在 B 层的三个 pause point 上,于是自动落入 C 层的沉默。
 
 ### v0.7.5 Wave 本身的 session 体感
 
 本 Wave 是第一个在「Policy 完全 total-collapse」状态下跑完的叙事 Wave。观察到的几件事:
 
-**一、用户被打断的次数只有两次,且两次都是真的必须打断。** 一次是 `/plan` 第 3 步提出 proposal 要求用户批复——这是 Policy trigger type (a),机械触发,Lead 没有选择空间。一次是 IR Wave-start 审出的 CRITICAL A3 grep bug + MAJOR T6 source-of-truth 反向,需要用户在是否重跑 IR cycle 上拍板——这是 Policy trigger type (e) 的延伸,同样是机械触发。除此之外,Lead 在整个 plan 编写、branch guard、文件读取、IR spawn、10 次 plan 修订这些环节上全程沉默,用户只在最终要做决定的两个节点被叫到。
+**一、用户被打断的次数只有两次,且两次都是真的必须打断。** 一次是 `/plan-isparto` 第 3 步提出 proposal 要求用户批复——这是 Policy trigger type (a),机械触发,Lead 没有选择空间。一次是 IR Wave-start 审出的 CRITICAL A3 grep bug + MAJOR T6 source-of-truth 反向,需要用户在是否重跑 IR cycle 上拍板——这是 Policy trigger type (e) 的延伸,同样是机械触发。除此之外,Lead 在整个 plan 编写、branch guard、文件读取、IR spawn、10 次 plan 修订这些环节上全程沉默,用户只在最终要做决定的两个节点被叫到。
 
-**二、B 层汇报确实只在三个 pause point 出现。** `/plan` 第 3 步的 proposal 是一次 B 层(结构是 B,其中请求确认的那一句是 A 层);`/start-working` 的开场汇报是一次 B 层;`/end-working` 的收场汇报还没跑到。整个过程没有出现「我要顺便告诉你一下 X」这种第四路 B 层。
+**二、B 层汇报确实只在三个 pause point 出现。** `/plan-isparto` 第 3 步的 proposal 是一次 B 层(结构是 B,其中请求确认的那一句是 A 层);`/start-isparto` 的开场汇报是一次 B 层;`/end-isparto` 的收场汇报还没跑到。整个过程没有出现「我要顺便告诉你一下 X」这种第四路 B 层。
 
 **三、C 层的沉默是真的沉默,不是 Lead「假装」沉默。** Branch guard 自动切 feat/v075-readme-restraint、PreToolUse hook 逐次放行、Process Observer 后台 arm、`gh auth` 对齐检查、每次 Edit/Write 落地——这些全都是 C 层,用户从头到尾没看到一个字。需要时可以 grep `docs/session-log.md` 或 git log,但 session 进行中用户的眼睛不会被这些操作性事实占用。
 

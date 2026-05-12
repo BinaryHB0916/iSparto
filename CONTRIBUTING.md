@@ -68,7 +68,7 @@ Some files have a wide blast radius. Extra care is needed when changing:
 |---|---|
 | `install.sh` | Must maintain backward compatibility -- existing users rely on `--uninstall` to revert cleanly |
 | `commands/*.md` | These are the command templates for all users; changes should be well-tested before merging |
-| `CLAUDE-TEMPLATE.md` | Propagates to every new project created with `/init-project` |
+| `CLAUDE-TEMPLATE.md` | Propagates to every new project created with `/init-isparto` |
 | `README.md` / `README.zh-CN.md` | Keep both English and Chinese versions in sync |
 
 ---
@@ -91,7 +91,7 @@ iSparto maintains a four-tier language architecture — contributors must unders
 - **`README.md` ↔ `README.zh-CN.md` must stay in sync.** Any content change to one requires a parallel change to the other (already listed in the blast-radius table above).
 - **New entries in `docs/plan.md` and `CHANGELOG.md` are written in English**, even though historical entries from before the Wave 1 convention may contain CJK.
 
-**Mechanical guardian (`scripts/language-check.sh`):** PRs are blocked if the language guardian finds CJK characters in Tier 1 or Tier 2 files, or Principle 1 violations in `commands/*.md` / `agents/*.md`. The guardian runs inside the Doc Engineer audit step of `/end-working` starting from Wave 4, which means any branch that introduces a violation cannot merge until it is fixed. Before opening a PR, run the guardian locally:
+**Mechanical guardian (`scripts/language-check.sh`):** PRs are blocked if the language guardian finds CJK characters in Tier 1 or Tier 2 files, or Principle 1 violations in `commands/*.md` / `agents/*.md`. The guardian runs inside the Doc Engineer audit step of `/end-isparto` starting from Wave 4, which means any branch that introduces a violation cannot merge until it is fixed. Before opening a PR, run the guardian locally:
 
 ```bash
 bash scripts/language-check.sh            # main scan (exit 0 = clean)

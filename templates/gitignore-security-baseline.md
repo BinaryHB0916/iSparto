@@ -1,5 +1,5 @@
 # iSparto Security .gitignore Baseline
-# /init-project and /migrate must include the entries below when generating .gitignore.
+# /init-isparto and /migrate-isparto must include the entries below when generating .gitignore.
 # Projects may append additional entries based on their tech stack, but must not remove baseline entries.
 
 ## ── Sensitive Credential Files ──

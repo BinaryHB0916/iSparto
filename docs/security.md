@@ -20,7 +20,7 @@ Characteristics:
 
 ### Layer 2: Pre-commit Gate
 
-Triggered automatically before each `/end-working` commit.
+Triggered automatically before each `/end-isparto` commit.
 
 Checks:
 - Full secret scan: all secrets and pii patterns (critical/high match → block commit)
@@ -34,7 +34,7 @@ Configuration:
 
 ### Layer 3: Milestone Audit
 
-Triggered manually via the `/security-audit` command at Phase completion or before release.
+Triggered manually via the `/security-isparto` command at Phase completion or before release.
 
 Coverage:
 - Full file scan (not just staged)

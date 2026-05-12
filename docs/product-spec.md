@@ -43,13 +43,13 @@ Users describe business requirements in natural language; the team translates th
 
 - **Agent Team role separation**: Team Lead assembles prompts and coordinates, Developer (Codex) implements code, Teammates run in parallel, Doc Engineer keeps documentation in sync
 - **Wave-based parallel development**: multiple Developers run in parallel within a single Wave, with tmux split panes for visualization
-- **10 slash commands**: /init-project, /migrate, /start-working, /end-working, /plan, /env-nogo, /doctor, /restore, /security-audit, /release
-- **Cross-session state recovery**: driven by plan.md, with /start-working automatically restoring context
+- **10 slash commands**: /init-isparto, /migrate-isparto, /start-isparto, /end-isparto, /plan-isparto, /env-isparto, /doctor-isparto, /restore-isparto, /security-isparto, /release-isparto
+- **Cross-session state recovery**: driven by plan.md, with /start-isparto automatically restoring context
 - **Cross-model quality gate**: Lead reviews Developer (Codex) output, covering each model's blind spots
 - **Automatic documentation sync**: Doc Engineer audits code/documentation consistency every Wave
-- **Snapshot/restore**: an automatic snapshot is taken before every operation, and /restore performs one-click rollback
+- **Snapshot/restore**: an automatic snapshot is taken before every operation, and /restore-isparto performs one-click rollback
 - **Session log**: docs/session-log.md records development metrics for every session
-- **Process Observer compliance oversight**: a three-layer security defense — L1 real-time content scanning on Write/Edit (intercepts critical secrets), L2 full secret/PII scan on pre-commit, L3 milestone-level full audit via /security-audit (covering git history and dependency checks). The post-hoc audit checks the full session for compliance against the code of conduct (a 19-item checklist across 6 categories A-F). The Observer does not participate in development decisions, only oversees them; deviation reports are emitted to the session briefing rather than auto-modifying files; remediation suggestions feed back into the rules to form a self-improvement loop
+- **Process Observer compliance oversight**: a three-layer security defense — L1 real-time content scanning on Write/Edit (intercepts critical secrets), L2 full secret/PII scan on pre-commit, L3 milestone-level full audit via /security-isparto (covering git history and dependency checks). The post-hoc audit checks the full session for compliance against the code of conduct (a 19-item checklist across 6 categories A-F). The Observer does not participate in development decisions, only oversees them; deviation reports are emitted to the session briefing rather than auto-modifying files; remediation suggestions feed back into the rules to form a self-improvement loop
 - **Version tracking and changelog**: --upgrade supports version upgrades
 - **One-line install**: a single curl command, with --dry-run preview, --upgrade upgrade, and --uninstall uninstall
 
