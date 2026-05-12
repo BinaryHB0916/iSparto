@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **Process Observer git-push guard no longer spans compound-command segments** — `git push -u origin <feature-branch> && git checkout main ...` is now allowed as a feature-branch push followed by a separate branch switch, while real direct pushes such as `git push -u origin main` and `git push origin HEAD:main` remain blocked. Added a `--self-test` flag to `hooks/process-observer/scripts/pre-tool-check.sh` with 6 fixtures (3 should-match + 3 should-not-match) covering compound commands, quoted PR-body mentions, and force pushes.
+
 ## [0.9.0] - 2026-05-12
 
 ### Changed
