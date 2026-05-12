@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-05-12
+
 ### Changed
 
 - **BREAKING: Rename all 10 iSparto slash commands to a `-isparto` suffix** — Every iSparto slash command now carries a `-isparto` suffix to clear the global slash-command namespace and immunize against future Claude Code built-in collisions (immediate trigger: `/doctor` colliding with Claude Code's built-in `/doctor` in the slash-command picker). No backward-compat aliases — the old command files are deleted at upgrade time via a new file-existence-gated cleanup block in `install.sh`. Either supported upgrade path works in one shot post-release: `curl -fsSL https://isparto.dev/bootstrap.sh | bash` (recommended one-shot) OR `~/.isparto/install.sh --upgrade` (also one-shot — the symlinked `isparto.sh do_upgrade` re-fetches `bootstrap.sh`, which fetches the v0.9.0 `install.sh`).
