@@ -24,11 +24,27 @@ for arg in "$@"; do
 done
 
 # ── Resolve latest version from GitHub Releases ──────────────
+# Two-stage resolver: (1) api.github.com/releases/latest is the canonical source
+# but the unauthenticated endpoint allows only 60 requests/hour/IP, so it can
+# fail with HTTP 403 on shared IPs even when releases exist. (2) Fall back to
+# raw.githubusercontent.com/$REPO/main/VERSION — same CDN we already trust for
+# install.sh, not subject to API rate limits, and the VERSION file on main is
+# advanced as part of every /release-isparto run so it reflects the latest tag.
+# Only if BOTH sources fail do we drop to the "install from main unverified"
+# path, which is the truly-no-releases case.
 if [ -z "$VERSION" ]; then
     VERSION=$(curl -fsSL --connect-timeout 10 --max-time 30 "https://api.github.com/repos/$REPO/releases/latest" 2>/dev/null \
         | grep '"tag_name"' | sed -E 's/.*"v?([0-9][^"]*)".*/\1/')
     if [ -z "$VERSION" ]; then
-        # Fallback: no releases yet, run install.sh directly from main branch
+        # API call failed — try raw VERSION as CDN fallback.
+        _raw_version=$(curl -fsSL --connect-timeout 10 --max-time 30 "https://raw.githubusercontent.com/$REPO/main/VERSION" 2>/dev/null | tr -d '[:space:]')
+        if echo "$_raw_version" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+'; then
+            VERSION="$_raw_version"
+            printf "${YELLOW}GitHub API unavailable (rate-limited?). Using version $VERSION from main/VERSION.${NC}\n" >&2
+        fi
+    fi
+    if [ -z "$VERSION" ]; then
+        # Last resort: no releases at all (early development), or both sources blocked.
         printf "${YELLOW}No releases found. Installing from main branch (unverified).${NC}\n" >&2
         BOOTSTRAP_TMPDIR=$(mktemp -d)
         trap 'rm -rf "$BOOTSTRAP_TMPDIR"' EXIT
