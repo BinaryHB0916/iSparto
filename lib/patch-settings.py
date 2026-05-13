@@ -19,6 +19,21 @@ import os
 # Workflow matchers that belong at project level, not user level
 WORKFLOW_MATCHERS = ['Edit', 'Write', 'mcp__codex-dev__codex', 'mcp__codex-reviewer__codex']
 
+# FR-52: hook script name used by the Process Observer Bash safety hook.
+# Used for semantic-equivalence dedup so old absolute-path entries from
+# previous installs / cross-machine settings.json migration are detected
+# and replaced by the canonical portable form, regardless of how the
+# command string is shaped (absolute path, $HOME literal, conditional
+# wrapper). Detection is substring-based — any command string that
+# references `pre-tool-check.sh` is treated as a Process Observer hook
+# registration and subject to dedup.
+PRE_TOOL_CHECK_SCRIPT = 'pre-tool-check.sh'
+
+
+def _is_pre_tool_check_hook(cmd):
+    """Return True if the command string invokes pre-tool-check.sh in any form."""
+    return isinstance(cmd, str) and PRE_TOOL_CHECK_SCRIPT in cmd
+
 
 def load_settings(path):
     """Load settings from JSON file, return {} if missing or invalid."""
@@ -89,15 +104,16 @@ def patch_user(path, hook_cmd, matchers):
         entry_hooks = matched_entry.get('hooks')
         if not isinstance(entry_hooks, list):
             entry_hooks = []
-            matched_entry['hooks'] = entry_hooks
-            changed = True
 
-        has_hook = any(
-            isinstance(h, dict) and h.get('command') == hook_cmd
-            for h in entry_hooks
-        )
-        if not has_hook:
-            entry_hooks.append({'type': 'command', 'command': hook_cmd})
+        other_hooks = []
+        for hook in entry_hooks:
+            if isinstance(hook, dict) and _is_pre_tool_check_hook(hook.get('command')):
+                continue
+            other_hooks.append(hook)
+
+        new_entry_hooks = other_hooks + [{'type': 'command', 'command': hook_cmd}]
+        if new_entry_hooks != entry_hooks:
+            matched_entry['hooks'] = new_entry_hooks
             changed = True
 
     # Clean workflow matchers from user level (they belong at project level)

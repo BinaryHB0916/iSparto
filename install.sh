@@ -133,6 +133,9 @@ run_v090_rename_cleanup() {
 # 0.10.x semver regression case) + B.2 stale-file detection against /tmp fixtures.
 run_migration_self_test() {
     local failed=0
+    local script_dir
+    script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+    local canonical_hook_cmd='if [ -f "$HOME/.isparto/hooks/process-observer/scripts/pre-tool-check.sh" ]; then bash "$HOME/.isparto/hooks/process-observer/scripts/pre-tool-check.sh"; fi'
     # B.3 fixtures
     if ! version_lt "0.8.4" "0.9.0"; then
         printf "  [FAIL] version_lt 0.8.4 0.9.0: expected true (0)\n" >&2
@@ -174,9 +177,70 @@ run_migration_self_test() {
         printf "  [FAIL] case-b 3-stale fixture: expected 3, got %d\n" "${#stale[@]}" >&2
         failed=1
     fi
+    # Fixture C: fresh settings.json gets canonical hook form
+    mkdir -p "$tmp_dir/case-c"
+    if ! python3 "$script_dir/lib/patch-settings.py" patch-user "$tmp_dir/case-c/settings.json" "$canonical_hook_cmd" Bash >/dev/null 2>&1; then
+        printf "  [FAIL] case-c fresh settings fixture: patch-user failed\n" >&2
+        failed=1
+    elif [ ! -f "$tmp_dir/case-c/settings.json" ]; then
+        printf "  [FAIL] case-c fresh settings fixture: settings.json was not created\n" >&2
+        failed=1
+    elif ! python3 -c 'import json, sys
+path, expected = sys.argv[1], sys.argv[2]
+with open(path) as f:
+    settings = json.load(f)
+ptu = settings.get("hooks", {}).get("PreToolUse", [])
+bash_entries = [e for e in ptu if isinstance(e, dict) and e.get("matcher") == "Bash"]
+assert len(bash_entries) == 1
+hooks = bash_entries[0].get("hooks", [])
+matches = [h for h in hooks if isinstance(h, dict) and "pre-tool-check.sh" in h.get("command", "")]
+assert len(matches) == 1
+assert matches[0].get("command") == expected
+' "$tmp_dir/case-c/settings.json" "$canonical_hook_cmd" >/dev/null 2>&1; then
+        printf "  [FAIL] case-c fresh settings fixture: expected exactly 1 canonical pre-tool-check.sh hook\n" >&2
+        failed=1
+    fi
+    # Fixture D: stale absolute-path entries collapse to 1 canonical hook
+    mkdir -p "$tmp_dir/case-d"
+    cat <<'EOF' > "$tmp_dir/case-d/settings.json"
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {"type": "command", "command": "bash /Users/duanshao/.isparto/hooks/process-observer/scripts/pre-tool-check.sh"},
+          {"type": "command", "command": "bash /Users/duanwei/.isparto/hooks/process-observer/scripts/pre-tool-check.sh"}
+        ]
+      }
+    ]
+  }
+}
+EOF
+    if ! python3 "$script_dir/lib/patch-settings.py" patch-user "$tmp_dir/case-d/settings.json" "$canonical_hook_cmd" Bash >/dev/null 2>&1; then
+        printf "  [FAIL] case-d stale hook fixture: patch-user failed\n" >&2
+        failed=1
+    elif ! python3 -c 'import json, sys
+path, expected = sys.argv[1], sys.argv[2]
+with open(path) as f:
+    raw = f.read()
+assert "duanshao" not in raw
+assert "bash /Users/duanwei/.isparto/hooks/process-observer/scripts/pre-tool-check.sh" not in raw
+settings = json.loads(raw)
+ptu = settings.get("hooks", {}).get("PreToolUse", [])
+bash_entries = [e for e in ptu if isinstance(e, dict) and e.get("matcher") == "Bash"]
+assert len(bash_entries) == 1
+hooks = bash_entries[0].get("hooks", [])
+matches = [h for h in hooks if isinstance(h, dict) and "pre-tool-check.sh" in h.get("command", "")]
+assert len(matches) == 1
+assert matches[0].get("command") == expected
+' "$tmp_dir/case-d/settings.json" "$canonical_hook_cmd" >/dev/null 2>&1; then
+        printf "  [FAIL] case-d stale hook fixture: expected 1 canonical hook with stale absolute paths removed\n" >&2
+        failed=1
+    fi
     rm -rf "$tmp_dir"
     if [ "$failed" -eq 0 ]; then
-        printf "  ${GREEN}\xe2\x9c\x93${NC} --self-test-migration: all 5 fixtures PASS (3 version_lt + 2 stale-detection)\n"
+        printf "  ${GREEN}\xe2\x9c\x93${NC} --self-test-migration: all 7 fixtures PASS (3 version_lt + 2 stale-detection + 2 hook-patch)\n"
         return 0
     else
         printf "  ${RED}\xe2\x9c\x97${NC} --self-test-migration: FAIL\n" >&2
@@ -664,7 +728,14 @@ _user_settings="$HOME/.claude/settings.json"
 if ! $DRY_RUN; then
     mkdir -p "$HOME/.claude"
     # python3 already verified in Dependencies section
-    _hook_cmd="bash $ISPARTO_HOME/hooks/process-observer/scripts/pre-tool-check.sh"
+    # FR-52: write $HOME as a literal so the command resolves at hook-execution
+    # time, not at install time. Wrap in `if [ -f ... ]; then bash ...; fi` so a
+    # missing iSparto install (e.g. after uninstall) silently no-ops instead of
+    # raising `No such file or directory`. The conditional form is also what
+    # patch-settings.py dedups against — old `bash /Users/<old>/.isparto/...`
+    # absolute-path entries from prior installs get replaced by this canonical
+    # form on the next --upgrade.
+    _hook_cmd='if [ -f "$HOME/.isparto/hooks/process-observer/scripts/pre-tool-check.sh" ]; then bash "$HOME/.isparto/hooks/process-observer/scripts/pre-tool-check.sh"; fi'
     _patch_result=$(python3 "$SCRIPT_DIR/lib/patch-settings.py" patch-user "$_user_settings" "$_hook_cmd" "Bash" 2>&1 || true)
     if [ "$_patch_result" = "PATCHED" ]; then
         printf "  ${GREEN}✓${NC} Process Observer Bash hook registered in user settings (~/.claude/settings.json)\n"
