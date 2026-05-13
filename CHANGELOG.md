@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.1] - 2026-05-13
+
 ### Fixed
 
 - **`install.sh` / `bootstrap.sh` API rate-limit fallback** — Both scripts called `api.github.com/repos/$REPO/releases/latest` to resolve the latest release. The unauthenticated GitHub REST endpoint allows only 60 requests/hour/IP, so on shared IPs (corporate proxies, VPNs, NAT pools) the call returned HTTP 403 even when releases existed. The previous fallback path treated empty API responses as "no releases at all" and then re-hit the same rate-limited endpoint from `install.sh`, producing a contradictory `Error: Could not determine version. Use bootstrap.sh to install:` message to users who had already used `bootstrap.sh`. Added a two-stage resolver in both scripts: `api.github.com` (canonical) → `raw.githubusercontent.com/$REPO/main/VERSION` (CDN fallback, not subject to API rate limits, kept in sync by every `/release-isparto` run) → install-from-main-unverified (last resort). Affected users on rate-limited IPs now see the upgrade succeed transparently.
