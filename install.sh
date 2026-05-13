@@ -239,11 +239,22 @@ if [ -f "$(dirname "$0")/commands/start-isparto.md" ] 2>/dev/null; then
 fi
 
 if ! $_use_local_source; then
-    # Running via bootstrap.sh, or from ISPARTO_HOME (legacy git-clone) — download release
+    # Running via bootstrap.sh, or from ISPARTO_HOME (legacy git-clone) — download release.
+    # Mirror bootstrap.sh's two-stage resolver: api.github.com first (canonical), then
+    # raw.githubusercontent.com/$REPO/main/VERSION as a rate-limit-immune CDN fallback.
+    # Without the second stage, an upgrade reached via bootstrap.sh's own fallback path
+    # (no version passed via ISPARTO_INSTALL_VERSION) would re-hit the same rate-limited
+    # API endpoint and exit with "Could not determine version".
     if [ -z "$INSTALL_VERSION" ]; then
-        # Auto-resolve latest version from GitHub Releases
         INSTALL_VERSION=$(curl -fsSL --connect-timeout 10 --max-time 30 "https://api.github.com/repos/$REPO/releases/latest" 2>/dev/null \
             | grep '"tag_name"' | sed -E 's/.*"v?([0-9][^"]*)".*/\1/')
+    fi
+    if [ -z "$INSTALL_VERSION" ]; then
+        _raw_version=$(curl -fsSL --connect-timeout 10 --max-time 30 "https://raw.githubusercontent.com/$REPO/main/VERSION" 2>/dev/null | tr -d '[:space:]')
+        if echo "$_raw_version" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+'; then
+            INSTALL_VERSION="$_raw_version"
+            printf "${YELLOW}GitHub API unavailable (rate-limited?). Using version $INSTALL_VERSION from main/VERSION.${NC}\n" >&2
+        fi
     fi
     if [ -z "$INSTALL_VERSION" ]; then
         echo "Error: Could not determine version. Use bootstrap.sh to install:" >&2
