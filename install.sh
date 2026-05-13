@@ -43,9 +43,35 @@ read_version_file() {
 # offline (no network, no dependency checks, no $HOME mutation).
 
 # B.3: semver-aware "less than" comparator. Returns 0 (true) if $1 < $2.
+# Pure bash field-by-field MAJOR.MINOR.PATCH numeric compare with a
+# lexicographic tail for pre-release suffixes. Replaces the prior
+# `sort -V`-based implementation, which depended on a BSD-sort feature
+# only present in macOS Big Sur (11.0, 2020) and later. iSparto's actual
+# release tags are clean MAJOR.MINOR.PATCH, so the pre-release tail is
+# best-effort: it mirrors sort -V for ASCII-only pre-release strings but
+# does NOT do per-dot-segment numeric comparison inside the tail (e.g.
+# "alpha.10" sorts lexicographically before "alpha.2"). Acceptable
+# limitation — iSparto never ships pre-release tags.
 version_lt() {
     [ "$1" = "$2" ] && return 1
-    [ "$(printf '%s\n%s\n' "$1" "$2" | sort -V | head -n 1)" = "$1" ]
+    local -a a b
+    local i ai bi p1="" p2=""
+    IFS=. read -r -a a <<< "${1%%[-+]*}"
+    IFS=. read -r -a b <<< "${2%%[-+]*}"
+    for i in 0 1 2; do
+        ai="${a[i]:-0}"
+        bi="${b[i]:-0}"
+        ((10#$ai < 10#$bi)) && return 0
+        ((10#$ai > 10#$bi)) && return 1
+    done
+    # MAJOR.MINOR.PATCH equal — fall through to pre-release tail.
+    [ "$1" != "${1%%-*}" ] && p1="${1#*-}"
+    [ "$2" != "${2%%-*}" ] && p2="${2#*-}"
+    # Pre-release < release (semver §11.4: "Pre-release versions have lower
+    # precedence than the associated normal version").
+    [ -n "$p1" ] && [ -z "$p2" ] && return 0
+    [ -z "$p1" ] && [ -n "$p2" ] && return 1
+    [ "$p1" \< "$p2" ]
 }
 
 # B.2 helper: print the rename mapping notice + 2-sentence migration guidance.
