@@ -21,24 +21,34 @@ iSparto/
 ├── bootstrap.sh               ← Thin entry point (version resolve + checksum verify)
 ├── install.sh                 ← Main installer (versioned per release)
 ├── isparto.sh                 ← Local stub (upgrade / uninstall / version)
+├── .github/
+│   ├── workflows/
+│   │   └── ci.yml             ← CI gate (syntax, shellcheck, guardian self-tests on macOS + Ubuntu, repo guardians, installer smoke)
+│   └── ISSUE_TEMPLATE/        ← GitHub issue templates
 ├── scripts/
 │   ├── release.sh             ← Automated release (bump version → changelog → tag → gh release)
 │   ├── language-check.sh      ← Four-tier language guardian (Tier 1 / Tier 2 CJK scan + Principle 1 heuristic)
-│   └── policy-lint.sh         ← Information Layering Policy guardian (C-layer ceremonial wrapper detector, v1)
+│   ├── policy-lint.sh         ← Information Layering Policy guardian (C-layer ceremonial wrapper detector, v1)
+│   ├── doctor-check.sh        ← 7-check environment health script invoked by /doctor-isparto
+│   ├── gh-account-guard.sh    ← gh account mid-session guard (runs immediately before `gh pr create`)
+│   ├── session-health.sh      ← /start-isparto session-opening health preview
+│   ├── plan-md-contract-check.sh ← Mechanical plan.md / session-log / CHANGELOG separation detector
+│   └── check-command-rename.sh   ← v0.9.0 command-rename guardian
 ├── lib/
 │   └── snapshot.sh            ← Snapshot / restore engine (factory-reset capability)
 ├── hooks/
 │   └── process-observer/      ← Real-time interception hook scripts + rule files
 ├── commands/
-│   ├── start-working.md       ← Start-working command
-│   ├── end-working.md         ← End-working command
-│   ├── plan.md                ← Planning command
-│   ├── init-project.md        ← Initialize project command
-│   ├── env-nogo.md            ← Environment readiness check
-│   ├── migrate.md             ← Migrate existing project to iSparto
-│   ├── restore.md             ← Restore project to a previous snapshot
-│   ├── security-audit.md      ← Milestone-level full security audit
-│   └── release.md             ← Release flow (wraps scripts/release.sh)
+│   ├── start-isparto.md       ← Start-working command
+│   ├── end-isparto.md         ← End-working command
+│   ├── plan-isparto.md        ← Planning command
+│   ├── init-isparto.md        ← Initialize project command
+│   ├── env-isparto.md         ← Environment readiness check
+│   ├── migrate-isparto.md     ← Migrate existing project to iSparto
+│   ├── restore-isparto.md     ← Restore project to a previous snapshot
+│   ├── security-isparto.md    ← Milestone-level full security audit
+│   ├── doctor-isparto.md      ← Installation health check (wraps scripts/doctor-check.sh)
+│   └── release-isparto.md     ← Release flow (wraps scripts/release.sh)
 ├── agents/
 │   ├── independent-reviewer.md       ← Product-technical alignment blind reviewer (Codex CLI runtime — see note below)
 │   └── process-observer-audit.md     ← Post-session compliance audit role (Claude Code sub-agent)
@@ -59,6 +69,7 @@ iSparto/
     ├── repo-structure.md      ← This file
     ├── dogfood-log.md         ← Subjective dogfooding experience log
     ├── concepts.md            ← Core concepts (decoupling, Wave, file ownership)
+    ├── collaboration-mode.md  ← Collaboration mode (mode selection, lifecycle, protocols)
     ├── security.md            ← Security audit system (three-layer defense)
     ├── user-guide.md          ← User interaction guide
     ├── roles.md               ← Role definitions + Codex prompt templates
@@ -68,11 +79,13 @@ iSparto/
     ├── process-observer.md    ← Process Observer subsystem reference
     ├── design-decisions.md    ← Design decision records
     ├── independent-review.md  ← Independent Reviewer report archive
+    ├── observation-period/    ← v0.8.0 observation-period audit artifacts
     ├── zh/
     │   └── quick-start.md     ← Chinese quick-start (Tier 3 user-facing entry)
     └── design-principles/
         ├── information-layering-policy.md   ← A / B / C layering policy
-        └── conversation-style.md            ← Conversation style guide
+        ├── conversation-style.md            ← Conversation style guide
+        └── a-layer-peer-review.md           ← A-layer Peer Review protocol
 ```
 
 ## Tier annotation (per CLAUDE.md Documentation Language Convention)

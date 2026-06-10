@@ -1,0 +1,90 @@
+# iSparto CI — mechanical gate for every PR and push to main.
+#
+# Runs what the framework already ships: bash syntax gate, shellcheck,
+# the 7 guardian self-tests on both macOS (BSD userland) and Ubuntu (GNU
+# userland — the v0.7.1 BSD-sed and FR-51 `sort -V` incidents were exactly
+# this class of divergence), the repo-content guardians, and the installer
+# smoke. Actions are pinned to commit SHAs (supply-chain posture).
+
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  syntax:
+    name: bash syntax gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - name: bash -n every tracked shell script
+        run: git ls-files '*.sh' | xargs -n1 bash -n
+
+  shellcheck:
+    name: shellcheck (warning severity)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - name: Install shellcheck
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq shellcheck
+      - name: shellcheck all tracked shell scripts
+        run: git ls-files '*.sh' | xargs shellcheck -S warning
+
+  self-tests:
+    name: guardian self-tests (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - name: language-check self-test
+        run: bash scripts/language-check.sh --self-test
+      - name: policy-lint self-test
+        run: bash scripts/policy-lint.sh --self-test
+      - name: check-command-rename self-test
+        run: bash scripts/check-command-rename.sh --self-test
+      - name: doctor-check self-test
+        run: bash scripts/doctor-check.sh --self-test
+      - name: gh-account-guard self-test
+        run: bash scripts/gh-account-guard.sh --self-test
+      - name: session-health self-test
+        run: bash scripts/session-health.sh --self-test
+      - name: pre-tool-check self-test
+        run: bash hooks/process-observer/scripts/pre-tool-check.sh --self-test
+      - name: install.sh migration self-test
+        run: ./install.sh --self-test-migration
+
+  repo-guardians:
+    name: repo guardians (macOS / BSD userland)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - name: language-check (Tier 1/2 CJK + Principle 1)
+        run: bash scripts/language-check.sh
+      - name: policy-lint (Information Layering Policy)
+        run: bash scripts/policy-lint.sh
+      - name: plan.md contract check
+        run: bash scripts/plan-md-contract-check.sh
+
+  install-smoke:
+    name: installer smoke (macOS)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+      - name: Install tmux (install.sh hard-dependency pre-flight runs before dry-run handling)
+        run: brew install tmux
+      - name: install.sh dry-run
+        run: ./install.sh --dry-run
+      - name: snapshot engine list
+        run: bash lib/snapshot.sh list

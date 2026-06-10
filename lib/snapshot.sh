@@ -100,7 +100,7 @@ EOF
 
     # Process each file
     local files_manifest="$snap_dir/files.txt"
-    > "$files_manifest"
+    : > "$files_manifest"
 
     for rel_path in "${files[@]}"; do
         local full_path
@@ -348,10 +348,15 @@ cmd_prune() {
         for d in "$SNAPSHOT_DIR"/${type}-*/; do
             [ -d "$d" ] && snap_dirs+=("$d")
         done
-        # Sort newest first (lexicographic on our YYYYMMDD-HHMMSS ID format)
-        local _saved_ifs="$IFS"
-        IFS=$'\n' snap_dirs=($(printf '%s\n' "${snap_dirs[@]}" | sort -r))
-        IFS="$_saved_ifs"
+        # Sort newest first (lexicographic on our YYYYMMDD-HHMMSS ID format).
+        # read-loop instead of array=($(...)) to avoid glob expansion (SC2207);
+        # mapfile is unavailable on macOS's default bash 3.2.
+        local _sorted=()
+        local _d
+        while IFS= read -r _d; do
+            [ -n "$_d" ] && _sorted+=("$_d")
+        done < <(printf '%s\n' "${snap_dirs[@]}" | sort -r)
+        snap_dirs=("${_sorted[@]}")
         for snap_dir in "${snap_dirs[@]}"; do
             [ ! -f "$snap_dir/metadata.txt" ] && continue
             count=$((count + 1))

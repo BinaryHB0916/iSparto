@@ -167,15 +167,17 @@ do_uninstall() {
     if ! $dry_run; then
         # Remove backup, snapshots, and internal directories
         rm -rf "$BACKUP_DIR"
-        rm -rf "$ISPARTO_HOME/snapshots"
+        # ${ISPARTO_HOME:?} aborts if the variable is ever unset/empty,
+        # so these can never expand to bare /bin, /lib, etc. (SC2115).
+        rm -rf "${ISPARTO_HOME:?}/snapshots"
 
         # Remove isparto home if empty (or mostly empty)
-        rm -f "$ISPARTO_HOME/VERSION"
-        rm -f "$ISPARTO_HOME/install.sh"
-        rm -rf "$ISPARTO_HOME/bin"
-        rm -rf "$ISPARTO_HOME/lib"
-        rm -rf "$ISPARTO_HOME/hooks"
-        rm -rf "$ISPARTO_HOME/scripts"
+        rm -f "${ISPARTO_HOME:?}/VERSION"
+        rm -f "${ISPARTO_HOME:?}/install.sh"
+        rm -rf "${ISPARTO_HOME:?}/bin"
+        rm -rf "${ISPARTO_HOME:?}/lib"
+        rm -rf "${ISPARTO_HOME:?}/hooks"
+        rm -rf "${ISPARTO_HOME:?}/scripts"
 
         if [ -d "$ISPARTO_HOME" ] && [ -z "$(ls -A "$ISPARTO_HOME")" ]; then
             rmdir "$ISPARTO_HOME"

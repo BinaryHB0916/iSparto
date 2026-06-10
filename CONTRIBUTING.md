@@ -39,10 +39,11 @@ Please include:
 3. **Make your changes**
 4. **Test your changes:**
    - For `install.sh` changes: run `./install.sh --dry-run` to verify
+   - For shell scripts: run `shellcheck` and the script's `--self-test` flag if it has one
    - For command templates (`commands/*.md`): manually test in a Claude Code session
    - For doc changes: review rendering on GitHub
 5. **Commit** with a clear message (see [Commit messages](#commit-messages) below)
-6. **Open a PR** against `main`
+6. **Open a PR** against `main` — CI (`.github/workflows/ci.yml`) must pass: it runs the bash syntax gate, shellcheck, all guardian self-tests on macOS + Ubuntu, the repo-content guardians, and the installer dry-run smoke
 
 PRs will be reviewed by maintainers. We aim to respond within a few days.
 

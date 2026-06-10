@@ -57,6 +57,7 @@ set -euo pipefail
 
 RED='\033[0;31m'
 YELLOW='\033[0;33m'
+# shellcheck disable=SC2034  # palette kept in full across guardian scripts
 GREEN='\033[0;32m'
 NC='\033[0m'
 
