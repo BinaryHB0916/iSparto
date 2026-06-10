@@ -2360,3 +2360,28 @@ This close-out commit: docs/session-log.md + docs/plan.md
 - **FR-56 来源.** README Evidence 链接校验时发现 GitHub 把含 em-dash 标题渲染为双连字符 slug, plan.md 索引表 ~28 个单连字符锚点全部 404; 新链接用 `curl <blob URL> | grep '"anchor":"'` 实测校验, 存量修复记 FR-56.
 - **og-image 再生方法.** og-image.svg 文字锁排改为 tspan 单元素居中 (免手工坐标), PNG 用 headless Chrome `--screenshot --window-size=1200,630` 从 SVG 重渲染, 视觉校验通过 — 该方法可复用于未来文案改版.
 - **PO audit 结果 (fresh spawn, canonical 19-row).** 8 PASS + 5 IN-PROGRESS (B2/C1/D1/D2/D3 — Step 5 时点的标准 pre-close-out 状态) + 0 WARN + 1 FAIL + 5 N/A = 19. F1 FAIL: IR 跳过不满足 FR-19 carve-out 条件 (iii) (工作单元 PR 走 Lead self-assessed, 非 fresh sub-agent spawn) — 已按 PO 恢复路径在 Wave 索引行补 non-carve-out 跳过注记; 框架侧 3 条修正入 Backlog FR-58 (condition (iii) "this invocation" 歧义) / FR-59 (缺 structural-defect-blocked 注记词汇) / FR-60 (PO F1 bucket 精度). DE audit (fresh spawn): 11 项全过, verdict PASS WITH MINOR — MINOR-1 repo-structure 缺 lib/patch-settings.py (本 commit 修), MINOR-2 plan.md 当前阶段 intro 过期 v0.8.0 表述 (本 commit 修), MINOR-3 CLAUDE.md CI 行漏 migration self-test 一步 (本 commit 修).
+
+## 2026-06-10 Session (#b) — v0.9.2 Release + Website Hero Polish (Vercel author incident)
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | Non-Wave segment: dedicated release (v0.9.2) + isparto-website hero polish (cross-repo) |
+| Tasks completed | v0.9.2 released via /release-isparto patch (PR #259 merged, tag v0.9.2, GitHub Release published with install.sh + checksums.sha256; release.sh full pass, post-release三方验证一致); isparto-website PR #7 (hero 排版: 品类行改 "on Claude Code + Codex CLI" 并缩字号至单行 clamp(1.15,2.3vw,1.6rem), 基础 tagline 降档修层级倒挂, 删机制句与句尾句号, 1024/1100/1440 截图验证); PR #8 (角色行厂商着色: 陶土=Claude 侧 4 角色 / 矩阵绿=GPT 侧 2 角色 + title tooltip; 新增订阅成本小字 "Runs on your Claude Max + ChatGPT subscriptions — no API keys"); PR #9 (空提交 retrigger, 修复 Vercel 部署归因); isparto.dev 实测上线 (轮询 + 1440 截图核对) |
+| Key decisions | 版本号走 patch (用户 versioning policy: fixes+enhancements → 0.9.2, minor 只留里程碑); 网站两个增强 (厂商着色 + 成本小字) 经用户 "按你的想法改改试试" 批准; Vercel 事故根因由用户先诊断 ("你用错GitHub账号了") |
+
+### Files Changed
+
+```
+iSparto release commit (PR #259): VERSION + CHANGELOG.md (+3/-1, release.sh 自动生成)
+isparto-website PR #7: index.html + plan.md (+6/-5)
+isparto-website PR #8: index.html + plan.md (+14/-1)
+isparto-website PR #9: empty commit (retrigger)
+This close-out commit: docs/session-log.md
+```
+
+### Notes
+
+- **Vercel deployment-blocked 事故 (本 segment 核心教训).** website PR #7/#8 的 merge commit 作者是 BinaryHB0916 (段少🎵DaDalus) —— iSparto PR #258 流程中的 `gh auth switch --user BinaryHB0916` 持久化进了后续 website shell, 推翻了上午 "新 shell 自动翻回 dadalus0916" 的模型; 真实行为是活跃账号**双向不定期翻转** (疑因 FR-53 同族的 iCloud 跨机配置同步覆盖 ~/.config/gh). Vercel Hobby 对私有仓库要求提交作者具有项目权限, 两次 Production 部署被 "Deployment was blocked" 拒绝 (GitHub deployment status: failure). 修复: 仓库历史 PR #4 同款 —— 空提交 `chore: retrigger deploy`, 在同一 shell 内钉死 dadalus0916 后合并 (merge commit 7faaf85 作者验证 = dadalus0916), 部署即刻成功 (轮询第 1 次命中). **固化规则 (已写入 project memory):** 任何 gh 写操作在同一 compound command 内先 `gh auth switch --user <repo-owner>` (BinaryHB0916=iSparto / dadalus0916=isparto-website), website 的 merge 动作必须由 dadalus0916 执行; `scripts/gh-account-guard.sh` 是仓库通用的 (从 origin 推 owner), 跨仓库操作时在目标仓库 cwd 下运行同样有效 —— 本次事故是 FR-13 设计价值的反面验证 (guard 没跑的地方恰好出事).
+- **v0.9.2 release 执行细节.** 发布全程 pinned BinaryHB0916 (本 segment 的 gh 切换按 FR-55 归属记录于此); release.sh 单 pass 无错; CI 未拦截 release PR (required-checks 仍待 ED-5 用户手动配置, 但 main push run 事后验证 success).
+- **website 移动端溢出跟进提醒.** PR #7 期间复现的 ~390px 横向溢出仍开放 (website plan.md Known TODOs), 真机确认后再修.
