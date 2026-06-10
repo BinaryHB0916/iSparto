@@ -8,7 +8,7 @@
 
 ---
 
-**iSparto is an open-source Agent Team framework for Claude Code — built for solopreneurs.** One command spins up the whole agent team — all working in perfect sync. You direct the team through the Team Lead; the rest runs in the background.
+**iSparto is an open-source cross-provider AI dev team for solopreneurs, built on Claude Code + Codex CLI.** Claude plans, orchestrates, and reviews every line GPT implements; a zero-context GPT pass independently re-checks the plan against the product spec. Each provider's work is reviewed by the other. One command spins up the whole team; you direct it through the Team Lead.
 
 > **中文用户** can start from [docs/zh/quick-start.md](docs/zh/quick-start.md) — a Chinese quick-start covering install, first use, and the daily workflow.
 >
@@ -22,16 +22,27 @@ Every existing AI coding tool — Cursor, Windsurf, Copilot, Claude Code on its 
 
 iSparto's central move is to turn that single agent into an Agent Team. One command (`/init-isparto` or `/start-isparto`) spins up the whole agent team — six roles in parallel: Team Lead plans and coordinates, Teammate writes code prompts in parallel, Independent Reviewer audits with fresh context, Developer implements via Codex, Doc Engineer keeps documentation synced, Process Observer guards the workflow. You direct the team through the Team Lead; the rest stays out of your way until a decision is actually needed.
 
+The team deliberately spans two providers. A single-vendor agent fleet shares one training distribution — and with it, one set of blind spots; a review by the same model family that wrote the code inherits the failure modes it is supposed to catch. iSparto routes the quality path across the provider boundary in both directions by default: Claude reviews the code GPT writes, and a zero-context GPT pass re-checks Claude's plan against the product spec at Wave boundaries. Separate failure modes, independent review paths.
+
 |  | Single-agent tools | iSparto |
 |--|---|---|
 | What you see | Everything the agent just read, reconstructed in prose | The one line the Team Lead decides you need; the rest lives in `docs/` |
 | When you are interrupted | Whenever the agent has something to say | Only at genuine decision points |
 | Cross-session state | Lost — you re-explain context every time | Restored automatically from `docs/plan.md` at session start |
 | Documentation sync | Manual | Audited by the Doc Engineer at each Wave boundary (a Wave is a batch of decoupled tasks; see [docs/concepts.md](docs/concepts.md#wave-parallelism)) |
+| Who reviews the work | The same model that wrote it | The other provider — Claude reviews GPT's code; a zero-context GPT pass reviews the plan |
+
+### Does the cross-review catch anything real?
+
+Dogfooding receipts from this repo's own logs, in both directions:
+
+- **GPT caught Claude's work** — at a Wave boundary, the Independent Reviewer (GPT, zero context) blocked the merge of `scripts/doctor-check.sh` over two MAJOR findings: `|| true` guards masking version-check failures, and raw multi-line output breaking the one-line-per-check contract. Three-pass cycle: BLOCK → fix → BLOCK → fix → PROCEED. ([session log, 2026-04-20](docs/session-log.md#2026-04-20-session--wave-2--doctor-slash-command-v080-observation-period-row-3))
+- **GPT caught what every Claude-side scan missed** — the v0.8.0 boundary review surfaced a stale token-budget row in `docs/configuration.md` that both the Lead and the Doc Engineer audit had passed over. ([session log, 2026-04-18](docs/session-log.md#2026-04-18-session--v080-model-config-upgrade--independent-reviewer-cross-provider-migration))
+- **Claude caught GPT's work** — Lead review of Codex output caught `git diff --stat` silently missing staged files (fixed to `git diff HEAD --stat`) and diff output that broke Markdown table rendering. ([Case 1](docs/case-studies.md#case-1--session-log-self-bootstrapping-wave-5))
 
 ### Who this is for
 
-Solopreneurs shipping software on macOS who want to run a full agent team on top of Claude Code. Requires Claude Max and ChatGPT subscriptions.
+Solopreneurs shipping software on macOS who want to run a cross-provider agent team on top of Claude Code + Codex CLI. Requires Claude Max and ChatGPT subscriptions.
 
 > **Platform: macOS only.** Requires **tmux 3.x** as a hard dependency since v0.8.0 — the Independent Reviewer is spawned via `codex exec` in a tmux pane (cross-provider blind review on top of zero inherited context). Install with `brew install tmux`. Single-session mode may work on other platforms but is untested.
 

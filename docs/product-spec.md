@@ -1,7 +1,7 @@
 # iSparto Product Specification
 
 ## Product Positioning
-iSparto is an AI Agent Team workflow framework that turns Claude Code from a single agent into a development team with clearly defined roles.
+iSparto is a cross-provider AI dev team workflow framework, built on Claude Code + Codex CLI, that turns a single coding agent into a development team with clearly defined roles. The quality path crosses the provider boundary in both directions by default: Claude reviews what GPT implements, and a zero-context GPT pass reviews the plan against the product spec.
 
 **One-line vision:** Give everyone their own technical team — talk like a CEO, state requirements, watch progress, receive deliverables, and never touch code or terminals.
 
@@ -23,7 +23,7 @@ timeline
 ```
 
 ### v0.x — Developer Tool (current)
-Extends Claude Code from a single agent into a structured team. Users are still developers who understand git/branches/review and trigger workflows via slash commands. Core value: **one person commands the output capacity of an entire team**.
+Extends a single coding agent into a structured cross-provider team on top of Claude Code + Codex CLI. Users are still developers who understand git/branches/review and trigger workflows via slash commands. Core value: **one person commands the output capacity of an entire team**.
 
 ### v1.x — Autonomous Dev Team
 Users no longer need to manually drive every workflow node. Saying "build this feature" lets the team complete the full plan → code → review → test → merge loop on its own. The user role shifts from "developer" to "tech lead" — focused on direction and acceptance, not on the process. Core value: **end-to-end autonomy where the user only supplies requirements and validates results**.
@@ -45,7 +45,7 @@ Users describe business requirements in natural language; the team translates th
 - **Wave-based parallel development**: multiple Developers run in parallel within a single Wave, with tmux split panes for visualization
 - **10 slash commands**: /init-isparto, /migrate-isparto, /start-isparto, /end-isparto, /plan-isparto, /env-isparto, /doctor-isparto, /restore-isparto, /security-isparto, /release-isparto
 - **Cross-session state recovery**: driven by plan.md, with /start-isparto automatically restoring context
-- **Cross-model quality gate**: Lead reviews Developer (Codex) output, covering each model's blind spots
+- **Cross-provider quality gates**: Lead (Claude) reviews Developer (GPT/Codex) output, and the Independent Reviewer (GPT, zero inherited context) blind-reviews product-technical alignment at Phase 0 and Wave boundaries — each provider's work is reviewed by the other, covering each model family's blind spots
 - **Automatic documentation sync**: Doc Engineer audits code/documentation consistency every Wave
 - **Snapshot/restore**: an automatic snapshot is taken before every operation, and /restore-isparto performs one-click rollback
 - **Session log**: docs/session-log.md records development metrics for every session
@@ -61,6 +61,8 @@ Users describe business requirements in natural language; the team translates th
 
 ## Competitive Differentiation
 Other AI coding tools (Cursor, Windsurf, Copilot, single-session Claude Code) all have the user iterating with a single agent. iSparto turns that single agent into an Agent Team — one command spins up the whole agent team, all working in perfect sync. The user only talks to the Team Lead, and the Team Lead coordinates the Teammate, Independent Reviewer, Developer, Doc Engineer, and Process Observer roles in the background.
+
+Against native single-vendor multi-agent features (e.g., Claude Code's own teams and sub-agents), the differentiation is structural rather than numerical: a same-vendor fleet shares one training distribution and one set of failure modes, so its reviews inherit the blind spots they are meant to catch. iSparto's quality path crosses the provider boundary in both directions by default — Claude reviews the code GPT writes; a zero-context GPT pass re-checks the plan against the product spec at Wave boundaries. On top of that sits an engineered governance layer: model-free PreToolUse hook interception, three-layer secret/PII scanning, mechanical guardian scripts, and runtime output layering that keeps the team quiet except at genuine decision points.
 
 ## Three-Layer Capability Model
 

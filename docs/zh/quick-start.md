@@ -1,6 +1,6 @@
 # iSparto 中文快速上手
 
-iSparto 把 Claude Code 从单 Agent 变成一个开发团队——Lead 负责组织提示词，Developer (Codex) 负责实现代码，Teammates 负责并行协作，Doc Engineer 负责同步文档。你指挥团队，而不是对着单个 Agent 反复拉扯。
+iSparto 在 Claude Code + Codex CLI 之上运行一支跨厂商 AI 开发团队——Lead (Claude) 负责规划并审查 GPT 写下的代码，Developer (Codex/GPT) 负责实现，Independent Reviewer (GPT) 以零上下文盲审规划与产品是否对齐，Doc Engineer 负责同步文档。你指挥团队，而不是对着单个 Agent 反复拉扯。
 
 > 本文是中文用户快速上手入口，只覆盖安装和日常使用。深入的角色定义、工作流细节、故障排查、设计决策都在英文参考文档中（见文末说明）。
 
