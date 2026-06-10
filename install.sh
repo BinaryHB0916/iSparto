@@ -760,6 +760,7 @@ else
     elif ! grep -q "pre-tool-check.sh" "$_user_settings" 2>/dev/null; then
         _needs_user_hook_patch=true
     else
+        # shellcheck disable=SC2043  # single-element by design; list grows when more matchers need auditing
         for _matcher in "Bash"; do
             if ! grep -q "\"matcher\"[[:space:]]*:[[:space:]]*\"$_matcher\"" "$_user_settings" 2>/dev/null; then
                 _needs_user_hook_patch=true

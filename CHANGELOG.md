@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **CI workflow (`.github/workflows/ci.yml`)** — Every PR and push to main now runs a mechanical gate on GitHub Actions: bash syntax check on all tracked shell scripts, shellcheck at warning severity, the 7 guardian self-tests (`language-check`, `policy-lint`, `check-command-rename`, `doctor-check`, `gh-account-guard`, `session-health`, `pre-tool-check`) plus `install.sh --self-test-migration` on both macOS (BSD userland) and Ubuntu (GNU userland), the repo-content guardians (`language-check`, `policy-lint`, `plan-md-contract-check`), and the installer smoke (`install.sh --dry-run` + `snapshot.sh list`). Previously these guardians only ran when the agent workflow remembered to invoke them in-session; the BSD-sed (v0.7.1) and `sort -V` (FR-51) incident class is now caught by the dual-userland matrix before merge. Actions pinned to commit SHAs.
+
+### Fixed
+
+- **shellcheck findings across the script suite (14 warnings → 0)** — `isparto.sh` uninstall block now uses `"${ISPARTO_HOME:?}/..."` so an unset/empty `ISPARTO_HOME` aborts instead of expanding to `rm -rf /bin`-style paths (SC2115); `lib/snapshot.sh` prune-sort rewritten from `array=($(...))` to a glob-safe read-loop compatible with macOS bash 3.2 (SC2207) and bare `>` truncation given an explicit `:` no-op (SC2188); intentional glob-matching `case` patterns in `pre-commit-security.sh` and the by-design single-element matcher loop in `install.sh` annotated with scoped `shellcheck disable` directives rather than silenced globally.
+
 ### Changed
 
 - **Repositioning: "Agent Team framework for Claude Code" → "cross-provider AI dev team"** — All active positioning surfaces now lead with the cross-provider review structure (Claude plans and reviews what GPT implements; a zero-context GPT pass blind-reviews the plan against the product spec) instead of categorizing iSparto as a Claude-Code-specific framework. Claude Code + Codex CLI remain named as the runtime. Updated: `README.md` / `README.zh-CN.md` lead sections, comparison table (new "Who reviews the work" row), and a new dogfooding-evidence section linking both review directions to session-log/case-study entries; `docs/product-spec.md` Product Positioning + Competitive Differentiation (new paragraph contrasting single-vendor multi-agent fleets); `docs/zh/quick-start.md` opening; `CLAUDE.md` Project Overview; GitHub repo description and topics. Terminology standardized on "cross-provider" across active files; historical Tier 4 entries keep the old wording.

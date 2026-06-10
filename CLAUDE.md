@@ -23,7 +23,7 @@ iSparto is a cross-provider AI Agent Team workflow framework, built on Claude Co
 - Changes to command templates (commands/*.md) must be verified not to break existing users' /migrate-isparto and /init-isparto flows
 - After completing all reviews, automatically create PR and merge to main — no manual user review needed
 - Releases must use the `/release-isparto` command — manual `git tag`, `git push origin <tag>`, or any operation on main is not allowed. The release flow is fully automated by `scripts/release.sh`
-- This project is the framework itself; all Tier 1 System Prompt Layer files (as defined in Documentation Language Convention) fall within the self-referential boundary — Lead edits directly, and Process Observer interceptions can be approved. This includes both subdirectory files (`commands/`, `templates/`, `scripts/`, `hooks/`, `agents/`, `docs/`, `lib/`) and root-level files (`CLAUDE.md`, `CLAUDE-TEMPLATE.md`, `bootstrap.sh`, `install.sh`, `isparto.sh`). Tier 2/3/4 documentation (other `docs/*.md`, `README*.md`, `CONTRIBUTING.md`, `CHANGELOG.md`, `VERSION`) is also in scope for direct Lead edits under the same framework self-referential principle.
+- This project is the framework itself; all Tier 1 System Prompt Layer files (as defined in Documentation Language Convention) fall within the self-referential boundary — Lead edits directly, and Process Observer interceptions can be approved. This includes both subdirectory files (`commands/`, `templates/`, `scripts/`, `hooks/`, `agents/`, `docs/`, `lib/`, `.github/`) and root-level files (`CLAUDE.md`, `CLAUDE-TEMPLATE.md`, `bootstrap.sh`, `install.sh`, `isparto.sh`). Tier 2/3/4 documentation (other `docs/*.md`, `README*.md`, `CONTRIBUTING.md`, `CHANGELOG.md`, `VERSION`) is also in scope for direct Lead edits under the same framework self-referential principle.
 
 ## Documentation Language Convention
 
@@ -66,6 +66,7 @@ See [docs/collaboration-mode.md](docs/collaboration-mode.md) for the full collab
 | Project Docs | docs/ (product-spec, plan) | iSparto's own product specification and development plan |
 | Release Script | scripts/release.sh | Automated release (bump version → changelog → tag → gh release) |
 | Guardian Scripts | scripts/language-check.sh, scripts/policy-lint.sh, scripts/gh-account-guard.sh, scripts/session-health.sh, scripts/plan-md-contract-check.sh | Workflow guardrails invoked by slash commands: language-check.sh (Tier 1/2 CJK + Principle 1 guard, called by /end-isparto DE audit item 9); policy-lint.sh (policy lint, called by /end-isparto DE audit item 10); gh-account-guard.sh (gh account mid-session guard, called by /end-isparto Step 9); session-health.sh (session health preview, called by /start-isparto Step 9); plan-md-contract-check.sh (mechanical plan.md contract detector, called by /end-isparto Step 4 contract enforcement and DE audit item 11) |
+| CI | .github/workflows/ci.yml | GitHub Actions gate on every PR and push to main: bash syntax gate, shellcheck, the 7 guardian self-tests on macOS + Ubuntu, repo-content guardians (language-check / policy-lint / plan-md-contract-check), and installer dry-run smoke |
 | Assets | assets/*.svg | SVG images used by the README |
 | Process Observer | hooks/process-observer/, agents/process-observer-audit.md | Real-time interception (hook scripts + dangerous-operations list) + post-session audit |
 | Independent Reviewer | agents/independent-reviewer.md | Product-technical alignment blind review (Codex CLI in tmux pane — GPT-5.5, cross-provider isolation on top of zero inherited context) |
@@ -103,7 +104,7 @@ The agent team treats the user's memory as **read-only input** used to adapt com
 ## Common Commands
 - Install test: `./install.sh --dry-run`
 - Snapshot test: `bash lib/snapshot.sh list`
-- Lint (no automation; relies on Codex review)
+- Lint/CI: GitHub Actions runs the full mechanical gate on every PR (`.github/workflows/ci.yml` — syntax, shellcheck, guardian self-tests on macOS + Ubuntu, repo guardians, installer smoke); locally: `shellcheck $(git ls-files '*.sh')` and the individual `--self-test` flags
 
 ## Documentation Index
 - Product spec -> docs/product-spec.md

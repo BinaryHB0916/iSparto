@@ -314,6 +314,7 @@ is_whitelisted() {
     for ((i = 0; i < SECURE_COUNT; i++)); do
         file_glob="${SECURE_PATHS[$i]}"
         id_glob="${SECURE_PATTERN_IDS[$i]}"
+        # shellcheck disable=SC2254  # intentional: .secureignore entries are glob patterns
         case "$file_path" in
             $file_glob)
                 if [ "$id_glob" = "*" ] || [ "$id_glob" = "$pattern_id" ]; then
@@ -336,6 +337,7 @@ matches_glob_csv() {
 
     IFS=','
     for glob_item in $glob_csv; do
+        # shellcheck disable=SC2254  # intentional: CSV entries are glob patterns
         case "$file_path" in
             $glob_item)
                 IFS="$old_ifs"
@@ -496,6 +498,7 @@ while IFS= read -r -d '' staged_file; do
     # Block sensitive file globs.
     while IFS= read -r sensitive_glob || [ -n "$sensitive_glob" ]; do
         [ -z "$sensitive_glob" ] && continue
+        # shellcheck disable=SC2254  # intentional: security-patterns.json entries are glob patterns
         case "$staged_file" in
             $sensitive_glob)
                 if is_whitelisted "$staged_file" "sensitive-file"; then
