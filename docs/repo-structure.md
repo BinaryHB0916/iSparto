@@ -35,7 +35,8 @@ iSparto/
 │   ├── plan-md-contract-check.sh ← Mechanical plan.md / session-log / CHANGELOG separation detector
 │   └── check-command-rename.sh   ← v0.9.0 command-rename guardian
 ├── lib/
-│   └── snapshot.sh            ← Snapshot / restore engine (factory-reset capability)
+│   ├── snapshot.sh            ← Snapshot / restore engine (factory-reset capability)
+│   └── patch-settings.py      ← settings.json hook patcher (equivalence-based dedup, FR-52)
 ├── hooks/
 │   └── process-observer/      ← Real-time interception hook scripts + rule files
 ├── commands/
