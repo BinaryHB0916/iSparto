@@ -2332,3 +2332,31 @@ Note: 本 commit (docs/session-log-0420 分支) 只含 plan.md Status flip + clo
 
 - **Release session 的 PO audit canonical 18-row 压力测试 positive case.** Wave 4 刚把 PO canonical checklist codify 到 18 行 (A1-A3/B1-B2/C1-C2/D1-D4/E1-E6/F1), 本 session 的 PO spawn 是 Wave 4 template 对 "非 Wave session" (release session) 的首次验证. 结果: template 足够 robust 处理 release session 形态 (F1 结构性 N/A + B1 经 reasoning 判定 N/A 但 auditor 给出 PASS 含 rationale). 本会话 surface 的 FR-33 gap 不是 template 失败, 是 spec 精度可提升的小幅 polish — positive result for Wave 4 的 canonical 18-row codification 决策.
 
+
+## 2026-06-10 Session — Cross-provider Repositioning + CI Introduction
+
+| Metric | Value |
+|--------|-------|
+| Project | iSparto |
+| Wave | Cross-provider Repositioning + CI Introduction (conversation-driven; 2 iSparto PRs + 1 website PR) |
+| Tasks completed | 定位重塑 (PR #256): README/README.zh-CN 首段重写 + why-two-providers 段 + 对比表 "Who reviews the work" 行 + Evidence 小节 (锚点经 GitHub 渲染实测校验) / product-spec Positioning + Competitive Differentiation / zh quick-start 开篇 / CLAUDE.md overview / case-studies 术语统一; GitHub 仓库描述 + topics 更新 (+cross-provider/multi-agent/agent-team/openai/codex-cli); isparto-website PR #6 (hero + 全部 meta/og/JSON-LD + og-image SVG 锁排重写 + PNG 经 headless Chrome 1200×630 重渲染, Vercel 部署已实测上线); CI 引入 (PR #257): `.github/workflows/ci.yml` 5 jobs (syntax / shellcheck / 7 guardian self-tests macOS+Ubuntu 矩阵 / repo guardians / installer smoke), 首跑 6/6 全绿; shellcheck 整治 14 warnings → 0 (isparto.sh `${ISPARTO_HOME:?}` rm 保护 + snapshot.sh bash-3.2 兼容 prune 重写 + 3 处故意 glob case 的 scoped disable); CLAUDE.md Module Boundaries +CI 行 + 自指边界 +`.github/` + Common Commands lint 行更新; repo-structure.md 目录树陈旧修正 (v0.9.0 旧命令名 ×9 → 新名 ×10, scripts 3→8, 补 collaboration-mode/a-layer-peer-review/observation-period) |
+| Key decisions | 定位选 Option B: 品类 "cross-provider AI dev team", Claude Code + Codex CLI 以运行时身份保留在描述里 (GPT-5.5 盲审 MAJOR: 零外部用户期不丢搜索锚点); 用词全线统一 cross-provider/跨厂商 (不用 cross-model/跨模型); 核心主张只写双向交叉 (GPT-5.5 纠正初稿事实错误: Developer 和 IR 都是 GPT, "实现和审查永不同厂商"为假; 真实结构是 Claude 审 GPT 的代码 + 零上下文 GPT 盲审 Claude 的规划); install.sh tmux 硬检查保留产品 fail-fast 语义, CI 侧 brew install tmux (Codex P0); 分支保护 required-checks 留待用户手动执行 (权限分类器拦截) |
+
+### Files Changed
+
+```
+PR #256 (docs/cross-provider-repositioning): 8 files, +39/-10
+PR #257 (feat/ci-workflow): 14 files, +156/-26 (create .github/workflows/ci.yml)
+isparto-website PR #6 (content/cross-provider-repositioning): 4 files, +14/-13 (og-image.png re-rendered)
+This close-out commit: docs/session-log.md + docs/plan.md
+```
+
+### Notes
+
+- **GPT-5.5 盲审两次实质介入.** (1) 定位方案盲审 (xhigh, zero context): PROCEED WITH CHANGES, 5 MAJOR — 其中"实现和审查永不同厂商"事实错误被拦下, 文案改为双向交叉表述; "moat"降档为 built-in review path; 要求补 Evidence 章节. (2) CI Wave diff 审查 (high): FAIL → 1 P0 (install.sh tmux 硬依赖预检在 dry-run 分支之前, GitHub macOS runner 无 tmux, install-smoke 必挂) → ci.yml 加 brew install tmux 步骤 → 首跑全绿验证了该修复. 两次审查均为 FR-45 精神的 in-session 实践 (Tier 1 shell 逻辑改动过 Codex).
+- **Wave Boundary IR 未跑 (rationale).** FR-47 已记录 IR agent prompt 在 iSparto 自指审查时因缺 docs/tech-spec.md 产生 13 条假阳性 CRITICAL 的结构性 BLOCK (v0.9.0 Wave 实测); 修复未落地前跑正式 IR 只会复现噪声. 本 session 的跨厂商对齐审查已由上述两次 GPT-5.5 实质审查覆盖 (一次产品-定位对齐, 一次实现 diff). PO audit F1 如标记 deviation 属预期, 记录在案.
+- **gh account flip 环境怪癖 (二次实锤).** 每个新 shell 把活跃 gh 账号翻回 dadalus0916 (疑似 shell profile); `gh-account-guard.sh` 在两次 `gh pr create` 前各拦截并自动纠正一次 (PR #256/#257 归属均为 BinaryHB0916 ✓); 但 admin 级操作 (`gh repo edit`) 不在 guard 射程, 首次调用 404 (GitHub 对非 admin 返回 404 而非 403). 对策: owner 级 gh 操作与 `gh auth switch` 放同一 compound command. 已写入 project memory.
+- **Process Observer hook cwd 盲区 (观察).** 跨仓库操作 isparto-website 时, push-on-main hook 按会话 cwd (iSparto repo, 时值 main) 判定而非命令内 `cd` 目标仓库的分支, 误拦 website 的 feature-branch push; 通过先建 iSparto 侧 feat/ci-workflow 分支 (本来就需要) 解除. 已记 Backlog FR-57 (path-aware 改造候选, 与 FR-40 path-gate 同族).
+- **FR-56 来源.** README Evidence 链接校验时发现 GitHub 把含 em-dash 标题渲染为双连字符 slug, plan.md 索引表 ~28 个单连字符锚点全部 404; 新链接用 `curl <blob URL> | grep '"anchor":"'` 实测校验, 存量修复记 FR-56.
+- **og-image 再生方法.** og-image.svg 文字锁排改为 tspan 单元素居中 (免手工坐标), PNG 用 headless Chrome `--screenshot --window-size=1200,630` 从 SVG 重渲染, 视觉校验通过 — 该方法可复用于未来文案改版.
+- **PO audit 结果 (fresh spawn, canonical 19-row).** 8 PASS + 5 IN-PROGRESS (B2/C1/D1/D2/D3 — Step 5 时点的标准 pre-close-out 状态) + 0 WARN + 1 FAIL + 5 N/A = 19. F1 FAIL: IR 跳过不满足 FR-19 carve-out 条件 (iii) (工作单元 PR 走 Lead self-assessed, 非 fresh sub-agent spawn) — 已按 PO 恢复路径在 Wave 索引行补 non-carve-out 跳过注记; 框架侧 3 条修正入 Backlog FR-58 (condition (iii) "this invocation" 歧义) / FR-59 (缺 structural-defect-blocked 注记词汇) / FR-60 (PO F1 bucket 精度). DE audit (fresh spawn): 11 项全过, verdict PASS WITH MINOR — MINOR-1 repo-structure 缺 lib/patch-settings.py (本 commit 修), MINOR-2 plan.md 当前阶段 intro 过期 v0.8.0 表述 (本 commit 修), MINOR-3 CLAUDE.md CI 行漏 migration self-test 一步 (本 commit 修).
