@@ -1,7 +1,7 @@
 # iSparto
 
 ## Project Overview
-iSparto is an AI Agent Team workflow framework that turns single-agent Claude Code into a team with distinct roles (Lead + Teammate + Developer + Doc Engineer + Process Observer). Target users are independent developers. Current stage: open-source core workflow released, dogfooding in progress.
+iSparto is a cross-provider AI Agent Team workflow framework, built on Claude Code + Codex CLI, that turns a single coding agent into a team with distinct roles (Lead + Teammate + Developer + Doc Engineer + Process Observer + Independent Reviewer) — Claude reviews what GPT implements, and a zero-context GPT pass blind-reviews product-technical alignment. Target users are independent developers. Current stage: open-source core workflow released, dogfooding in progress.
 
 ## Tech Stack
 - Language: Shell (Bash), Markdown

@@ -8,7 +8,7 @@
 
 ---
 
-**iSparto 是一个为 Claude Code 打造的开源 Agent Team 框架,面向 solopreneur。** 一条命令启动整支 agent team,全员同步协作。你通过 Team Lead 指挥团队,其余在后台跑。
+**iSparto 是一个面向 solopreneur 的开源跨厂商 AI 开发团队,运行在 Claude Code + Codex CLI 之上。** Claude 负责规划、编排,并逐行审查 GPT 实现的代码;一条零继承上下文的 GPT 盲审通道反向独立复核规划与产品是否对齐——两家厂商的工作互相检查。一条命令启动整支团队,你通过 Team Lead 指挥。
 
 > **中文用户第一次使用?** 先看 [docs/zh/quick-start.md](docs/zh/quick-start.md) — 安装、首次使用、日常工作流的中文速览。
 >
@@ -22,16 +22,27 @@
 
 iSparto 的核心动作是把这一个 Agent 变成一支 Agent Team。一条命令(`/init-isparto` 或 `/start-isparto`)启动整支 agent team——六个角色并行:Team Lead 拆任务、协调团队,Teammate 并行写代码 prompt,Independent Reviewer 以零上下文独立审查,Developer 通过 Codex 实现代码,Doc Engineer 同步文档,Process Observer 守护工作流。你通过 Team Lead 指挥团队,其余在真正需要决策时才回来。
 
+这支团队刻意横跨两家厂商。单一厂商的 agent 编队共享同一套训练分布,也就共享同一组盲点——让写代码的模型家族自己审自己,审查会继承它本该抓住的失败模式。iSparto 默认把质量路径双向跨过厂商边界:Claude 审查 GPT 写下的代码,零上下文的 GPT 在 Wave 边界反向复核 Claude 的规划与产品规格是否对齐。失败模式彼此独立,审查路径互不隶属。
+
 |  | 单 Agent 工具 | iSparto |
 |--|---|---|
 | 你看到什么 | Agent 刚读到的所有事实,用散文复述一遍 | 你现在必须知道的那一句,其余留在 `docs/` 里 |
 | 什么时候打断你 | 只要 Agent 有话想说 | 只在真正需要决策的时刻 |
 | 跨会话状态 | 会丢,每次都得重新解释上下文 | `/start-isparto` 从 `docs/plan.md` 自动恢复 |
 | 文档同步 | 手动 | 每个 Wave 边界由 Doc Engineer 审计(Wave 是一组解耦任务的工作批次;详见 [docs/concepts.md](docs/concepts.md#wave-parallelism)) |
+| 谁来审查工作 | 写代码的模型自己审 | 对方厂商交叉审——Claude 审 GPT 的代码,零上下文的 GPT 审规划 |
+
+### 跨厂商审查真的抓到过东西吗?
+
+来自本仓库日志的双向实证:
+
+- **GPT 抓住 Claude 的问题** —— Wave 边界上,Independent Reviewer(GPT,零上下文)以两个 MAJOR 发现 BLOCK 了 `scripts/doctor-check.sh` 的合并:`|| true` 掩盖了 version-check 失败,raw 多行输出破坏了 one-line-per-check 契约。三轮循环:BLOCK → 修复 → BLOCK → 修复 → PROCEED。([session log,2026-04-20](docs/session-log.md#2026-04-20-session--wave-2--doctor-slash-command-v080-observation-period-row-3))
+- **GPT 抓住所有 Claude 侧扫描都漏掉的问题** —— v0.8.0 边界审查发现 `docs/configuration.md` 里一行过期的 token-budget 配置,Lead 和 Doc Engineer 审计都没拦住。([session log,2026-04-18](docs/session-log.md#2026-04-18-session--v080-model-config-upgrade--independent-reviewer-cross-provider-migration))
+- **Claude 抓住 GPT 的问题** —— Lead 复审 Codex 输出时抓出 `git diff --stat` 漏掉 staged 文件(改为 `git diff HEAD --stat`),以及 diff 输出破坏 Markdown 表格渲染。([案例 1](docs/case-studies.md#case-1--session-log-self-bootstrapping-wave-5))
 
 ### 适合谁用
 
-在 macOS 上用 Claude Code 开发软件的 solopreneur。需要 Claude Max 和 ChatGPT 订阅。
+在 macOS 上用 Claude Code + Codex CLI 跑一支跨厂商 agent team 的 solopreneur。需要 Claude Max 和 ChatGPT 订阅。
 
 > **平台:仅支持 macOS。** 自 v0.8.0 起,**tmux 3.x 为硬性依赖** —— Independent Reviewer 通过 `codex exec` 在 tmux pane 内启动(在零上下文继承之上叠加跨厂商盲审)。用 `brew install tmux` 安装。单会话模式在其他平台上可能可用,但未经测试。
 

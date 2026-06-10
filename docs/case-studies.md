@@ -36,4 +36,4 @@ iSparto used its own Agent Team workflow to build the "Session Log" feature — 
 
 ### What this case demonstrates
 
-Two Developers ran in parallel against disjoint file ownership without merge conflicts; the cross-model review gate (Lead reviewing Codex output) caught two real defects before any human review; documentation stayed in sync inside the same Wave rather than drifting into a follow-up commit. One single-sentence requirement produced a complete merged feature without the user acting as dispatcher between subtasks.
+Two Developers ran in parallel against disjoint file ownership without merge conflicts; the cross-provider review gate (Lead/Claude reviewing Codex/GPT output) caught two real defects before any human review; documentation stayed in sync inside the same Wave rather than drifting into a follow-up commit. One single-sentence requirement produced a complete merged feature without the user acting as dispatcher between subtasks.

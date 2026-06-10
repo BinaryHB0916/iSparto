@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Repositioning: "Agent Team framework for Claude Code" → "cross-provider AI dev team"** — All active positioning surfaces now lead with the cross-provider review structure (Claude plans and reviews what GPT implements; a zero-context GPT pass blind-reviews the plan against the product spec) instead of categorizing iSparto as a Claude-Code-specific framework. Claude Code + Codex CLI remain named as the runtime. Updated: `README.md` / `README.zh-CN.md` lead sections, comparison table (new "Who reviews the work" row), and a new dogfooding-evidence section linking both review directions to session-log/case-study entries; `docs/product-spec.md` Product Positioning + Competitive Differentiation (new paragraph contrasting single-vendor multi-agent fleets); `docs/zh/quick-start.md` opening; `CLAUDE.md` Project Overview; GitHub repo description and topics. Terminology standardized on "cross-provider" across active files; historical Tier 4 entries keep the old wording.
+
 ## [0.9.1] - 2026-05-13
 
 ### Fixed
