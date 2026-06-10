@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.2] - 2026-06-10
+
 ### Added
 
 - **CI workflow (`.github/workflows/ci.yml`)** — Every PR and push to main now runs a mechanical gate on GitHub Actions: bash syntax check on all tracked shell scripts, shellcheck at warning severity, the 7 guardian self-tests (`language-check`, `policy-lint`, `check-command-rename`, `doctor-check`, `gh-account-guard`, `session-health`, `pre-tool-check`) plus `install.sh --self-test-migration` on both macOS (BSD userland) and Ubuntu (GNU userland), the repo-content guardians (`language-check`, `policy-lint`, `plan-md-contract-check`), and the installer smoke (`install.sh --dry-run` + `snapshot.sh list`). Previously these guardians only ran when the agent workflow remembered to invoke them in-session; the BSD-sed (v0.7.1) and `sort -V` (FR-51) incident class is now caught by the dual-userland matrix before merge. Actions pinned to commit SHAs.
